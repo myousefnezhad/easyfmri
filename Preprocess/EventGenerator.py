@@ -62,8 +62,6 @@ class EventGenerator:
                             EventAddr = setParameters3(setting.Onset,setting.mainDIR,fixstr(s, setting.SubLen, setting.SubPer)\
                                                           ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task, \
                                                           fixstr(cnt, setting.ConLen, setting.ConPer))
-                            #EventFilename = "sub-" +  + "_task-" + setting.Task + "_run-" + \
-                                        #+ "_events." + setting.Onset
                             EventFolder = setParameters3(setting.EventFolder,setting.mainDIR,fixstr(s, setting.SubLen, setting.SubPer)\
                                                           ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task,
                                                                           fixstr(cnt, setting.ConLen, setting.ConPer))
@@ -170,7 +168,27 @@ class EventGenerator:
                             tabFile.write(str(onset[0]) + "\t" + str(onset[1]) + "\t1\n")
                         tabFile.close()
                 print("EVENT: "+ event[1] + " is generated!")
-            # # Report
+
+            # Check Tab File
+            for cond in conditions:
+                for si, s in enumerate(Subjects):
+                    for cnt in Counters[si]:
+                        print("Checking Tab Files: Subject %d, Counter %d ..." % (s, cnt))
+                        for r in Runs[si]:
+                            EventFolder = setParameters3(setting.EventFolder, setting.mainDIR,
+                                                         fixstr(s, setting.SubLen, setting.SubPer), \
+                                                         fixstr(r, setting.RunLen, setting.RunPer), setting.Task,
+                                                         fixstr(cnt, setting.ConLen, setting.ConPer))
+                            fname = EventFolder + cond[0] + '.tab'
+                            if os.path.isfile(fname):
+                                print(fname + " - is okay.")
+                            else:
+                                tabfile = open(fname, "w")
+                                tabfile.write("0\t0\t0\n")
+                                tabfile.close()
+                                print(fname + " - is EMPTY!")
+
+            # Report
             print("List of generated conditions:")
             print("Condition ID\tCondition Title")
             for cond in conditions:

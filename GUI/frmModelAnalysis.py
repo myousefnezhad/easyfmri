@@ -52,7 +52,9 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("MatLab, SK Clustering: Gaussian Mixture",10004)
         ui.cbMAU.addItem("MatLab, SK Clustering: KMeans",10000)
         ui.cbMAU.addItem("MatLab, SK Clustering: Spectral",10001)
-        ui.cbMAU.addItem("MatLab, RSA (session level)",20000)
+        ui.cbMAU.addItem("MatLab, RSA, Session Level Representational Similarity Analysis (npy least square)",20000)
+        ui.cbMAU.addItem("MatLab, RSA, Group Level Representational Similarity Analysis (npy least square)",20001)
+
 
         # Supervised
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: AdaBoost",80005)
@@ -64,6 +66,8 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Random Forest",80004)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Stochastic Gradient Descent based approaches",80003)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Support Vector Machine (libsvm)",10000)
+
+
 
         dialog.setWindowTitle("easy fMRI model analysis - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -121,6 +125,10 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMARSA import frmMARSA
             frmMARSA.show(frmMARSA)
             return
+        if MAID == 20001:
+            from GUI.frmMAGRSA import frmMAGRSA
+            frmMAGRSA.show(frmMAGRSA)
+            return
 
     def btnMAS_click(self):
         MAID = ui.cbMAS.currentData()
@@ -136,7 +144,6 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMANuSVM import frmMANuSVM
             frmMANuSVM.show(frmMANuSVM)
             return
-
         if MAID == 80000:
             from GUI.frmMAGNB import frmMAGNB
             frmMAGNB.show(frmMAGNB)
@@ -161,6 +168,8 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMAAdaBoost import frmMAAdaBoost
             frmMAAdaBoost.show(frmMAAdaBoost)
             return
+
+
 
 # Auto Run
 if __name__ == "__main__":

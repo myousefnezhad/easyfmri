@@ -297,6 +297,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 ui.txtSSRunRange.setText(setting.RunRange)
                 ui.txtSSRunPer.setText(setting.RunPer)
                 ui.txtSSRunLen.setValue(setting.RunLen)
+                ui.txtSSSpace.setCurrentText(setting.Analysis + ".feat/reg/standard.nii.gz")
+                ui.txtSSInFile.setCurrentText(setting.Analysis + ".feat/filtered_func_data.nii.gz")
+                ui.txtSSOutFile.setCurrentText(setting.Analysis + ".feat/std_filtered_func_data.nii.gz")
 
     def btnDISetting_click(self):
         global ui
@@ -341,6 +344,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 ui.txtDIRunRange.setText(setting.RunRange)
                 ui.txtDIRunPer.setText(setting.RunPer)
                 ui.txtDIRunLen.setValue(setting.RunLen)
+                ui.txtDIEventDIR.setText(setting.EventFolder)
+                ui.txtDIInFile.setCurrentText(setting.Analysis + ".feat/filtered_func_data.nii.gz")
+                ui.txtDIDM.setCurrentText(setting.Analysis + ".feat/design.mat")
 
     def btnSSSettingReload_click(self):
         global ui
@@ -372,6 +378,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     ui.txtSSRunRange.setText(setting.RunRange)
                     ui.txtSSRunPer.setText(setting.RunPer)
                     ui.txtSSRunLen.setValue(setting.RunLen)
+                    ui.txtSSSpace.setCurrentText(setting.Analysis + ".feat/reg/standard.nii.gz")
+                    ui.txtSSInFile.setCurrentText(setting.Analysis + ".feat/filtered_func_data.nii.gz")
+                    ui.txtSSOutFile.setCurrentText(setting.Analysis + ".feat/std_filtered_func_data.nii.gz")
+
         else:
             print("Setting file not found!")
 
@@ -406,6 +416,12 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     ui.txtDIRunRange.setText(setting.RunRange)
                     ui.txtDIRunPer.setText(setting.RunPer)
                     ui.txtDIRunLen.setValue(setting.RunLen)
+                    ui.txtDIEventDIR.setText(setting.EventFolder)
+                    ui.txtDIInFile.setCurrentText(setting.Analysis + ".feat/filtered_func_data.nii.gz")
+                    ui.txtDIDM.setCurrentText(setting.Analysis + ".feat/design.mat")
+
+
+
         else:
             print("Setting file not found!")
 
