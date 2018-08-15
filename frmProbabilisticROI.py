@@ -161,10 +161,8 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
                 ui.txtSSRunPer.setText(setting.RunPer)
                 ui.txtSSRunLen.setValue(setting.RunLen)
 
-                if float(getVersion()) < 1.3:
-                    ui.txtEventDIR.setText("$MAINDIR$" + setting.EventFolder)
-                else:
-                    ui.txtEventDIR.setText(setting.EventFolder)
+
+                ui.txtEventDIR.setText(setting.EventFolder)
 
 
                 ui.txtCondPre.setText(setting.CondPre)
@@ -197,10 +195,8 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
                         ui.txtSSRunPer.setText(setting.RunPer)
                         ui.txtSSRunLen.setValue(setting.RunLen)
 
-                        if float(getVersion()) < 1.3:
-                            ui.txtEventDIR.setText("$MAINDIR$" + setting.EventFolder)
-                        else:
-                            ui.txtEventDIR.setText(setting.EventFolder)
+
+                        ui.txtEventDIR.setText(setting.EventFolder)
                         ui.txtCondPre.setText(setting.CondPre)
 
         else:

@@ -3,13 +3,10 @@ import sys
 from PyQt5.QtWidgets import QMessageBox
 import os, platform
 import subprocess
-from PyQt5.QtWidgets import QFileDialog, QDialog
+from PyQt5.QtWidgets import QFileDialog
 
-import PyQt5.QtWidgets as QtWidgets
-import PyQt5.QtGui as QtGui
 
 import configparser as cp
-import glob
 import nibabel as nb
 import numpy as np
 
@@ -21,7 +18,7 @@ from frmScriptEditor        import frmScriptEditor
 from frmfMRIConcatenator    import frmfMRIConcatenator
 from frmEventConcatenator   import frmEventConcatenator
 
-from utility            import getTimeSliceText,fixstr,setParameters
+from utility            import getTimeSliceText,fixstr,setParameters3
 from Setting            import Setting
 from SettingHistory     import History
 from BrainExtractor     import BrainExtractor
@@ -48,12 +45,16 @@ def EventCode():
 # Handling headers ->
 RowStartID = 1
 
+# Skip is not zero for any row that you don't want to use it!
+Skip = 0
+
 # Extracting onset ->
 # In order to handle the headers, you must use this style:
 try:
     Onset = float(Event[0])
 except:
     Onset = None
+    Skip = 1
 
 # Extracting echo time ->
 # In order to handle the headers, you must use this style:
@@ -61,6 +62,7 @@ try:
     Duration = float(Event[1])
 except:
     Duration = None
+    Skip = 1
 
 Condition = Event[2]"""
 
@@ -267,7 +269,6 @@ class frmPreprocess(Ui_frmPreprocess):
 
 # This is the main directory in the Directory tab
     def btnDIR_click(self):
-        from utility import fixstr,setParameters
         import numpy as np
         import glob
         global ui
@@ -292,19 +293,14 @@ class frmPreprocess(Ui_frmPreprocess):
                     task = str(task).replace("-","")
                     task = str(task).replace("_","")
                     task = str(task).replace(".","")
-                    task = str(task).replace("task","")
+                    task = str(task).replace("task","",1)
                     task = str(task).replace("json","")
                     task = str(task).replace("bold","")
                     ui.txtTask.addItem(task)
-                #BOLDDIR = os.path.dirname(directory + ui.txtBOLD.text())
-                #BOLDDIR = setParameters(BOLDDIR,fixstr(ui.txtSubFrom.value(), np.int32(ui.txtSubLen.text()), ui.txtSubPer.text()),"","")
-                #FileList = glob.glob(BOLDDIR + "/*.*")
-                #print(FileList)
+
 
 # This function read the basic features from datasets, i.e. TR, Voxel size, etc.
     def btnTaskRead_click(self):
-        from utility import fixstr,setParameters
-        import numpy as np
         global ui
         if ui.txtTask.currentText() == "":
             msgBox = QMessageBox()
@@ -342,7 +338,7 @@ class frmPreprocess(Ui_frmPreprocess):
         directory = ui.txtDIR.text()
         if len(directory):
             ui.txtDIR.setText(directory)
-            FirstFile = directory + setParameters(ui.txtBOLD.text(),fixstr(sSess.SubID, np.int32(ui.txtSubLen.text()),ui.txtSubPer.text()), \
+            FirstFile =  setParameters3(ui.txtBOLD.text(),directory, fixstr(sSess.SubID, np.int32(ui.txtSubLen.text()),ui.txtSubPer.text()), \
                                                   fixstr(sSess.RunID, np.int32(ui.txtRunLen.text()), \
                                                   ui.txtRunPer.text()),ui.txtTask.currentText(), \
                                                   fixstr(sSess.ConID, np.int32(ui.txtConLen.text()), ui.txtConPer.text()))
@@ -840,10 +836,9 @@ class frmPreprocess(Ui_frmPreprocess):
             else:
                 sSess = frmSelectSession(None,setting=setting)
                 if sSess.PASS:
-                    ScriptFile = setParameters(setting.Script,fixstr(int(sSess.SubID),setting.SubLen,setting.SubPer),\
+                    ScriptAdd = setParameters3(setting.Script,setting.mainDIR,fixstr(int(sSess.SubID),setting.SubLen,setting.SubPer),\
                                                fixstr(int(sSess.RunID),int(setting.RunLen),setting.RunPer),setting.Task, \
                                                fixstr(sSess.ConID, int(setting.ConLen), setting.ConPer))
-                    ScriptAdd = setting.mainDIR + ScriptFile
                     subprocess.Popen([Feat_gui, ScriptAdd])
     pass
 
@@ -873,11 +868,9 @@ class frmPreprocess(Ui_frmPreprocess):
             else:
                 sSess = frmSelectSession(None, setting=setting)
                 if sSess.PASS:
-                    EventFilename = setParameters(setting.Onset, fixstr(sSess.SubID, int(setting.SubLen), setting.SubPer) \
+                    EventAddr = setParameters3(setting.Onset, setting.mainDIR, fixstr(sSess.SubID, int(setting.SubLen), setting.SubPer) \
                                                  , fixstr(sSess.RunID, int(setting.RunLen), setting.RunPer), setting.Task, \
                                                   fixstr(sSess.ConID, int(setting.ConLen), setting.ConPer))
-
-                    EventAddr = setting.mainDIR + EventFilename
 
                     if not os.path.isfile(EventAddr):
                         print(EventAddr, " - file not find!")
@@ -943,7 +936,19 @@ class frmPreprocess(Ui_frmPreprocess):
                                 msgBox.setStandardButtons(QMessageBox.Ok)
                                 msgBox.exec_()
                                 return
-                            if RowStartID <= k:
+
+                            try:
+                                Skip = int(allvars["Skip"])
+                            except:
+                                print("Cannot find Skip variable in event code")
+                                msgBox = QMessageBox()
+                                msgBox.setText("Cannot find Skip variable in event code")
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
+                                return
+
+                            if RowStartID <= k and Skip == 0:
                                 GenEvents.append([Onset,Duration,Condition])
 
                     EventViewer = frmEventViewer(Events=GenEvents,StartRow=RowStartID,SubID=sSess.SubID,\
@@ -1002,11 +1007,11 @@ class frmPreprocess(Ui_frmPreprocess):
                 else:
                     sSess = frmSelectSession(None, setting=setting)
                     if sSess.PASS:
-                        AnalysisFile = setParameters(setting.Analysis,
+                        AnalysisFile = setParameters3(setting.Analysis, setting.mainDIR,
                                                    fixstr(int(sSess.SubID), setting.SubLen, setting.SubPer), \
                                                    fixstr(int(sSess.RunID), int(setting.RunLen), setting.RunPer),
                                                    setting.Task,fixstr(int(sSess.ConID), int(setting.ConLen), setting.ConPer))
-                        AnalysisAdd = setting.mainDIR + AnalysisFile + ".feat/report.html"
+                        AnalysisAdd =  AnalysisFile + ".feat/report.html"
                         if not os.path.isfile(AnalysisAdd):
                             print(AnalysisAdd + " - not found!")
                         else:
@@ -1025,10 +1030,6 @@ class frmPreprocess(Ui_frmPreprocess):
         global ui
         frmEventConcatenator.show(frmEventConcatenator)
         pass
-
-
-
-
 
 
 # Auto Run

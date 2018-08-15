@@ -7,7 +7,7 @@ import os
 import sys
 import numpy as np
 import nibabel as nb
-from utility import getVersion, getBuild, setParameters2, fixstr
+from utility import getVersion, getBuild, setParameters3, fixstr
 
 from SettingHistory import History
 from Setting import *
@@ -364,7 +364,7 @@ class frmWholeBrainROI(Ui_frmWholeBrainROI):
                 # SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
                 for r in range(1, Run[si] + 1):
 
-                    InFile = setParameters2(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()),\
+                    InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()),\
                                     fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(),\
                                     fixstr(cnt, ConLen, ui.txtSSConPer.text()))
                     if os.path.isfile(InFile):
@@ -382,7 +382,7 @@ class frmWholeBrainROI(Ui_frmWholeBrainROI):
                 for cnt in range(ConFrom, ConTo + 1):
                     print("Analyzing Subject %d, Counter %d ..." % (s,cnt))
                     for r in range(1, Run[si] + 1):
-                        InFile = setParameters2(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
+                        InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
                                                 fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
                                                 fixstr(cnt, ConLen, ui.txtSSConPer.text()))
 

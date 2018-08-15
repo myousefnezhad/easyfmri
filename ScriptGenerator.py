@@ -5,7 +5,7 @@ class ScriptGenerator:
         import scipy.io as io
         import os
 
-        from utility import fixstr,setParameters
+        from utility import fixstr,setParameters3
         from Setting import Setting
         setting = Setting()
         setting.Load(SettingFileName)
@@ -20,35 +20,20 @@ class ScriptGenerator:
             for si, s in enumerate(range(setting.SubFrom, setting.SubTo + 1)):
               for cnt in range(setting.ConFrom, setting.ConTo + 1):
                 print("Analyzing Subject %d ..." % (s))
-                #SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
                 for r in range(1,Run[si] + 1):
-                    #ScriptFilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
-                    #           fixstr(r, RunLen, setting.RunPer) + "_script.fsf"
-                    ScriptFilename = setParameters(setting.Script,fixstr(s, setting.SubLen, setting.SubPer),\
+                    ScriptAddr = setParameters3(setting.Script,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),\
                                                    fixstr(r, setting.RunLen, setting.RunPer), setting.Task,\
                                                    fixstr(cnt, setting.ConLen, setting.ConPer))
 
-                    ScriptAddr       = setting.mainDIR + ScriptFilename
 
-                    #ScriptOutputFolder = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
-                    #           fixstr(r, RunLen, setting.RunPer) + "_analyze"
-                    ScriptOutputFolder = setParameters(setting.Analysis,fixstr(s, setting.SubLen, setting.SubPer),\
+                    ScriptOutputAddr = setParameters3(setting.Analysis,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),\
                                                        fixstr(r, setting.RunLen, setting.RunPer), setting.Task,\
                                                    fixstr(cnt, setting.ConLen, setting.ConPer))
 
-                    ScriptOutputAddr = setting.mainDIR + ScriptOutputFolder
-
-                    #BOLDfilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
-                    #           fixstr(r, RunLen, setting.RunPer) + "_bold"
-                    BOLDfilename = setParameters(setting.BOLD,fixstr(s, setting.SubLen, setting.SubPer),\
+                    BOLDaddr = setParameters3(setting.BOLD,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),\
                                                 fixstr(r, setting.RunLen, setting.RunPer), setting.Task,\
                                                    fixstr(cnt, setting.ConLen, setting.ConPer))
 
-
-
-                    BOLDaddr   = setting.mainDIR + BOLDfilename
-
-                    #BOLDaddrWE = setting.mainDIR + setting.Analysis
 
                     # Generate Script
                     scriptFile = open(ScriptAddr,"w")
@@ -106,7 +91,7 @@ class ScriptGenerator:
                     scriptFile.write("# Higher-level modelling\n# 3 : Fixed effects\n# 0 : Mixed Effects: Simple OLS\n# 2 : Mixed Effects: FLAME 1\n# 1 : Mixed Effects: FLAME 1+2\nset fmri(mixed_yn) 2\n\n")
                     # Conditions
                     #ConditionFile = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + fixstr(r, RunLen, setting.RunPer) + "_events/Cond.mat"
-                    ConditionFile = setting.mainDIR + setParameters(setting.EventFolder,fixstr(s, setting.SubLen, setting.SubPer),\
+                    ConditionFile =  setParameters3(setting.EventFolder,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),\
                                                 fixstr(r, setting.RunLen, setting.RunPer), setting.Task, fixstr(cnt, setting.ConLen, setting.ConPer)) + setting.CondPre + ".mat"
 
                     Cond = io.loadmat(ConditionFile)
@@ -171,10 +156,9 @@ class ScriptGenerator:
                     scriptFile.write("# 4D AVW data or FEAT directory (1)\nset feat_files(1) \"" + BOLDaddr + "\"\n\n")
                     scriptFile.write("# Add confound EVs text file\nset fmri(confoundevs) 0\n\n")
                     if setting.Anat:
-                        AnatFilename = setParameters(setting.BET,fixstr(s, setting.SubLen, setting.SubPer),"",setting.Task,\
+                        AnatAddr = setParameters3(setting.BET,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),"",setting.Task,\
                                                    fixstr(cnt, setting.ConLen, setting.ConPer))
-                        #"sub-" + fixstr(s, SubLen, setting.SubPer) + "_T1w." + setting.BOLD
-                        AnatAddr = setting.mainDIR + AnatFilename
+
                         scriptFile.write("# Subject's structural image for analysis 1\nset highres_files(1) \"" + AnatAddr + "\"\n\n")
 
                     # Condition Files
@@ -185,8 +169,7 @@ class ScriptGenerator:
                         scriptFile.write("# Convolve phase (EV " + str(cond) + ")\nset fmri(convolve_phase" + str(cond) + ") 0\n\n")
                         scriptFile.write("# Apply temporal filtering (EV " + str(cond) + ")\nset fmri(tempfilt_yn" + str(cond) + ") 1\n\n")
                         scriptFile.write("# Add temporal derivative (EV " + str(cond) + ")\nset fmri(deriv_yn" + str(cond) + ") 0\n\n")
-                        #ConditionFile = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen,setting.SubPer) + "_task-" + setting.Task + "_run-" + fixstr(r, RunLen, setting.RunPer) + "_events/Cond_" + str(cond) + ".tab"
-                        ConditionFile = setting.mainDIR + setParameters(setting.EventFolder,fixstr(s, setting.SubLen,setting.SubPer), \
+                        ConditionFile =  setParameters3(setting.EventFolder,setting.mainDIR, fixstr(s, setting.SubLen,setting.SubPer), \
                                                                         fixstr(r, setting.RunLen, setting.RunPer), setting.Task,\
                                                    fixstr(cnt, setting.ConLen, setting.ConPer)) + setting.CondPre + "_" +  str(cond) + ".tab"
                         scriptFile.write("# Custom EV file (EV " + str(cond) + ")\nset fmri(custom" + str(cond) + ") \"" + ConditionFile + "\"\n\n")

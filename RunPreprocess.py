@@ -3,7 +3,7 @@ class RunPreprocess:
     def Check(self,SettingFileName,isOne=False,SubID=None,RunID=None,ConID=None):
         import numpy as np
         import os
-        from utility import fixstr,setParameters
+        from utility import fixstr,setParameters3
         from Setting import Setting
         setting = Setting()
         setting.Load(SettingFileName)
@@ -31,11 +31,10 @@ class RunPreprocess:
                 for r in range(1, Run[si] + 1):
                     #ScriptFilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
                     #                 fixstr(r, RunLen, setting.RunPer) + "_script.fsf"
-                    ScriptFilename = setParameters(setting.Script, fixstr(s, setting.SubLen, setting.SubPer),\
+                    ScriptAddr = setParameters3(setting.Script, setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),\
                             fixstr(r, setting.RunLen, setting.RunPer), setting.Task, \
                             fixstr(cnt, setting.ConLen, setting.ConPer))
 
-                    ScriptAddr = setting.mainDIR + ScriptFilename
                     if os.path.isfile(ScriptAddr):
                        print("CHECK: " + ScriptAddr + " - checked!")
                     else:
@@ -47,7 +46,7 @@ class RunPreprocess:
         import numpy as np
         import shutil
         import os,subprocess
-        from utility import fixstr,setParameters
+        from utility import fixstr,setParameters3
         from Setting import Setting
 
         if (feat == None) or (os.path.isfile(feat) == False):
@@ -82,21 +81,14 @@ class RunPreprocess:
                 print("Run script for Subject %d ..." % (s))
                 #SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
                 for r in range(1, Run[si] + 1):
-                    ScriptFilename = setParameters(setting.Script, fixstr(s, setting.SubLen, setting.SubPer),\
+                    ScriptAddr = setParameters3(setting.Script,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),\
                             fixstr(r, setting.RunLen, setting.RunPer), setting.Task,\
                             fixstr(cnt, setting.ConLen, setting.ConPer))
 
-                    ScriptAddr = setting.mainDIR + ScriptFilename
-
                     if Remove:
-                        ScriptOutputFolder = setParameters(setting.Analysis, fixstr(s, setting.SubLen, setting.SubPer),\
+                        ScriptOutputAddr = setParameters3(setting.Analysis,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),\
                                                        fixstr(r, setting.RunLen, setting.RunPer), setting.Task,\
                             fixstr(cnt, setting.ConLen, setting.ConPer)) + ".feat"
-
-                        #ScriptOutputFolder = "sub-" + fixstr(s, SubLen,
-                        #                                    setting.SubPer) + "_task-" + setting.Task + "_run-" + \
-                        #                     fixstr(r, RunLen, setting.RunPer) + "_analyze.feat"
-                        ScriptOutputAddr = setting.mainDIR + ScriptOutputFolder
 
                         try:
                             shutil.rmtree(ScriptOutputAddr)

@@ -1420,6 +1420,138 @@ It's case sensitive.</string>
           <string>0.1</string>
          </property>
         </widget>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="geometry">
+          <rect>
+           <x>300</x>
+           <y>0</y>
+           <width>421</width>
+           <height>141</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>&lt;Draw Timing&gt;</string>
+         </property>
+         <widget class="QPushButton" name="btnDIDraw">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>100</y>
+            <width>401</width>
+            <height>32</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Draw</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="cbDILegend">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>30</y>
+            <width>121</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Legend</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="cbDIDraw">
+          <property name="geometry">
+           <rect>
+            <x>150</x>
+            <y>30</y>
+            <width>141</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Multi-Figure</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="cbDIColor">
+          <property name="geometry">
+           <rect>
+            <x>280</x>
+            <y>30</y>
+            <width>131</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Multi-Color</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="cbDIReal">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>60</y>
+            <width>81</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Real</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="cbDINorm">
+          <property name="geometry">
+           <rect>
+            <x>110</x>
+            <y>60</y>
+            <width>121</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Normalized</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="cbDIClass">
+          <property name="geometry">
+           <rect>
+            <x>240</x>
+            <y>60</y>
+            <width>101</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Class</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="cbDIRest">
+          <property name="geometry">
+           <rect>
+            <x>340</x>
+            <y>60</y>
+            <width>81</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Rest </string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </widget>
        </widget>
        <widget class="QWidget" name="tab_21">
         <attribute name="title">
@@ -2069,43 +2201,89 @@ It's case sensitive.</string>
     <attribute name="title">
      <string>Feature Engineering</string>
     </attribute>
-    <widget class="QPushButton" name="btnFEPCA">
+    <widget class="QLabel" name="label_40">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>30</y>
-       <width>771</width>
-       <height>32</height>
+       <y>20</y>
+       <width>181</width>
+       <height>16</height>
       </rect>
      </property>
      <property name="text">
-      <string>Principal Component Analysis (PCA)</string>
+      <string>Unsupervised Method</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnFEICA">
+    <widget class="QComboBox" name="cbFEU">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>80</y>
-       <width>771</width>
-       <height>32</height>
+       <x>210</x>
+       <y>20</y>
+       <width>581</width>
+       <height>26</height>
       </rect>
-     </property>
-     <property name="text">
-      <string>Independent Component Analysis (ICA)</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnFEMRPA">
+    <widget class="QPushButton" name="btnFEURun">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>130</y>
-       <width>771</width>
+       <x>12</x>
+       <y>70</y>
+       <width>781</width>
        <height>32</height>
       </rect>
      </property>
      <property name="text">
-      <string>Multi Region Pattern Analysis (snapshots)</string>
+      <string>Run</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnFECross">
+     <property name="geometry">
+      <rect>
+       <x>12</x>
+       <y>120</y>
+       <width>781</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Cross Validation</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_50">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>170</y>
+       <width>181</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Supervised Method</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbFES">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>170</y>
+       <width>581</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnFESRun">
+     <property name="geometry">
+      <rect>
+       <x>12</x>
+       <y>220</y>
+       <width>781</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Run</string>
      </property>
     </widget>
    </widget>
@@ -2113,62 +2291,40 @@ It's case sensitive.</string>
     <attribute name="title">
      <string>Functional Alignment</string>
     </attribute>
-    <widget class="QPushButton" name="btnFAHA">
+    <widget class="QLabel" name="label_49">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>771</width>
-       <height>32</height>
+       <x>18</x>
+       <y>20</y>
+       <width>91</width>
+       <height>16</height>
       </rect>
      </property>
      <property name="text">
-      <string>Hyperalignment</string>
+      <string>Method</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnFAGPUHA">
+    <widget class="QComboBox" name="cbFA">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>108</x>
+       <y>20</y>
+       <width>681</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnFARun">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
        <y>80</y>
-       <width>771</width>
+       <width>781</width>
        <height>32</height>
       </rect>
      </property>
      <property name="text">
-      <string>GPU Hyperalignment</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnFADHA">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>130</y>
-       <width>771</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Deep Hyperalignment</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnFASHA">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>180</y>
-       <width>771</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Supervised Hyperalignment</string>
+      <string>Run</string>
      </property>
     </widget>
    </widget>
@@ -2248,9 +2404,9 @@ It's case sensitive.</string>
   <widget class="QPushButton" name="btnClose">
    <property name="geometry">
     <rect>
-     <x>700</x>
+     <x>640</x>
      <y>690</y>
-     <width>113</width>
+     <width>171</width>
      <height>32</height>
     </rect>
    </property>

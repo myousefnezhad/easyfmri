@@ -7,7 +7,7 @@ import sys
 import numpy as np
 from frmRenameFileGUI import *
 
-from utility import fixstr,setParameters
+from utility import fixstr,setParameters3
 
 
 
@@ -88,7 +88,6 @@ class frmRenameFile(Ui_frmRenameFile):
         pass
 
     def btnDIR_click(self):
-            from utility import fixstr, setParameters
             import numpy as np
             global ui
             current = ui.txtDIR.text()
@@ -227,16 +226,14 @@ class frmRenameFile(Ui_frmRenameFile):
         for si, s in enumerate(range(SubFrom, SubTo + 1)):
             for r in range(1, Run[si] + 1):
                 for c in range(ConFrom, ConTo+1):
-                    InFileName = setParameters(Input,fixstr(s,SubLen,SubPer),\
+                    InAdd = setParameters3(Input,DIR, fixstr(s,SubLen,SubPer),\
                                                fixstr(r,RunLen,RunPer),Task,\
                                                fixstr(c,ConLen,ConPer))
-                    InAdd = DIR + InFileName
-                    OutFileName = setParameters(Output,fixstr(s,SubLen,SubPer),\
+                    OutAdd = setParameters3(Output,DIR,fixstr(s,SubLen,SubPer),\
                                                fixstr(r,RunLen,RunPer),Task,\
                                                fixstr(c,ConLen,ConPer))
-                    OutAdd = DIR + OutFileName
                     try:
-                        if not os.path.isfile(DIR + InFileName):
+                        if not os.path.isfile(InAdd):
                             print(InAdd + " - not found!")
                         else:
                             print("MOVE: " + InAdd + " - running ...")

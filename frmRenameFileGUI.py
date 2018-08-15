@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmRenameFileGUI.ui'
 #
-# Created by: PyQt5 UI code generator 5.8.2
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -85,15 +85,15 @@ class Ui_frmRenameFile(object):
         self.label = QtWidgets.QLabel(self.groupBox_4)
         self.label.setGeometry(QtCore.QRect(10, 31, 111, 16))
         self.label.setToolTip("")
+        self.label.setToolTipDuration(-1)
         self.label.setStatusTip("")
-        self.label.setProperty("toolTipDuration", -1)
         self.label.setObjectName("label")
         self.txtDIR = QtWidgets.QLineEdit(self.groupBox_4)
         self.txtDIR.setGeometry(QtCore.QRect(118, 31, 431, 21))
         self.txtDIR.setToolTip("")
+        self.txtDIR.setToolTipDuration(-1)
         self.txtDIR.setStatusTip("")
         self.txtDIR.setText("")
-        self.txtDIR.setProperty("toolTipDuration", -1)
         self.txtDIR.setObjectName("txtDIR")
         self.groupBox_2 = QtWidgets.QGroupBox(frmRenameFile)
         self.groupBox_2.setGeometry(QtCore.QRect(20, 185, 621, 80))
@@ -142,18 +142,24 @@ class Ui_frmRenameFile(object):
         self.label_17 = QtWidgets.QLabel(self.groupBox_5)
         self.label_17.setGeometry(QtCore.QRect(10, 31, 111, 16))
         self.label_17.setToolTip("")
+        self.label_17.setToolTipDuration(-1)
         self.label_17.setStatusTip("")
-        self.label_17.setProperty("toolTipDuration", -1)
         self.label_17.setObjectName("label_17")
         self.txtInput = QtWidgets.QLineEdit(self.groupBox_5)
         self.txtInput.setGeometry(QtCore.QRect(100, 31, 500, 21))
         self.txtInput.setToolTip("")
+        self.txtInput.setToolTipDuration(-1)
         self.txtInput.setStatusTip("")
         self.txtInput.setText("")
-        self.txtInput.setProperty("toolTipDuration", -1)
         self.txtInput.setObjectName("txtInput")
+        self.btnExit = QtWidgets.QPushButton(frmRenameFile)
+        self.btnExit.setGeometry(QtCore.QRect(530, 520, 113, 32))
+        self.btnExit.setObjectName("btnExit")
+        self.btnRun = QtWidgets.QPushButton(frmRenameFile)
+        self.btnRun.setGeometry(QtCore.QRect(20, 520, 113, 32))
+        self.btnRun.setObjectName("btnRun")
         self.label_23 = QtWidgets.QLabel(frmRenameFile)
-        self.label_23.setGeometry(QtCore.QRect(20, 570, 621, 31))
+        self.label_23.setGeometry(QtCore.QRect(20, 570, 591, 31))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(11)
@@ -162,12 +168,6 @@ class Ui_frmRenameFile(object):
         self.label_23.setFont(font)
         self.label_23.setFrameShadow(QtWidgets.QFrame.Plain)
         self.label_23.setObjectName("label_23")
-        self.btnExit = QtWidgets.QPushButton(frmRenameFile)
-        self.btnExit.setGeometry(QtCore.QRect(530, 520, 113, 32))
-        self.btnExit.setObjectName("btnExit")
-        self.btnRun = QtWidgets.QPushButton(frmRenameFile)
-        self.btnRun.setGeometry(QtCore.QRect(20, 520, 113, 32))
-        self.btnRun.setObjectName("btnRun")
 
         self.retranslateUi(frmRenameFile)
         QtCore.QMetaObject.connectSlotsByName(frmRenameFile)
@@ -219,8 +219,8 @@ class Ui_frmRenameFile(object):
         self.label_16.setText(_translate("frmRenameFile", "Output Files:"))
         self.label_17.setText(_translate("frmRenameFile", "Input Files:"))
         self.label_17.setProperty("setToolTip", _translate("frmRenameFile", "Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure."))
-        self.label_23.setText(_translate("frmRenameFile", "$SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.\n"
-"It\'s case sensitive."))
         self.btnExit.setText(_translate("frmRenameFile", "Exit"))
         self.btnRun.setText(_translate("frmRenameFile", "Run"))
+        self.label_23.setText(_translate("frmRenameFile", "$MAINDIR$, $SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.\n"
+"It\'s case sensitive."))
 

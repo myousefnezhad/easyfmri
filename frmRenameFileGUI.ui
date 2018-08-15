@@ -299,14 +299,14 @@
     <property name="toolTip">
      <string/>
     </property>
+    <property name="toolTipDuration">
+     <number>-1</number>
+    </property>
     <property name="statusTip">
      <string/>
     </property>
     <property name="text">
      <string>Main Directory:</string>
-    </property>
-    <property name="toolTipDuration" stdset="0">
-     <number>-1</number>
     </property>
     <property name="setToolTip" stdset="0">
      <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
@@ -324,14 +324,14 @@
     <property name="toolTip">
      <string/>
     </property>
+    <property name="toolTipDuration">
+     <number>-1</number>
+    </property>
     <property name="statusTip">
      <string/>
     </property>
     <property name="text">
      <string/>
-    </property>
-    <property name="toolTipDuration" stdset="0">
-     <number>-1</number>
     </property>
    </widget>
   </widget>
@@ -514,14 +514,14 @@
     <property name="toolTip">
      <string/>
     </property>
+    <property name="toolTipDuration">
+     <number>-1</number>
+    </property>
     <property name="statusTip">
      <string/>
     </property>
     <property name="text">
      <string>Input Files:</string>
-    </property>
-    <property name="toolTipDuration" stdset="0">
-     <number>-1</number>
     </property>
     <property name="setToolTip" stdset="0">
      <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
@@ -539,41 +539,16 @@
     <property name="toolTip">
      <string/>
     </property>
+    <property name="toolTipDuration">
+     <number>-1</number>
+    </property>
     <property name="statusTip">
      <string/>
     </property>
     <property name="text">
      <string/>
     </property>
-    <property name="toolTipDuration" stdset="0">
-     <number>-1</number>
-    </property>
    </widget>
-  </widget>
-  <widget class="QLabel" name="label_23">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>570</y>
-     <width>621</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-     <pointsize>11</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Plain</enum>
-   </property>
-   <property name="text">
-    <string>$SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
-It's case sensitive.</string>
-   </property>
   </widget>
   <widget class="QPushButton" name="btnExit">
    <property name="geometry">
@@ -599,6 +574,31 @@ It's case sensitive.</string>
    </property>
    <property name="text">
     <string>Run</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_23">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>570</y>
+     <width>591</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>11</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="text">
+    <string>$MAINDIR$, $SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
+It's case sensitive.</string>
    </property>
   </widget>
  </widget>

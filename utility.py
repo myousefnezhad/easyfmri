@@ -1,5 +1,13 @@
 from PyQt5.QtWidgets import QMessageBox, QSizePolicy, QTextEdit
 
+def getVersion():
+    return "1.3"
+
+
+def getBuild():
+    return "1000"
+
+
 def fixstr(Value, Length, Perfix="0"):
     strVal = str(Value)
     while (len(strVal) < Length):
@@ -75,14 +83,6 @@ def setParameters3(STR, Dir, Sub, Run, Task, Counter=None,Condition=None):
     return outSTR
 
 
-def getVersion():
-    return "1.2"
-
-
-def getBuild():
-    return "1000"
-
-
 def getDirSpaceINI():
     import os
     ProgramPath = os.path.dirname(os.path.abspath(__file__))
@@ -148,14 +148,17 @@ def fitLine(interval):
         errors.append(err)
     return coeffs[np.argmin(errors)]
 
-
-
-
-
-
-
-    pass
-
+def strRange(x):
+    result = []
+    for part in x.split(','):
+        if '-' in part:
+            a, b = part.split('-')
+            a, b = int(a), int(b)
+            result.extend(range(a, b + 1))
+        else:
+            a = int(part)
+            result.append(a)
+    return result
 
 
 class MyMessageBox(QMessageBox):
@@ -182,14 +185,9 @@ class MyMessageBox(QMessageBox):
         return result
 
 
-
 # Auto Run
 if __name__ == "__main__":
-    import scipy.io as io
-
-    DLine = io.loadmat("/Users/tony/Workspace/ali.mat")["dm"][:,0]
-    print(fitLine(DLine))
-
+    pass
 
 
 

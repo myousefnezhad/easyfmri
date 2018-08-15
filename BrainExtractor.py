@@ -11,7 +11,7 @@ class BrainExtractor():
         import matplotlib.pyplot as plt
 
 
-        from utility import fixstr,setParameters
+        from utility import fixstr,setParameters3
         from Setting import Setting
 
         if betcmd is None:
@@ -39,18 +39,14 @@ class BrainExtractor():
                 #SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
                 # checking anat file
                 #InFilename  = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_T1w." + setting.BOLD
-                InFilename = setParameters(setting.AnatDIR,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
+                InAddr = setParameters3(setting.AnatDIR,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
                                            fixstr(cnt, setting.ConLen, setting.ConPer))
                 #OutFilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_T1w_BET." + setting.BOLD
-                OutFilename = setParameters(setting.BET,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
+                OutAddr = setParameters3(setting.BET,setting.mainDIR,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
                                             fixstr(cnt, setting.ConLen, setting.ConPer))
-                PDFfilename = setParameters(setting.BETPDF,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
+                PDFAddr = setParameters3(setting.BETPDF,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
                                             fixstr(cnt, setting.ConLen, setting.ConPer))
 
-
-                InAddr      = setting.mainDIR + InFilename
-                OutAddr     = setting.mainDIR + OutFilename
-                PDFAddr     = setting.mainDIR + PDFfilename
                 if not os.path.isfile(InAddr):
                     print(InAddr, " - file not find!")
                     return False

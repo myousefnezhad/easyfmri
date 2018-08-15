@@ -400,7 +400,7 @@
        <x>20</x>
        <y>310</y>
        <width>621</width>
-       <height>191</height>
+       <height>151</height>
       </rect>
      </property>
      <property name="currentIndex">
@@ -420,32 +420,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_bold.nii.gz</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_23">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>124</y>
-         <width>591</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>11</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
-       </property>
-       <property name="text">
-        <string>$SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
-It's case sensitive.</string>
+        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_bold.nii.gz</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_12">
@@ -489,7 +464,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>/sub-$SUB$/anat/sub-$SUB$_T1w_BET.nii.gz</string>
+        <string>$MAINDIR$/sub-$SUB$/anat/sub-$SUB$_T1w_BET.nii.gz</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_29">
@@ -540,7 +515,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>/sub-$SUB$/anat/sub-$SUB$_T1w_BET.pdf</string>
+        <string>$MAINDIR$/sub-$SUB$/anat/sub-$SUB$_T1w_BET.pdf</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_22">
@@ -559,14 +534,14 @@ It's case sensitive.</string>
       <widget class="QLineEdit" name="txtAnat">
        <property name="geometry">
         <rect>
-         <x>153</x>
+         <x>163</x>
          <y>10</y>
-         <width>441</width>
+         <width>431</width>
          <height>21</height>
         </rect>
        </property>
        <property name="text">
-        <string>/sub-$SUB$/anat/sub-$SUB$_T1w.nii.gz</string>
+        <string>$MAINDIR$/sub-$SUB$/anat/sub-$SUB$_T1w.nii.gz</string>
        </property>
       </widget>
      </widget>
@@ -622,7 +597,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_events/</string>
+        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_events/</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_28">
@@ -677,7 +652,7 @@ It's case sensitive.</string>
         <cursorShape>ArrowCursor</cursorShape>
        </property>
        <property name="text">
-        <string>/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_events.tsv</string>
+        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_events.tsv</string>
        </property>
       </widget>
      </widget>
@@ -720,7 +695,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_analyze</string>
+        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_analyze</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_33">
@@ -746,7 +721,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_script.fsf</string>
+        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_script.fsf</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_34">
@@ -884,6 +859,31 @@ It's case sensitive.</string>
        </property>
       </widget>
      </widget>
+    </widget>
+    <widget class="QLabel" name="label_23">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>470</y>
+       <width>591</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>11</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="text">
+      <string>$MAINDIR$, $SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
+It's case sensitive.</string>
+     </property>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_2">

@@ -253,7 +253,7 @@ class Ui_frmProbabilisticROI(object):
         self.txtSSInFile.setEditable(True)
         self.txtSSInFile.setObjectName("txtSSInFile")
         self.label_23 = QtWidgets.QLabel(frmProbabilisticROI)
-        self.label_23.setGeometry(QtCore.QRect(20, 380, 541, 31))
+        self.label_23.setGeometry(QtCore.QRect(20, 380, 751, 41))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(11)

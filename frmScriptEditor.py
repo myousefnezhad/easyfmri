@@ -7,7 +7,7 @@ import sys
 import numpy as np
 from frmScriptEditorGUI import *
 
-from utility import fixstr,setParameters
+from utility import fixstr,setParameters3
 
 
 
@@ -88,7 +88,6 @@ class frmScriptEditor(Ui_frmScriptEditor):
         pass
 
     def btnDIR_click(self):
-            from utility import fixstr, setParameters
             import numpy as np
             global ui
             current = ui.txtDIR.text()
@@ -229,18 +228,18 @@ class frmScriptEditor(Ui_frmScriptEditor):
         for si, s in enumerate(range(SubFrom, SubTo + 1)):
             for r in range(1, Run[si] + 1):
                 for c in range(ConFrom, ConTo+1):
-                    SFile   = DIR + setParameters(Script,fixstr(s,SubLen,SubPer),\
+                    SFile   =  setParameters3(Script, DIR, fixstr(s,SubLen,SubPer),\
                                                fixstr(r,RunLen,RunPer),Task,\
                                                fixstr(c,ConLen,ConPer))
                     if ui.cbInDynamic.isChecked():
-                        InValue = setParameters(Input,fixstr(s,SubLen,SubPer),\
+                        InValue = setParameters3(Input,DIR, fixstr(s,SubLen,SubPer),\
                                                fixstr(r,RunLen,RunPer),Task,\
                                                fixstr(c,ConLen,ConPer))
                     else:
                         InValue = Input
 
                     if ui.cbOutDynamic.isChecked():
-                        OutValue = setParameters(Output,fixstr(s,SubLen,SubPer),\
+                        OutValue = setParameters3(Output,DIR, fixstr(s,SubLen,SubPer),\
                                                fixstr(r,RunLen,RunPer),Task,\
                                                fixstr(c,ConLen,ConPer))
                     else:

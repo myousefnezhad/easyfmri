@@ -11,24 +11,10 @@ from pyqode.qt import QtWidgets as pyWidgets
 import numpy, scipy, sklearn
 import os, platform
 import nibabel, nipype
-
 import sys
 import subprocess
 import configparser as cp
 import glob
-
-from frmSelectSession   import frmSelectSession
-from frmEventViewer     import frmEventViewer
-from frmRenameFile      import frmRenameFile
-from frmScriptEditor    import frmScriptEditor
-
-from utility            import getTimeSliceText,fixstr,setParameters
-from Setting            import Setting
-from SettingHistory     import History
-from BrainExtractor     import BrainExtractor
-from EventGenerator     import EventGenerator
-from ScriptGenerator    import ScriptGenerator
-from RunPreprocess      import RunPreprocess
 
 
 def About():

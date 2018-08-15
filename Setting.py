@@ -49,20 +49,13 @@ class Setting:
         import numpy as np
         import scipy.io as io
         from PyQt5.QtWidgets import QMessageBox
-        from utility import fixstr,getTimeSliceID,setParameters,getVersion
+        from utility import fixstr,getTimeSliceID,setParameters3,getVersion
         import os
 
         self.empty = True
         msgBox = QMessageBox()
         FSLDIR = ui.txtFSLDIR.text()
 
-        #if (os.path.isdir(FSLDIR) == False):
-        #    msgBox = QMessageBox()
-        #    msgBox.setText("$FSLDIR does not exist!")
-        #    msgBox.setIcon(QMessageBox.Critical)
-        #    msgBox.setStandardButtons(QMessageBox.Ok)
-        #    msgBox.exec_()
-        #    return False
 
         if (os.path.isfile(ui.txtMNI.currentText()) == False):
             msgBox = QMessageBox()
@@ -437,8 +430,7 @@ class Setting:
                 #SubDIR = mainDIR + "/" + "sub-" + fixstr(s, SubLen, ui.txtSubPer.text())
 
                 # checking anat file
-                filename =  setParameters(ui.txtAnat.text(),fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                addr = mainDIR + filename
+                addr =  setParameters3(ui.txtAnat.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
                 if os.path.isfile(addr):
                     print(addr, " - OKAY.")
                 else:
@@ -446,8 +438,7 @@ class Setting:
                     return False
                 if checkGeneratedFiles and ui.cbRegAnat.isChecked():
                     # BET Files
-                    filename = setParameters(ui.txtBET.text(), fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                    addr = mainDIR + filename
+                    addr = setParameters3(ui.txtBET.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
                     if os.path.isfile(addr):
                         print(addr, " - OKAY.")
                     else:
@@ -457,9 +448,8 @@ class Setting:
                 for r in range(1,Run[si] + 1):
 
                     # BOLD File Check
-                    filename = setParameters(ui.txtBOLD.text(), fixstr(s, SubLen, ui.txtSubPer.text()), \
+                    addr = setParameters3(ui.txtBOLD.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), \
                                              fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                    addr = mainDIR + filename
                     if os.path.isfile(addr):
                         print(addr, " - OKAY.")
                     else:
@@ -467,9 +457,8 @@ class Setting:
                         return False
 
                     # Event File Check
-                    filename = setParameters(ui.txtOnset.text(), fixstr(s, SubLen, ui.txtSubPer.text()), \
+                    addr = setParameters3(ui.txtOnset.text(), mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), \
                                              fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                    addr = mainDIR + filename
                     if os.path.isfile(addr):
                         print(addr, " - OKAY.")
                     else:
@@ -477,9 +466,8 @@ class Setting:
                         return False
 
                     if checkGeneratedFiles:
-                        EventFolder = setParameters(ui.txtEventDIR.text(), fixstr(s, SubLen, ui.txtSubPer.text()), \
+                        addr = setParameters3(ui.txtEventDIR.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), \
                                              fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                        addr = mainDIR + EventFolder
                         if os.path.isdir(addr):
                             print(addr, " - OKAY.")
                             try:

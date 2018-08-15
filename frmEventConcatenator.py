@@ -8,9 +8,6 @@ import numpy as np
 import nibabel as nb
 from frmEventConcatenatorGUI import *
 
-from utility import fixstr,setParameters
-
-
 
 class frmEventConcatenator(Ui_frmEventConcatenator):
     ui = Ui_frmEventConcatenator()

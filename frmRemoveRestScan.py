@@ -306,7 +306,7 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
                 msgBox.exec_()
                 return False
 
-
+        # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -431,7 +431,7 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
         except:
             print("Cannot load data")
             return
-        OutData[ui.txtData.currentText()] = X[NoneZeroArea,:][0]
+        OutData[ui.txtData.currentText()] = X[NoneZeroArea[1]]
 
         # Subject
         if ui.cbSubject.isChecked():
@@ -481,7 +481,7 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
         if ui.cbDM.isChecked():
             try:
                 DM = InData[ui.txtDM.currentText()]
-                OutData[ui.txtDM.currentText()] = DM[NoneZeroArea,:][0]
+                OutData[ui.txtDM.currentText()] = DM[NoneZeroArea[1]]
             except:
                 print("Cannot load Design Matrix ID!")
                 return
