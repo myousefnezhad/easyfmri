@@ -1,4 +1,4 @@
-easy fMRI project (V1.7B1000 beta)
+easy fMRI project (V1.7B2000 beta)
 ===============
 
 ### Introduction
@@ -33,10 +33,16 @@ From [GitHub](https://github.com/easyfmri/easyfmri):
 git clone https://github.com/easyfmri/easyfmri.git ~/.easyfmri
 ```
 
-From [SourceForge](https://sourceforge.net/p/easyfmri/code/ci/master/tree/):
+From [SourceForge Git](https://sourceforge.net/p/easyfmri/code/ci/master/tree/):
 
 ```
 git clone git://git.code.sf.net/p/easyfmri/code ~/.easyfmri
+```
+
+From [SourceForge](https://sourceforge.net/projects/easyfmri/files/) as a zip file
+```
+unzip easyfMRI.<version>.zip
+mv easyfmri .easyfmri
 ```
 
 

@@ -47,24 +47,23 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
 
         ui.tabWidget.setCurrentIndex(0)
         # Unsupervised
-        ui.cbMAU.addItem("MatLab, SK: RSA: Agglomerative Clustering",10002)
-        ui.cbMAU.addItem("MatLab, SK: RSA: Birch Clustering",10003)
-        ui.cbMAU.addItem("MatLab, SK: RSA: Gaussian Mixture Clustering",10004)
-        ui.cbMAU.addItem("MatLab, SK: RSA: KMeans Clustering",10000)
-        ui.cbMAU.addItem("MatLab, SK: RSA: Spectral Clustering",10001)
-
-
+        ui.cbMAU.addItem("MatLab, SK Clustering: Agglomerative",10002)
+        ui.cbMAU.addItem("MatLab, SK Clustering: Birch",10003)
+        ui.cbMAU.addItem("MatLab, SK Clustering: Gaussian Mixture",10004)
+        ui.cbMAU.addItem("MatLab, SK Clustering: KMeans",10000)
+        ui.cbMAU.addItem("MatLab, SK Clustering: Spectral",10001)
+        ui.cbMAU.addItem("MatLab, RSA (session level)",20000)
 
         # Supervised
-        ui.cbMAS.addItem("MatLab, SK: MVPA: AdaBoost Classifier",80005)
-        ui.cbMAS.addItem("MatLab, SK: MVPA: Decision Tree",80001)
-        ui.cbMAS.addItem("MatLab, SK: MVPA: Gaussian Naive Bayes",80000)
-        ui.cbMAS.addItem("MatLab, SK: MVPA: Linear Support Vector Classification (liblinear)",10001)
-        ui.cbMAS.addItem("MatLab, SK: MVPA: Multi-Layer Perceptron (MLP)",80002)
-        ui.cbMAS.addItem("MatLab, SK: MVPA: Nu Support Vector Classification (libsvm)",10002)
-        ui.cbMAS.addItem("MatLab, SK: MVPA: Random Forest",80004)
-        ui.cbMAS.addItem("MatLab, SK: MVPA: Stochastic Gradient Descent based Classification",80003)
-        ui.cbMAS.addItem("MatLab, SK: MVPA: Support Vector Classification (libsvm)",10000)
+        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: AdaBoost",80005)
+        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Decision Tree",80001)
+        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Gaussian Naive Bayes",80000)
+        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Linear Support Vector Machine (liblinear)",10001)
+        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Multi-Layer Perceptron (MLP)",80002)
+        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Nu Support Vector Machine (libsvm)",10002)
+        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Random Forest",80004)
+        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Stochastic Gradient Descent based approaches",80003)
+        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Support Vector Machine (libsvm)",10000)
 
         dialog.setWindowTitle("easy fMRI model analysis - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -118,8 +117,10 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMAGaussian import frmMAGaussian
             frmMAGaussian.show(frmMAGaussian)
             return
-
-
+        if MAID == 20000:
+            from GUI.frmMARSA import frmMARSA
+            frmMARSA.show(frmMARSA)
+            return
 
     def btnMAS_click(self):
         MAID = ui.cbMAS.currentData()

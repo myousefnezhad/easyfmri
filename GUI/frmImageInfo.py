@@ -2,6 +2,7 @@
 import os
 import sys
 import nibabel as nb
+import numpy as np
 from PyQt5.QtWidgets import *
 from Base.utility import getVersion, getBuild
 from Base.dialogs import LoadFile
@@ -48,14 +49,21 @@ class frmImageInfo(Ui_frmImageInfo):
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    mriHDR = nb.load(filename)
+                    mriHDR   = nb.load(filename)
+                    mriData  = mriHDR.get_data()
+                    AllVoxel = 1
+                    for size in  np.shape(mriData):
+                        AllVoxel = AllVoxel * size
+                    Zero = 1
+                    for size in np.shape(np.where(mriData == 0)[0]):
+                        Zero = Zero * size
                     ui.txtImageInfo.clear()
-                    ui.txtImageInfo.append("Image Shape:")
-                    ui.txtImageInfo.append(str(mriHDR.header.get_data_shape()))
-                    ui.txtImageInfo.append("Header Information:")
-                    ui.txtImageInfo.append(str(mriHDR.header).replace("<class 'nibabel.nifti1.Nifti1Header'> object, endian='<'","").replace("\n","",1))
-                    ui.txtImageInfo.append("Affine Matrix:")
+                    ui.txtImageInfo.append("---- Image Shape: " + str(mriHDR.header.get_data_shape()))
+                    ui.txtImageInfo.append("---- Number of Voxels: %d = (Zero Value Voxel: %d + Other: %d)" % (AllVoxel, Zero, AllVoxel - Zero))
+                    ui.txtImageInfo.append("---- Affine Matrix:")
                     ui.txtImageInfo.append(str(mriHDR.affine))
+                    ui.txtImageInfo.append("---- Header Information:")
+                    ui.txtImageInfo.append(str(mriHDR.header).replace("<class 'nibabel.nifti1.Nifti1Header'> object, endian='<'","").replace("\n","",1))
                     ui.txtImage.setText(filename)
                 except:
 
