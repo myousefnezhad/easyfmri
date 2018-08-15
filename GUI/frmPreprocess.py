@@ -127,7 +127,7 @@ class frmPreprocess(Ui_frmPreprocess):
         ui.txtEvents.setGeometry(QtCore.QRect(10, 10, 641, 451))
         ui.txtEvents.setObjectName("txtEvents")
 
-        #ui.txtEvents.backend.start('backend/server.py')
+        ui.txtEvents.backend.start('backend/server.py')
 
         ui.txtEvents.modes.append(modes.CodeCompletionMode())
         ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())

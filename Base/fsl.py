@@ -173,24 +173,25 @@ class FSL:
                 return
             else:
                 self.FSLDIR = FSLDIR
+                print("$FSLDIR=" + FSLDIR)
 
                 # BET
                 if not os.path.isfile(FSLDIR + "/bin/bet"):
-                    print("Cannot find bet cmd!")
+                    print("$FSLDIR: Cannot find bet cmd!")
                     return
                 else:
                     self.bet = "/bin/bet"
 
                 # feat
                 if not os.path.isfile(FSLDIR + "/bin/feat"):
-                    print("Cannot find feat cmd!")
+                    print("$FSLDIR: Cannot find feat cmd!")
                     return
                 else:
                     self.feat = "/bin/feat"
 
                 # flirt
                 if not os.path.isfile(FSLDIR + "/bin/flirt"):
-                    print("Cannot find flirt cmd!")
+                    print("$FSLDIR: Cannot find flirt cmd!")
                     return
                 else:
                     self.flirt = "/bin/flirt"
@@ -201,7 +202,7 @@ class FSL:
                 elif os.path.isfile(FSLDIR + "/bin/Feat"):
                     self.FeatGUI = "/bin/Feat"
                 else:
-                    print("Cannot find Feat cmd!")
+                    print("$FSLDIR: Cannot find Feat cmd!")
                     return
 
                 # Flirt
@@ -210,7 +211,7 @@ class FSL:
                 elif os.path.isfile(FSLDIR + "/bin/Flirt"):
                     self.FlirtGUI = "/bin/Flirt"
                 else:
-                    print("Cannot find Flirt cmd!")
+                    print("$FSLDIR: Cannot find Flirt cmd!")
                     return
 
                 self.platform = platform.system()

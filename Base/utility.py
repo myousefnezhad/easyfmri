@@ -78,7 +78,7 @@ def getVersion():
 
 
 def getBuild():
-    return "1000"
+    return "2000"
 
 def getSettingVersion():
     return "2.0"
@@ -303,6 +303,57 @@ def decoding(Codes):
     return Decode
 
 
+def LoadEzData(Header=None,data=None):
+    import scipy.io as io
+    if Header is None:
+        print("Please enter header file!")
+        return None
+
+    if not os.path.isfile(Header):
+        print("Header file is not found!")
+        return None
+
+    try:
+        Out = io.loadmat(Header,appendmat=False)
+    except:
+        print("Cannot load header file!")
+        return None
+    try:
+        DataStruct = Out["DataStructure"]
+        DataKey = list()
+        for key in DataStruct:
+            if data is None:
+                DataKey.append(key)
+            else:
+                if key in data:
+                    DataKey.append(key)
+
+        if not len(DataKey):
+            print("WARNING: No data key found!")
+        else:
+            for dkey in DataKey:
+                X = None
+                dfiles = np.array(Out[dkey + "_files"])
+                for fdata in dfiles:
+                    try:
+                        del io
+                        import scipy.io as io
+                        dat = io.loadmat(os.path.dirname(Header) + "/" + fdata,appendmat=False)[dkey]
+                        X = dat if X is None else np.concatenate((X,dat))
+                        del dat
+                        print("Data %s is load!" % (fdata))
+                    except Exception as e:
+                        print(str(e))
+                        return None
+                Out[dkey] = X
+    except:
+        print("DEBUG: Error in loading data files!")
+        return None
+    return Out
+
 # Auto Run
 if __name__ == "__main__":
+    dat = LoadEzData("/home/Workspace/Integration/DS107/Preprocessed.R2.0.2/Integration/roi/data-onebacktask.ezdata","test")
+
+
     pass

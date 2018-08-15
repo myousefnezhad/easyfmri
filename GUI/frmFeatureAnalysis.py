@@ -29,13 +29,14 @@ from GUI.frmCombineData import frmCombineData
 from GUI.frmFECrossValidation import frmFECrossValidation
 from GUI.frmImageInfo import frmImageInfo
 from GUI.frmSelectSession import frmSelectSession
+from GUI.frmEzMat import frmEzMat
 
 from Base.utility import fixstr, getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
 from Base.utility import strRange, strMultiRange, getSettingVersion
 from Base.Setting import Setting
 from Base.SettingHistory import History
 from Base.Conditions import Conditions
-from Base.dialogs import LoadFile, SaveFile
+from Base.dialogs import LoadFile, SaveFile, SelectDir
 from Base.fsl import FSL
 
 
@@ -189,22 +190,26 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         # Unsupervised Feature Engineering
-        ui.cbFEU.addItem("Data Normalization",1)
-        ui.cbFEU.addItem("Dictionary Learning",20002)
-        ui.cbFEU.addItem("Factor Analysis",20000)
-        ui.cbFEU.addItem("Fast Independent Component Analysis (FastICA)",20001)
-        ui.cbFEU.addItem("Incremental Principal Component Analysis (IPCA)",10001)
-        ui.cbFEU.addItem("Kernel Principal Component Analysis (KPCA)",10002)
-        ui.cbFEU.addItem("Multi Region Pattern Analysis (Snapshots)", 30000)
-        ui.cbFEU.addItem("Principal Component Analysis (PCA)",10000)
-        ui.cbFEU.addItem("Sparse Principal Component Analysis (SPCA)",10003)
+        ui.cbFEU.addItem("MatLab: Data Normalization",1)
+        ui.cbFEU.addItem("MatLab: Dictionary Learning",20002)
+        ui.cbFEU.addItem("MatLab: Factor Analysis",20000)
+        ui.cbFEU.addItem("MatLab: Fast Independent Component Analysis (FastICA)",20001)
+        ui.cbFEU.addItem("MatLab: Incremental Principal Component Analysis (IPCA)",10001)
+        ui.cbFEU.addItem("MatLab: Kernel Principal Component Analysis (KPCA)",10002)
+        ui.cbFEU.addItem("MatLab: Multi Region Pattern Analysis (Snapshots)", 30000)
+        ui.cbFEU.addItem("MatLab: Principal Component Analysis (PCA)",10000)
+        ui.cbFEU.addItem("MatLab: Sparse Principal Component Analysis (SPCA)",10003)
 
         # Supervised Feature Engineering
-        ui.cbFES.addItem("Linear Discriminant Analysis (LDA)",1)
+        ui.cbFES.addItem("MatLab: Linear Discriminant Analysis (LDA)",1)
 
 
         # Functional Alignment
-        ui.cbFA.addItem("Regularized Hyperalignment", 10000)
+        ui.cbFA.addItem("MatLab: Regularized Hyperalignment", 10000)
+
+
+        # Just for this version
+        ui.btnFECrossEzData.setEnabled(False)
 
 
         dialog.setWindowTitle("easy fMRI feature analysis - V" + getVersion() + "B" + getBuild())
@@ -242,6 +247,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnFECross.clicked.connect(self.btnFECross_click)
         ui.btnFARun.clicked.connect(self.btnFA_click)
         ui.btnImageInfo.clicked.connect(self.btnImageInfo_click)
+        ui.btnDIConvertEzData.clicked.connect(self.btnDIConverEzData_click)
 
 
     # Exit function
@@ -678,10 +684,12 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
     def btnDIOutFile_click(self):
         global ui
-        ofile = SaveFile("Output data file ...",['Data file (*.mat)'],'mat',\
-                         os.path.dirname(ui.txtDIOutFile.text()))
+        ofile = SelectDir("Select output directory", ui.txtDIOutDIR.text())
+
+        #ofile = SaveFile("Output data file ...",['Data file (*.mat)'],'mat',\
+                         #os.path.dirname(ui.txtDIOutFile.text()))
         if len(ofile):
-            ui.txtDIOutFile.setText(ofile)
+            ui.txtDIOutDIR.setText(ofile)
 
     def btnDIROIFile_click(self):
         global ui
@@ -807,9 +815,27 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             return False
         print("Length of runs is valid")
 
-        OutFile = ui.txtDIOutFile.text()
-        if not len(OutFile):
+        OutDIR = ui.txtDIOutDIR.text()
+        if not len(OutDIR):
             msgBox.setText("Please enter output file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        OutDIR = OutDIR.replace("$MAINDIR$", mainDIR)
+
+        OutHDR = ui.txtDIOutHDR.text()
+        OutHDR = OutHDR.replace("$TASK$", Task)
+        if not len(OutHDR):
+            msgBox.setText("Please enter output header file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        OutDAT = ui.txtDIOutDAT.text()
+        if not len(OutDAT):
+            msgBox.setText("Please enter output data file!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
@@ -1040,14 +1066,18 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         RunID       = list()
         TaskID      = list()
         CounterID   = list()
-        X           = list()
         Y           = list()
         NScanID     = list()
         DesignID    = list()
+        DataFiles   = list()
         CondID      = Conditions()
         NumberOFExtract = 0
         NumberOFALL = 0
-
+        # RUNNING ...
+        try:
+            os.stat(OutDIR)
+        except:
+            os.makedirs(OutDIR,exist_ok=True)
 
         print("Extraction ...")
         for si, s in enumerate(SubRange):
@@ -1055,21 +1085,32 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
                 # SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
                 for r in RunRange[si]:
+                    X = list()
                     try:
                         InFile = setParameters3(In, mainDIR,
                                     fixstr(s, SubLen, ui.txtDISubPer.text()), \
                                     fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
                                     fixstr(cnt, ConLen, ui.txtDIConPer.text()))
+                        InHDR = None # Free Mem
                         InHDR = nb.load(InFile)
                         InIMG = InHDR.get_data()
                         if fMRISize is None:
                             fMRISize = np.shape(InIMG)[0:3]
                             if roiSize != fMRISize:
                                 print("ROI and fMRI images must be in the same size!")
+                                msgBox.setText("ROI and fMRI images must be in the same size!")
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
+                                return
 
                         else:
                             if fMRISize != np.shape(InIMG)[0:3]:
                                 print("Image size is not matched!")
+                                msgBox.setText("Image size is not matched!")
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
                                 return
                         NScan = np.shape(InIMG)[3]
                     except:
@@ -1194,46 +1235,56 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                             if ui.cbDIDM.isChecked():
                                 DesignID.append(DesginValues[instID])
 
-
-                    OutData = dict()
-                    OutData["imgShape"] = fMRISize
-
-                    # NScan
-                    if ui.cbDINScanID.isChecked():
-                        OutData[ui.txtDINScanID.text()] = NScanID
-                    # Subject
-                    if ui.cbDISubjectID.isChecked():
-                        OutData[ui.txtDISubjectID.text()] = SubjectID
-                    # Task
-                    if ui.cbDITaskID.isChecked():
-                        OutData[ui.txtDITaskID.text()] = np.array(TaskID,dtype=object)
-                    # Run
-                    if ui.cbDIRunID.isChecked():
-                        OutData[ui.txtDIRunID.text()] = RunID
-                    # Counter
-                    if ui.cbDICounterID.isChecked():
-                        OutData[ui.txtDICounterID.text()] = CounterID
-                    # Label
-                    if ui.cbDILabelID.isChecked():
-                        OutData[ui.txtDILabelID.text()] = Y
-                    # Matrix Label
-                    if ui.cbDImLabelID.isChecked():
-                        OutData[ui.txtDImLabelID.text()] = label_binarize(Y,np.unique(Y))
-                    # Data
                     if ui.cbDIDataID.isChecked():
-                        OutData[ui.txtDIDataID.text()] = X
-                    # Design
-                    if ui.cbDIDM.isChecked():
-                        OutData[ui.txtDIDMID.text()] = DesignID
-                    # Coordinate
-                    if ui.cbDICoID.isChecked():
-                        OutData[ui.txtDICoID.text()] = roiIND
-                    # Condition
-                    if ui.cbDICondID.isChecked():
-                        OutData[ui.txtDICoundID.text()] = np.array(CondID.get_cond(),dtype=object)
+                        OutDataFile = setParameters3(OutDAT, "",
+                                    fixstr(s, SubLen, ui.txtDISubPer.text()), \
+                                    fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
+                                    fixstr(cnt, ConLen, ui.txtDIConPer.text()))
+                        print("Saving data " + OutDataFile + "... ")
+                        DataFiles.append(OutDataFile)
+                        io.savemat(OutDIR + '/' + OutDataFile, mdict={ui.txtDIDataID.text(): X},appendmat=False, do_compression=True)
+                        print("Data " + OutDataFile + " is saved!")
 
-        print("Saving ...")
-        io.savemat(ui.txtDIOutFile.text(), mdict=OutData)
+        print("Saving Header " + OutHDR + "...")
+        OutData = dict()
+        OutData["imgShape"] = np.array(fMRISize)
+        OutData["DataStructure"] = []
+        if len(DataFiles):
+            OutData["DataStructure"] = [ui.txtDIDataID.text()]
+            OutData[ui.txtDIDataID.text() + "_files"] = DataFiles
+
+        # NScan
+        if ui.cbDINScanID.isChecked():
+            OutData[ui.txtDINScanID.text()] = NScanID
+        # Subject
+        if ui.cbDISubjectID.isChecked():
+            OutData[ui.txtDISubjectID.text()] = SubjectID
+        # Task
+        if ui.cbDITaskID.isChecked():
+            OutData[ui.txtDITaskID.text()] = np.array(TaskID,dtype=object)
+        # Run
+        if ui.cbDIRunID.isChecked():
+            OutData[ui.txtDIRunID.text()] = RunID
+        # Counter
+        if ui.cbDICounterID.isChecked():
+            OutData[ui.txtDICounterID.text()] = CounterID
+        # Label
+        if ui.cbDILabelID.isChecked():
+            OutData[ui.txtDILabelID.text()] = Y
+        # Matrix Label
+        if ui.cbDImLabelID.isChecked():
+            OutData[ui.txtDImLabelID.text()] = label_binarize(Y,np.unique(Y))
+        # Design
+        if ui.cbDIDM.isChecked():
+            OutData[ui.txtDIDMID.text()] = DesignID
+        # Coordinate
+        if ui.cbDICoID.isChecked():
+            OutData[ui.txtDICoID.text()] = np.array(roiIND)
+        # Condition
+        if ui.cbDICondID.isChecked():
+            OutData[ui.txtDICoundID.text()] = np.array(CondID.get_cond(),dtype=object)
+
+        io.savemat(OutDIR + '/' + OutHDR, mdict=OutData,appendmat=False,do_compression=True)
         print("Number of all instances:", NumberOFALL)
         print("Number of selected instances:", NumberOFExtract)
         print("Number of features: ", np.shape(roiIND)[1])
@@ -1242,8 +1293,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
-
-
 
     def btnDIDraw_click(self):
         global ui
@@ -1488,6 +1537,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 leg = ax.legend( shadow=True)
                 leg.draggable()
         plt.show()
+
+    def btnDIConverEzData_click(self):
+        frmEzMat.show(frmEzMat)
 
     def btnDIRemoveRest_click(self):
         frmRemoveRestScan.show(frmRemoveRestScan)
