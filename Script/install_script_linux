@@ -1,3 +1,0 @@
-cp startupscript ~/.startupscript
-echo "# This script is for easy fMRI" >> ~/.bashrc
-echo "source ~/.startupscript" >> ~/.bashrc
