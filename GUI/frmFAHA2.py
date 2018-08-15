@@ -9,7 +9,7 @@ from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmFAHAGUI import *
-from Hyperalignment.RHA import RHA
+from Hyperalignment.RHA2 import RHA
 
 
 class frmFAHA(Ui_frmFAHA):
@@ -27,7 +27,7 @@ class frmFAHA(Ui_frmFAHA):
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
 
-        dialog.setWindowTitle("easy fMRI Regularized Hyperalignment (direct solution, with trans. matrix) - V" + getVersion() + "B" + getBuild())
+        dialog.setWindowTitle("easy fMRI Regularized Hyperalignment (direct solution, without trans. matrix) - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -905,25 +905,21 @@ class frmFAHA(Ui_frmFAHA):
 
             print("Testing Shape: " + str(np.shape(TeX)))
 
-            model = RHA(regularization=Regularization,Dim=NumFea)
+            model = RHA(Dim=NumFea,regularization=Regularization)
 
             print("Running Hyperalignment on Training Data ...")
-            model.fit(TrX)
-            G = model.get_G()
-            TrU = model.get_U()
+            MappedXtr, G = model.train(TrX)
 
             print("Running Hyperalignment on Testing Data ...")
-            model.project(TeX)
-            TeU = model.get_U_tilde()
+            MappedXte =  model.test(TeX)
 
             # Train Dot Product
             print("Producting Training Data ...")
             TrHX = None
             TrErr = None
             for foldindx, fold in enumerate(TrListFoldUniq):
-                mapping = np.dot(TrX[foldindx],TrU[foldindx])
-                TrErr = TrErr + (G - mapping) if TrErr is not None else G - mapping
-                TrHX = np.concatenate((TrHX, mapping)) if TrHX is not None else mapping
+                TrErr = TrErr + (G - MappedXtr[foldindx]) if TrErr is not None else G - MappedXtr[foldindx]
+                TrHX = np.concatenate((TrHX, MappedXtr[foldindx])) if TrHX is not None else MappedXtr[foldindx]
             OutData[ui.txtOTrData.text()] = TrHX
             foldindx = foldindx + 1
             TrErr = TrErr / foldindx
@@ -935,9 +931,8 @@ class frmFAHA(Ui_frmFAHA):
             TeHX = None
             TeErr = None
             for foldindx, fold in enumerate(TeListFoldUniq):
-                mapping = np.dot(TeX[foldindx],TeU[foldindx])
-                TeErr = TeErr + (G - mapping) if TeErr is not None else G - mapping
-                TeHX = np.concatenate((TeHX, mapping)) if TeHX is not None else mapping
+                TeErr = TeErr + (G - MappedXte[foldindx]) if TeErr is not None else G - MappedXte[foldindx]
+                TeHX = np.concatenate((TeHX, MappedXte[foldindx])) if TeHX is not None else MappedXte[foldindx]
             OutData[ui.txtOTeData.text()] = TeHX
             foldindx = foldindx + 1
             TeErr = TeErr / foldindx
@@ -946,8 +941,6 @@ class frmFAHA(Ui_frmFAHA):
 
             HAParam = dict()
             HAParam["Share"] = G
-            HAParam["Train"] = TrU
-            HAParam["Test"]  = TeU
             HAParam["Level"] = FoldStr
             OutData["FunctionalAlignment"] = HAParam
 

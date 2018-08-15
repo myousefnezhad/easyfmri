@@ -271,6 +271,7 @@ class frmFETempAlign(Ui_frmFETempAlign):
             msgBox.exec_()
             return False
 
+        print("Loading data ...")
         InData = io.loadmat(InFile)
 
         try:

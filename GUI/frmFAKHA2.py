@@ -8,26 +8,41 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from GUI.frmFAHAGUI import *
-from Hyperalignment.RHA import RHA
+from GUI.frmFAKHAGUI import *
+from Hyperalignment.RHA2 import RHA
+from sklearn.decomposition import KernelPCA, PCA, IncrementalPCA
 
 
-class frmFAHA(Ui_frmFAHA):
-    ui = Ui_frmFAHA()
+class frmFAKHA(Ui_frmFAKHA):
+    ui = Ui_frmFAKHA()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmFAHA()
+        ui = Ui_frmFAKHA()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
 
-        dialog.setWindowTitle("easy fMRI Regularized Hyperalignment (direct solution, with trans. matrix) - V" + getVersion() + "B" + getBuild())
+
+        # Kenel List
+        ui.cbKernel.addItem("linear")
+        ui.cbKernel.addItem("poly")
+        ui.cbKernel.addItem("rbf")
+        ui.cbKernel.addItem("sigmoid")
+        ui.cbKernel.addItem("cosine")
+
+        # Method
+        ui.cbMethod.addItem("PCA")
+        ui.cbMethod.addItem("Kernel PCA")
+        ui.cbMethod.addItem("Incremental PCA")
+
+
+        dialog.setWindowTitle("easy fMRI Kernel/SVD Hyperalignment (direct solution, without trans. matrix) - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -324,6 +339,106 @@ class frmFAHA(Ui_frmFAHA):
 
     def btnConvert_click(self):
         msgBox = QMessageBox()
+
+        # Batch
+        try:
+            Batch = np.int32(ui.txtBatch.text())
+        except:
+            msgBox.setText("Size of batch is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if Batch == 0:
+            Batch = None
+
+        # Kernel
+        Kernel = ui.cbKernel.currentText()
+        # Method
+        Method = ui.cbMethod.currentText()
+
+        # Gamma
+        try:
+            Gamma = np.float(ui.txtGamma.text())
+        except:
+            msgBox.setText("Gamma is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Degree
+        try:
+            Degree = np.int32(ui.txtDegree.text())
+        except:
+            msgBox.setText("Degree is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Coef0
+        try:
+            Coef0 = np.float(ui.txtCoef0.text())
+        except:
+            msgBox.setText("Coef0 is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Alpha
+        try:
+            Alpha = np.int32(ui.txtAlpha.text())
+        except:
+            msgBox.setText("Alpha is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Tol
+        try:
+            Tol = np.float(ui.txtTole.text())
+        except:
+            msgBox.setText("Tolerance is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # MaxIte
+        try:
+            MaxIter = np.int32(ui.txtMaxIter.text())
+        except:
+            msgBox.setText("Maximum number of iterations is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if MaxIter <= 0:
+            MaxIter = None
+
+        # Number of Job
+        try:
+            NJob = np.int32(ui.txtJobs.text())
+        except:
+            msgBox.setText("The number of parallel jobs is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if NJob < -1 or NJob == 0:
+            msgBox.setText("The number of parallel jobs must be -1 or greater than 0!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
 
         TrFoldErr = list()
         TeFoldErr = list()
@@ -868,12 +983,22 @@ class frmFAHA(Ui_frmFAHA):
             print("Partitioning Training Data ...")
             TrX = list()
             TrShape = None
+
+            if Method == "PCA":
+                svdmodel = PCA(n_components=NumFea,copy=False,tol=Tol)
+            elif Method == "Kernel PCA":
+                svdmodel = KernelPCA(n_components=NumFea,kernel=Kernel,gamma=Gamma,degree=Degree,\
+                              coef0=Coef0, alpha=Alpha, tol=Tol, max_iter=MaxIter, n_jobs=NJob,copy_X=False)
+            else:
+                svdmodel = IncrementalPCA(n_components=NumFea,copy=False,batch_size=Batch)
+
             for foldindx, fold in enumerate(TrListFoldUniq):
                 dat = XTr[np.where(TrListFold == fold)]
                 if ui.cbScale.isChecked() and ui.rbScale.isChecked():
                     dat = preprocessing.scale(dat)
                     print("Data belong to View " + str(foldindx + 1) + " is scaled X~N(0,1).")
 
+                dat = svdmodel.fit_transform(dat)
                 TrX.append(dat)
                 if TrShape is None:
                     TrShape = np.shape(dat)
@@ -894,6 +1019,8 @@ class frmFAHA(Ui_frmFAHA):
                 if ui.cbScale.isChecked() and ui.rbScale.isChecked():
                     dat = preprocessing.scale(dat)
                     print("Data belong to View " + str(foldindx + 1) + " is scaled X~N(0,1).")
+
+                dat = svdmodel.fit_transform(dat)
                 TeX.append(dat)
                 if TeShape is None:
                     TeShape = np.shape(dat)
@@ -905,25 +1032,21 @@ class frmFAHA(Ui_frmFAHA):
 
             print("Testing Shape: " + str(np.shape(TeX)))
 
-            model = RHA(regularization=Regularization,Dim=NumFea)
+            model = RHA(Dim=NumFea,regularization=Regularization)
 
             print("Running Hyperalignment on Training Data ...")
-            model.fit(TrX)
-            G = model.get_G()
-            TrU = model.get_U()
+            MappedXtr, G = model.train(TrX)
 
             print("Running Hyperalignment on Testing Data ...")
-            model.project(TeX)
-            TeU = model.get_U_tilde()
+            MappedXte =  model.test(TeX)
 
             # Train Dot Product
             print("Producting Training Data ...")
             TrHX = None
             TrErr = None
             for foldindx, fold in enumerate(TrListFoldUniq):
-                mapping = np.dot(TrX[foldindx],TrU[foldindx])
-                TrErr = TrErr + (G - mapping) if TrErr is not None else G - mapping
-                TrHX = np.concatenate((TrHX, mapping)) if TrHX is not None else mapping
+                TrErr = TrErr + (G - MappedXtr[foldindx]) if TrErr is not None else G - MappedXtr[foldindx]
+                TrHX = np.concatenate((TrHX, MappedXtr[foldindx])) if TrHX is not None else MappedXtr[foldindx]
             OutData[ui.txtOTrData.text()] = TrHX
             foldindx = foldindx + 1
             TrErr = TrErr / foldindx
@@ -935,9 +1058,8 @@ class frmFAHA(Ui_frmFAHA):
             TeHX = None
             TeErr = None
             for foldindx, fold in enumerate(TeListFoldUniq):
-                mapping = np.dot(TeX[foldindx],TeU[foldindx])
-                TeErr = TeErr + (G - mapping) if TeErr is not None else G - mapping
-                TeHX = np.concatenate((TeHX, mapping)) if TeHX is not None else mapping
+                TeErr = TeErr + (G - MappedXte[foldindx]) if TeErr is not None else G - MappedXte[foldindx]
+                TeHX = np.concatenate((TeHX, MappedXte[foldindx])) if TeHX is not None else MappedXte[foldindx]
             OutData[ui.txtOTeData.text()] = TeHX
             foldindx = foldindx + 1
             TeErr = TeErr / foldindx
@@ -945,9 +1067,9 @@ class frmFAHA(Ui_frmFAHA):
             TeFoldErr.append(np.linalg.norm(TeErr))
 
             HAParam = dict()
+            HAParam["Method"]= Method
+            HAParam["Kernel"]= Kernel
             HAParam["Share"] = G
-            HAParam["Train"] = TrU
-            HAParam["Test"]  = TeU
             HAParam["Level"] = FoldStr
             OutData["FunctionalAlignment"] = HAParam
 
@@ -957,8 +1079,8 @@ class frmFAHA(Ui_frmFAHA):
 
         print("Training -> Alignment Error: mean " + str(np.mean(TrFoldErr)) + " std " + str(np.std(TrFoldErr)))
         print("Testing  -> Alignment Error: mean " + str(np.mean(TeFoldErr)) + " std " + str(np.std(TeFoldErr)))
-        print("Regularized Hyperalignment is done.")
-        msgBox.setText("Regularized Hyperalignment is done.")
+        print("Kernel/SVD Hyperalignment is done.")
+        msgBox.setText("Kernel/SVD Hyperalignment is done.")
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
@@ -966,5 +1088,5 @@ class frmFAHA(Ui_frmFAHA):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmFAHA.show(frmFAHA)
+    frmFAKHA.show(frmFAKHA)
     sys.exit(app.exec_())

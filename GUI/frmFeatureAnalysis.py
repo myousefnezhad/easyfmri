@@ -208,7 +208,15 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         # Functional Alignment
-        ui.cbFA.addItem("MatLab: Regularized Hyperalignment", 10000)
+        ui.cbFA.addItem("MatLab: Shared Response Model (SRM)", 10005)
+        ui.cbFA.addItem("MatLab: Regularized Hyperalignment (direct solution, without trans. matrix)", 10001)
+        ui.cbFA.addItem("MatLab: Regularized Hyperalignment (direct solution, with trans. matrix)", 10000)
+        ui.cbFA.addItem("MatLab: Kernel/SVD Hyperalignment (direct solution, without trans. matrix)", 10006)
+        ui.cbFA.addItem("MatLab: Kernel/SVD Hyperalignment (direct solution, with trans. matrix)", 10007)
+        ui.cbFA.addItem("MatLab: Principal Component Analysis (PCA) Functional Alignment", 10002)
+        ui.cbFA.addItem("MatLab: Independent Component Analysis (ICA) Functional Alignment", 10003)
+        ui.cbFA.addItem("MatLab: Linear Discriminant Analysis (LDA) Functional Alignment", 10004)
+
 
         dialog.setWindowTitle("easy fMRI feature analysis - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -1747,8 +1755,34 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             from GUI.frmFAHA import frmFAHA
             frmFAHA.show(frmFAHA)
             return
-
-
+        elif FAID == 10001:
+            from GUI.frmFAHA2 import frmFAHA
+            frmFAHA.show(frmFAHA)
+            return
+        elif FAID == 10002:
+            from GUI.frmFAPCA import frmFAPCA
+            frmFAPCA.show(frmFAPCA)
+            return
+        elif FAID == 10003:
+            from GUI.frmFAICA import frmFAICA
+            frmFAICA.show(frmFAICA)
+            return
+        elif FAID == 10004:
+            from GUI.frmFELDA import frmFELDA
+            frmFELDA.show(frmFELDA)
+            return
+        elif FAID == 10005:
+            from GUI.frmFASRM import frmFASRM
+            frmFASRM.show(frmFASRM)
+            return
+        elif FAID == 10006:
+            from GUI.frmFAKHA2 import frmFAKHA
+            frmFAKHA.show(frmFAKHA)
+            return
+        elif FAID == 10007:
+            from GUI.frmFAKHA import frmFAKHA
+            frmFAKHA.show(frmFAKHA)
+            return
 # Auto Run
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

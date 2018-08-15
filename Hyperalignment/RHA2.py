@@ -1,14 +1,13 @@
 '''
-Implementation of Regularized Hyperalignment by using MVLSA optimization approach
+Implementation of Regularized Hyperalignment by using MVLSA optimization approach (without trans. mat.)
 Objective Function: ||G - XiUi||_F^2
 Input: views = {X1, X2, ..., Xn} \in R^{Subject x Time x Voxel} for training phase
     or views_tilde = {X1_tilde, X2_tilde, ..., Xn_tilde} \in R^{Subject x Time x Voxel} for testing phase
 Optional Input: K for managing missed values for training phase
                 W as weight of each view for training phase
                 G_tilde: for testing phase
-Output: G \in R^{Time x Voxel} for training
-        U = {U1, U2, ..., Un} R^{Subject x Time x Voxel} for training
-        U_tilde = {U1, U2, ..., Un} R^{Subject x Time x Voxel} for training
+Output: G \in R^{Time x Feature} for training
+        X_new = {X1, X2, ..., Xn} R^{Subject x Time x Feature} for training
 Functions:
 fit(Xs) for training phase
 project(Xs_bar) for testing phase
@@ -24,14 +23,15 @@ import scipy.linalg
 import scipy.io as io
 
 class RHA:
-    def __init__(self,regularization=10**-4,Dim=None):
-        self.G = None
-        self.U_tilde = None
-        self.U = None
-        self.Dim = Dim
+    def __init__(self,Dim=None,regularization=10**-4):
+        self.G = None # Shared Space
+        self.EigVal = None # Eigenvalues (Lambda) of Shared Space
+        self.Xtrain = None # Transformed trained data
+        self.Xtest  = None # Transformed test data
+        self.Dim = Dim # Number of Dimension
         self.regularization=regularization
 
-    def fit(self, views, verbose=True):
+    def train(self, views, verbose=True):
         # Show Message or not
         self.verbose = verbose
         # Number of Subjects
@@ -61,6 +61,8 @@ class RHA:
         _Stilde = np.float32(np.zeros(self.k))
         _Gprime = np.float32(np.zeros((N, self.k)))
 
+        ProjectMats = list()
+
         # Take SVD of each view, to calculate A_i and T_i
         for i, (eps, view) in enumerate(zip(self.eps, views)):
             if self.verbose:
@@ -73,43 +75,25 @@ class RHA:
             if self.verbose:
                 print('TRAIN: Calculate dot product AT for View %d' % (i + 1))
             ajtj =  A.dot(T)
-            #ajtj = A.dot(T)
+            ProjectMats.append(ajtj)
             if self.verbose:
                 print('TRAIN DATA -> View %d -> Calculate Incremental PCA ...' % (i + 1))
             _Gprime, _Stilde = self._batch_incremental_pca(ajtj,_Gprime,_Stilde, i, self.verbose)
             if self.verbose:
                 print('TRAIN DATA -> View %d -> Decomposing data matrix ...' % (i + 1))
         self.G = _Gprime
-        self.lbda = _Stilde
-        self.U = []  # Mapping from views to latent space
+        self.EigVal = _Stilde
+        self.Xtrain = list()
 
         print('TRAIN DATA -> Mapping to shared space ...')
               # Get mapping to shared space
-        for idx, (eps, f, view) in enumerate(zip(self.eps, self.F, views)):
-            if self.verbose:
-                print('TRAIN DATA -> Mapping View %d -> QR Decomposition ...' % (idx + 1))
-            R = scipy.linalg.qr(view, mode='r')[0]
-            if self.verbose:
-                print('TRAIN DATA -> Mapping View %d -> Calculating inverse of covariance matrix ...' % (idx + 1))
-            RTR = R.transpose().dot(R) + eps * np.eye(f)
-            if self.verbose:
-                print('TRAIN DATA -> Mapping View %d -> RTR size: ' % (idx + 1), np.shape(RTR))
-            Cjj_inv = np.linalg.inv((RTR))
-            if self.verbose:
-                print('TRAIN DATA -> Mapping View %d -> Running dot product ...' % (idx + 1))
-            pinv = Cjj_inv.dot(view.transpose())
-            self.U.append(pinv.dot(self.G))
-            if self.verbose:
-                print('TRAIN DATA -> Mapping View %d is solved.' % (idx + 1))
+        for pid, project in enumerate(ProjectMats):
+            self.Xtrain.append(np.dot(np.dot(project, np.transpose(project)),self.G))
+            print('TRAIN DATA -> View %d is projected ...' % (pid + 1))
 
-        return self.G, self.U
+        return self.Xtrain, self.G
 
-    def project(self, views_tilde,verbose=True, G=None):
-        self.V_tilde = np.shape(views_tilde)[0]
-
-        self.eps_tilde = [np.float32(self.regularization) for i in range(self.V_tilde)]  # Assume eps is same for each view
-
-        self.F_tilde = [np.int(np.shape(views_tilde)[2]) for i in range(self.V_tilde)]  # Assume eps is same for each view
+    def test(self, views, G=None, verbose=True):
         if G is not None:
             self.G = G
         else:
@@ -118,25 +102,58 @@ class RHA:
                     print("There is no G")
                 return None
 
-        self.U_tilde = []
-       # Get mapping to shared space
-        for idx, (eps, f, view) in enumerate(zip(self.eps_tilde, self.F_tilde, views_tilde)):
-            R = scipy.linalg.qr(view, mode='r')[0]
-            Cjj_inv = np.linalg.inv((R.transpose().dot(R) + eps * np.eye(f)))
-            pinv = Cjj_inv.dot(view.transpose())
-            self.U_tilde.append(pinv.dot(self.G))
+        # Show Message or not
+        self.verbose = verbose
+        # Number of Subjects
+        self.V_test = np.shape(views)[0]
+
+        try:
+            if len(self.regularization) == self.V_test:
+                self.eps_test = [np.float32(e) for e in self.regularization]
+            else:
+                self.eps_test = [np.float32(self.regularization) for i in range(self.V_test)]  # Assume eps is same for each view
+        except:
+            self.eps_test = [np.float32(self.regularization) for i in range(self.V_test)]  # Assume eps is same for each view
+
+        self.F_test = [np.int(np.shape(views)[2]) for i in range(self.V_test)]  # Assume eps is same for each view
+
+        if self.Dim is None:
+            self.k = np.shape(views)[2]  # Dimensionality of embedding we want to learn
+        else:
+            try:
+                self.k = np.int32(self.Dim)
+            except:
+                self.k = np.shape(views)[2]  # Dimensionality of embedding we want to learn
+
+        self.Xtest = list()
+
+        # Take SVD of each view, to calculate A_i and T_i
+        for i, (eps, view) in enumerate(zip(self.eps, views)):
             if self.verbose:
-                print('TEST DATA -> View %d -> Solving mapping ...' % (idx + 1))
-        return self.U_tilde
+                print('TEST DATA -> View %d -> Run SVD ...' % (i + 1))
+            A, S_thin, B = scipy.linalg.svd(view, full_matrices=False)
+            if self.verbose:
+                print('TEST DATA -> View %d -> Calculate Sigma inverse ...' % (i + 1))
+            S2_inv = 1. / (np.multiply(S_thin, S_thin) + eps)
+            T = np.diag(np.sqrt(np.multiply(np.multiply(S_thin, S2_inv), S_thin)))
+            if self.verbose:
+                print('TEST: Calculate dot product AT for View %d' % (i + 1))
+            ajtj = A.dot(T)
+            self.Xtest.append(np.dot(np.dot(ajtj,np.transpose(ajtj)), self.G))
+            print('TEST DATA -> View %d is projected ...' % (i + 1))
+
+        return self.Xtest
+
 
     def get_G(self):
         return self.G
 
-    def get_U(self):
-        return self.U
+    def get_Xtrain(self):
+        return self.Xtrain
 
-    def get_U_tilde(self):
-        return self.U_tilde
+    def get_Xtest(self):
+        return self.Xtest
+
 
     @staticmethod
     def _batch_incremental_pca(x, G, S, i, verbose):

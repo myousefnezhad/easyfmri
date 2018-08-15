@@ -13,7 +13,7 @@ class Ui_frmMainMenuGUI(object):
         frmMainMenuGUI.setObjectName("frmMainMenuGUI")
         frmMainMenuGUI.resize(555, 480)
         self.label = QtWidgets.QLabel(frmMainMenuGUI)
-        self.label.setGeometry(QtCore.QRect(0, 10, 551, 61))
+        self.label.setGeometry(QtCore.QRect(0, 0, 551, 80))
         font = QtGui.QFont()
         font.setPointSize(48)
         self.label.setFont(font)
@@ -62,7 +62,7 @@ class Ui_frmMainMenuGUI(object):
 
     def retranslateUi(self, frmMainMenuGUI):
         _translate = QtCore.QCoreApplication.translate
-        frmMainMenuGUI.setWindowTitle(_translate("frmMainMenuGUI", "easy fMRI (1.0)"))
+        frmMainMenuGUI.setWindowTitle(_translate("frmMainMenuGUI", "easy fMRI (2.0)"))
         self.label.setText(_translate("frmMainMenuGUI", "easy fMRI"))
         self.btnFeatureAnalysis.setText(_translate("frmMainMenuGUI", "Feature Analysis"))
         self.btnModelAnalysis.setText(_translate("frmMainMenuGUI", "Model Analysis"))

@@ -4,30 +4,74 @@ import sys
 
 import numpy as np
 import scipy.io as io
+import scipy.linalg as lg
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from GUI.frmFAHAGUI import *
-from Hyperalignment.RHA import RHA
+from GUI.frmFASRMGUI import *
+from Hyperalignment.SRM import SRM, DetSRM
+from Hyperalignment.RSRM import RSRM
+
+def Lic():
+    return """#  Copyright 2016 Intel Corporation
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+The implementation is based on the following publications:
+
+.. [Chen2015] "A Reduced-Dimension fMRI Shared Response Model",
+   P.-H. Chen, J. Chen, Y. Yeshurun-Dishon, U. Hasson, J. Haxby, P. Ramadge
+   Advances in Neural Information Processing Systems (NIPS), 2015.
+   http://papers.nips.cc/paper/5855-a-reduced-dimension-fmri-shared-response-model
+
+.. [Anderson2016] "Enabling Factor Analysis on Thousand-Subject Neuroimaging
+   Datasets",
+   Michael J. Anderson, Mihai Capotă, Javier S. Turek, Xia Zhu, Theodore L.
+   Willke, Yida Wang, Po-Hsuan Chen, Jeremy R. Manning, Peter J. Ramadge,
+   Kenneth A. Norman,
+   IEEE International Conference on Big Data, 2016.
+   https://doi.org/10.1109/BigData.2016.7840719
+
+.. [Turek2017] "Capturing Shared and Individual Information in fMRI Data",
+   J. Turek, C. Ellis, L. Skalaban, N. Turk-Browne, T. Willke
+   under review, 2017."""
 
 
-class frmFAHA(Ui_frmFAHA):
-    ui = Ui_frmFAHA()
+class frmFASRM(Ui_frmFASRM):
+    ui = Ui_frmFASRM()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmFAHA()
+        ui = Ui_frmFASRM()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
 
-        dialog.setWindowTitle("easy fMRI Regularized Hyperalignment (direct solution, with trans. matrix) - V" + getVersion() + "B" + getBuild())
+        # Method
+        ui.cbMethod.addItem("Probabilistic SRM")
+        ui.cbMethod.addItem("Deterministic SRM")
+        ui.cbMethod.addItem("Robust SRM")
+
+        ui.txtLic.setPlainText(Lic())
+        ui.txtLic.setReadOnly(True)
+
+        dialog.setWindowTitle("easy fMRI Shared Response Model (SRM) - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -325,6 +369,8 @@ class frmFAHA(Ui_frmFAHA):
     def btnConvert_click(self):
         msgBox = QMessageBox()
 
+        Model = ui.cbMethod.currentText()
+
         TrFoldErr = list()
         TeFoldErr = list()
 
@@ -342,9 +388,18 @@ class frmFAHA(Ui_frmFAHA):
         for fold_all in range(FoldFrom, FoldTo+1):
             # Regularization
             try:
-                Regularization = np.float(ui.txtRegularization.text())
+                NIter = np.int32(ui.txtIter.text())
             except:
-                msgBox.setText("Regularization value is wrong!")
+                msgBox.setText("Number of iterations is wrong!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            try:
+                Gamma = np.float(ui.txtGamma.text())
+            except:
+                msgBox.setText("Gamma is wrong!")
                 msgBox.setIcon(QMessageBox.Critical)
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
@@ -874,7 +929,7 @@ class frmFAHA(Ui_frmFAHA):
                     dat = preprocessing.scale(dat)
                     print("Data belong to View " + str(foldindx + 1) + " is scaled X~N(0,1).")
 
-                TrX.append(dat)
+                TrX.append(np.transpose(dat))
                 if TrShape is None:
                     TrShape = np.shape(dat)
                 else:
@@ -894,7 +949,7 @@ class frmFAHA(Ui_frmFAHA):
                 if ui.cbScale.isChecked() and ui.rbScale.isChecked():
                     dat = preprocessing.scale(dat)
                     print("Data belong to View " + str(foldindx + 1) + " is scaled X~N(0,1).")
-                TeX.append(dat)
+                TeX.append(np.transpose(dat))
                 if TeShape is None:
                     TeShape = np.shape(dat)
                 else:
@@ -905,60 +960,55 @@ class frmFAHA(Ui_frmFAHA):
 
             print("Testing Shape: " + str(np.shape(TeX)))
 
-            model = RHA(regularization=Regularization,Dim=NumFea)
+            SharedR = None
+            if Model == "Probabilistic SRM":
+                model = SRM(n_iter=NIter,features=NumFea)
+            elif Model == "Deterministic SRM":
+                model = DetSRM(n_iter=NIter,features=NumFea)
+            else:
+                model = RSRM(n_iter=NIter, features=NumFea, gamma=Gamma)
+                SharedR = True
+
 
             print("Running Hyperalignment on Training Data ...")
             model.fit(TrX)
-            G = model.get_G()
-            TrU = model.get_U()
-
-            print("Running Hyperalignment on Testing Data ...")
-            model.project(TeX)
-            TeU = model.get_U_tilde()
-
+            if SharedR == True:
+                S = model.r_
+            else:
+                S = model.s_
+            WTr = model.w_
             # Train Dot Product
             print("Producting Training Data ...")
             TrHX = None
-            TrErr = None
-            for foldindx, fold in enumerate(TrListFoldUniq):
-                mapping = np.dot(TrX[foldindx],TrU[foldindx])
-                TrErr = TrErr + (G - mapping) if TrErr is not None else G - mapping
-                TrHX = np.concatenate((TrHX, mapping)) if TrHX is not None else mapping
+            for mapping in WTr:
+                TrHX = np.concatenate((TrHX, np.transpose(np.dot(mapping,S)))) if TrHX is not None else np.transpose(np.dot(mapping,S))
             OutData[ui.txtOTrData.text()] = TrHX
-            foldindx = foldindx + 1
-            TrErr = TrErr / foldindx
-            print("Train: alignment error ", np.linalg.norm(TrErr))
-            TrFoldErr.append(np.linalg.norm(TrErr))
 
-            # Train Dot Product
-            print("Producting Testing Data ...")
+
+            print("Running Hyperalignment on Testing Data ...")
             TeHX = None
-            TeErr = None
-            for foldindx, fold in enumerate(TeListFoldUniq):
-                mapping = np.dot(TeX[foldindx],TeU[foldindx])
-                TeErr = TeErr + (G - mapping) if TeErr is not None else G - mapping
-                TeHX = np.concatenate((TeHX, mapping)) if TeHX is not None else mapping
+            WTe = list()
+            for vid, view in enumerate(TeX):
+                product = np.dot(view, np.transpose(S))
+                U, _, V = lg.svd(product, full_matrices=False, check_finite=False)
+                Wtest = np.dot(U,V)
+                WTe.append(Wtest)
+                TeHX = np.concatenate((TeHX, np.transpose(np.dot(Wtest,S)))) if TeHX is not None else np.transpose(np.dot(Wtest,S))
             OutData[ui.txtOTeData.text()] = TeHX
-            foldindx = foldindx + 1
-            TeErr = TeErr / foldindx
-            print("Test: alignment error ", np.linalg.norm(TeErr))
-            TeFoldErr.append(np.linalg.norm(TeErr))
 
             HAParam = dict()
-            HAParam["Share"] = G
-            HAParam["Train"] = TrU
-            HAParam["Test"]  = TeU
-            HAParam["Level"] = FoldStr
+            HAParam["Share"]    = S
+            HAParam["WTrain"]   = WTr
+            HAParam["WTest"]    = WTe
+            HAParam["Model"]    = Model
             OutData["FunctionalAlignment"] = HAParam
 
             print("Saving ...")
             io.savemat(OutFile, mdict=OutData)
             print("Fold " + str(fold_all) + " is DONE: " + OutFile)
 
-        print("Training -> Alignment Error: mean " + str(np.mean(TrFoldErr)) + " std " + str(np.std(TrFoldErr)))
-        print("Testing  -> Alignment Error: mean " + str(np.mean(TeFoldErr)) + " std " + str(np.std(TeFoldErr)))
-        print("Regularized Hyperalignment is done.")
-        msgBox.setText("Regularized Hyperalignment is done.")
+        print("Shared Response Model (SRM) is done.")
+        msgBox.setText("Shared Response Model (SRM) is done.")
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
@@ -966,5 +1016,5 @@ class frmFAHA(Ui_frmFAHA):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmFAHA.show(frmFAHA)
+    frmFASRM.show(frmFASRM)
     sys.exit(app.exec_())
