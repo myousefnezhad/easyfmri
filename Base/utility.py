@@ -74,11 +74,11 @@ def OpenReport(addr):
 
 
 def getVersion():
-    return "1.7"
+    return "1.8"
 
 
 def getBuild():
-    return "3000"
+    return "1000"
 
 def getSettingVersion():
     return "2.0"

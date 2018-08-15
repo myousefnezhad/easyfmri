@@ -9,31 +9,70 @@ from sklearn import preprocessing
 from sklearn.metrics import mean_squared_error
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from GUI.frmMARSAGUI import *
+from RSA.GradientRSA import GradientRSA
+
+from GUI.frmMAGrRSAGUI import *
 
 # Plot
 import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 
+def MethodTitle(str):
+    if   str == 'regularizedreg':
+        return 'Regularized Regression'
+    elif str == 'linregl1':
+        return 'Linear Regression L1'
+    elif str == 'linregl2':
+        return 'Linear Regression L2'
+    elif str == 'ridgereg':
+        return 'Ridge Regression'
+    elif str == 'lasso':
+        return 'LASSO'
+    elif str == 'elasticnet':
+        return 'Elastic Net'
+    return ''
 
 
-class frmMARSA(Ui_frmMARSA):
-    ui = Ui_frmMARSA()
+
+
+class frmMAGrRSA(Ui_frmMAGrRSA):
+    ui = Ui_frmMAGrRSA()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmMARSA()
+        ui = Ui_frmMAGrRSA()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
 
-        dialog.setWindowTitle("easy fMRI Session Level Representational Similarity Analysis (RSA) - V" + getVersion() + "B" + getBuild())
+        # Method
+        ui.cbMethod.addItem('Regularized Regression','regularizedreg')
+        ui.cbMethod.addItem('Linear Regression L1','linregl1')
+        ui.cbMethod.addItem('Linear Regression L2', 'linregl2')
+        ui.cbMethod.addItem('Ridge Regression' , 'ridgereg')
+        ui.cbMethod.addItem('LASSO' , 'lasso')
+        ui.cbMethod.addItem('Elastic Net', 'elasticnet')
+
+        # LOSS Type
+        ui.cbLossType.addItem('Norm', 'norm')
+        ui.cbLossType.addItem('Mean Square Error', 'mse')
+
+        # LASSO Norm
+        ui.cbLossNorm.addItem('Euclidean', 'euclidean')
+        ui.cbLossNorm.addItem('Supremum', np.inf)
+
+        # Device
+        ui.cbDevice.addItem("Auto", False)
+        ui.cbDevice.addItem("Just CPU", True)
+
+
+        dialog.setWindowTitle("easy fMRI Session Level Gradient Representational Similarity Analysis - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -90,8 +129,7 @@ class frmMARSA(Ui_frmMARSA):
                         Labels = data[ui.txtLabel.currentText()]
                         Labels = np.unique(Labels)
                         print("Number of labels: ", np.shape(Labels)[0])
-                        print("Labels:")
-                        print(Labels)
+                        print("Labels: ", Labels)
                         ui.txtClass.clear()
                         for lbl in Labels:
                             ui.txtClass.append(str(lbl))
@@ -116,6 +154,7 @@ class frmMARSA(Ui_frmMARSA):
                             HasDefualt = True
                     if HasDefualt:
                         ui.txtSubject.setCurrentText("subject")
+                        print("Number of subjects: ", np.shape(np.unique(data["subject"]))[0])
                         values = np.unique(data["subject"])
                         for val in values:
                             ui.txtSubjectVal.addItem(str(val))
@@ -288,6 +327,101 @@ class frmMARSA(Ui_frmMARSA):
     def btnConvert_click(self):
         msgBox = QMessageBox()
         tStart = time.time()
+        Type = ui.cbMethod.currentData()
+        LossType = ui.cbLossType.currentData()
+        LossNorm = ui.cbLossNorm.currentData()
+
+        try:
+            Iter = np.int32(ui.txtIter.text())
+        except:
+            msgBox.setText("Number of iteration is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            BatchSize = np.int32(ui.txtBatch.text())
+        except:
+            msgBox.setText("Number of batch is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            ReportStep = np.int32(ui.txtReportStep.text())
+        except:
+            msgBox.setText("Number of Report Step is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            RandomSeed = np.int32(ui.txtRandom.text())
+        except:
+            msgBox.setText("Number of Random Seed is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            LearningRate = np.float32(ui.txtRate.text())
+        except:
+            msgBox.setText("Number of Report Step is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            LassoParam = np.float32(ui.txtLParam.text())
+        except:
+            msgBox.setText("Number of Lasso Parameter is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            LassoPenalty = np.float32(ui.txtLPenalty.text())
+        except:
+            msgBox.setText("Number of Lasso Penalty is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            ElasticLambda1 = np.float32(ui.txtEL1.text())
+        except:
+            msgBox.setText("Number of Elastic Lambda 1 is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            ElasticLambda2 = np.float32(ui.txtEL2.text())
+        except:
+            msgBox.setText("Number of Elastic Lambda 2 is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            RidgeReg = np.float32(ui.txtRRP.text())
+        except:
+            msgBox.setText("Number of Ridge Regression Parameter is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
         if not ui.cbCov.isChecked() and not ui.cbCorr.isChecked():
             msgBox.setText("At least, you must select one metric!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -317,7 +451,7 @@ class frmMARSA(Ui_frmMARSA):
             return False
 
         OutData = dict()
-        OutData["ModelAnalysis"] = "RSA"
+        OutData["ModelAnalysis"] = "GradientRSA"
 
         # InFile
         InFile = ui.txtInFile.text()
@@ -575,25 +709,43 @@ class frmMARSA(Ui_frmMARSA):
         if ui.cbScale.isChecked():
             X = preprocessing.scale(X)
             print("Data is scaled to N(0,1).")
-        print("Running RSA ...")
+        print("Running Gradient RSA ...")
         # RSA Method
-        Reg     = np.insert(Design, 0, 1, axis=1)
-        Betas   = np.linalg.lstsq(Reg, X)[0]
-        print("Calculating MSE ...")
-        MSE = mean_squared_error(X, np.matmul(Reg, Betas))
-        print("MSE: %f" % (MSE))
+        OutData['Method'] = dict()
+        OutData['Method']['Type']           = Type
+        OutData['Method']['LossType']       = LossType
+        OutData['Method']['LossNorm']       = LossNorm
+        OutData['Method']['LearningRate']   = LearningRate
+        OutData['Method']['NumIter']        = Iter
+        OutData['Method']['BatchSize']      = BatchSize
+        OutData['Method']['ReportStep']     = ReportStep
+        OutData['Method']['RidgeRegParam']  = RidgeReg
+        OutData['Method']['ElaticLambda1']  = ElasticLambda1
+        OutData['Method']['ElaticLambda1']  = ElasticLambda1
+        OutData['Method']['LassoParam']     = LassoParam
+        OutData['Method']['LassoPenalty']   = LassoPenalty
+        OutData['Method']['RandomSeed']     = RandomSeed
+        OutData['Method']['Verbose']        = ui.cbVerbose.isChecked()
+        rsa = GradientRSA(regression_type=Type,loss_type=LossType,loss_norm=LossNorm,learning_rate=LearningRate,\
+                          n_iter=Iter, batch_size=BatchSize, report_step=ReportStep, ridge_param=RidgeReg, \
+                          elstnet_lamda1=ElasticLambda1, elstnet_lamda2=ElasticLambda2,lasso_param=LassoParam,\
+                          lasso_penalty=LassoPenalty,random_seed=RandomSeed,verbose=ui.cbVerbose.isChecked(),\
+                          CPU=ui.cbDevice.currentData())
+        Betas, Eps, loss_vec, MSE = rsa.fit(data_vals=X, design_vals=Design)
+        OutData["LossVec"] = loss_vec
         OutData["MSE"] = MSE
 
         if ui.cbBeta.isChecked():
-            OutData["Betas"]        = Betas
+            OutData["Betas"]  = Betas
+            OutData["Eps"]    = Eps
         # Calculate Results
         if ui.cbCorr.isChecked():
             print("Calculating Correlation ...")
-            Corr = np.corrcoef(Betas[1:, :])
+            Corr = np.corrcoef(Betas)
             OutData["Correlation"] = Corr
         if ui.cbCov.isChecked():
             print("Calculating Covariance ...")
-            Cov = np.cov(Betas[1:, :])
+            Cov = np.cov(Betas)
             OutData["Covariance"]  = Cov
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))
@@ -610,7 +762,8 @@ class frmMARSA(Ui_frmMARSA):
                 plt.colorbar()
                 ax = plt.gca()
                 ax.set_aspect(1)
-                plt.title('Correlation of Categories\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+                plt.title('Correlation (' + ui.cbMethod.currentText() + \
+                          ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
             if ui.cbCov.isChecked():
@@ -621,10 +774,11 @@ class frmMARSA(Ui_frmMARSA):
                 plt.colorbar()
                 ax = plt.gca()
                 ax.set_aspect(1)
-                plt.title('Covariance of Categories\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+                plt.title('Covariance (' + ui.cbMethod.currentText() + \
+                          ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
         print("DONE.")
-        msgBox.setText("Representational Similarity Analysis (RSA) is done.")
+        msgBox.setText("Gradient Representational Similarity Analysis (RSA) is done.")
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
@@ -669,7 +823,8 @@ class frmMARSA(Ui_frmMARSA):
                 plt.colorbar()
                 ax = plt.gca()
                 ax.set_aspect(1)
-                plt.title('Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+                plt.title('Correlation (' + MethodTitle(str(Res['Method']['Type'][0][0][0])) + \
+                          ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
 
@@ -690,11 +845,12 @@ class frmMARSA(Ui_frmMARSA):
                 plt.colorbar()
                 ax = plt.gca()
                 ax.set_aspect(1)
-                plt.title('Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+                plt.title('Covariance (' + MethodTitle(str(Res['Method']['Type'][0][0][0])) + \
+                          ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmMARSA.show(frmMARSA)
+    frmMAGrRSA.show(frmMAGrRSA)
     sys.exit(app.exec_())

@@ -1,4 +1,4 @@
-easy fMRI project (V1.7B3000 beta)
+easy fMRI project (V1.8B1000 beta)
 ===============
 
 ### Introduction
@@ -18,6 +18,12 @@ Easy fMRI needs following software:
   -[FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki) (version=5.0.10 or above) for preprocessing steps
 
   -[AFNI & SUMA](https://afni.nimh.nih.gov/) (version=17.3.06 or above) for 3D visualization
+
+  -[CUDA](https://developer.nvidia.com/cuda-toolkit) for GPU-based algorithms
+
+  -[CUDNN](https://developer.nvidia.com/cudnn) for GPU-based algorithms
+
+  -[Tensorflow](https://www.tensorflow.org/install/) for Gradient-based Optimization and Learning 
 
 
 ### How to install easy fMRI
@@ -72,6 +78,22 @@ For Mac: click PKG file and continue installation.
 ```
 cd ~/.easyfmri/PyPackage
 sudo pip install *
+```
+
+-- Install Tensorflow package:
+
+For CPU version:
+
+```
+pip install tensorflow
+```
+
+For GPU Vesion: You must install [CUDA](https://developer.nvidia.com/cuda-toolkit) and [CUDNN](https://developer.nvidia.com/cudnn). Then, you can install [Tensorflow](https://www.tensorflow.org/install/)
+
+Note: By employing `CUDA 8.0`, `CUDNN 6.0` and `Ubuntu 16.04.x`, you can use following command to install tensorflow:
+
+```
+pip install tensorflow-gpu
 ```
 
 -- Set environment variables (see example at the end)

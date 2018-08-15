@@ -8,8 +8,9 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.metrics import mean_squared_error
 from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild
-from GUI.frmMAGRSAGUI import *
+from Base.utility import getVersion, getBuild, strRange
+from RSA.DeepRSA import DeepRSA
+from GUI.frmMAGMDeepRSAGUI import *
 
 # Plot
 import matplotlib
@@ -17,23 +18,37 @@ matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 
 
-
-class frmMAGRSA(Ui_frmMAGRSA):
-    ui = Ui_frmMAGRSA()
+class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
+    ui = Ui_frmMAGMDeepRSA()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmMAGRSA()
+        ui = Ui_frmMAGMDeepRSA()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
 
-        dialog.setWindowTitle("easy fMRI Group Representational Similarity Analysis (RSA) - V" + getVersion() + "B" + getBuild())
+        # Activation
+        ui.cbActivation.addItem('ReLU', 'relu')
+        ui.cbActivation.addItem('Sigmoid', 'sigmoid')
+        ui.cbActivation.addItem('Tanh', 'tanh')
+
+        # LASSO Norm
+        ui.cbLossNorm.addItem('Euclidean', 'euclidean')
+        ui.cbLossNorm.addItem('Supremum', np.inf)
+
+        # Device
+        ui.cbDevice.addItem("Auto", False)
+        ui.cbDevice.addItem("Just CPU", True)
+
+
+
+        dialog.setWindowTitle("easy fMRI Group Level Multi-Deep-Kernel Representational Similarity Analysis - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -89,8 +104,7 @@ class frmMAGRSA(Ui_frmMAGRSA):
                         Labels = data[ui.txtLabel.currentText()]
                         Labels = np.unique(Labels)
                         print("Number of labels: ", np.shape(Labels)[0])
-                        print("Labels:")
-                        print(Labels)
+                        print("Labels: ", Labels)
                         ui.txtClass.clear()
                         for lbl in Labels:
                             ui.txtClass.append(str(lbl))
@@ -114,6 +128,7 @@ class frmMAGRSA(Ui_frmMAGRSA):
                             HasDefualt = True
                     if HasDefualt:
                         ui.txtSubject.setCurrentText("subject")
+                        print("Number of subjects: ", np.shape(np.unique(data["subject"]))[0])
 
                     # Run
                     ui.txtRun.clear()
@@ -147,7 +162,6 @@ class frmMAGRSA(Ui_frmMAGRSA):
 
                     ui.txtInFile.setText(filename)
                     print("DONE.")
-
                 except Exception as e:
                     print(e)
                     print("Cannot load data file!")
@@ -165,6 +179,58 @@ class frmMAGRSA(Ui_frmMAGRSA):
     def btnConvert_click(self):
         msgBox = QMessageBox()
         tStart = time.time()
+        Activation  = ui.cbActivation.currentData()
+        LossNorm    = ui.cbLossNorm.currentData()
+        try:
+            Layers = strRange(ui.txtLayers.text(),Unique=False)
+            if Layers is None:
+                raise Exception('')
+
+        except:
+            msgBox.setText("Layers is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            Iter = np.int32(ui.txtIter.text())
+        except:
+            msgBox.setText("Number of iteration is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            BatchSize = np.int32(ui.txtBatch.text())
+        except:
+            msgBox.setText("Number of batch is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            ReportStep = np.int32(ui.txtReportStep.text())
+        except:
+            msgBox.setText("Number of Report Step is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
+        try:
+            LearningRate = np.float32(ui.txtRate.text())
+        except:
+            msgBox.setText("Number of Report Step is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
         if not ui.cbCov.isChecked() and not ui.cbCorr.isChecked():
             msgBox.setText("At least, you must select one metric!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -194,7 +260,7 @@ class frmMAGRSA(Ui_frmMAGRSA):
             return False
 
         OutData = dict()
-        OutData["ModelAnalysis"] = "RSA"
+        OutData["ModelAnalysis"] = "GroupMultiParametersDeepRSA"
 
         # InFile
         InFile = ui.txtInFile.text()
@@ -441,29 +507,51 @@ class frmMAGRSA(Ui_frmMAGRSA):
         Corr = None
         AMSE = list()
 
+        # RSA Method
+        OutData['Method'] = dict()
+        OutData['Method']['Layers'] = ui.txtLayers.text()
+        OutData['Method']['Activation'] = Activation
+        OutData['Method']['LossNorm'] = LossNorm
+        OutData['Method']['LearningRate'] = LearningRate
+        OutData['Method']['NumIter'] = Iter
+        OutData['Method']['BatchSize'] = BatchSize
+        OutData['Method']['ReportStep'] = ReportStep
+        OutData['Method']['Verbose'] = ui.cbVerbose.isChecked()
+
+        TotalFolds = len(UniqFold)
+
         for foldID, fold in enumerate(GUFold):
-            print("Analyzing level " + str(foldID + 1)," of ", str(len(UniqFold)) , " ...")
+            print("Analyzing level " + str(foldID + 1)," of ", str(TotalFolds) , " ...")
             Index = np.where(UnitFold == fold)
             # Whole-Data
             if FoldStr == "Whole-Data" and np.shape(Index)[0]:
                 Index = [Index[1]]
             XLi      = X[Index]
+            RegLi    = Design[Index]
             if ui.cbScale.isChecked() and ui.rbScale.isChecked():
                 XLi = preprocessing.scale(XLi)
                 print("Whole of data is scaled X%d~N(0,1)." % (foldID + 1))
-            RegLi       =  np.insert(Design[Index], 0, 1, axis=1)
-            BetaLi      = np.linalg.lstsq(RegLi, XLi)[0]
-            print("Calculating MSE for level %d ..." % (foldID + 1))
-            MSE = mean_squared_error(XLi, np.matmul(RegLi, BetaLi))
-            print("MSE%d: %f" % (foldID + 1, MSE))
+
+            print("Running Deep RSA ...")
+            rsa = DeepRSA(layers=Layers, n_iter=Iter, learning_rate=LearningRate, loss_norm=LossNorm,
+                          activation=Activation, \
+                          batch_size=BatchSize, report_step=ReportStep, verbose=ui.cbVerbose.isChecked(),\
+                          CPU=ui.cbDevice.currentData())
+            BetaLi, EpsLi, WeightsLi, BiasesLi, loss_vec, MSE = rsa.fit(data_vals=XLi, design_vals=RegLi)
+
+            OutData["LossVec" + str(foldID + 1)] = loss_vec
             OutData["MSE" + str(foldID)] = MSE
             AMSE.append(MSE)
             if ui.cbBeta.isChecked():
                 OutData["BetaL" + str(foldID + 1)] = BetaLi
+                OutData["EpsL" + str(foldID + 1)]  = EpsLi
+                OutData["WeightsL" + str(foldID + 1)] = WeightsLi
+                OutData["BiasesL" + str(foldID + 1)]  = BiasesLi
+
             # Calculate Results
             if ui.cbCorr.isChecked():
-                print("Calculating Correlation for level %d ..." % (foldID + 1))
-                CorrLi = np.corrcoef(BetaLi[1:, :])
+                print("Calculating Correlation for level %d of %d ..." % (foldID + 1, TotalFolds))
+                CorrLi = np.corrcoef(BetaLi)
                 OutData["Corr" + str(foldID + 1)] = CorrLi
                 if Corr is None:
                     Corr = CorrLi.copy()
@@ -475,8 +563,8 @@ class frmMAGRSA(Ui_frmMAGRSA):
                     else:
                         Corr = np.maximum(Corr, CorrLi)
             if ui.cbCov.isChecked():
-                print("Calculating Covariance for level %d ..." % (foldID + 1))
-                CovLi = np.cov(BetaLi[1:, :])
+                print("Calculating Covariance for level %d  of %d ..." % (foldID + 1, TotalFolds))
+                CovLi = np.cov(BetaLi)
                 OutData["Cov" + str(foldID + 1)]  = CovLi
                 if Cov is None:
                     Cov = CovLi.copy()
@@ -488,15 +576,15 @@ class frmMAGRSA(Ui_frmMAGRSA):
                     else:
                         Cov = np.maximum(Cov, CovLi)
 
-        CoEff = len(UniqFold) - 1 if len(UniqFold) > 2 else 1
         if ui.cbCov.isChecked():
             if ui.rbAvg.isChecked():
-                Cov = Cov / CoEff
+                Cov = Cov / len(UniqFold)
             OutData["Covariance"] = Cov
         if ui.cbCorr.isChecked():
             if ui.rbAvg.isChecked():
-                Corr = Corr / CoEff
+                Corr = Corr / len(UniqFold)
             OutData["Correlation"] = Corr
+
 
         OutData["MSE"] = np.mean(AMSE)
         print("Average MSE: %f" % (OutData["MSE"]))
@@ -516,7 +604,7 @@ class frmMAGRSA(Ui_frmMAGRSA):
                 plt.colorbar()
                 ax = plt.gca()
                 ax.set_aspect(1)
-                plt.title('Correlation of Categories\nLevel: ' + FoldStr)
+                plt.title('Group MP DeepRSA: Correlation\nLevel: ' + FoldStr)
                 plt.show()
 
             if ui.cbCov.isChecked():
@@ -527,10 +615,10 @@ class frmMAGRSA(Ui_frmMAGRSA):
                 plt.colorbar()
                 ax = plt.gca()
                 ax.set_aspect(1)
-                plt.title('Covariance of Categories\nLevel: ' + FoldStr)
+                plt.title('Group MP DeepRSA: Covariance\nLevel: ' + FoldStr)
                 plt.show()
         print("DONE.")
-        msgBox.setText("Group Representational Similarity Analysis (RSA) is done.")
+        msgBox.setText("Group Level Multi-Deep-Kernel Representational Similarity Analysis is done.")
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
@@ -569,7 +657,7 @@ class frmMAGRSA(Ui_frmMAGRSA):
                 plt.colorbar()
                 ax = plt.gca()
                 ax.set_aspect(1)
-                plt.title('Correlation of Categories\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+                plt.title('Group MP DeepRSA: Correlation\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
                 plt.show()
 
 
@@ -590,11 +678,11 @@ class frmMAGRSA(Ui_frmMAGRSA):
                 plt.colorbar()
                 ax = plt.gca()
                 ax.set_aspect(1)
-                plt.title('Covariance of Categories\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+                plt.title('Group MP DeepRSA: Covariance\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
                 plt.show()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmMAGRSA.show(frmMAGRSA)
+    frmMAGMDeepRSA.show(frmMAGMDeepRSA)
     sys.exit(app.exec_())
