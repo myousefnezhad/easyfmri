@@ -7,13 +7,16 @@ class frmSelectSession(QDialog):
         # inputs
         self.SubFrom = setting.SubFrom
         self.SubTo   = setting.SubTo
+
+        self.ConFrom = setting.ConFrom
+        self.ConTo   = setting.ConTo
+
         self.Run     = setting.Run
         # outputs
         self.SubID   = None
         self.RunID   = None
+        self.ConID   = None
         self.PASS    = False
-
-
 
         layout = QFormLayout()
 
@@ -37,6 +40,12 @@ class frmSelectSession(QDialog):
         self.txtTask.setReadOnly(True)
         layout.addRow(self.lblTask,self.txtTask)
 
+        self.btnCon = QPushButton("Counter")
+        self.btnCon.clicked.connect(self.getCon_onclick)
+        self.txtCon = QLineEdit()
+        self.txtCon.setReadOnly(True)
+        layout.addRow(self.btnCon, self.txtCon)
+
         self.btnOK = QPushButton("OK")
         self.btnOK.clicked.connect(self.btnOK_onclick)
 
@@ -58,6 +67,12 @@ class frmSelectSession(QDialog):
             self.txtRun.setText("")
             self.SubID = num
 
+    def getCon_onclick(self):
+        num, ok = QInputDialog.getInt(self, "Select Counter", "Enter Subject Number",value=self.ConFrom,min=self.ConFrom,max=self.ConTo)
+
+        if ok:
+            self.txtCon.setText(str(num))
+            self.ConID = num
 
     def getRun_onclick(self):
         import numpy as np
@@ -90,6 +105,12 @@ class frmSelectSession(QDialog):
         elif self.txtRun.text() == "":
             msgBox = QMessageBox()
             msgBox.setText("Please select a run first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+        elif self.txtCon.text() == "":
+            msgBox = QMessageBox()
+            msgBox.setText("Please select a counter first!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()

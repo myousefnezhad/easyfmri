@@ -40,16 +40,19 @@ class EventGenerator:
             Events = []
             # COLECT ALL EVENTS AND CALCULATE THE LIST OF CONDITION
             for si, s in enumerate(range(setting.SubFrom, setting.SubTo + 1)):
+              for cnt in range(setting.ConFrom, setting.ConTo + 1):
                 print("Analyzing Subject %d ..." % (s))
                 #SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
                 for r in range(1,Run[si] + 1):
                     # Event File Check
                     EventFilename = setParameters(setting.Onset,fixstr(s, setting.SubLen, setting.SubPer)\
-                                                  ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task)
+                                                  ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task, \
+                                                  fixstr(cnt, setting.ConLen, setting.ConPer))
                     #EventFilename = "sub-" +  + "_task-" + setting.Task + "_run-" + \
                                 #+ "_events." + setting.Onset
                     EventFolder = setting.mainDIR + setParameters(setting.EventFolder,fixstr(s, setting.SubLen, setting.SubPer)\
-                                                  ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task)
+                                                  ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task,
+                                                                  fixstr(cnt, setting.ConLen, setting.ConPer))
                     #EventFolder = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
                                #fixstr(r, RunLen, setting.RunPer) + "_events/"
                     EventAddr   = setting.mainDIR + EventFilename

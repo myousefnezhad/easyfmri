@@ -26,6 +26,11 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
+
+        ui.lwFiles.setColumnCount(2)
+        ui.lwFiles.setHeaderLabels(['Offset','File'])
+
+
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -34,10 +39,11 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
     def set_events(self):
         global ui
         ui.btnClose.clicked.connect(self.btnClose_click)
-        ui.btnFFile.clicked.connect(self.btnFFile_click)
-        ui.btnSFile.clicked.connect(self.btnSFile_click)
         ui.btnOFile.clicked.connect(self.btnOFile_click)
         ui.btnConcatenate.clicked.connect(self.btnConcatenate_click)
+        ui.btnRemove.clicked.connect(self.btnRemove_click)
+        ui.btnAdd.clicked.connect(self.btnAdd_click)
+
 
 
 
@@ -46,33 +52,28 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
         dialog.close()
         pass
 
-    def btnFFile_click(self):
+    def btnAdd_click(self):
         global ui
-        current = ui.txtFFile.text()
-        if not len(current):
-            current = os.getcwd()
+        current = os.getcwd()
         flags = QFileDialog.DontUseNativeDialog
         dialog = QFileDialog()
-        ffile = dialog.getOpenFileName(None,"Open First File",current,"","",flags)[0]
-        if len(ffile):
-            if os.path.isfile(ffile) == False:
-                ui.txtFFile.setText("")
-            else:
-                ui.txtFFile.setText(ffile)
+        ifile = dialog.getOpenFileName(None,"Open First File",current,"","",flags)[0]
+        if len(ifile):
+            if os.path.isfile(ifile):
+                item = QtWidgets.QTreeWidgetItem()
+                item.setText(0,str(ui.txtOffset.value()))
+                item.setText(1,ifile)
+                ui.lwFiles.addTopLevelItem(item)
 
-    def btnSFile_click(self):
-        global ui
-        current = ui.txtSFile.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        sfile = dialog.getOpenFileName(None,"Open Second File",current,"","",flags)[0]
-        if len(sfile):
-            if os.path.isfile(sfile) == False:
-                ui.txtSFile.setText("")
-            else:
-                ui.txtSFile.setText(sfile)
+    def btnRemove_click(self):
+        if not len(ui.lwFiles.selectedItems()):
+            msgBox = QMessageBox()
+            msgBox.setText("Please select a item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        ui.lwFiles.takeTopLevelItem(ui.lwFiles.indexOfTopLevelItem(ui.lwFiles.selectedItems()[0]))
 
     def btnOFile_click(self):
         global ui
@@ -87,59 +88,57 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
 
 
     def btnConcatenate_click(self):
-        global ui
-        ffile = ui.txtFFile.text()
-        if not len(ffile):
-            print("Please enter First File!")
-            return
-        if not os.path.isfile(ffile):
-            print("First File not found!")
-            return
-
-        sfile = ui.txtSFile.text()
-        if not len(sfile):
-            print("Please enter Second File!")
+        if ui.lwFiles.topLevelItemCount() < 1:
+            msgBox = QMessageBox()
+            msgBox.setText("There is no input file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
             return
 
-        if not os.path.isfile(sfile):
-            print("First Second not found!")
+        if ui.lwFiles.topLevelItemCount() < 2:
+            msgBox = QMessageBox()
+            msgBox.setText("You must select at least two files!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
             return
+
+        files = []
+        offsets = []
+        for index in range(ui.lwFiles.topLevelItemCount()):
+            item = ui.lwFiles.topLevelItem(index)
+            offsets.append(int(item.text(0))-1)
+            file = item.text(1)
+            if not os.path.isfile(file):
+                print(file + " not found!")
+                return
+            files.append(file)
 
         ofile = ui.txtOFile.text()
         if not len(ofile):
             print("Please enter Output File!")
+            msgBox = QMessageBox()
+            msgBox.setText("Please enter Output File!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
             return
 
-        if ofile == ffile:
-            print("Output file cannot be equal with the First File")
-            return
 
-        if ofile == sfile:
-            print("Output file cannot be equal with the Second File")
-            return
-
-        try:
-            offset1 = np.int32(ui.txtfDim.value()) - 1
-        except:
-            return
-
-        try:
-            offset2 = np.int32(ui.txtsDim.value()) - 1
-        except:
-            return
-
-        offset = [offset1, offset2]
 
         print("Generating Output File ...")
 
-        files = [ffile, sfile]
         with open(ofile,"w") as outfile:
+
             if len(ui.txtHDR.text()):
-                outfile.write(ui.txtHDR.text())
-            for fnameinx, fname in enumerate(files):
-                with open(fname) as infile:
+                header = str(ui.txtHDR.text()).replace("\n","")
+                outfile.write(header+"\n")
+            for offsetinx, filename in enumerate(files):
+                print("Loading File: " + filename)
+                with open(filename) as infile:
                     for lineinx, line in enumerate(infile):
-                        if lineinx > offset[fnameinx]:
+                        if lineinx >= offsets[offsetinx]:
                             outfile.write(line)
 
         print("Output is generated!")

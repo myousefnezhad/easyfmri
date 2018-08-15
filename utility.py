@@ -1,4 +1,4 @@
-
+from PyQt5.QtWidgets import QMessageBox, QSizePolicy, QTextEdit
 
 def fixstr(Value, Length, Perfix="0"):
     strVal = str(Value)
@@ -46,3 +46,31 @@ def setParameters(STR, Sub, Run, Task, Counter=None):
         outSTR = outSTR.replace("$COUNT$", Counter)
     return outSTR
 
+def getVersion():
+    return "1.0.4"
+
+
+
+
+class MyMessageBox(QMessageBox):
+    def __init__(self):
+        QMessageBox.__init__(self)
+        self.setSizeGripEnabled(True)
+
+    def event(self, e):
+        result = QMessageBox.event(self, e)
+        self.setMinimumHeight(0)
+        self.setMaximumHeight(16777215)
+        self.setMinimumWidth(550)
+        self.setMaximumWidth(16777215)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        textEdit = self.findChild(QTextEdit)
+        if textEdit != None :
+            textEdit.setMinimumHeight(0)
+            textEdit.setMaximumHeight(16777215)
+            textEdit.setMinimumWidth(0)
+            textEdit.setMaximumWidth(16777215)
+            textEdit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        return result

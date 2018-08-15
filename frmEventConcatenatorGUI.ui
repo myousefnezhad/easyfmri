@@ -6,140 +6,50 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>813</width>
-    <height>232</height>
+    <width>623</width>
+    <height>503</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Event Concatenator</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QPushButton" name="btnAdd">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>81</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>First File:</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>60</y>
-     <width>101</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Second File:</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>630</x>
-     <y>16</y>
-     <width>141</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Offset:</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnFFile">
-   <property name="geometry">
-    <rect>
-     <x>560</x>
-     <y>10</y>
-     <width>51</width>
+     <x>480</x>
+     <y>84</y>
+     <width>131</width>
      <height>32</height>
     </rect>
    </property>
    <property name="text">
-    <string>...</string>
+    <string>Add</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="txtFFile">
+  <widget class="QSpinBox" name="txtOffset">
    <property name="geometry">
     <rect>
-     <x>119</x>
-     <y>15</y>
-     <width>431</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;mainDIR: main folder that is included all dataset files, i.e. support BIDS format: &lt;/span&gt;&lt;a href=&quot;https://www.nature.com/articles/sdata201644&quot;&gt;&lt;span style=&quot; font-size:18pt; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.nature.com/articles/sdata201644&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="statusTip">
-    <string/>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnSFile">
-   <property name="geometry">
-    <rect>
-     <x>561</x>
-     <y>55</y>
-     <width>51</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>...</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="txtSFile">
-   <property name="geometry">
-    <rect>
-     <x>120</x>
-     <y>60</y>
-     <width>431</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;mainDIR: main folder that is included all dataset files, i.e. support BIDS format: &lt;/span&gt;&lt;a href=&quot;https://www.nature.com/articles/sdata201644&quot;&gt;&lt;span style=&quot; font-size:18pt; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.nature.com/articles/sdata201644&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="statusTip">
-    <string/>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="txtfDim">
-   <property name="geometry">
-    <rect>
-     <x>690</x>
-     <y>10</y>
+     <x>140</x>
+     <y>84</y>
      <width>111</width>
      <height>29</height>
     </rect>
    </property>
    <property name="minimum">
-    <number>0</number>
+    <number>1</number>
    </property>
    <property name="maximum">
-    <number>1000000000</number>
+    <number>10000000</number>
    </property>
    <property name="value">
-    <number>1</number>
+    <number>2</number>
    </property>
   </widget>
   <widget class="QPushButton" name="btnClose">
    <property name="geometry">
     <rect>
-     <x>520</x>
-     <y>190</y>
+     <x>20</x>
+     <y>460</y>
      <width>131</width>
      <height>29</height>
     </rect>
@@ -151,8 +61,8 @@
   <widget class="QPushButton" name="btnConcatenate">
    <property name="geometry">
     <rect>
-     <x>670</x>
-     <y>190</y>
+     <x>480</x>
+     <y>460</y>
      <width>131</width>
      <height>29</height>
     </rect>
@@ -165,7 +75,7 @@
    <property name="geometry">
     <rect>
      <x>561</x>
-     <y>101</y>
+     <y>10</y>
      <width>51</width>
      <height>32</height>
     </rect>
@@ -177,9 +87,9 @@
   <widget class="QLineEdit" name="txtOFile">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>106</y>
-     <width>431</width>
+     <x>90</x>
+     <y>15</y>
+     <width>461</width>
      <height>21</height>
     </rect>
    </property>
@@ -197,7 +107,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>106</y>
+     <y>15</y>
      <width>101</width>
      <height>17</height>
     </rect>
@@ -206,57 +116,53 @@
     <string>Output:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_5">
+  <widget class="QPushButton" name="btnRemove">
    <property name="geometry">
     <rect>
-     <x>630</x>
-     <y>66</y>
+     <x>340</x>
+     <y>84</y>
+     <width>131</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Remove</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>90</y>
      <width>141</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>Offset:</string>
+    <string>Offset from Line:</string>
    </property>
   </widget>
-  <widget class="QSpinBox" name="txtsDim">
+  <widget class="QTreeWidget" name="lwFiles">
    <property name="geometry">
     <rect>
-     <x>690</x>
-     <y>60</y>
-     <width>111</width>
-     <height>29</height>
+     <x>10</x>
+     <y>130</y>
+     <width>601</width>
+     <height>321</height>
     </rect>
    </property>
-   <property name="minimum">
-    <number>0</number>
-   </property>
-   <property name="maximum">
-    <number>1000000000</number>
-   </property>
-   <property name="value">
-    <number>1</number>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_6">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>150</y>
-     <width>101</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Header:</string>
-   </property>
+   <column>
+    <property name="text">
+     <string notr="true">1</string>
+    </property>
+   </column>
   </widget>
   <widget class="QLineEdit" name="txtHDR">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>150</y>
-     <width>681</width>
+     <x>90</x>
+     <y>50</y>
+     <width>511</width>
      <height>21</height>
     </rect>
    </property>
@@ -270,7 +176,29 @@
     <string/>
    </property>
   </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>50</y>
+     <width>101</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Header:</string>
+   </property>
+  </widget>
  </widget>
+ <tabstops>
+  <tabstop>txtOFile</tabstop>
+  <tabstop>btnOFile</tabstop>
+  <tabstop>txtOffset</tabstop>
+  <tabstop>btnRemove</tabstop>
+  <tabstop>btnAdd</tabstop>
+  <tabstop>btnConcatenate</tabstop>
+  <tabstop>btnClose</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

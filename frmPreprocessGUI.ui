@@ -14,7 +14,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>easy fMRI: Preprosessing (1.0)</string>
+   <string>easy fMRI: Preprosessing - </string>
   </property>
   <widget class="QTabWidget" name="tabWidget">
    <property name="enabled">
@@ -204,22 +204,6 @@
        <string>Task Name:</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="txtTask">
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>70</y>
-        <width>421</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;Task name based on the BOLD (fmri) files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
      <widget class="QPushButton" name="btnDIR">
       <property name="geometry">
        <rect>
@@ -245,14 +229,14 @@
       <property name="toolTip">
        <string/>
       </property>
+      <property name="toolTipDuration">
+       <number>-1</number>
+      </property>
       <property name="statusTip">
        <string/>
       </property>
       <property name="text">
        <string>Main Directory:</string>
-      </property>
-      <property name="toolTipDuration" stdset="0">
-       <number>-1</number>
       </property>
       <property name="setToolTip" stdset="0">
        <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
@@ -288,6 +272,19 @@
       </property>
       <property name="text">
        <string>Read</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="txtTask">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>67</y>
+        <width>421</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="editable">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -447,7 +444,7 @@
         <enum>QFrame::Plain</enum>
        </property>
        <property name="text">
-        <string>$SUB$, $TASK$, and $RUN$ will be replaced by the preprocessing parameters.
+        <string>$SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
 It's case sensitive.</string>
        </property>
       </widget>
@@ -516,7 +513,7 @@ It's case sensitive.</string>
         <enum>QFrame::Plain</enum>
        </property>
        <property name="text">
-        <string>$SUB$, $TASK$, and $RUN$ will be replaced by the preprocessing parameters.
+        <string>$SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
 It's case sensitive.</string>
        </property>
       </widget>
@@ -598,7 +595,7 @@ It's case sensitive.</string>
         <enum>QFrame::Plain</enum>
        </property>
        <property name="text">
-        <string>$SUB$, $TASK$, and $RUN$ will be replaced by the preprocessing parameters.
+        <string>$SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
 It's case sensitive.</string>
        </property>
       </widget>
@@ -709,7 +706,7 @@ It's case sensitive.</string>
         <enum>QFrame::Plain</enum>
        </property>
        <property name="text">
-        <string>$SUB$, $TASK$, and $RUN$ will be replaced by the preprocessing parameters.
+        <string>$SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
 It's case sensitive.</string>
        </property>
       </widget>
@@ -763,6 +760,127 @@ It's case sensitive.</string>
        </property>
        <property name="text">
         <string>Analysis Script:</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_11">
+      <attribute name="title">
+       <string>Counter</string>
+      </attribute>
+      <widget class="QLabel" name="label_17">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>60</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>From:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_41">
+       <property name="geometry">
+        <rect>
+         <x>460</x>
+         <y>20</y>
+         <width>60</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Perfix:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_42">
+       <property name="geometry">
+        <rect>
+         <x>290</x>
+         <y>20</y>
+         <width>60</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Length:</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="txtConTo">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>20</y>
+         <width>80</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtConPer">
+       <property name="geometry">
+        <rect>
+         <x>510</x>
+         <y>20</y>
+         <width>80</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="txtConFrom">
+       <property name="geometry">
+        <rect>
+         <x>56</x>
+         <y>20</y>
+         <width>80</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_43">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>20</y>
+         <width>60</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>To:</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="txtConLen">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>20</y>
+         <width>80</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>2</number>
        </property>
       </widget>
      </widget>
@@ -1374,26 +1492,7 @@ It's case sensitive.</string>
       </rect>
      </property>
      <property name="text">
-      <string>MNI File Address:</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="txtMNI">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>30</y>
-       <width>510</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string/>
-     </property>
-     <property name="statusTip">
-      <string/>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
+      <string>MNI Space:</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_19">
@@ -1421,11 +1520,11 @@ It's case sensitive.</string>
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
     <widget class="QLineEdit" name="txtFeat">
@@ -1440,14 +1539,14 @@ It's case sensitive.</string>
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/feat</string>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_24">
@@ -1488,14 +1587,14 @@ It's case sensitive.</string>
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/Feat_gui</string>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
     <widget class="QLineEdit" name="txtbetcmd">
@@ -1510,14 +1609,14 @@ It's case sensitive.</string>
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/bet</string>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_40">
@@ -1531,6 +1630,16 @@ It's case sensitive.</string>
      </property>
      <property name="text">
       <string>bet cmd:</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="txtMNI">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>25</y>
+       <width>510</width>
+       <height>26</height>
+      </rect>
      </property>
     </widget>
    </widget>
@@ -1716,8 +1825,8 @@ It's case sensitive.</string>
   <tabstop>txtRunLen</tabstop>
   <tabstop>txtRunPer</tabstop>
   <tabstop>txtDIR</tabstop>
-  <tabstop>btnDIR</tabstop>
   <tabstop>txtTask</tabstop>
+  <tabstop>btnDIR</tabstop>
   <tabstop>btnReadTask</tabstop>
   <tabstop>tabWidget_2</tabstop>
   <tabstop>txtBOLD</tabstop>
@@ -1746,7 +1855,6 @@ It's case sensitive.</string>
   <tabstop>btnLoadHistory</tabstop>
   <tabstop>btnRemoveHistory</tabstop>
   <tabstop>btnClearAllHistory</tabstop>
-  <tabstop>txtMNI</tabstop>
   <tabstop>txtFSLDIR</tabstop>
   <tabstop>txtFeat</tabstop>
   <tabstop>txtFeat_gui</tabstop>
@@ -1763,6 +1871,19 @@ It's case sensitive.</string>
   <tabstop>txtEvents</tabstop>
   <tabstop>txtAnalysis</tabstop>
   <tabstop>txtScript</tabstop>
+  <tabstop>txtConTo</tabstop>
+  <tabstop>txtConPer</tabstop>
+  <tabstop>txtConFrom</tabstop>
+  <tabstop>txtConLen</tabstop>
+  <tabstop>txtDENL</tabstop>
+  <tabstop>txtDETS</tabstop>
+  <tabstop>txtDEZT</tabstop>
+  <tabstop>txtCTZT</tabstop>
+  <tabstop>txtCTPT</tabstop>
+  <tabstop>txtbetcmd</tabstop>
+  <tabstop>txtMNI</tabstop>
+  <tabstop>btnfMRIConcatenator</tabstop>
+  <tabstop>btnEventConcatenator</tabstop>
  </tabstops>
  <resources/>
  <connections/>

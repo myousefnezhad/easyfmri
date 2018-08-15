@@ -34,14 +34,18 @@ class BrainExtractor():
 
 
             for s in range(setting.SubFrom, setting.SubTo + 1):
+              for cnt in range(setting.ConFrom, setting.ConTo + 1):
                 print("Analyzing Subject %d ..." % (s))
                 #SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
                 # checking anat file
                 #InFilename  = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_T1w." + setting.BOLD
-                InFilename = setParameters(setting.AnatDIR,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task)
+                InFilename = setParameters(setting.AnatDIR,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
+                                           fixstr(cnt, setting.ConLen, setting.ConPer))
                 #OutFilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_T1w_BET." + setting.BOLD
-                OutFilename = setParameters(setting.BET,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task)
-                PDFfilename = setParameters(setting.BETPDF,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task)
+                OutFilename = setParameters(setting.BET,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
+                                            fixstr(cnt, setting.ConLen, setting.ConPer))
+                PDFfilename = setParameters(setting.BETPDF,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
+                                            fixstr(cnt, setting.ConLen, setting.ConPer))
 
 
                 InAddr      = setting.mainDIR + InFilename
@@ -80,7 +84,7 @@ class BrainExtractor():
                     imgOut = data[Ox, :, :]
                     # Plot In and Out Images in a PDF file
                     fig, (ax1, ax2) = plt.subplots(1, 2, sharex='col', sharey='row')
-                    ax1.set_title("Brain extractor result for Subject: " + str(s))
+                    ax1.set_title("Brain extractor for Subject: " + str(s) + ", Counter: " + str(cnt))
                     ax1.imshow(np.flipud(np.transpose(imgIn)), interpolation='nearest',  aspect='auto', cmap=plt.cm.gray)
                     ax2.imshow(np.flipud(np.transpose(imgOut)), interpolation='nearest', aspect='auto', cmap=plt.cm.gray)
                     plt.savefig(PDFAddr)

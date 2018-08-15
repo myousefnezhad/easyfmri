@@ -2,12 +2,18 @@
 
 class Setting:
     def __init__(self):
+        self.Version        = None
         self.mainDIR        = None
+        self.MNISpace       = None
         self.Task           = None
         self.SubFrom        = None
         self.SubTo          = None
         self.SubLen         = None
         self.SubPer         = None
+        self.ConFrom        = None
+        self.ConTo          = None
+        self.ConLen         = None
+        self.ConPer         = None
         self.RunNum         = None
         self.RunLen         = None
         self.RunPer         = None
@@ -43,7 +49,7 @@ class Setting:
         import numpy as np
         import scipy.io as io
         from PyQt5.QtWidgets import QMessageBox
-        from utility import fixstr,getTimeSliceID,setParameters
+        from utility import fixstr,getTimeSliceID,setParameters,getVersion
         import os
 
         self.empty = True
@@ -58,7 +64,7 @@ class Setting:
         #    msgBox.exec_()
         #    return False
 
-        if (os.path.isfile(ui.txtMNI.text()) == False):
+        if (os.path.isfile(ui.txtMNI.currentText()) == False):
             msgBox = QMessageBox()
             msgBox.setText("Cannot find MNI file!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -83,7 +89,7 @@ class Setting:
             return False
 
         mainDIR = ui.txtDIR.text()
-        Task = ui.txtTask.text()
+        Task = ui.txtTask.currentText()
         # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
@@ -139,6 +145,42 @@ class Setting:
             msgBox.exec_()
             return False
         print("Length of subjects is valid")
+
+        try:
+            ConFrom = np.int32(ui.txtConFrom.value())
+            1 / ConFrom
+        except:
+            msgBox.setText("Counter From must be an integer number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            ConTo = np.int32(ui.txtConTo.value())
+            1 / ConTo
+        except:
+            msgBox.setText("Counter To must be an integer number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if ConTo < ConFrom:
+            msgBox.setText("Conunter To is smaller then Subject From!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Counter is valid")
+        try:
+            ConLen = np.int32(ui.txtConLen.text())
+            1 / ConLen
+        except:
+            msgBox.setText("Length of counter must be an integer number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Length of counter is valid")
 
         try:
             RunLen = np.int32(ui.txtRunLen.value())
@@ -376,6 +418,7 @@ class Setting:
             return False
 
 
+
         if ui.txtCondPre.text() == "":
             msgBox.setText("The prefix of condition files is empty!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -388,12 +431,13 @@ class Setting:
             print("Validating files ...")
 
             for si, s in enumerate(range(SubFrom, SubTo + 1)):
+              for c in range(ConFrom, ConTo + 1):
                 print("Analyzing Subject %d ..." % (s))
 
                 #SubDIR = mainDIR + "/" + "sub-" + fixstr(s, SubLen, ui.txtSubPer.text())
 
                 # checking anat file
-                filename =  setParameters(ui.txtAnat.text(),fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.text())
+                filename =  setParameters(ui.txtAnat.text(),fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
                 addr = mainDIR + filename
                 if os.path.isfile(addr):
                     print(addr, " - OKAY.")
@@ -402,7 +446,7 @@ class Setting:
                     return False
                 if checkGeneratedFiles and ui.cbRegAnat.isChecked():
                     # BET Files
-                    filename = setParameters(ui.txtBET.text(), fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.text())
+                    filename = setParameters(ui.txtBET.text(), fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
                     addr = mainDIR + filename
                     if os.path.isfile(addr):
                         print(addr, " - OKAY.")
@@ -414,7 +458,7 @@ class Setting:
 
                     # BOLD File Check
                     filename = setParameters(ui.txtBOLD.text(), fixstr(s, SubLen, ui.txtSubPer.text()), \
-                                             fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.text())
+                                             fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
                     addr = mainDIR + filename
                     if os.path.isfile(addr):
                         print(addr, " - OKAY.")
@@ -424,7 +468,7 @@ class Setting:
 
                     # Event File Check
                     filename = setParameters(ui.txtOnset.text(), fixstr(s, SubLen, ui.txtSubPer.text()), \
-                                             fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.text())
+                                             fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
                     addr = mainDIR + filename
                     if os.path.isfile(addr):
                         print(addr, " - OKAY.")
@@ -434,7 +478,7 @@ class Setting:
 
                     if checkGeneratedFiles:
                         EventFolder = setParameters(ui.txtEventDIR.text(), fixstr(s, SubLen, ui.txtSubPer.text()), \
-                                             fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.text())
+                                             fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
                         addr = mainDIR + EventFolder
                         if os.path.isdir(addr):
                             print(addr, " - OKAY.")
@@ -453,12 +497,18 @@ class Setting:
                             print(addr + ui.txtCondPre.text() + ".mat - file not find!")
                             return False
 
+        self.Version = getVersion()
         self.mainDIR = mainDIR
-
+        self.MNISpace = ui.txtMNI.currentText()
         self.SubFrom = SubFrom
         self.SubTo   = SubTo
         self.SubLen = SubLen
         self.SubPer = ui.txtSubPer.text()
+
+        self.ConFrom = ConFrom
+        self.ConTo   = ConTo
+        self.ConLen  = ConLen
+        self.ConPer  = ui.txtConPer.text()
 
         self.Task = str(Task)
 
@@ -510,12 +560,20 @@ class Setting:
         import configparser as cp
         from utility import Str2Bool
 
+        self.Version        = None
         self.mainDIR        = None
+        self.MNISpace       = None
         self.Task           = None
         self.SubFrom        = None
         self.SubTo          = None
         self.SubLen         = None
         self.SubPer         = None
+
+        self.ConFrom        = None
+        self.ConTo          = None
+        self.ConLen         = None
+        self.ConPer         = None
+
         self.RunNum         = None
         self.RunLen         = None
         self.RunPer         = None
@@ -551,13 +609,20 @@ class Setting:
             try:
                 config = cp.ConfigParser()
                 config.read(filename)
+                self.Version    = config['DEFAULT']['ver']
                 self.mainDIR    = config['DEFAULT']['maindir']
+                self.MNISpace   = config['DEFAULT']['mni_space']
                 self.Task       = config['DEFAULT']['task']
 
                 self.SubFrom    = np.int32(config['DEFAULT']['sub_from'])
                 self.SubTo      = np.int32(config['DEFAULT']['sub_to'])
                 self.SubLen     = np.int32(config['DEFAULT']['sub_len'])
                 self.SubPer     = config['DEFAULT']['sub_perfix']
+
+                self.ConFrom    = np.int32(config['DEFAULT']['con_from'])
+                self.ConTo      = np.int32(config['DEFAULT']['con_to'])
+                self.ConLen     = np.int32(config['DEFAULT']['con_len'])
+                self.ConPer     = config['DEFAULT']['con_perfix']
 
                 self.Run        = config['DEFAULT']['run']
                 self.RunLen     = np.int32(config['DEFAULT']['run_len'])
@@ -611,14 +676,20 @@ class Setting:
     def checkGUI(self,ui, SettingFileName,checkGeneratedFiles=False):
         import numpy as np
         import configparser as cp
-        from utility import Str2Bool
+        from utility import Str2Bool,getVersion
         # init Empty
+        self.Version        = getVersion()
         self.mainDIR        = None
+        self.MNISpace       = None
         self.Task           = None
         self.SubFrom        = None
         self.SubTo          = None
         self.SubLen         = None
         self.SubPer         = None
+        self.ConFrom        = None
+        self.ConTo          = None
+        self.ConLen         = None
+        self.ConPer         = None
         self.RunNum         = None
         self.RunLen         = None
         self.RunPer         = None
@@ -662,6 +733,8 @@ class Setting:
                     config.read(SettingFileName)
                     if self.mainDIR != config['DEFAULT']['maindir']:
                         return True
+                    if self.MNISpace != config['DEFAULT']['mni_space']:
+                        return True
                     elif self.Task != config['DEFAULT']['task']:
                         return True
                     elif np.double(self.SubFrom) != np.double(config['DEFAULT']['sub_from']):
@@ -671,6 +744,14 @@ class Setting:
                     elif np.double(self.SubLen) != np.double(config['DEFAULT']['sub_len']):
                         return True
                     elif self.SubPer != config['DEFAULT']['sub_perfix']:
+                        return True
+                    elif np.double(self.ConFrom) != np.double(config['DEFAULT']['con_from']):
+                        return True
+                    elif np.double(self.ConTo) != np.double(config['DEFAULT']['con_to']):
+                        return True
+                    elif np.double(self.ConLen) != np.double(config['DEFAULT']['con_len']):
+                        return True
+                    elif self.ConPer != config['DEFAULT']['con_perfix']:
                         return True
                     elif self.Run != config['DEFAULT']['run']:
                         return True

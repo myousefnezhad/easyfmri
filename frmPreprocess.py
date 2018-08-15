@@ -87,6 +87,7 @@ class frmPreprocess(Ui_frmPreprocess):
 # This function is run when the main form start
 # and initiate the default parameters.
     def show(self,parentin=None):
+        from utility import getVersion
         global dialog, ui, parent
         ui = Ui_frmPreprocess()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
@@ -104,11 +105,20 @@ class frmPreprocess(Ui_frmPreprocess):
         ui.cbSliceTime.addItem("Regular up (1, 2, ..., n)")
         ui.cbSliceTime.addItem("Regular down (n, n-1, ..., 1)")
         ui.cbSliceTime.addItem("Interleaved (2, 4, 6, ...), (1, 3, 5, ...)")
-        if (os.path.isfile(os.path.dirname(os.path.abspath(__file__)) + "/space/MNI152_T1_2mm_brain.nii.gz")):
-                ui.txtMNI.setText(os.path.dirname(os.path.abspath(__file__)) + "/space/MNI152_T1_2mm_brain.nii.gz")
-        else:
+
+        ProgramPath = os.path.dirname(os.path.abspath(__file__))
+
+        try:
+            spaceINI = str.rsplit(open(ProgramPath + "/space/space.ini").read(),"\n")
+            for space in spaceINI:
+                if len(space):
+                    ui.txtMNI.addItem(ProgramPath + "/space/" + space)
+
+            ui.txtMNI.setCurrentIndex(1)
+
+        except:
             msgBox = QMessageBox()
-            msgBox.setText("Cannot find MNI file!")
+            msgBox.setText("Cannot find MNI files!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
@@ -206,12 +216,9 @@ class frmPreprocess(Ui_frmPreprocess):
             font.setWeight(75)
             ui.txtEvents.setFont(font)
             ui.txtEvents.setPlainText(EventCode(),"","")
-
             pass
 
-
-
-
+        dialog.setWindowTitle("easy fMRI preprocessing - " + getVersion())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -262,6 +269,7 @@ class frmPreprocess(Ui_frmPreprocess):
     def btnDIR_click(self):
         from utility import fixstr,setParameters
         import numpy as np
+        import glob
         global ui
         current = ui.txtDIR.text()
         if not len(current):
@@ -274,18 +282,31 @@ class frmPreprocess(Ui_frmPreprocess):
                 ui.txtDIR.setText("")
             else:
                 ui.txtDIR.setText(directory)
+
+                ui.txtTask.clear()
+                TaskFiles = glob.glob(directory + "/task-*.json")
+
+                for file in TaskFiles:
+                    task = str(file).replace(directory,"")
+                    task = str(task).replace("/","")
+                    task = str(task).replace("-","")
+                    task = str(task).replace("_","")
+                    task = str(task).replace(".","")
+                    task = str(task).replace("task","")
+                    task = str(task).replace("json","")
+                    task = str(task).replace("bold","")
+                    ui.txtTask.addItem(task)
                 #BOLDDIR = os.path.dirname(directory + ui.txtBOLD.text())
                 #BOLDDIR = setParameters(BOLDDIR,fixstr(ui.txtSubFrom.value(), np.int32(ui.txtSubLen.text()), ui.txtSubPer.text()),"","")
                 #FileList = glob.glob(BOLDDIR + "/*.*")
                 #print(FileList)
-
 
 # This function read the basic features from datasets, i.e. TR, Voxel size, etc.
     def btnTaskRead_click(self):
         from utility import fixstr,setParameters
         import numpy as np
         global ui
-        if ui.txtTask.text() == "":
+        if ui.txtTask.currentText() == "":
             msgBox = QMessageBox()
             msgBox.setText("Please enter the task name!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -293,10 +314,38 @@ class frmPreprocess(Ui_frmPreprocess):
             msgBox.exec_()
             return
 
+
+        setting         = Setting()
+
+        setting.mainDIR = ui.txtDIR.text()
+        setting.Task    = ui.txtTask.currentText()
+
+        setting.SubFrom = np.int32(ui.txtSubFrom.text())
+        setting.SubTo   = np.int32(ui.txtSubTo.text())
+        setting.SubLen  = np.int32(ui.txtSubLen.text())
+        setting.SubPer  = ui.txtSubPer.text()
+
+        setting.ConFrom = np.int32(ui.txtConFrom.text())
+        setting.ConTo   = np.int32(ui.txtConTo.text())
+        setting.ConLen  = np.int32(ui.txtConLen.text())
+        setting.ConPer  = ui.txtConPer.text()
+
+        setting.Run     = ui.txtRunNum.text()
+        setting.RunLen  = np.int32(ui.txtRunLen.text())
+        setting.RunPer  = ui.txtRunPer.text()
+
+
+        sSess = frmSelectSession(None, setting=setting)
+        if not sSess.PASS:
+            return
+
         directory = ui.txtDIR.text()
         if len(directory):
             ui.txtDIR.setText(directory)
-            FirstFile = directory + setParameters(ui.txtBOLD.text(),fixstr(ui.txtSubFrom.value(), np.int32(ui.txtSubLen.text()), ui.txtSubPer.text()), fixstr(1, np.int32(ui.txtRunLen.text()), ui.txtRunPer.text()),ui.txtTask.text())
+            FirstFile = directory + setParameters(ui.txtBOLD.text(),fixstr(sSess.SubID, np.int32(ui.txtSubLen.text()),ui.txtSubPer.text()), \
+                                                  fixstr(sSess.RunID, np.int32(ui.txtRunLen.text()), \
+                                                  ui.txtRunPer.text()),ui.txtTask.currentText(), \
+                                                  fixstr(sSess.ConID, np.int32(ui.txtConLen.text()), ui.txtConPer.text()))
             #print(FirstFile)
             if not os.path.isfile(FirstFile):
                 msgBox = QMessageBox()
@@ -321,9 +370,6 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.setIcon(QMessageBox.Information)
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
-
-
-
             except:
                 msgBox = QMessageBox()
                 msgBox.setText("Cannot read file. Please check parameters!")
@@ -331,8 +377,6 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 pass
-
-
 
     def btnTest_click(self):
         global ui
@@ -346,6 +390,7 @@ class frmPreprocess(Ui_frmPreprocess):
 
     def btnSave_click(self):
         global ui
+        from utility import getVersion
         SettingFileName = ui.txtSetting.text()
         setting = Setting()
         if not setting.checkValue(ui):
@@ -373,18 +418,22 @@ class frmPreprocess(Ui_frmPreprocess):
                 else:
                     SettingFileName = ""
 
-
-
             if len(SettingFileName):
                 config = cp.ConfigParser()
                 config.read(SettingFileName)
-                config['DEFAULT']['ver']        = "1.0"
+                config['DEFAULT']['ver']        = setting.Version
                 config['DEFAULT']['maindir']    = setting.mainDIR
+                config['DEFAULT']['mni_space']    = setting.MNISpace
                 config['DEFAULT']['task']       = setting.Task
+
                 config['DEFAULT']['sub_from']   = str(setting.SubFrom)
                 config['DEFAULT']['sub_to']     = str(setting.SubTo)
                 config['DEFAULT']['sub_len']    = str(setting.SubLen)
                 config['DEFAULT']['sub_perfix'] = setting.SubPer
+                config['DEFAULT']['con_from']   = str(setting.ConFrom)
+                config['DEFAULT']['con_to']     = str(setting.ConTo)
+                config['DEFAULT']['con_len']    = str(setting.ConLen)
+                config['DEFAULT']['con_perfix'] = setting.ConPer
                 config['DEFAULT']['run']        = setting.Run
                 config['DEFAULT']['run_len']    = str(setting.RunLen)
                 config['DEFAULT']['run_perfix'] = setting.RunPer
@@ -443,6 +492,7 @@ class frmPreprocess(Ui_frmPreprocess):
                 print("Saved setting in ",SettingFileName)
 
     def btnLoad_click(self):
+        from utility import getVersion
         global ui
         fdialog = QFileDialog()
         filename = fdialog.getOpenFileName(None, "Open setting file ...", ui.txtDIR.text(), options=QFileDialog.DontUseNativeDialog)
@@ -450,10 +500,15 @@ class frmPreprocess(Ui_frmPreprocess):
         if len(filename):
             setting = Setting()
             setting.Load(filename)
+
+            if setting.Version != getVersion():
+                print("WARNING: You are using different version of Easy fMRI!!!")
+
             if not setting.empty:
                 ui.txtSetting.setText(filename)
                 ui.txtDIR.setText(setting.mainDIR)
-                ui.txtTask.setText(setting.Task)
+                ui.txtMNI.setCurrentText(setting.MNISpace)
+                ui.txtTask.setCurrentText(setting.Task)
                 ui.txtBOLD.setText(setting.BOLD)
                 ui.txtOnset.setText(setting.Onset)
                 ui.txtAnat.setText(setting.AnatDIR)
@@ -465,6 +520,10 @@ class frmPreprocess(Ui_frmPreprocess):
                 ui.txtSubTo.setValue(setting.SubTo)
                 ui.txtSubLen.setValue(setting.SubLen)
                 ui.txtSubPer.setText(setting.SubPer)
+                ui.txtConFrom.setValue(setting.ConFrom)
+                ui.txtConTo.setValue(setting.ConTo)
+                ui.txtConLen.setValue(setting.ConLen)
+                ui.txtConPer.setText(setting.ConPer)
                 ui.txtRunNum.setText(setting.Run)
                 ui.txtRunPer.setText(setting.RunPer)
                 ui.txtRunLen.setValue(setting.RunLen)
@@ -504,16 +563,22 @@ class frmPreprocess(Ui_frmPreprocess):
                     ui.lwHistory.addItem(item)
 
     def btnLoadHistory_click(self):
+        from utility import getVersion
         global ui
         try:
             filename = ui.lwHistory.selectedItems()[0].text()
             if len(filename):
                 setting = Setting()
                 setting.Load(filename)
+
+                if setting.Version != getVersion():
+                    print("WARNING: You are using different version of Easy fMRI!!!")
+
                 if not setting.empty:
                     ui.txtSetting.setText(filename)
                     ui.txtDIR.setText(setting.mainDIR)
-                    ui.txtTask.setText(setting.Task)
+                    ui.txtMNI.setCurrentText(setting.MNISpace)
+                    ui.txtTask.setCurrentText(setting.Task)
                     ui.txtBOLD.setText(setting.BOLD)
                     ui.txtOnset.setText(setting.Onset)
                     ui.txtAnat.setText(setting.AnatDIR)
@@ -525,6 +590,10 @@ class frmPreprocess(Ui_frmPreprocess):
                     ui.txtSubTo.setValue(setting.SubTo)
                     ui.txtSubLen.setValue(setting.SubLen)
                     ui.txtSubPer.setText(setting.SubPer)
+                    ui.txtConFrom.setValue(setting.ConFrom)
+                    ui.txtConTo.setValue(setting.ConTo)
+                    ui.txtConLen.setValue(setting.ConLen)
+                    ui.txtConPer.setText(setting.ConPer)
                     ui.txtRunNum.setText(setting.Run)
                     ui.txtRunPer.setText(setting.RunPer)
                     ui.txtRunLen.setValue(setting.RunLen)
@@ -670,7 +739,7 @@ class frmPreprocess(Ui_frmPreprocess):
                 return
             else:
                 scriptGenerator = ScriptGenerator()
-                scriptGenerator.run(ui.txtSetting.text(),ui.txtMNI.text())
+                scriptGenerator.run(ui.txtSetting.text())
                 print("TASK FINISHED!")
                 msgBox = QMessageBox()
                 msgBox.setText("All scripts are generated!")
@@ -704,8 +773,20 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.exec_()
                 return
             else:
+                SubID=None
+                ConID=None
+                RunID=None
+                if ui.cbJustRun.checkState():
+                    sSess = frmSelectSession(None, setting=setting)
+                    if sSess.PASS:
+                        SubID = sSess.SubID
+                        ConID = sSess.ConID
+                        RunID = sSess.RunID
+                    else:
+                        return
+
                 runPreprocess = RunPreprocess()
-                if not runPreprocess.Check(ui.txtSetting.text(),ui.cbJustRun.checkState()):
+                if not runPreprocess.Check(ui.txtSetting.text(),ui.cbJustRun.checkState(),SubID,RunID,ConID):
                     msgBox = QMessageBox()
                     msgBox.setText("Script(s) are not found!")
                     msgBox.setIcon(QMessageBox.Critical)
@@ -714,7 +795,7 @@ class frmPreprocess(Ui_frmPreprocess):
                     return
                 else:
                     feat = ui.txtFSLDIR.text() + ui.txtFeat.text()
-                    runPreprocess.Run(ui.txtSetting.text(),ui.cbJustRun.checkState(),ui.cbRemoveOlds.checkState(),feat)
+                    runPreprocess.Run(ui.txtSetting.text(),ui.cbJustRun.checkState(),ui.cbRemoveOlds.checkState(),feat,SubID,RunID,ConID)
                     print("TASK FINISHED!")
                     msgBox = QMessageBox()
                     msgBox.setText("All scripts are generated!")
@@ -760,7 +841,8 @@ class frmPreprocess(Ui_frmPreprocess):
                 sSess = frmSelectSession(None,setting=setting)
                 if sSess.PASS:
                     ScriptFile = setParameters(setting.Script,fixstr(int(sSess.SubID),setting.SubLen,setting.SubPer),\
-                                               fixstr(int(sSess.RunID),int(setting.RunLen),setting.RunPer),setting.Task)
+                                               fixstr(int(sSess.RunID),int(setting.RunLen),setting.RunPer),setting.Task, \
+                                               fixstr(sSess.ConID, int(setting.ConLen), setting.ConPer))
                     ScriptAdd = setting.mainDIR + ScriptFile
                     subprocess.Popen([Feat_gui, ScriptAdd])
     pass
@@ -792,7 +874,8 @@ class frmPreprocess(Ui_frmPreprocess):
                 sSess = frmSelectSession(None, setting=setting)
                 if sSess.PASS:
                     EventFilename = setParameters(setting.Onset, fixstr(sSess.SubID, int(setting.SubLen), setting.SubPer) \
-                                                 , fixstr(sSess.RunID, int(setting.RunLen), setting.RunPer), setting.Task)
+                                                 , fixstr(sSess.RunID, int(setting.RunLen), setting.RunPer), setting.Task, \
+                                                  fixstr(sSess.ConID, int(setting.ConLen), setting.ConPer))
 
                     EventAddr = setting.mainDIR + EventFilename
 
@@ -871,7 +954,7 @@ class frmPreprocess(Ui_frmPreprocess):
         global ui
         frmRenameFile.show(frmRenameFile,SubFrom=ui.txtSubFrom.value(),SubTo=ui.txtSubTo.value(),\
                            SubLen=ui.txtSubLen.value(),SubPer=ui.txtSubPer.text(),Run=ui.txtRunNum.text(),\
-                           RunLen=ui.txtRunLen.value(),RunPer=ui.txtRunPer.text(),Task=ui.txtTask.text(),\
+                           RunLen=ui.txtRunLen.value(),RunPer=ui.txtRunPer.text(),Task=ui.txtTask.currentText(),\
                            DIR=ui.txtDIR.text())
         pass
 
@@ -879,7 +962,7 @@ class frmPreprocess(Ui_frmPreprocess):
         global ui
         frmScriptEditor.show(frmScriptEditor,SubFrom=ui.txtSubFrom.value(),SubTo=ui.txtSubTo.value(),\
                            SubLen=ui.txtSubLen.value(),SubPer=ui.txtSubPer.text(),Run=ui.txtRunNum.text(),\
-                           RunLen=ui.txtRunLen.value(),RunPer=ui.txtRunPer.text(),Task=ui.txtTask.text(),\
+                           RunLen=ui.txtRunLen.value(),RunPer=ui.txtRunPer.text(),Task=ui.txtTask.currentText(),\
                            DIR=ui.txtDIR.text())
 
         pass
@@ -922,7 +1005,7 @@ class frmPreprocess(Ui_frmPreprocess):
                         AnalysisFile = setParameters(setting.Analysis,
                                                    fixstr(int(sSess.SubID), setting.SubLen, setting.SubPer), \
                                                    fixstr(int(sSess.RunID), int(setting.RunLen), setting.RunPer),
-                                                   setting.Task)
+                                                   setting.Task,fixstr(int(sSess.ConID), int(setting.ConLen), setting.ConPer))
                         AnalysisAdd = setting.mainDIR + AnalysisFile + ".feat/report.html"
                         if not os.path.isfile(AnalysisAdd):
                             print(AnalysisAdd + " - not found!")
