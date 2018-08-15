@@ -980,8 +980,8 @@ class frmFASRM(Ui_frmFASRM):
             # Train Dot Product
             print("Producting Training Data ...")
             TrHX = None
-            for mapping in WTr:
-                TrHX = np.concatenate((TrHX, np.transpose(np.dot(mapping,S)))) if TrHX is not None else np.transpose(np.dot(mapping,S))
+            for mapping, viewi in zip(WTr, TrX):
+                TrHX = np.concatenate((TrHX, np.transpose(np.dot(np.transpose(mapping),viewi)))) if TrHX is not None else np.transpose(np.dot(np.transpose(mapping),viewi))
             OutData[ui.txtOTrData.text()] = TrHX
 
 
@@ -993,7 +993,7 @@ class frmFASRM(Ui_frmFASRM):
                 U, _, V = lg.svd(product, full_matrices=False, check_finite=False)
                 Wtest = np.dot(U,V)
                 WTe.append(Wtest)
-                TeHX = np.concatenate((TeHX, np.transpose(np.dot(Wtest,S)))) if TeHX is not None else np.transpose(np.dot(Wtest,S))
+                TeHX = np.concatenate((TeHX, np.transpose(np.dot(np.transpose(Wtest),view)))) if TeHX is not None else np.transpose(np.dot(np.transpose(Wtest),view))
             OutData[ui.txtOTeData.text()] = TeHX
 
             HAParam = dict()

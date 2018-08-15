@@ -1,0 +1,3 @@
+cp startupscript ~/.startupscript
+echo "# This script is for easy fMRI" >> ~/.profile
+echo "source ~/.startupscript" >> ~/.profile

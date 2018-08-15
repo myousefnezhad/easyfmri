@@ -1,0 +1,110 @@
+# For installing this script:
+# 1. copy this file to home directory
+# 2. Enable/Disable the features
+# 3. Set the installation directory
+# 4. Run following command for Linux:
+# echo "source ~/.startupscript" >> ~/.bashrc
+# for Mac:
+# echo "source ~/.startupscript" >> ~/.profile
+
+######################################
+# Enable ("1") or Disable ("0") features #
+######################################
+export EN_EZFMRI="1"
+export EN_PYTHON="1"
+export EN_PYTHON_ALIAS="1"
+export EN_AFNI="1"
+export EN_FSL="1"
+export EN_CUDA="1"
+export EN_BASH="1"
+export EN_MC="1"
+export EN_COLOR="1"
+######################################
+# Directories                        #
+######################################
+export INSTALL_DIR="$HOME"      # Base dir for Anaconda, easy fMRI, and AFNI
+export FSLDIR="/usr/local/fsl"  # for FSL 5.0.10
+export ANACON_PATH="$INSTALL_DIR/anaconda3/bin"
+export AFNI_PATH="$INSTALL_DIR/abin"
+export CUDA_HOME="/usr/local/cuda"
+# export FSLDIR="/usr/share/fsl/5.0" # for FSL 5.0.9
+# export DISPLAY=:0.0 # Enable for Windows 10
+######################################
+# Scripts                            #
+######################################
+
+######## Easy fMRI
+if (( $EN_EZFMRI != "0" )); then
+  export EASYFMRI="$INSTALL_DIR/.easyfmri"
+fi
+######## Python
+if (( $EN_PYTHON != "0" )); then
+  export PATH="$ANACON_PATH:$PATH"
+fi
+if (( $EN_PYTHON_ALIAS != "0" )); then
+  alias python="python -m IPython"
+  alias python3="python -m IPython"
+fi
+######## AFNI
+if (( $EN_AFNI != "0" )); then
+  export DYLD_LIBRARY_PATH=/opt/X11/lib/flat_namespace
+  export DYLD_FALLBACK_LIBRARY_PATH="$HOME/abin"
+  export PATH="/usr/local/bin:$AFNI_PATH:$PATH"
+fi
+####### FSL
+if (( $EN_FSL != "0" )); then
+  . $FSLDIR/etc/fslconf/fsl.sh
+  export PATH="$FSLDIR/bin:$PATH"
+fi
+####### CUDA
+if (( $EN_CUDA != "0" )); then
+  export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$CUDA_HOME/lib"
+  export LD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$CUDA_HOME/lib:/usr/local/cuda/lib64/"
+  export PATH="$CUDA_HOME/bin:$PATH"
+fi
+####### BASH
+if (( $EN_BASH != "0" )); then
+  [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+fi
+####### MC
+if (( $EN_MC != "0" )); then
+  alias mc=". /usr/local/opt/midnight-commander/libexec/mc/mc-wrapper.sh"
+fi
+####### BASH COLOR
+if (( $EN_COLOR != "0" )); then
+  # Define Colors
+  C_DEFAULT="\[\033[m\]"
+  C_WHITE="\[\033[1m\]"
+  C_BLACK="\[\033[30m\]"
+  C_RED="\[\033[31m\]"
+  C_GREEN="\[\033[32m\]"
+  C_YELLOW="\[\033[33m\]"
+  C_BLUE="\[\033[34m\]"
+  C_PURPLE="\[\033[35m\]"
+  C_CYAN="\[\033[36m\]"
+  C_LIGHTGRAY="\[\033[37m\]"
+  C_DARKGRAY="\[\033[1;30m\]"
+  C_LIGHTRED="\[\033[1;31m\]"
+  C_LIGHTGREEN="\[\033[1;32m\]"
+  C_LIGHTYELLOW="\[\033[1;33m\]"
+  C_LIGHTBLUE="\[\033[1;34m\]"
+  C_LIGHTPURPLE="\[\033[1;35m\]"
+  C_LIGHTCYAN="\[\033[1;36m\]"
+  C_BG_BLACK="\[\033[40m\]"
+  C_BG_RED="\[\033[41m\]"
+  C_BG_GREEN="\[\033[42m\]"
+  C_BG_YELLOW="\[\033[43m\]"
+  C_BG_BLUE="\[\033[44m\]"
+  C_BG_PURPLE="\[\033[45m\]"
+  C_BG_CYAN="\[\033[46m\]"
+  C_BG_LIGHTGRAY="\[\033[47m\]"
+  # Set Terminal Colors
+  export CLICOLOR=1
+  export LSCOLORS=GxacCxDxBxegedabagaced
+  alias ls='ls -GFh'
+  export PS1="\n$C_LIGHTPURPLE\u$C_DEFAULT@$C_LIGHTCYAN\h$C_DEFAULT:$C_LIGHTBLUE\W$C_DEFAULT\$$C_LIGHTYELLOW "
+  if (( $EUID != 0 )); then
+    export LSCOLORS=GxacCxDxBxegedabagaced
+    export PS1="\n$C_LIGHTGREEN\u$C_DEFAULT@$C_LIGHTCYAN\h$C_DEFAULT:$C_LIGHTBLUE\W$C_DEFAULT\$$C_LIGHTYELLOW "
+  fi
+fi
