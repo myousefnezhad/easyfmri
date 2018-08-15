@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 
 from Base.utility import getVersion, getBuild
+from Base.dialogs import LoadFile, SaveFile
 from GUI.frmFENormalizationGUI import *
 
 
@@ -49,10 +50,8 @@ class frmFENormalization(Ui_frmFENormalization):
 
 
     def btnInFile_click(self):
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open label file ...", os.path.dirname(ui.txtInFile.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                            os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
@@ -188,13 +187,8 @@ class frmFENormalization(Ui_frmFENormalization):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        global ui
-        current = ui.txtOutFile.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ofile = dialog.getSaveFileName(None, "Output File", current, "", "", flags)[0]
+        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                             os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
 

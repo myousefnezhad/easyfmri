@@ -7,7 +7,7 @@ import scipy.io as io
 from Base.Conditions import Conditions
 from PyQt5.QtWidgets import *
 from sklearn.preprocessing import label_binarize
-
+from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmCombineDataGUI import *
 
@@ -52,10 +52,8 @@ class frmCombineData(Ui_frmCombineData):
 
 
     def btnInFFile_click(self):
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open label file ...", os.path.dirname(ui.txtInFFile.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                            os.path.dirname(ui.txtInFFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
@@ -174,10 +172,8 @@ class frmCombineData(Ui_frmCombineData):
 
 
     def btnInSFile_click(self):
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open label file ...", os.path.dirname(ui.txtInFFile.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                            os.path.dirname(ui.txtInSFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
@@ -295,13 +291,8 @@ class frmCombineData(Ui_frmCombineData):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        global ui
-        current = ui.txtOutFile.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ofile = dialog.getSaveFileName(None, "Output File", current, "", "", flags)[0]
+        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                             os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
 

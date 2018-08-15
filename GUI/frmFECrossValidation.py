@@ -6,7 +6,7 @@ import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn.preprocessing import label_binarize
-
+from Base.dialogs import LoadFile, SelectDir
 from Base.utility import getVersion, getBuild
 from GUI.frmFECrossValidationGUI import *
 
@@ -48,10 +48,8 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
 
 
     def btnInFile_click(self):
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open label file ...", os.path.dirname(ui.txtInFile.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                            os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
@@ -187,13 +185,7 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        global ui
-        current = ui.txtOutDIR.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly | QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        directory = dialog.getExistingDirectory(None,"Open Output Directory",current,flags)
+        directory = SelectDir("Open Output Directory",ui.txtOutDIR.text())
         if len(directory):
             ui.txtOutDIR.setText(directory)
 

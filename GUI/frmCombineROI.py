@@ -6,158 +6,193 @@ import nibabel as nb
 import numpy as np
 from PyQt5.QtWidgets import *
 
-from Base.utility import getVersion, getBuild
-from Base.dialogs import LoadFile, SaveFile
+from Base.utility import getDirFSLAtlas
+from Base.dialogs import LoadFile, SaveFile, LoadMultiFile
 from GUI.frmCombineROIGUI import *
 
 
 class frmCombineROI(Ui_frmCombineROI):
     ui = Ui_frmCombineROI()
     dialog = None
+
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
+        global OutSize, currentFile, currentSize
         ui = Ui_frmCombineROI()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
 
+        ui.tvArea.setColumnCount(2)
+        ui.tvArea.setHeaderLabels(['Affine', 'File'])
+        ui.tvArea.setColumnWidth(0,50)
+
         ui.cbMetric.addItem("Intersection","int")
         ui.cbMetric.addItem("Union","uni")
 
-        dialog.setWindowTitle("easy fMRI combine ROI - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
-
-    # This function initiate the events procedures
     def set_events(self):
         global ui
         ui.btnClose.clicked.connect(self.btnClose_click)
-        ui.btnFROI.clicked.connect(self.btnFROI_click)
-        ui.btnSROI.clicked.connect(self.btnSROI_click)
-        ui.btnOROI.clicked.connect(self.btnOROI_click)
-        ui.btnRUN.clicked.connect(self.btnRun_click)
+        ui.btnOFile.clicked.connect(self.btnOFile_click)
+        ui.btnAdd.clicked.connect(self.btnAdd_click)
+        ui.btnRemove.clicked.connect(self.btnRemove_click)
+        ui.btnAffine.clicked.connect(self.btnAffine_click)
+        ui.btnRun.clicked.connect(self.btnRun_click)
 
 
     def btnClose_click(self):
         global dialog
         dialog.close()
+        pass
 
-
-    def btnFROI_click(self):
+    def btnOFile_click(self):
         global ui
-        filename = LoadFile('Open ROI image ...', ['ROI images (*.nii.gz)'], 'nii.gz',os.path.dirname(ui.txtFROI.text()))
-        if len(filename):
-            if os.path.isfile(filename):
-                ui.txtFROI.setText(filename)
-            else:
-                print("Image file not found!")
+        ofile = SaveFile('Save ROI ...',['ROI images (*.nii.gz)'],'nii.gz',os.path.dirname(ui.txtOFile.text()))
+        if len(ofile):
+                ui.txtOFile.setText(ofile)
 
+    def btnAdd_click(self):
+        filenames = LoadMultiFile('Save ROI ...',['ROI images (*.nii.gz, *.nii)', 'All files (*.*)'],'nii.gz')
+        for file in filenames:
+            if len(file):
+                item = QtWidgets.QTreeWidgetItem()
+                item.setText(0,"")
+                item.setText(1, str(file))
+                ui.tvArea.addTopLevelItem(item)
 
-    def btnSROI_click(self):
-        global ui
-        filename = LoadFile('Open ROI image ...', ['ROI images (*.nii.gz)'], 'nii.gz',os.path.dirname(ui.txtSROI.text()))
-        if len(filename):
-            if os.path.isfile(filename):
-                ui.txtSROI.setText(filename)
-            else:
-                print("Image file not found!")
+    def btnRemove_click(self):
+        if not len(ui.tvArea.selectedItems()):
+            msgBox = QMessageBox()
+            msgBox.setText("Please select a item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        ui.tvArea.takeTopLevelItem(ui.tvArea.indexOfTopLevelItem(ui.tvArea.selectedItems()[0]))
 
-
-    def btnOROI_click(self):
-        global ui
-        filename = SaveFile('Save ROI image ...', ['ROI images (*.nii.gz)'], 'nii.gz',os.path.dirname(ui.txtOROI.text()))
-        if len(filename):
-                ui.txtOROI.setText(filename)
+    def btnAffine_click(self):
+        if not len(ui.tvArea.selectedItems()):
+            msgBox = QMessageBox()
+            msgBox.setText("Please select a item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        aindx = ui.tvArea.indexOfTopLevelItem(ui.tvArea.selectedItems()[0])
+        for index in range(ui.tvArea.topLevelItemCount()):
+            ui.tvArea.topLevelItem(index).setText(0, "*") if index == aindx else ui.tvArea.topLevelItem(index).setText(0, "")
 
 
     def btnRun_click(self):
-        global ui
-
         msgBox = QMessageBox()
 
-        FROI = ui.txtFROI.text()
-        if not len(FROI):
-            msgBox.setText("Please enter first ROI file!")
+        if ui.tvArea.topLevelItemCount() < 1:
+            msgBox.setText("There is no input file!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return
 
-        if not os.path.isfile(FROI):
-            msgBox.setText("The first ROI file not found!")
+        ofile = ui.txtOFile.text()
+        if not len(ofile):
+            print("Please enter Output File!")
+            msgBox.setText("Please enter Output File!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return
 
-        SROI = ui.txtSROI.text()
-        if not len(SROI):
-            msgBox.setText("Please enter second ROI file!")
+        aindx = -1
+        for index in range(ui.tvArea.topLevelItemCount()):
+            if (ui.tvArea.topLevelItem(index).text(0) == "*"):
+                aindx = index
+
+        if aindx < 0:
+            print("Please select affine file")
+            msgBox.setText("Please select affine file!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return
 
-        if not os.path.isfile(SROI):
-            msgBox.setText("The second ROI file not found!")
+        print("Combining ROI ...")
+        OutIMG = None
+        OutSize = None
+        affine = None
+        counter = 0
+        for index in range(ui.tvArea.topLevelItemCount()):
+            # Get file name
+            filename = ui.tvArea.topLevelItem(index).text(1)
+            if not os.path.isfile(filename):
+                print("Cannot find input file: " + filename)
+                msgBox.setText("Cannot find input file: " + filename)
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return
+            # Load Data
+            try:
+                fileHDR = nb.load(filename)
+                fileIMG = fileHDR.get_data()
+            except:
+                print("Cannot load input file: " + filename)
+                msgBox.setText("Cannot load input file: " + filename)
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return
+            # Check Size
+            if OutSize is None:
+                OutSize = np.shape(fileIMG)
+                OutIMG  = np.zeros(OutSize)
+            elif OutSize != np.shape(fileIMG):
+                print("Size of file: " + filename + " is not matched!")
+                msgBox.setText("Size of file: " + filename + " is not matched!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return
+            # Get Affine
+            if len(ui.tvArea.topLevelItem(index).text(1)):
+                affine = fileHDR.affine
+            # Normalization
+            fileIMG = fileIMG / np.max(fileIMG)
+            # Store
+            OutIMG = OutIMG + fileIMG
+            # Counting files
+            counter = counter + 1
+
+        if affine is None:
+            print("Cannot find affine!")
+            msgBox.setText("Cannot find affine!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return
 
-        OROI = ui.txtOROI.text()
-        if not len(OROI):
-            msgBox.setText("Please enter output ROI file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return
-
-        try:
-            FROIHDR = nb.load(FROI)
-        except:
-            print("Cannot load first ROI!")
-            return
-        FROIIMG = FROIHDR.get_data()
-
-        try:
-            SROIHDR = nb.load(SROI)
-        except:
-            print("Cannot load second ROI!")
-            return
-        SROIIMG = SROIHDR.get_data()
-
-        if not np.shape(FROIIMG) == np.shape(SROIIMG):
-            print("ROIs must be the same size!")
-            return
+        if ui.cbMetric.currentData() == "int":
+            OutIMG = OutIMG / counter
+            OutIMG[np.where(OutIMG < 1)] = 0
+        # For both intersection and union
+        OutIMG[np.where(OutIMG != 0)] = 1
 
 
+        OutHDR = nb.Nifti1Image(OutIMG,affine)
+        nb.save(OutHDR,ofile)
 
-        if ui.cbMetric.currentData() == "uni":
-            OROIIMG = np.zeros(np.shape(FROIIMG))
-            OROIIMG[np.where(FROIIMG != 0)] = 1
-            OROIIMG[np.where(SROIIMG != 0)] = 1
-        elif ui.cbMetric.currentData() == "int":
-            FROIIMG[np.where(FROIIMG != 0)] = 1
-            SROIIMG[np.where(SROIIMG != 0)] = 1
-            OROIIMG = FROIIMG + SROIIMG
-            OROIIMG[np.where(OROIIMG < 2)] = 0
-            OROIIMG[np.where(OROIIMG != 0)] = 1
-
-        OROIHDR = nb.Nifti1Image(OROIIMG,FROIHDR.affine)
-        nb.save(OROIHDR,OROI)
-
-        NumVoxels = np.shape(OROIIMG)
+        NumVoxels = np.shape(OutIMG)
         NumVoxels = NumVoxels[0] * NumVoxels[1] * NumVoxels[2]
         print("Number of all voxels: %d " % NumVoxels)
-        NumROIVoxel = len(OROIIMG[np.where(OROIIMG != 0)])
+        NumROIVoxel = len(OutIMG[np.where(OutIMG != 0)])
         print("Number of selected voxles in ROI: %d" % NumROIVoxel)
         print("ROI is generated!")
 
@@ -166,8 +201,6 @@ class frmCombineROI(Ui_frmCombineROI):
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
-
-
 
 
 if __name__ == '__main__':

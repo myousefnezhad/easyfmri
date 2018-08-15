@@ -47,24 +47,24 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
 
         ui.tabWidget.setCurrentIndex(0)
         # Unsupervised
-        ui.cbMAU.addItem("SK: RSA: Agglomerative Clustering",10002)
-        ui.cbMAU.addItem("SK: RSA: Birch Clustering",10003)
-        ui.cbMAU.addItem("SK: RSA: Gaussian Mixture Clustering",10004)
-        ui.cbMAU.addItem("SK: RSA: KMeans Clustering",10000)
-        ui.cbMAU.addItem("SK: RSA: Spectral Clustering",10001)
+        ui.cbMAU.addItem("MatLab, SK: RSA: Agglomerative Clustering",10002)
+        ui.cbMAU.addItem("MatLab, SK: RSA: Birch Clustering",10003)
+        ui.cbMAU.addItem("MatLab, SK: RSA: Gaussian Mixture Clustering",10004)
+        ui.cbMAU.addItem("MatLab, SK: RSA: KMeans Clustering",10000)
+        ui.cbMAU.addItem("MatLab, SK: RSA: Spectral Clustering",10001)
 
 
 
         # Supervised
-        ui.cbMAS.addItem("SK: MVPA: AdaBoost Classifier",80005)
-        ui.cbMAS.addItem("SK: MVPA: Decision Tree",80001)
-        ui.cbMAS.addItem("SK: MVPA: Gaussian Naive Bayes",80000)
-        ui.cbMAS.addItem("SK: MVPA: Linear Support Vector Classification (liblinear)",10001)
-        ui.cbMAS.addItem("SK: MVPA: Multi-Layer Perceptron (MLP)",80002)
-        ui.cbMAS.addItem("SK: MVPA: Nu Support Vector Classification (libsvm)",10002)
-        ui.cbMAS.addItem("SK: MVPA: Random Forest",80004)
-        ui.cbMAS.addItem("SK: MVPA: Stochastic Gradient Descent based Classification",80003)
-        ui.cbMAS.addItem("SK: MVPA: Support Vector Classification (libsvm)",10000)
+        ui.cbMAS.addItem("MatLab, SK: MVPA: AdaBoost Classifier",80005)
+        ui.cbMAS.addItem("MatLab, SK: MVPA: Decision Tree",80001)
+        ui.cbMAS.addItem("MatLab, SK: MVPA: Gaussian Naive Bayes",80000)
+        ui.cbMAS.addItem("MatLab, SK: MVPA: Linear Support Vector Classification (liblinear)",10001)
+        ui.cbMAS.addItem("MatLab, SK: MVPA: Multi-Layer Perceptron (MLP)",80002)
+        ui.cbMAS.addItem("MatLab, SK: MVPA: Nu Support Vector Classification (libsvm)",10002)
+        ui.cbMAS.addItem("MatLab, SK: MVPA: Random Forest",80004)
+        ui.cbMAS.addItem("MatLab, SK: MVPA: Stochastic Gradient Descent based Classification",80003)
+        ui.cbMAS.addItem("MatLab, SK: MVPA: Support Vector Classification (libsvm)",10000)
 
         dialog.setWindowTitle("easy fMRI model analysis - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)

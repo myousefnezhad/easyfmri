@@ -10,7 +10,7 @@ import subprocess as sub
 
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
-
+from Base.dialogs import LoadFile, SaveFile
 from Base.utility import strRange
 from Base.afni import AFNI
 from Base.utility import getVersion, getBuild, getDirSpaceINI, getDirSpace
@@ -108,11 +108,8 @@ class frmMatNITF(Ui_frmMatNITF):
 
 
     def btnSSSpace_click(self):
-        global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open space file ...", os.path.dirname(ui.txtSSSpace.currentText()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Open Affine Reference Image ...",['Image files (*.nii.gz)','All files (*.*)'],\
+                            'nii.gz',os.path.dirname(ui.txtSSSpace.currentText()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtSSSpace.setCurrentText(filename)
@@ -123,11 +120,8 @@ class frmMatNITF(Ui_frmMatNITF):
     def btnInFile_click(self):
         msgBox = QMessageBox()
 
-
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open label file ...", os.path.dirname(ui.txtInFile.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Open MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                            os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
@@ -187,42 +181,27 @@ class frmMatNITF(Ui_frmMatNITF):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        global ui
-        current = ui.txtOutFile.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ofile = dialog.getSaveFileName(None, "Output File", current, "", "", flags)[0]
+        ofile = SaveFile("Save (f)MRI image ...",['Image files (*.nii.gz)'],'nii.gz',\
+                         os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
 
 
     def btnFAFNI_click(self):
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open AFNI file ...", os.path.dirname(ui.txtFAFNI.text()),
-                                           options=QFileDialog.DontUseNativeDialog)[0]
+        filename = LoadFile("Open 3dcopy binary file ...",currentDirectory=os.path.dirname(ui.txtFAFNI.text()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtFAFNI.setText(filename)
 
     def btnFSUMA_click(self):
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open SUMA file ...", os.path.dirname(ui.txtFSUMA.text()),
-                                           options=QFileDialog.DontUseNativeDialog)[0]
+        filename = LoadFile("Open 3drefit binary file ...",currentDirectory=os.path.dirname(ui.txtFSUMA.text()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtFSUMA.setText(filename)
 
 
     def btnAFNI_click(self):
-        global ui
-        current = ui.txtAFNI.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ofile = dialog.getSaveFileName(None, "Output File", current, "", "", flags)[0]
+        ofile = SaveFile("Save AFNI image ...",currentDirectory=os.path.dirname(ui.txtAFNI.text()))
         if len(ofile):
             ui.txtAFNI.setText(ofile)
 

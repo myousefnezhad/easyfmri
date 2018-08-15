@@ -6,7 +6,7 @@ import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
-
+from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmFAHAGUI import *
 from Hyperalignment.RHA import RHA
@@ -47,10 +47,8 @@ class frmFAHA(Ui_frmFAHA):
         dialog.close()
 
     def btnInFile_click(self):
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open label file ...", os.path.dirname(ui.txtInFile.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                            os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
@@ -319,13 +317,8 @@ class frmFAHA(Ui_frmFAHA):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        global ui
-        current = ui.txtOutFile.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ofile = dialog.getSaveFileName(None, "Output File", current, "", "", flags)[0]
+        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                             os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
 

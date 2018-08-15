@@ -3,17 +3,15 @@ import configparser as cp
 import os
 import platform
 import sys
-
 import subprocess as sub
 
 import nibabel as nb
 import numpy as np
 from PyQt5.QtWidgets import *
 
-
 from Base.utility import RunCMD
 from Base.afni import AFNI
-
+from Base.dialogs import LoadFile, SaveFile, SelectDir
 from GUI.frmVisualizationGUI import *
 from GUI.frmMatNITF import *
 from GUI.frmNITFAFNI import *
@@ -118,39 +116,25 @@ class frmVisalization(Ui_frmVisalization):
         frmImageInfo.show(frmImageInfo)
 
     def btnFAFNI_click(self):
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open AFNI file ...", os.path.dirname(ui.txtFAFNI.text()),
-                                           options=QFileDialog.DontUseNativeDialog)[0]
+        filename = LoadFile("Open AFNI binary file ...",currentDirectory=os.path.dirname(ui.txtFAFNI.text()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtFAFNI.setText(filename)
 
     def btnFSUMA_click(self):
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open SUMA file ...", os.path.dirname(ui.txtFSUMA.text()),
-                                           options=QFileDialog.DontUseNativeDialog)[0]
+        filename = LoadFile("Open SUMA binary file ...",currentDirectory=os.path.dirname(ui.txtFSUMA.text()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtFSUMA.setText(filename)
 
     def btnWork_click(self):
-        current = ui.txtWork.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly | QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        directory = dialog.getExistingDirectory(None,"Open Working Directory",current,flags)
+        directory = SelectDir("Open Working Directory",ui.txtWork.text())
         if len(directory):
             if os.path.isdir(directory):
                 ui.txtWork.setText(directory)
 
     def btnDSUMA_click(self):
-        current = ui.txtDSUMA.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly | QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        directory = dialog.getExistingDirectory(None,"Open SUMA Directory",current,flags)
+        directory = SelectDir("Open SUMA Visualization Directory",ui.txtDSUMA.text())
         if len(directory):
             if os.path.isdir(directory):
                 ui.txtDSUMA.setText(directory)

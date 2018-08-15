@@ -3,11 +3,10 @@ import os
 import platform
 import subprocess
 import sys
-
 from PyQt5.QtWidgets import *
-
 from GUI.frmTransformationMatrixGUI import *
 from Base.fsl import FSL
+from Base.dialogs import LoadFile, SaveFile
 
 
 class frmTansformationMatrix(Ui_frmTansformationMatrix):
@@ -160,11 +159,8 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
 
 
     def btnImgFile_click(self):
-        global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open image file ...", os.path.dirname(ui.txtImgFile.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Load (f)MRI file ...",['Image files (*.nii.gz)','All files (*.*)'],'nii.gz',\
+                            os.path.dirname(ui.txtImgFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtImgFile.setText(filename)
@@ -173,11 +169,8 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
 
 
     def btnSpace_click(self):
-        global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open space file ...", os.path.dirname(ui.txtSpace.currentText()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Load (f)MRI file ...",['Image files (*.nii.gz)','All files (*.*)'],'nii.gz',\
+                            os.path.dirname(ui.txtSpace.currentText()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtSpace.setCurrentText(filename)
@@ -185,21 +178,15 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
                 print("Image file not found!")
 
     def btnMatFile_click(self):
-        global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getSaveFileName(None, "Save matrix file ...", os.path.dirname(ui.txtMatFile.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = SaveFile("Saving matrix file ...",['Matrix file (*.mat)'],'mat', \
+                            os.path.dirname(ui.txtMatFile.text()))
         if len(filename):
                 ui.txtMatFile.setText(filename)
 
 
     def btnExaFile_click(self):
-        global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getSaveFileName(None, "Save Example file ...", os.path.dirname(ui.txtExaFile.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = SaveFile("Load (f)MRI file ...",['Image files (*.nii.gz)','All files (*.*)'],'nii.gz',\
+                            os.path.dirname(ui.txtExaFile.text()))
         if len(filename):
                 ui.txtExaFile.setText(filename)
 
