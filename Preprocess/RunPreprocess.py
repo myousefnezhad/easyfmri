@@ -43,6 +43,7 @@ class PreprocessThread(threading.Thread):
         isFailed = False
         for fil in self.files:
             if not os.path.isfile(fil):
+                print("Cannot find " + fil + "!")
                 isFailed = True
                 break
         if isFailed:
@@ -152,7 +153,8 @@ class RunPreprocess:
                                                               fixstr(s, setting.SubLen, setting.SubPer), \
                                                               fixstr(r, setting.RunLen, setting.RunPer), setting.Task, \
                                                               fixstr(cnt, setting.ConLen, setting.ConPer)) + ".feat"
-                            files  = [ScriptOutputAddr + "/filtered_func_data.nii.gz", ScriptOutputAddr + "/mask.nii.gz"]
+                            files  = [ScriptOutputAddr + "/filtered_func_data.nii.gz", ScriptOutputAddr + \
+                                      "/mask.nii.gz", ScriptOutputAddr + "/cluster_mask_zstat1.nii.gz"]
                             cmd    = ScriptAddr
                             report = ScriptOutputAddr + "/report_log.html"
                             thread = PreprocessThread(feat=feat, cmd=cmd, report=report, files=files, \

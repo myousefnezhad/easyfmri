@@ -156,11 +156,11 @@ class frmJobs(Ui_frmJobs):
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self, Jobs=None, parentin=None):
-        global dialog, ui, parent, JRunner, JobList
+        global dialog, ui, parent, JRunner, JobList, JobListBack
         ui = Ui_frmJobs()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
-        JobList = Jobs
-        JRunner = None
+        JobList     = Jobs
+        JRunner     = None
         if parentin is not None:
             dialog = MainWindow(parentin,JRunner)
         else:
@@ -170,6 +170,8 @@ class frmJobs(Ui_frmJobs):
         self.set_events(self)
         self.refresh_list(self)
 
+        ui.tabWidget.setCurrentIndex(0)
+
         ui.lvJobs.setColumnCount(4)
         ui.lvJobs.setHeaderLabels(['ID','Type','Status','File'])
         ui.lvJobs.setColumnWidth(0,50)
@@ -177,8 +179,8 @@ class frmJobs(Ui_frmJobs):
         ui.lvJobs.setColumnWidth(2,150)
 
         dialog.setWindowTitle("easy fMRI Job Manager - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & QtCore.Qt.WindowMaximizeButtonHint)
+        #dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        #dialog.setWindowFlags(dialog.windowFlags() & QtCore.Qt.WindowMaximizeButtonHint)
         dialog.show()
 
 
@@ -191,6 +193,7 @@ class frmJobs(Ui_frmJobs):
         ui.btnRun.clicked.connect(self.btnRun_click)
         ui.btnDelete.clicked.connect(self.btnDelete_click)
         ui.btnReport.clicked.connect(self.btnReport_click)
+        #ui.btnReset.clicked.connect(self.btnReset_click)
 
 
     # Close
@@ -200,10 +203,13 @@ class frmJobs(Ui_frmJobs):
 
 
     def refresh_list(self):
-        global ui
         ui.lvJobs.clear()
+        ui.txtVerify.clear()
         if JobList is not None:
             for jinx, job in enumerate(JobList):
+                ui.txtVerify.append("Job ID: " + str(jinx + 1))
+                for fil in job[2].files:
+                    ui.txtVerify.append(fil)
                 item = QtWidgets.QTreeWidgetItem()
                 item.setText(0, str(jinx + 1))
                 item.setText(1, job[0])
@@ -285,7 +291,7 @@ class frmJobs(Ui_frmJobs):
         else:
             ui.stb.showMessage("Please wait ...")
             JRunner.setDoRun(False)
-            time.sleep(3)
+            time.sleep(1)
             JRunner = None
             ui.btnRun.setText("Run")
 

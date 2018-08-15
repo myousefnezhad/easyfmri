@@ -73,6 +73,7 @@ class BrainExtractorThread(threading.Thread):
         isFailed = False
         for fil in self.files:
             if not os.path.isfile(fil):
+                print("Cannot find " + fil + "!")
                 isFailed = True
                 break
         if isFailed:

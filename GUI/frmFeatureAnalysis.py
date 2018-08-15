@@ -29,6 +29,7 @@ from GUI.frmCombineData import frmCombineData
 from GUI.frmFECrossValidation import frmFECrossValidation
 from GUI.frmImageInfo import frmImageInfo
 from GUI.frmSelectSession import frmSelectSession
+from GUI.frmFEEZCrossValidation import frmFEEZCrossValidation
 from GUI.frmEzMat import frmEzMat
 
 from Base.utility import fixstr, getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
@@ -72,6 +73,7 @@ class RegistrationThread(threading.Thread):
         isFailed = False
         for fil in self.files:
             if not os.path.isfile(fil):
+                print("Cannot find " + fil + "!")
                 isFailed = True
                 break
         if isFailed:
@@ -207,11 +209,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         # Functional Alignment
         ui.cbFA.addItem("MatLab: Regularized Hyperalignment", 10000)
 
-
-        # Just for this version
-        ui.btnFECrossEzData.setEnabled(False)
-
-
         dialog.setWindowTitle("easy fMRI feature analysis - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
@@ -248,6 +245,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnFARun.clicked.connect(self.btnFA_click)
         ui.btnImageInfo.clicked.connect(self.btnImageInfo_click)
         ui.btnDIConvertEzData.clicked.connect(self.btnDIConverEzData_click)
+        ui.btnFECrossEzData.clicked.connect(self.btnFECrossEzData_click)
 
 
     # Exit function
@@ -681,6 +679,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
     def btnROIAtlas_click(self):
         frmAtlasROI.show(frmAtlasROI)
+
+    def btnFECrossEzData_click(self):
+        frmFEEZCrossValidation.show(frmFEEZCrossValidation)
 
     def btnDIOutFile_click(self):
         global ui

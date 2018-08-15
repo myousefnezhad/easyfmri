@@ -6,7 +6,7 @@ import nibabel as nb
 import numpy as np
 from PyQt5.QtWidgets import *
 
-from Base.utility import getDirFSLAtlas
+from Base.utility import getDirFSLAtlas, getVersion, getBuild
 from Base.dialogs import LoadFile, SaveFile, LoadMultiFile
 from GUI.frmCombineROIGUI import *
 
@@ -34,6 +34,7 @@ class frmCombineROI(Ui_frmCombineROI):
         ui.cbMetric.addItem("Intersection","int")
         ui.cbMetric.addItem("Union","uni")
 
+        dialog.setWindowTitle("easy fMRI combine ROI - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -61,7 +62,7 @@ class frmCombineROI(Ui_frmCombineROI):
                 ui.txtOFile.setText(ofile)
 
     def btnAdd_click(self):
-        filenames = LoadMultiFile('Save ROI ...',['ROI images (*.nii.gz, *.nii)', 'All files (*.*)'],'nii.gz')
+        filenames = LoadMultiFile('Save ROI ...',['ROI images (*.nii.gz *.nii)', 'All files (*.*)'],'nii.gz')
         for file in filenames:
             if len(file):
                 item = QtWidgets.QTreeWidgetItem()
