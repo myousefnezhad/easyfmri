@@ -12,7 +12,7 @@ from __future__ import print_function
 from sklearn.metrics import mean_squared_error
 
 class DeepRSA:
-    def __init__(self, layers=[10,10], n_iter = 1000, learning_rate=0.001, loss_norm = 'euclidean', activation = 'relu', batch_size = 50, report_step=300, verbose=True, CPU=False, alpha=10):
+    def __init__(self, layers=[10,10], n_iter = 1000, learning_rate=0.001, loss_norm = 'euclidean', activation = 'relu', batch_size = 50, report_step=300, verbose=True, CPU=False, alpha=10, loss_type='mse'):
         self.loss_norm      = loss_norm  # 'euclidean', 2, np.inf
         self.activation     = str.lower(activation) # 'relu', 'sigmoid', 'tanh'
         self.learning_rate  = learning_rate
@@ -27,6 +27,7 @@ class DeepRSA:
         self.loss_vec       = None
         self.CPU            = CPU
         self.alpha          = alpha
+        self.loss_type      = loss_type # 'norm', 'mse'
 
 
     def fit(self, data_vals, design_vals, sess=None):
@@ -49,7 +50,10 @@ class DeepRSA:
         # RSA optimization
         l1_term = tf.multiply(tf.constant(self.alpha,dtype=tf.float32), tf.reduce_mean(tf.abs(Beta)))
         l2_term = tf.multiply(tf.constant(-10 * self.alpha,dtype=tf.float32), tf.reduce_mean(tf.square(Beta)))
-        rsa_loss = tf.add(tf.add(tf.square(tf.norm(tf.subtract(MappedF, tf.matmul(D, Beta)), ord=self.loss_norm)),l1_term),l2_term)
+        if self.loss_type == 'norm':
+            rsa_loss = tf.add(tf.add(tf.square(tf.norm(tf.subtract(MappedF, tf.matmul(D, Beta)), ord=self.loss_norm)),l1_term),l2_term)
+        else:
+            rsa_loss = tf.add(tf.add(tf.reduce_mean(tf.square(tf.subtract(MappedF, tf.matmul(D, Beta)))),l1_term),l2_term)
         rsa_train = tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate).minimize(rsa_loss)
         # Performance Estimation mean((F - D * Beta)**2) / n
         perf  = tf.divide(tf.reduce_mean(tf.square(MappedF - tf.matmul(D, Beta))), tf.constant(np.shape(data_vals)[0],dtype=tf.float32))

@@ -5,7 +5,7 @@ from GUI.frmModelAnalysisGUI import *
 from GUI.frmDataEditor import frmDataEditor
 from GUI.frmSKModelEditor import frmSKModelEditor
 from GUI.frmSKCModelEditor import frmSKCModelEditor
-
+from GUI.frmResultReport import frmResultReport
 
 class MainWindow(QtWidgets.QMainWindow):
     parent = None
@@ -87,6 +87,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.btnDataEditor.clicked.connect(self.btnDataEditor_click)
         ui.btnSKModel.clicked.connect(self.btnSKModelEdior_click)
         ui.btnSKCModel.clicked.connect(self.btnSKCModelEdior_click)
+        ui.btnReport.clicked.connect(self.btnReport_click)
 
 
     # Exit function
@@ -162,8 +163,6 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             frmMASKGRSA.show(frmMASKGRSA)
             return
 
-
-
     def btnMAS_click(self):
         MAID = ui.cbMAS.currentData()
         if MAID == 10000:
@@ -202,6 +201,9 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMAAdaBoost import frmMAAdaBoost
             frmMAAdaBoost.show(frmMAAdaBoost)
             return
+
+    def btnReport_click(self):
+        frmResultReport.show(frmResultReport)
 
 # Auto Run
 if __name__ == "__main__":

@@ -45,6 +45,9 @@ class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
         ui.cbDevice.addItem("Auto", False)
         ui.cbDevice.addItem("Just CPU", True)
 
+        # Type
+        ui.cbType.addItem("MSE", 'mse')
+        ui.cbType.addItem("Norm", 'norm')
 
 
         dialog.setWindowTitle("easy fMRI Group Level Multi-Deep-Kernel Representational Similarity Analysis - V" + getVersion() + "B" + getBuild())
@@ -180,6 +183,8 @@ class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
         tStart = time.time()
         Activation  = ui.cbActivation.currentData()
         LossNorm    = ui.cbLossNorm.currentData()
+        LossType    = ui.cbType.currentData()
+
         try:
             Layers = strRange(ui.txtLayers.text(),Unique=False)
             if Layers is None:
@@ -548,7 +553,7 @@ class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
             rsa = DeepRSA(layers=Layers, n_iter=Iter, learning_rate=LearningRate, loss_norm=LossNorm,
                           activation=Activation, \
                           batch_size=BatchSize, report_step=ReportStep, verbose=ui.cbVerbose.isChecked(),\
-                          CPU=ui.cbDevice.currentData(), alpha=Alpha)
+                          CPU=ui.cbDevice.currentData(), alpha=Alpha, loss_type=LossType)
             BetaLi, WeightsLi, BiasesLi, loss_vec, MSE, Performance = rsa.fit(data_vals=XLi, design_vals=RegLi)
 
             OutData["LossVec" + str(foldID + 1)] = loss_vec
@@ -598,6 +603,8 @@ class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
             OutData["Covariance_max"]   = covClass.max()
             OutData["Covariance_std"]   = covClass.std()
             OutData["Covariance_mean"]  = covClass.mean()
+            print("Covariance: min: {:3.10f}, max: {:3.10f}, mean: {:3.10f}, std: {:3.10f}".format(covClass.min(), \
+                    covClass.max(), covClass.mean(), covClass.std()))
 
         if ui.cbCorr.isChecked():
             if ui.rbAvg.isChecked():
@@ -608,6 +615,9 @@ class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
             OutData["Correlation_max"]  = corClass.max()
             OutData["Correlation_std"]  = corClass.std()
             OutData["Correlation_mean"] = corClass.mean()
+            print("Correlation: min: {:3.10f}, max: {:3.10f}, mean: {:3.10f}, std: {:3.10f}".format(corClass.min(), \
+                    corClass.max(), corClass.mean(), corClass.std()))
+
 
         OutData["MSE"] = np.mean(AMSE)
         OutData["MSE_std"] = np.std(AMSE)
