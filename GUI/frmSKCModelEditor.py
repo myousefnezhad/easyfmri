@@ -14,6 +14,7 @@ from sklearn.metrics import normalized_mutual_info_score, adjusted_mutual_info_s
 
 
 from Base.utility import getVersion, getBuild
+from Base.dialogs import LoadFile
 from GUI.frmSKCModelEditorGUI import *
 from GUI.frmDataViewer import frmDataViewer
 from GUI.frmSelectRange import frmSelectRange
@@ -40,8 +41,6 @@ class frmSKCModelEditor(Ui_frmSKCModelEditor):
         ui.lwData.setHeaderLabels(['Name','Class' ,'Shape','Value'])
         ui.lwData.setColumnWidth(0,200)
 
-
-
         dialog.setWindowTitle("easy fMRI SK Clustering Model Viewer - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
@@ -65,10 +64,8 @@ class frmSKCModelEditor(Ui_frmSKCModelEditor):
 
 
     def btnInData_click(self):
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open label file ...", os.path.dirname(ui.txtInData.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                             os.path.dirname(ui.txtInData.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
@@ -112,10 +109,8 @@ class frmSKCModelEditor(Ui_frmSKCModelEditor):
 
     def btnLoadFile_click(self):
         global data
-        current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ifile = dialog.getOpenFileName(None,"Open First File",current,"","",flags)[0]
+        ifile =  LoadFile("Load SK Clustering model file ...",['Model files (*.model)'],'model',\
+                             os.path.dirname(ui.txtInData.text()))
         if len(ifile):
             if os.path.isfile(ifile):
                 try:

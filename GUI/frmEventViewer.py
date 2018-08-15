@@ -44,22 +44,3 @@ class frmEventViewer(QDialog):
 
     def btnExit_onclick(self):
         self.close()
-
-
-# from PyQt5.QtGui import QIcon
-# from PyQt5.QtCore import pyqtSlot
-
-        #def createTable(self):
-        # Create table
-
-
-        # table selection change
-        #self.tableWidget.doubleClicked.connect(self.on_click)
-
-    #@pyqtSlot()
-    #def on_click(self):
-    #    print("\n")
-    #    for currentQTableWidgetItem in self.tableWidget.selectedItems():
-    #        print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(), currentQTableWidgetItem.text())
-
-    pass

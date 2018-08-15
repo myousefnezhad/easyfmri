@@ -193,9 +193,6 @@ class frmFEDictionaryLearning(Ui_frmFEDictionaryLearning):
                     ui.txtNumFea.setMaximum(XShape[1])
                     ui.txtNumFea.setValue(XShape[1])
                     ui.lblFeaNum.setText("1 ... " + str(XShape[1]))
-
-
-
                     ui.txtInFile.setText(filename)
                 except Exception as e:
                     print(e)

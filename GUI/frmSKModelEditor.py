@@ -13,6 +13,7 @@ from sklearn.metrics import accuracy_score, precision_score, average_precision_s
 
 
 from Base.utility import getVersion, getBuild
+from Base.dialogs import LoadFile
 from GUI.frmSKModelEditorGUI import *
 from GUI.frmDataViewer import frmDataViewer
 from GUI.frmSelectRange import frmSelectRange
@@ -95,10 +96,8 @@ class frmSKModelEditor(Ui_frmSKModelEditor):
 
 
     def btnInData_click(self):
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open label file ...", os.path.dirname(ui.txtInData.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                             os.path.dirname(ui.txtInData.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
@@ -144,10 +143,8 @@ class frmSKModelEditor(Ui_frmSKModelEditor):
 
     def btnLoadFile_click(self):
         global data
-        current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ifile = dialog.getOpenFileName(None,"Open First File",current,"","",flags)[0]
+        ifile = LoadFile("Load SK Classification model file ...",['Model files (*.model)'],'model',\
+                             os.path.dirname(ui.txtInData.text()))
         if len(ifile):
             if os.path.isfile(ifile):
                 try:

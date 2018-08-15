@@ -6,6 +6,7 @@ import numpy as np
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QThread
 from Base.utility import getVersion, getBuild, OpenReport
+from Base.dialogs import SaveFile
 from GUI.frmJobsGUI import *
 
 
@@ -177,10 +178,7 @@ class frmJobs(Ui_frmJobs):
         ui.lvJobs.setColumnWidth(0,50)
         ui.lvJobs.setColumnWidth(1,150)
         ui.lvJobs.setColumnWidth(2,150)
-
         dialog.setWindowTitle("easy fMRI Job Manager - V" + getVersion() + "B" + getBuild())
-        #dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        #dialog.setWindowFlags(dialog.windowFlags() & QtCore.Qt.WindowMaximizeButtonHint)
         dialog.show()
 
 
@@ -313,9 +311,7 @@ class frmJobs(Ui_frmJobs):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ofile = dialog.getSaveFileName(None, "Output File", os.getcwd(), "", "", flags)[0]
+        ofile = SaveFile("Saving Report ...",['Text files (*.txt)'],'txt')
         if len(ofile):
             file = open(ofile,"w")
             file.write("Type\tStatus\tFile\n")

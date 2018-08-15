@@ -1,3 +1,0 @@
-source ~/.profile
-cd $EASYFMRI
-/usr/bin/env python3 frmMainMenu.py

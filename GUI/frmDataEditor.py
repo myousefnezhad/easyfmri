@@ -7,6 +7,7 @@ import scipy.io as io
 from PyQt5.QtWidgets import *
 
 from Base.utility import getVersion, getBuild
+from Base.dialogs import LoadFile
 from GUI.frmDataEditorGUI import *
 from GUI.frmDataViewer import frmDataViewer
 from GUI.frmSelectRange import frmSelectRange
@@ -52,10 +53,9 @@ class frmDataEditor(Ui_frmDataEditor):
 
     def btnLoadFile_click(self):
         global data
-        current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ifile = dialog.getOpenFileName(None,"Open First File",current,"","",flags)[0]
+        ifile = LoadFile("Open data files ...",\
+                         ['Data files (*.mat *.ezdata *.ezmat)', 'MatLab files (*.mat)','EasyData files (*.ezdata)', \
+                          'EasyMat (*.ezmat)', 'All files (*.*)'],'mat')
         if len(ifile):
             if os.path.isfile(ifile):
                 try:

@@ -2,8 +2,6 @@
 import os
 import sys
 import nibabel as nb
-
-
 from PyQt5.QtWidgets import *
 from Base.utility import getVersion, getBuild
 from Base.dialogs import LoadFile
