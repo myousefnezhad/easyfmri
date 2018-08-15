@@ -145,6 +145,10 @@ class frmMatNITF(Ui_frmMatNITF):
                             HasDefualt = key
                             dataShape = np.shape(data[key])
                             ui.txtTime.setText("[0-" + str(dataShape[0]) + "]")
+                        if key == "Beta":
+                            HasDefualt = key
+                            dataShape = np.shape(data[key])
+                            ui.txtTime.setText("[0-" + str(dataShape[0]) + "]")
 
                     if HasDefualt is not None:
                         ui.txtMatrix.setCurrentText(HasDefualt)

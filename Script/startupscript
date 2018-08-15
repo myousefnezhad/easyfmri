@@ -20,6 +20,11 @@ export EN_BASH="1"
 export EN_MC="1"
 export EN_COLOR="1"
 ######################################
+# Proxy for terminal                 #
+######################################
+alias proxyon='export http_proxy=http://127.0.0.1:3213 && export https_proxy=http://127.0.0.1:3213'
+alias proxyoff='export http_proxy= && export https_proxy='
+######################################
 # Directories                        #
 ######################################
 export INSTALL_DIR="$HOME"      # Base dir for Anaconda, easy fMRI, and AFNI

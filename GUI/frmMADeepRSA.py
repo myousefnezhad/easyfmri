@@ -18,6 +18,7 @@ from GUI.frmMADeepRSAGUI import *
 import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
 
 
 class frmMADeepRSA(Ui_frmMADeepRSA):
@@ -181,6 +182,39 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
                         values = np.unique(data["task"])
                         for val in values:
                             ui.txtTaskVal.addItem(str(val[0]))
+
+
+                    # Coordinate
+                    ui.txtCoor.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtCoor.addItem(key)
+                        if key == "coordinate":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtCoor.setCurrentText("coordinate")
+
+
+                    # imgShape
+                    ui.txtImg.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtImg.addItem(key)
+                        if key == "imgShape":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtImg.setCurrentText("imgShape")
+
+
+                    # Condition
+                    ui.txtCond.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtCond.addItem(key)
+                        if key == "condition":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtCond.setCurrentText("condition")
 
                     ui.txtInFile.setText(filename)
                     print("DONE.")
@@ -460,6 +494,65 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
             msgBox.exec_()
             return False
 
+        # Coordinate
+        if not len(ui.txtCoor.currentText()):
+            msgBox.setText("Please enter Coordinate variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            OutData[ui.txtCoor.currentText()] = InData[ui.txtCoor.currentText()]
+        except:
+            msgBox.setText("Coordinate value is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Condition
+        if not len(ui.txtCond.currentText()):
+            msgBox.setText("Please enter Condition variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            Cond = InData[ui.txtCond.currentText()]
+            OutData[ui.txtCond.currentText()] = Cond
+            labels = list()
+            for con in Cond:
+                labels.append(con[1][0])
+            labels = np.array(labels)
+
+        except:
+            msgBox.setText("Condition value is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # imgShape
+        if not len(ui.txtImg.currentText()):
+            msgBox.setText("Please enter imgShape variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            OutData[ui.txtImg.currentText()] = InData[ui.txtImg.currentText()]
+        except:
+            msgBox.setText("imgShape value is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
+
         try:
             X = InData[ui.txtData.currentText()]
             L = InData[ui.txtLabel.currentText()][0]
@@ -612,6 +705,7 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
             return False
         OutData["CounterID"] = ConID
 
+        FontSize = ui.txtFontSize.value()
 
         if Filter is not None:
             for fil in Filter:
@@ -696,8 +790,25 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
 
         if ui.cbBeta.isChecked():
             OutData["Betas"]    = Betas
+
+        if ui.cbNetwork.isChecked():
             OutData["Weights"]  = Weights
             OutData["Biases"]   = Biases
+
+
+        # Calculating Distance Matrix
+        dis = np.zeros((np.shape(Betas)[0], np.shape(Betas)[0]))
+
+        for i in range(np.shape(Betas)[0]):
+            for j in range(i + 1, np.shape(Betas)[0]):
+                dis[i, j] = 1 - np.dot(Betas[i, :], Betas[j, :].T)
+                dis[j, i] = dis[i, j]
+        OutData["DistanceMatrix"] = dis
+        Z = linkage(dis)
+        OutData["Linkage"] = Z
+
+
+
 
         # Calculate Results
         if ui.cbCorr.isChecked():
@@ -734,26 +845,78 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
 
         if ui.cbDiagram.isChecked():
             if ui.cbCorr.isChecked():
-                fig1 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Corr, vmin=-0.1, vmax=1)
-                plt.xlim([0, LNum])
-                plt.ylim([0, LNum])
-                plt.colorbar()
+
+                NumData = np.shape(Corr)[0]
+                fig1 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Corr, vmin=np.min(Corr), vmax=np.max(Corr))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('DeepRSA: Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+
+                if len(ui.txtTitleCorr.text()):
+                    plt.title(ui.txtTitleCorr.text())
+                else:
+                    plt.title('DeepRSA: Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
+
             if ui.cbCov.isChecked():
-                fig2 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Cov)
-                plt.xlim([0, LNum])
-                plt.ylim([0, LNum])
-                plt.colorbar()
+                NumData = np.shape(Cov)[0]
+                fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('DeepRSA: Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                if len(ui.txtTitleCov.text()):
+                    plt.title(ui.txtTitleCov.text())
+                else:
+                    plt.title('DeepRSA: Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
+
+            fig3 = plt.figure(figsize=(25, 10), )
+            if len(ui.txtTitleDen.text()):
+                plt.title(ui.txtTitleDen.text())
+            else:
+                plt.title('Group MP DeepRSA: Similarity Analysis\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+            dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1)
+            plt.show()
+
         print("DONE.")
         msgBox.setText("Gradient Representational Similarity Analysis (RSA) is done.")
         msgBox.setIcon(QMessageBox.Information)
@@ -766,6 +929,9 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
 
         ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
                              os.path.dirname(ui.txtOutFile.text()))
+
+        FontSize = ui.txtFontSize.value()
+
         if len(ofile):
             try:
                 Res     = io.loadmat(ofile)
@@ -783,6 +949,37 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
                 msgBox.exec_()
                 return False
 
+
+            HasDefaultCond = False
+            # Condition
+            if not len(ui.txtCond.currentText()):
+                try:
+                    Cond = Res["condition"]
+                    HasDefaultCond = True
+                except:
+                    msgBox.setText("Please enter Condition variable name!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+            if not HasDefaultCond:
+                try:
+                    Cond = Res[ui.txtCond.currentText()]
+                except:
+                    msgBox.setText("Condition value is wrong!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+
+            labels = list()
+            for con in Cond:
+                labels.append(con[1][0])
+            labels = np.array(labels)
+
+
             if ui.cbCorr.isChecked():
                 try:
                     Corr = Res["Correlation"]
@@ -793,14 +990,37 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
-                fig1 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Corr, vmin=-0.1, vmax=1)
-                plt.xlim([0, LNum])
-                plt.ylim([0, LNum])
-                plt.colorbar()
+
+
+                NumData = np.shape(Corr)[0]
+                fig1 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Corr, vmin=np.min(Corr), vmax=np.max(Corr))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('DeepRSA: Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+
+                if len(ui.txtTitleCov.text()):
+                    plt.title(ui.txtTitleCov.text())
+                else:
+                    plt.title('DeepRSA: Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
 
@@ -814,14 +1034,44 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
-                fig2 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Cov)
-                plt.xlim([0, LNum])
-                plt.ylim([0, LNum])
-                plt.colorbar()
+
+
+                NumData = np.shape(Cov)[0]
+                fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('DeepRSA: Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                if len(ui.txtTitleCorr.text()):
+                    plt.title(ui.txtTitleCorr.text())
+                else:
+                    plt.title('DeepRSA: Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+                plt.show()
+
+                fig3 = plt.figure(figsize=(25, 10), )
+                dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1)
+                if len(ui.txtTitleDen.text()):
+                    plt.title(ui.txtTitleDen.text())
+                else:
+                    plt.title('Group MP DeepRSA: Similarity Analysis\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
 
