@@ -88,7 +88,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -639,6 +639,32 @@
       <string>[Hidden Layer 1, HL2, HL3, ..., Out Layer]</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_21">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>290</y>
+       <width>201</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Alpha &gt; 0</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtAlpha">
+     <property name="geometry">
+      <rect>
+       <x>600</x>
+       <y>290</y>
+       <width>160</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>10</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_4">
     <attribute name="title">
@@ -813,7 +839,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Save Beta, Eps, Network Parameters</string>
+    <string>Save Beta, and Network Parameters</string>
    </property>
    <property name="checked">
     <bool>true</bool>

@@ -33,8 +33,8 @@ class frmMADeepGroupRSA(Ui_frmMADeepGroupRSA):
         ui.tabWidget.setCurrentIndex(0)
 
         # Activation
-        ui.cbActivation.addItem('ReLU', 'relu')
         ui.cbActivation.addItem('Sigmoid', 'sigmoid')
+        ui.cbActivation.addItem('ReLU', 'relu')
         ui.cbActivation.addItem('Tanh', 'tanh')
 
         # LASSO Norm
@@ -550,11 +550,11 @@ class frmMADeepGroupRSA(Ui_frmMADeepGroupRSA):
 
         OutData["Weight"]   = Weights
         OutData["Bias"]     = Bias
-        OutData["MSE"]      = MSE
-        OutData["AMSE"]     = rsa.AMSE
-        OutData["MSE_std"]  = np.std(rsa.AMSE)
+        OutData["Perfromance"]      = MSE
+        OutData["Perfromance_Average"]     = rsa.AMSE
+        OutData["Perfromance_std"]  = np.std(rsa.AMSE)
         OutData["LossMat"]  = loss_mat
-        print("Average MSE: %f" % (OutData["MSE"]))
+        print("Average Performance: %f" % (OutData["Perfromance"]))
 
         print("Calculating cov & corr ... ")
         AvgCov  = None

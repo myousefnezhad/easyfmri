@@ -33,8 +33,8 @@ class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
         ui.tabWidget.setCurrentIndex(0)
 
         # Activation
-        ui.cbActivation.addItem('ReLU', 'relu')
         ui.cbActivation.addItem('Sigmoid', 'sigmoid')
+        ui.cbActivation.addItem('ReLU', 'relu')
         ui.cbActivation.addItem('Tanh', 'tanh')
 
         # LASSO Norm
@@ -196,6 +196,17 @@ class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
             Iter = np.int32(ui.txtIter.text())
         except:
             msgBox.setText("Number of iteration is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            Alpha = np.float32(ui.txtAlpha.text())
+            if Alpha < 0:
+                raise Exception
+        except:
+            msgBox.setText("Alpha is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
@@ -504,10 +515,12 @@ class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
         Cov = None
         Corr = None
         AMSE = list()
+        APer = list()
 
         # RSA Method
         OutData['Method'] = dict()
         OutData['Method']['Layers'] = ui.txtLayers.text()
+        OutData['Method']['Alpha']  = Alpha
         OutData['Method']['Activation'] = Activation
         OutData['Method']['LossNorm'] = LossNorm
         OutData['Method']['LearningRate'] = LearningRate
@@ -515,6 +528,7 @@ class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
         OutData['Method']['BatchSize'] = BatchSize
         OutData['Method']['ReportStep'] = ReportStep
         OutData['Method']['Verbose'] = ui.cbVerbose.isChecked()
+
 
         TotalFolds = len(UniqFold)
 
@@ -534,15 +548,16 @@ class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
             rsa = DeepRSA(layers=Layers, n_iter=Iter, learning_rate=LearningRate, loss_norm=LossNorm,
                           activation=Activation, \
                           batch_size=BatchSize, report_step=ReportStep, verbose=ui.cbVerbose.isChecked(),\
-                          CPU=ui.cbDevice.currentData())
-            BetaLi, EpsLi, WeightsLi, BiasesLi, loss_vec, MSE = rsa.fit(data_vals=XLi, design_vals=RegLi)
+                          CPU=ui.cbDevice.currentData(), alpha=Alpha)
+            BetaLi, WeightsLi, BiasesLi, loss_vec, MSE, Performance = rsa.fit(data_vals=XLi, design_vals=RegLi)
 
             OutData["LossVec" + str(foldID + 1)] = loss_vec
-            OutData["MSE" + str(foldID)] = MSE
+            OutData["MSE" + str(foldID)]            = MSE
+            OutData["Performance" + str(foldID)]    = Performance
             AMSE.append(MSE)
+            APer.append(Performance)
             if ui.cbBeta.isChecked():
                 OutData["BetaL" + str(foldID + 1)] = BetaLi
-                OutData["EpsL" + str(foldID + 1)]  = EpsLi
                 OutData["WeightsL" + str(foldID + 1)] = WeightsLi
                 OutData["BiasesL" + str(foldID + 1)]  = BiasesLi
 
@@ -596,6 +611,9 @@ class frmMAGMDeepRSA(Ui_frmMAGMDeepRSA):
 
         OutData["MSE"] = np.mean(AMSE)
         OutData["MSE_std"] = np.std(AMSE)
+        OutData["Performance"] = np.mean(APer)
+        OutData["Performance_std"] = np.std(APer)
+
 
         print("Average MSE: %f" % (OutData["MSE"]))
         OutData["RunTime"] = time.time() - tStart

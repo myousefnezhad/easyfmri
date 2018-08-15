@@ -574,6 +574,7 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
         Cov = None
         Corr = None
         AMSE = list()
+        APer = list()
 
         # RSA Method
         OutData['Method'] = dict()
@@ -610,12 +611,16 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
                               elstnet_lamda1=ElasticLambda1, elstnet_lamda2=ElasticLambda2, lasso_param=LassoParam, \
                               lasso_penalty=LassoPenalty, random_seed=RandomSeed, verbose=ui.cbVerbose.isChecked(),\
                               CPU=ui.cbDevice.currentData())
-            BetaLi, EpsLi, loss_vec, MSE = rsa.fit(data_vals=XLi, design_vals=RegLi)
+            BetaLi, EpsLi, loss_vec, MSE, Performance = rsa.fit(data_vals=XLi, design_vals=RegLi)
             OutData["LossVec"] = loss_vec
             print("Calculating MSE for level %d ..." % (foldID + 1))
             print("MSE%d: %f" % (foldID + 1, MSE))
+            print("Perfromance%d: %f" % (foldID + 1, Performance))
+
             OutData["MSE" + str(foldID)] = MSE
+            OutData["Performance" + str(foldID)] = MSE
             AMSE.append(MSE)
+            APer.append(Performance)
             if ui.cbBeta.isChecked():
                 OutData["BetaL" + str(foldID + 1)] = BetaLi
                 OutData["EpsL" + str(foldID + 1)]  = EpsLi
@@ -667,8 +672,12 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
             OutData["Correlation_std"]  = corClass.std()
             OutData["Correlation_mean"] = corClass.mean()
 
-        OutData["MSE"]      = np.mean(AMSE)
-        OutData["MSE_std"]  = np.std(AMSE)
+        OutData["MSE"]              = np.mean(AMSE)
+        OutData["MSE_std"]          = np.std(AMSE)
+        OutData["Performance"]      = np.mean(APer)
+        OutData["Performance_std"]  = np.std(APer)
+
+
         print("Average MSE: %f" % (OutData["MSE"]))
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))

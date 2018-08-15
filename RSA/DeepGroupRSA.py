@@ -97,7 +97,7 @@ class DeepGroupRSA:
             MSE = sess.run(perf, {D: design_vals[data_index], MappedF: sess.run(kernelmapping, {F: data_vals[data_index]})})
             self.AMSE.append(MSE)
             if self.verbose:
-                print("View {:d} MSE: {:20.10f}".format(data_index + 1, MSE))
+                print("View {:d} Performance: {:20.10f}".format(data_index + 1, MSE))
             self.loss_mat.append(loss_vec)
             self.Beta.append(sess.run(Beta))
             self.Eps.append(sess.run(Eps))

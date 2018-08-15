@@ -4,7 +4,7 @@
 # Nanjing University of Aeronautics and Astronautics
 # Example
 # rsa = GradientRSA()
-# beta, eps, loss = rsa.fit(data, design)
+# beta, eps, loss, mse, performance = rsa.fit(data, design)
 
 class GradientRSA:
     def __init__(self, regression_type = "regularizedreg", loss_type="norm", loss_norm='euclidean', learning_rate = 0.001, n_iter = 1000, batch_size = 50, report_step = 300, ridge_param = 0.1, elstnet_lamda1 = 0.1, elstnet_lamda2 = 0.1, lasso_param = 0.9, lasso_penalty = 99.0, random_seed = 13, verbose=True, CPU=False):
@@ -33,6 +33,7 @@ class GradientRSA:
         import tensorflow as tf
         from tensorflow.python.framework import ops
         import os
+        from sklearn.metrics import mean_squared_error
 
         if self.verbose:
             print("Type: %s with loss %s" % (self.regression_type, self.loss_type if self.loss_type == "mse" else self.loss_type + "_" + str(self.loss_norm)))
@@ -103,7 +104,7 @@ class GradientRSA:
 
         sess.run(tf.global_variables_initializer())
         if self.verbose:
-            print("Before Mapping, MSE:   {:20.10f}".format(sess.run(perf, {D: design_vals, F: data_vals})))
+            print("Before Mapping, Perfromance:   {:20.10f}".format(sess.run(perf, {D: design_vals, F: data_vals})))
         # Training loop
         self.loss_vec = list()
         for i in range(self.n_iter):
@@ -116,10 +117,11 @@ class GradientRSA:
             if self.verbose:
                 if (i == 0) or ((i+1)%self.report_step == 0) or (i == self.n_iter - 1):
                     print('It: {:9d} of {:9d} \t Loss: {:20.10f}'.format(i+1, self.n_iter, temp_loss))
-        MSE = sess.run(perf, {D: design_vals, F: data_vals})
+        Performance = sess.run(perf, {D: design_vals, F: data_vals})
         if self.verbose:
-            print("After Mapping, MSE:    {:20.10f}".format(MSE))
+            print("After Mapping, Performance:    {:20.10f}".format(Performance))
         self.Beta   = sess.run(Beta)
         self.Eps    = sess.run(Eps)
         sess.close()
-        return self.Beta, self.Eps, self.loss_vec, MSE
+        MSE = mean_squared_error(data_vals, np.dot(design_vals, self.Beta))
+        return self.Beta, self.Eps, self.loss_vec, MSE, Performance

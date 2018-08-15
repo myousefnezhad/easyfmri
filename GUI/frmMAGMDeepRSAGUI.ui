@@ -88,7 +88,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -751,6 +751,32 @@
       <string>Layers</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_21">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>380</y>
+       <width>201</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Alpha &gt; 0</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtAlpha">
+     <property name="geometry">
+      <rect>
+       <x>600</x>
+       <y>380</y>
+       <width>160</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>10</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_4">
     <attribute name="title">
@@ -918,14 +944,14 @@
   <widget class="QCheckBox" name="cbBeta">
    <property name="geometry">
     <rect>
-     <x>250</x>
+     <x>180</x>
      <y>90</y>
      <width>341</width>
      <height>22</height>
     </rect>
    </property>
    <property name="text">
-    <string>Save Beta Values</string>
+    <string>Save Beta, and Network Parameters</string>
    </property>
    <property name="checked">
     <bool>true</bool>
@@ -947,7 +973,7 @@
   <widget class="QLabel" name="label_22">
    <property name="geometry">
     <rect>
-     <x>450</x>
+     <x>500</x>
      <y>90</y>
      <width>81</width>
      <height>16</height>
@@ -960,9 +986,9 @@
   <widget class="QComboBox" name="cbDevice">
    <property name="geometry">
     <rect>
-     <x>530</x>
+     <x>580</x>
      <y>90</y>
-     <width>251</width>
+     <width>201</width>
      <height>26</height>
     </rect>
    </property>

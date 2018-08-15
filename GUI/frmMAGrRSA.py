@@ -731,9 +731,11 @@ class frmMAGrRSA(Ui_frmMAGrRSA):
                           elstnet_lamda1=ElasticLambda1, elstnet_lamda2=ElasticLambda2,lasso_param=LassoParam,\
                           lasso_penalty=LassoPenalty,random_seed=RandomSeed,verbose=ui.cbVerbose.isChecked(),\
                           CPU=ui.cbDevice.currentData())
-        Betas, Eps, loss_vec, MSE = rsa.fit(data_vals=X, design_vals=Design)
+        Betas, Eps, loss_vec, MSE, Performacne = rsa.fit(data_vals=X, design_vals=Design)
         OutData["LossVec"] = loss_vec
         OutData["MSE"] = MSE
+        OutData["Performance"] = Performacne
+        print("MSE: ", OutData["MSE"])
 
         if ui.cbBeta.isChecked():
             OutData["Betas"]  = Betas
