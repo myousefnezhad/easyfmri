@@ -1,0 +1,964 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>frmCombineData</class>
+ <widget class="QDialog" name="frmCombineData">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>734</width>
+    <height>706</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QLineEdit" name="txtInFFile">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>20</y>
+     <width>521</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_33">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>131</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Input First Data</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnInFFile">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>20</y>
+     <width>51</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtInSFile">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>60</y>
+     <width>521</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_34">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>60</y>
+     <width>131</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Input Second Data</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnInSFile">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>60</y>
+     <width>51</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_35">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>100</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Output Data File</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnOutFile">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>100</y>
+     <width>51</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtOutFile">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>100</y>
+     <width>521</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtFData">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>170</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtFLabel">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>210</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtFDM">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>330</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>210</y>
+     <width>60</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Label</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbDM">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>330</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Design Matrix</string>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>170</y>
+     <width>60</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Data</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtFCol">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>290</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbCol">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>290</y>
+     <width>111</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Coordinate</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbmLabel">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>250</y>
+     <width>111</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Label (matrix)</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtFSubject">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>370</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtFTask">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>410</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbCond">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>530</y>
+     <width>101</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Condition</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbTask">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>410</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Task</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtFCond">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>530</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbSubject">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>370</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Subject</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtFCounter">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>490</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbCounter">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>490</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Counter</string>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbRun">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>450</y>
+     <width>81</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Run</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtFRun">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>450</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbNScan">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>610</y>
+     <width>91</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>NScan</string>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtFScan">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>610</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtSCond">
+   <property name="geometry">
+    <rect>
+     <x>298</x>
+     <y>530</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtSCounter">
+   <property name="geometry">
+    <rect>
+     <x>298</x>
+     <y>490</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtSSubject">
+   <property name="geometry">
+    <rect>
+     <x>298</x>
+     <y>370</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtSScan">
+   <property name="geometry">
+    <rect>
+     <x>298</x>
+     <y>610</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtSCol">
+   <property name="geometry">
+    <rect>
+     <x>298</x>
+     <y>290</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtSDM">
+   <property name="geometry">
+    <rect>
+     <x>298</x>
+     <y>330</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtSLabel">
+   <property name="geometry">
+    <rect>
+     <x>298</x>
+     <y>210</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtSTask">
+   <property name="geometry">
+    <rect>
+     <x>298</x>
+     <y>410</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtSRun">
+   <property name="geometry">
+    <rect>
+     <x>298</x>
+     <y>450</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="txtSData">
+   <property name="geometry">
+    <rect>
+     <x>298</x>
+     <y>170</y>
+     <width>121</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>true</bool>
+   </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>140</y>
+     <width>61</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>First File</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>140</y>
+     <width>80</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Second File</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>140</y>
+     <width>61</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Out File</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnClose">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>660</y>
+     <width>141</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnConvert">
+   <property name="geometry">
+    <rect>
+     <x>570</x>
+     <y>660</y>
+     <width>141</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Convert</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtOLabel">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>210</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>label</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtOmLabel">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>250</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>mlabel</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtOData">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>170</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>data</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtOCoI">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>290</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>coordinate</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtODM">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>330</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>design</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtOSubject">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>370</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>subject</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtORun">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>450</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>run</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtOCounter">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>490</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>counter</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtOTask">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>410</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>task</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtOCond">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>530</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>condition</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtOScan">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>610</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>nscan</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbRelabeling">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>210</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Re-Labeling</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_28">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>570</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Condition Prefix:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtOCondPre">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>570</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>cond</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="cbCondUnion">
+   <property name="geometry">
+    <rect>
+     <x>588</x>
+     <y>530</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Just Union</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtFCondPre">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>570</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>cond</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtSCondPre">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>570</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>cond</string>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>txtInFFile</tabstop>
+  <tabstop>btnInFFile</tabstop>
+  <tabstop>txtInSFile</tabstop>
+  <tabstop>btnInSFile</tabstop>
+  <tabstop>txtOutFile</tabstop>
+  <tabstop>btnOutFile</tabstop>
+  <tabstop>cbmLabel</tabstop>
+  <tabstop>cbCol</tabstop>
+  <tabstop>cbDM</tabstop>
+  <tabstop>cbSubject</tabstop>
+  <tabstop>cbTask</tabstop>
+  <tabstop>cbRun</tabstop>
+  <tabstop>cbCounter</tabstop>
+  <tabstop>cbCond</tabstop>
+  <tabstop>cbNScan</tabstop>
+  <tabstop>txtFData</tabstop>
+  <tabstop>txtFLabel</tabstop>
+  <tabstop>txtFCol</tabstop>
+  <tabstop>txtFDM</tabstop>
+  <tabstop>txtFSubject</tabstop>
+  <tabstop>txtFTask</tabstop>
+  <tabstop>txtFRun</tabstop>
+  <tabstop>txtFCounter</tabstop>
+  <tabstop>txtFCond</tabstop>
+  <tabstop>txtFCondPre</tabstop>
+  <tabstop>txtFScan</tabstop>
+  <tabstop>txtSData</tabstop>
+  <tabstop>txtSLabel</tabstop>
+  <tabstop>txtSCol</tabstop>
+  <tabstop>txtSDM</tabstop>
+  <tabstop>txtSSubject</tabstop>
+  <tabstop>txtSTask</tabstop>
+  <tabstop>txtSRun</tabstop>
+  <tabstop>txtSCounter</tabstop>
+  <tabstop>txtSCond</tabstop>
+  <tabstop>txtSCondPre</tabstop>
+  <tabstop>txtSScan</tabstop>
+  <tabstop>txtOData</tabstop>
+  <tabstop>txtOLabel</tabstop>
+  <tabstop>txtOmLabel</tabstop>
+  <tabstop>txtOCoI</tabstop>
+  <tabstop>txtODM</tabstop>
+  <tabstop>txtOSubject</tabstop>
+  <tabstop>txtOTask</tabstop>
+  <tabstop>txtORun</tabstop>
+  <tabstop>txtOCounter</tabstop>
+  <tabstop>txtOCond</tabstop>
+  <tabstop>txtOCondPre</tabstop>
+  <tabstop>txtOScan</tabstop>
+  <tabstop>cbRelabeling</tabstop>
+  <tabstop>cbCondUnion</tabstop>
+  <tabstop>btnConvert</tabstop>
+  <tabstop>btnClose</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

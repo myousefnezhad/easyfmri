@@ -219,7 +219,7 @@ class Setting:
         print("Number of Runs are okay.")
         # Check fMRI Images
         try:
-            TR = np.double(ui.txtTR.value())
+            TR = np.double(ui.txtTR.text())
             1 / TR
         except:
             msgBox.setText("TR must be a number")
@@ -235,7 +235,7 @@ class Setting:
             return False
         print("TR is okay")
         try:
-            FWHM = np.double(ui.txtFWHM.value())
+            FWHM = np.double(ui.txtFWHM.text())
             1 / FWHM
         except:
             msgBox.setText("FWHM must be a number")
@@ -293,7 +293,7 @@ class Setting:
         print("Event codes are okay")
 
         try:
-            HighPass = np.double(ui.txtHighPass.value())
+            HighPass = np.double(ui.txtHighPass.text())
         except:
             msgBox.setText("High Pass cutoff must be a number")
             msgBox.setIcon(QMessageBox.Critical)

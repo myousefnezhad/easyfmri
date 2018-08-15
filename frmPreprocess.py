@@ -87,7 +87,7 @@ class frmPreprocess(Ui_frmPreprocess):
 # This function is run when the main form start
 # and initiate the default parameters.
     def show(self,parentin=None):
-        from utility import getVersion
+        from utility import getVersion, getBuild, getDirSpaceINI, getDirSpace
         global dialog, ui, parent
         ui = Ui_frmPreprocess()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
@@ -106,13 +106,13 @@ class frmPreprocess(Ui_frmPreprocess):
         ui.cbSliceTime.addItem("Regular down (n, n-1, ..., 1)")
         ui.cbSliceTime.addItem("Interleaved (2, 4, 6, ...), (1, 3, 5, ...)")
 
-        ProgramPath = os.path.dirname(os.path.abspath(__file__))
+        #ProgramPath = os.path.dirname(os.path.abspath(__file__))
 
         try:
-            spaceINI = str.rsplit(open(ProgramPath + "/space/space.ini").read(),"\n")
+            spaceINI = str.rsplit(open(getDirSpaceINI()).read(),"\n")
             for space in spaceINI:
                 if len(space):
-                    ui.txtMNI.addItem(ProgramPath + "/space/" + space)
+                    ui.txtMNI.addItem(getDirSpace() + space)
 
             ui.txtMNI.setCurrentIndex(1)
 
@@ -218,7 +218,7 @@ class frmPreprocess(Ui_frmPreprocess):
             ui.txtEvents.setPlainText(EventCode(),"","")
             pass
 
-        dialog.setWindowTitle("easy fMRI preprocessing - " + getVersion())
+        dialog.setWindowTitle("easy fMRI preprocessing - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -356,11 +356,11 @@ class frmPreprocess(Ui_frmPreprocess):
                 return
             try:
                 BoldHDR = nb.load(FirstFile)
-                ui.txtTR.setValue(float(BoldHDR.header.get_zooms()[3]))
+                ui.txtTR.setText(str(float(BoldHDR.header.get_zooms()[3])))
                 ui.txtTotalVol.setValue(int(BoldHDR.get_shape()[3]))
                 Voxels = BoldHDR.header.get_zooms()[0:3]
                 ui.txtVoxel.setText("Voxel Size: " + str(Voxels))
-                ui.txtFWHM.setValue(float(np.max(Voxels)*3))
+                ui.txtFWHM.setText(str(float(np.max(Voxels)*3)))
 
                 msgBox = QMessageBox()
                 msgBox.setText("Basic information is read from the 1st BOLD file\n\nTR: " +\
@@ -529,11 +529,11 @@ class frmPreprocess(Ui_frmPreprocess):
                 ui.txtRunLen.setValue(setting.RunLen)
                 ui.txtAnalysis.setText(setting.Analysis)
                 ui.txtScript.setText(setting.Script)
-                ui.txtTR.setValue(setting.TR)
-                ui.txtFWHM.setValue(setting.FWHM)
+                ui.txtTR.setText(str(setting.TR))
+                ui.txtFWHM.setText(str(setting.FWHM))
                 ui.txtTotalVol.setValue(setting.TotalVol)
                 ui.txtDeleteVol.setValue(setting.DeleteVol)
-                ui.txtHighPass.setValue(setting.HighPass)
+                ui.txtHighPass.setText(str(setting.HighPass))
                 ui.txtDENL.setText(str(setting.DENL))
                 ui.txtDETS.setText(str(setting.DETS))
                 ui.txtDEZT.setText(str(setting.DEZT))
@@ -599,11 +599,11 @@ class frmPreprocess(Ui_frmPreprocess):
                     ui.txtRunLen.setValue(setting.RunLen)
                     ui.txtAnalysis.setText(setting.Analysis)
                     ui.txtScript.setText(setting.Script)
-                    ui.txtTR.setValue(setting.TR)
-                    ui.txtFWHM.setValue(setting.FWHM)
+                    ui.txtTR.setText(str(setting.TR))
+                    ui.txtFWHM.setText(str(setting.FWHM))
                     ui.txtTotalVol.setValue(setting.TotalVol)
                     ui.txtDeleteVol.setValue(setting.DeleteVol)
-                    ui.txtHighPass.setValue(setting.HighPass)
+                    ui.txtHighPass.setText(str(setting.HighPass))
                     ui.txtDENL.setText(str(setting.DENL))
                     ui.txtDETS.setText(str(setting.DETS))
                     ui.txtDEZT.setText(str(setting.DEZT))
@@ -1025,6 +1025,9 @@ class frmPreprocess(Ui_frmPreprocess):
         global ui
         frmEventConcatenator.show(frmEventConcatenator)
         pass
+
+
+
 
 
 

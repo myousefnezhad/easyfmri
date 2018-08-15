@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from frmMainMenuGUI import *
 from frmPreprocess import *
+from frmFeatureAnalysis import *
 import PyQt5.QtWidgets as QtWidgets
 #import PyQt5.QtCore as QtCore
 from pyqode.core import api
@@ -46,7 +47,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
 
 
     def show(self):
-        from utility import getVersion
+        from utility import getVersion,getBuild
         global dialog, ui
         ui = Ui_frmMainMenuGUI()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
@@ -55,14 +56,14 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         self.set_events(self)
 
 
-        dialog.setWindowTitle("easy fMRI - " + getVersion())
+        dialog.setWindowTitle("easy fMRI - V" + getVersion() + "B" + getBuild())
 
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
 
 
-        ui.btnFeatureAnalysis.setEnabled(False)
+        #ui.btnFeatureAnalysis.setEnabled(False)
         ui.btnModelAnalysis.setEnabled(False)
         ui.btnVisualization.setEnabled(False)
 
@@ -74,6 +75,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         global ui
         ui.btnExit.clicked.connect(self.btnExit_click)
         ui.btnPreprocess.clicked.connect(self.btnPreprocess_click)
+        ui.btnFeatureAnalysis.clicked.connect(self.btnFeatureAnalysis_click)
         ui.btnAbout.clicked.connect(self.btnAbout_click)
 
 
@@ -97,6 +99,14 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         dialog.hide()
         frmPreprocess.show(frmPreprocess,dialog)
         #dialog.show()
+
+
+    def btnFeatureAnalysis_click(self):
+        global dialog
+        dialog.hide()
+        frmFeatureAnalysis.show(frmFeatureAnalysis,dialog)
+
+
 
 # Auto Run
 if __name__ == "__main__":

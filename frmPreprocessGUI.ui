@@ -29,7 +29,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -1055,66 +1055,6 @@ It's case sensitive.</string>
       <number>999999999</number>
      </property>
     </widget>
-    <widget class="QDoubleSpinBox" name="txtTR">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>20</y>
-       <width>121</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="decimals">
-      <number>6</number>
-     </property>
-     <property name="minimum">
-      <double>0.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>1000000000000000000000.000000000000000</double>
-     </property>
-     <property name="singleStep">
-      <double>0.500000000000000</double>
-     </property>
-     <property name="value">
-      <double>0.000000000000000</double>
-     </property>
-    </widget>
-    <widget class="QDoubleSpinBox" name="txtHighPass">
-     <property name="geometry">
-      <rect>
-       <x>550</x>
-       <y>108</y>
-       <width>100</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="decimals">
-      <number>5</number>
-     </property>
-     <property name="maximum">
-      <double>99999999999999996863366107917975552.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>100.000000000000000</double>
-     </property>
-    </widget>
-    <widget class="QDoubleSpinBox" name="txtFWHM">
-     <property name="geometry">
-      <rect>
-       <x>240</x>
-       <y>108</y>
-       <width>100</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="maximum">
-      <double>99999999999999996863366107917975552.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>5.000000000000000</double>
-     </property>
-    </widget>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="geometry">
       <rect>
@@ -1270,6 +1210,42 @@ It's case sensitive.</string>
        <string>0.05</string>
       </property>
      </widget>
+    </widget>
+    <widget class="QLineEdit" name="txtTR">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>20</y>
+       <width>100</width>
+       <height>21</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtHighPass">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>108</y>
+       <width>100</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>100</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtFWHM">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>108</y>
+       <width>100</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>5</string>
+     </property>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_3">
@@ -1842,11 +1818,8 @@ It's case sensitive.</string>
   <tabstop>txtOnset</tabstop>
   <tabstop>txtEventDIR</tabstop>
   <tabstop>txtCondPre</tabstop>
-  <tabstop>txtTR</tabstop>
   <tabstop>txtTotalVol</tabstop>
   <tabstop>txtDeleteVol</tabstop>
-  <tabstop>txtFWHM</tabstop>
-  <tabstop>txtHighPass</tabstop>
   <tabstop>cbSliceTime</tabstop>
   <tabstop>cbMotionCorrection</tabstop>
   <tabstop>cbRegAnat</tabstop>
