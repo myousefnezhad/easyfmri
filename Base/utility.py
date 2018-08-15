@@ -6,29 +6,82 @@ from dir import getDIR
 
 import threading
 
+def About():
+    return """<h1>easy fMRI project</h1>
+<h3>A toolbox for Human Brain Mapping and Decoding</h3>
+<h4>Website: <a href=\"https://easyfmri.sourceforge.io\">https://easyfmri.sourceforge.io</a></h4>
+<h4>Data repository: <a href=\"https://easyfmridata.sourceforge.io\">https://easyfmridata.sourceforge.io</a></h4>
 
-class MyThread(threading.Thread):
+<p>Created by:</p>
+<p><a href=\"https://myousefnezhad.sourceforge.io\">Muhammad Yousefnezhad</a>, <a href=\"http://ibrain.nuaa.edu.cn\">iBRAIN Group</a>,</p>
+<p><a href=\"http://iao.nuaa.edu.cn\">Nanjing University of Aeronautics and Astronautics</a>, China.<p></h6>
+"""
+
+
+class MyMessageBox(QMessageBox):
+    def __init__(self):
+        QMessageBox.__init__(self)
+        self.setSizeGripEnabled(True)
+
+    def event(self, e):
+        result = QMessageBox.event(self, e)
+        self.setMinimumHeight(0)
+        self.setMaximumHeight(16777215)
+        self.setMinimumWidth(550)
+        self.setMaximumWidth(16777215)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        textEdit = self.findChild(QTextEdit)
+        if textEdit != None :
+            textEdit.setMinimumHeight(0)
+            textEdit.setMaximumHeight(16777215)
+            textEdit.setMinimumWidth(0)
+            textEdit.setMaximumWidth(16777215)
+            textEdit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        return result
+
+
+class RunThread(threading.Thread):
     def __init__(self, cmd):
         threading.Thread.__init__(self)
         self.cmd = cmd
-
     def run(self):
         os.system(self.cmd)
 
+class OpenThread(threading.Thread):
+    def __init__(self, addr):
+        threading.Thread.__init__(self)
+        self.addr = addr
+
+    def run(self):
+        import webbrowser, time
+        for _ in range(0,1000):
+            time.sleep(3)
+            if webbrowser.open_new("file://" + self.addr):
+                break
 
 def RunCMD(cmd):
-    thread = MyThread(cmd)
+    thread = RunThread(cmd)
+    thread.daemon = True
+    thread.start()
+
+
+def OpenReport(addr):
+    thread = OpenThread(addr)
     thread.daemon = True
     thread.start()
 
 
 def getVersion():
-    return "1.5"
+    return "1.6"
 
 
 def getBuild():
     return "1000"
 
+def getSettingVersion():
+    return "2.0"
 
 def fixstr(Value, Length, Perfix="0"):
     strVal = str(Value)
@@ -71,27 +124,6 @@ def getTimeSliceText(ID):
     return None
 
 
-def setParameters(STR, Sub, Run, Task, Counter=None):
-    outSTR = str(STR)
-    outSTR = outSTR.replace("$SUB$",Sub)
-    outSTR = outSTR.replace("$RUN$",Run)
-    outSTR = outSTR.replace("$TASK$",Task)
-    if Counter is not None:
-        outSTR = outSTR.replace("$COUNT$", Counter)
-    return outSTR
-
-
-def setParameters2(STR, Dir, Sub, Run, Task, Counter=None):
-    outSTR = str(STR)
-    outSTR = outSTR.replace("$MAINDIR$",Dir)
-    outSTR = outSTR.replace("$SUB$",Sub)
-    outSTR = outSTR.replace("$RUN$",Run)
-    outSTR = outSTR.replace("$TASK$",Task)
-    if Counter is not None:
-        outSTR = outSTR.replace("$COUNT$", Counter)
-    return outSTR
-
-
 def setParameters3(STR, Dir, Sub, Run, Task, Counter=None,Condition=None):
     outSTR = str(STR)
     outSTR = outSTR.replace("$MAINDIR$",Dir)
@@ -121,21 +153,6 @@ def getFSLxml():
     ProgramPath = getDIR()
     return ProgramPath + "/data/fslatlas.ini"
 
-def getSUMADir():
-    ProgramPath = getDIR()
-    return ProgramPath + "/data/suma/"
-
-def getSUMAMNI():
-    return "MNI_N27+tlrc."
-
-def getSUMALeftHem():
-    return "N27_lh_tlrc.spec"
-
-def getSUMARightHem():
-    return "N27_rh_tlrc.spec"
-
-def getSUMABothHem():
-    return "N27_both_tlrc.spec"
 
 def convertDesignMatrix(filename,cond=None):
     import os
@@ -178,7 +195,7 @@ def fitLine(interval):
         errors.append(err)
     return coeffs[np.argmin(errors)]
 
-def strRange(data):
+def strRange(data,Unique=False):
     if not len(data):
         return None
     result = list()
@@ -207,31 +224,83 @@ def strRange(data):
     except:
         print("Wrong Format!")
         return None
+
+    if Unique:
+        if not(len(result) == len(np.unique(result))):
+            print("Subjects are not unique!")
+            return None
     return result
 
 
-class MyMessageBox(QMessageBox):
-    def __init__(self):
-        QMessageBox.__init__(self)
-        self.setSizeGripEnabled(True)
+def strMultiRange(data,Len=None):
+    if not len(data):
+        return None
+    result = list()
+    try:
+        strData = data.replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()
+        for D in strData:
+            # Calculate Repate
+            multiply = D.replace("*"," ").split()
+            if len(multiply) == 1:
+                Mul = 1
+                Str = D
+            elif len(multiply) == 2:
+                Mul = np.int32(multiply[0])
+                Str = multiply[1]
+            else:
+                print("Wrong Format, Symbol = *")
+                return None
+            # Calculate Range
+            res = list()
+            reformD = Str.replace("-"," ").split()
+            if len(reformD) == 1:
+                res.append(np.int(reformD[0]))
+            elif len(reformD) == 2:
+                LoBand = np.int(reformD[0])
+                HiBand = np.int(reformD[1])
+                if LoBand == HiBand:
+                    res.append(np.int(reformD[0]))
+                elif LoBand < HiBand:
+                    ren = np.arange(LoBand, HiBand + 1, 1)
+                    for x in ren:
+                        res.append(x)
+                elif LoBand > HiBand:
+                    ren = np.arange(LoBand, HiBand - 1, -1)
+                    for x in ren:
+                        res.append(x)
+            else:
+                print("Wrong Format, Symbol: -")
+                return None
+            # Apply Repeat
+            for _ in range(0, Mul):
+                result.append(res)
+    except:
+        print("Wrong Format!")
+        return None
+    if Len is not None:
+        if len(result) == 1:
+            res = result[0]
+            result = list()
+            for _ in range(0,Len):
+                result.append(res)
+        elif not len(result) == Len:
+            print("Size of Range is wrong!")
+            return None
+    return result
 
-    def event(self, e):
-        result = QMessageBox.event(self, e)
-        self.setMinimumHeight(0)
-        self.setMaximumHeight(16777215)
-        self.setMinimumWidth(550)
-        self.setMaximumWidth(16777215)
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+def encoding(Codes):
+    Encode = None
+    for code in Codes:
+        Encode = str(ord(code)) if Encode is None else Encode + "," + str(ord(code))
+    return Encode
 
-        textEdit = self.findChild(QTextEdit)
-        if textEdit != None :
-            textEdit.setMinimumHeight(0)
-            textEdit.setMaximumHeight(16777215)
-            textEdit.setMinimumWidth(0)
-            textEdit.setMaximumWidth(16777215)
-            textEdit.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-
-        return result
+def decoding(Codes):
+    Encode = str(Codes).replace(",", " ").split()
+    Decode = None
+    for ecode in Encode:
+        if len(ecode):
+            Decode = chr(np.int32(ecode)) if Decode is None else Decode + chr(np.int32(ecode))
+    return Decode
 
 
 # Auto Run

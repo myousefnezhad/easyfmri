@@ -3,26 +3,43 @@ import configparser as cp
 import os
 import platform
 import subprocess
-import sys
-
+import sys, shutil
+import logging
 import nibabel as nb
 import numpy as np
+import scipy.io as io
+
+
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
+
 from Base.Setting import Setting
 from Base.SettingHistory import History
+from Base.fsl import FSL
+from Base.utility import getTimeSliceText, fixstr, setParameters3, getSettingVersion, encoding, strRange, strMultiRange, OpenReport
+from Base.dialogs import SaveFile, LoadFile, SelectDir
+
 from GUI.frmEventConcatenator import frmEventConcatenator
 from GUI.frmEventViewer import frmEventViewer
 from GUI.frmPreprocessGUI import *
 from GUI.frmRenameFile import frmRenameFile
 from GUI.frmScriptEditor import frmScriptEditor
 from GUI.frmfMRIConcatenator import frmfMRIConcatenator
-from Base.utility import getTimeSliceText, fixstr, setParameters3
 from GUI.frmSelectSession import frmSelectSession
+from GUI.frmImageInfo import frmImageInfo
+
+
 from Preprocess.BrainExtractor import BrainExtractor
 from Preprocess.EventGenerator import EventGenerator
 from Preprocess.RunPreprocess import RunPreprocess
 from Preprocess.ScriptGenerator import ScriptGenerator
+
+
+logging.basicConfig(level=logging.DEBUG)
+from pyqode.core import api
+from pyqode.core import modes
+from pyqode.core import panels
+from pyqode.qt import QtWidgets as pyWidgets
 
 
 def EventCode():
@@ -106,7 +123,23 @@ class frmPreprocess(Ui_frmPreprocess):
         ui.cbSliceTime.addItem("Regular down (n, n-1, ..., 1)")
         ui.cbSliceTime.addItem("Interleaved (2, 4, 6, ...), (1, 3, 5, ...)")
 
-        #ProgramPath = os.path.dirname(os.path.abspath(__file__))
+        ui.txtEvents = api.CodeEdit(ui.tab_3)
+        ui.txtEvents.setGeometry(QtCore.QRect(10, 10, 641, 451))
+        ui.txtEvents.setObjectName("txtEvents")
+
+        #ui.txtEvents.backend.start('backend/server.py')
+
+        ui.txtEvents.modes.append(modes.CodeCompletionMode())
+        ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())
+        ui.txtEvents.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
+        ui.txtEvents.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
+        ui.txtEvents.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
+
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        ui.txtEvents.setFont(font)
+        ui.txtEvents.setPlainText(EventCode(),"","")
 
         try:
             spaceINI = str.rsplit(open(getDirSpaceINI()).read(),"\n")
@@ -123,100 +156,22 @@ class frmPreprocess(Ui_frmPreprocess):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
 
-        if platform.system() == "Linux":
-            ui.txtFSLDIR.setText("")
-            if os.path.isfile("/usr/bin/fsl5.0-Feat") and os.path.isfile("/usr/bin/fsl5.0-feat") and os.path.isfile("/usr/bin/fsl5.0-bet"):
-                ui.txtFeat.setText("/usr/bin/fsl5.0-feat")
-                ui.txtFeat_gui.setText("/usr/bin/fsl5.0-Feat")
-                ui.txtbetcmd.setText("/usr/bin/fsl5.0-bet")
 
-            else:
-                msgBox = QMessageBox()
-                msgBox.setText("fsl5.0 cmds are not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-
+        fsl = FSL()
+        fsl.setting()
+        if not fsl.Validate:
+            msgBox = QMessageBox()
+            msgBox.setText("Cannot find FSL setting!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
         else:
-            hasFSL = False
-            FSLDIR = str(os.environ["FSLDIR"])
-            if FSLDIR == "":
-                msgBox = QMessageBox()
-                msgBox.setText("Cannot find $FSLDIR variable!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-            else:
-                if (os.path.isdir(FSLDIR) == False):
-                    msgBox = QMessageBox()
-                    msgBox.setText("$FSLDIR does not exist!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                else:
-                    ui.txtFSLDIR.setText(os.environ["FSLDIR"])
-                    hasFSL = True
-            hasMNI = False
-
-            if hasFSL:
-                if (os.path.isfile(FSLDIR + "/bin/feat") == False):
-                    ui.txtFeat.setText("")
-                    msgBox = QMessageBox()
-                    msgBox.setText("Cannot find feat cmd!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                if (os.path.isfile(FSLDIR + "/bin/Feat_gui") == False):
-                    # For Linux
-                    if os.path.isfile(FSLDIR + "/bin/Feat"):
-                        ui.txtFeat_gui.setText("/bin/Feat")
-                    else:
-                        ui.txtFeat_gui.setText("")
-                        msgBox = QMessageBox()
-                        msgBox.setText("Cannot find Feat_gui cmd!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
-                if (os.path.isfile(FSLDIR + "/bin/bet") == False):
-                    ui.txtFeat.setText("")
-                    msgBox = QMessageBox()
-                    msgBox.setText("Cannot find bet cmd!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-            else:
-                ui.txtFeat.setText("")
-                ui.txtFeat_gui.setText("")
-        try:
-            import logging
-            logging.basicConfig(level=logging.DEBUG)
-            import sys
-            from pyqode.core import api
-            from pyqode.core import modes
-            from pyqode.core import panels
-            from pyqode.qt import QtWidgets as pyWidgets
+            ui.txtFSLDIR.setText(fsl.FSLDIR)
+            ui.txtFeat.setText(fsl.feat)
+            ui.txtFeat_gui.setText(fsl.FeatGUI)
+            ui.txtbetcmd.setText(fsl.bet)
 
 
-        finally:
-            ui.txtEvents = api.CodeEdit(ui.tab_3)
-            ui.txtEvents.setGeometry(QtCore.QRect(10, 10, 641, 451))
-            ui.txtEvents.setObjectName("txtEvents")
-
-            ui.txtEvents.backend.start('backend/server.py')
-
-            ui.txtEvents.modes.append(modes.CodeCompletionMode())
-            ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())
-            ui.txtEvents.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
-            ui.txtEvents.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
-            ui.txtEvents.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-
-
-            font = QtGui.QFont()
-            font.setBold(True)
-            font.setWeight(75)
-            ui.txtEvents.setFont(font)
-            ui.txtEvents.setPlainText(EventCode(),"","")
-            pass
 
         dialog.setWindowTitle("easy fMRI preprocessing - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -248,7 +203,9 @@ class frmPreprocess(Ui_frmPreprocess):
         ui.btnReportViewer.clicked.connect(self.btnReportViewer_onclick)
         ui.btnfMRIConcatenator.clicked.connect(self.btnfMRIConcatenator_click)
         ui.btnEventConcatenator.clicked.connect(self.btnEventConcatenator_click)
-
+        ui.btnImageInfo.clicked.connect(self.btnImageInfo_click)
+        ui.btnVerify.clicked.connect(self.btnVerify_click)
+        ui.btnDelete.clicked.connect(self.btnDelete_click)
 
 # Read history from file and visualized in the History tab
     def set_history(self):
@@ -269,12 +226,7 @@ class frmPreprocess(Ui_frmPreprocess):
     def btnDIR_click(self):
         import glob
         global ui
-        current = ui.txtDIR.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly | QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        directory = dialog.getExistingDirectory(None,"Open Main Directory",current,flags)
+        directory = SelectDir("Open Main Directory", ui.txtDIR.text())
         if len(directory):
             if os.path.isdir(directory) == False:
                 ui.txtDIR.setText("")
@@ -307,26 +259,11 @@ class frmPreprocess(Ui_frmPreprocess):
             msgBox.exec_()
             return
 
-
-        setting         = Setting()
-
-        setting.mainDIR = ui.txtDIR.text()
-        setting.Task    = ui.txtTask.currentText()
-
-        setting.SubFrom = np.int32(ui.txtSubFrom.text())
-        setting.SubTo   = np.int32(ui.txtSubTo.text())
-        setting.SubLen  = np.int32(ui.txtSubLen.text())
-        setting.SubPer  = ui.txtSubPer.text()
-
-        setting.ConFrom = np.int32(ui.txtConFrom.text())
-        setting.ConTo   = np.int32(ui.txtConTo.text())
-        setting.ConLen  = np.int32(ui.txtConLen.text())
-        setting.ConPer  = ui.txtConPer.text()
-
-        setting.Run     = ui.txtRunNum.text()
-        setting.RunLen  = np.int32(ui.txtRunLen.text())
-        setting.RunPer  = ui.txtRunPer.text()
-
+        setting             = Setting()
+        setting.Task        = ui.txtTask.currentText()
+        setting.SubRange    = ui.txtSubRange.text()
+        setting.ConRange    = ui.txtConRange.text()
+        setting.RunRange    = ui.txtRunRange.text()
 
         sSess = frmSelectSession(None, setting=setting)
         if not sSess.PASS:
@@ -357,7 +294,7 @@ class frmPreprocess(Ui_frmPreprocess):
 
                 msgBox = QMessageBox()
                 msgBox.setText("Basic information is read from the 1st BOLD file\n\nTR: " +\
-                               ui.txtTR.text() + "\nTotal Voxels: " + ui.txtTotalVol.text() +\
+                               ui.txtTR.text() + "\nData Shape: " + str(BoldHDR.header.get_data_shape()) +\
                                " \n" + ui.txtVoxel.text() +\
                                "\n\n\nYou can manually change these parameters in the Basic tab!")
                 msgBox.setIcon(QMessageBox.Information)
@@ -402,31 +339,32 @@ class frmPreprocess(Ui_frmPreprocess):
 
 
             if OpenDialog:
-                dialog = QFileDialog()
-                settingFileName = setting.mainDIR + "/setting-" + setting.Task + ".ini"
-                filename = dialog.getSaveFileName(None,"Save setting file ...",settingFileName,options=QFileDialog.DontUseNativeDialog)
+                filename = SaveFile("Save setting file ...",['Easy fMRI setting files (*.ez)'],'ez',\
+                                    setting.mainDIR, "setting-" + setting.Task + ".ez")
                 if len(filename):
-                    SettingFileName = filename[0]
+                    SettingFileName = filename
                 else:
                     SettingFileName = ""
 
             if len(SettingFileName):
+                try:
+                    os.remove(SettingFileName)
+                except:
+                    pass
+
                 config = cp.ConfigParser()
                 config.read(SettingFileName)
                 config['DEFAULT']['ver']        = setting.Version
                 config['DEFAULT']['maindir']    = setting.mainDIR
-                config['DEFAULT']['mni_space']    = setting.MNISpace
+                config['DEFAULT']['mni_space']  = setting.MNISpace
                 config['DEFAULT']['task']       = setting.Task
-
-                config['DEFAULT']['sub_from']   = str(setting.SubFrom)
-                config['DEFAULT']['sub_to']     = str(setting.SubTo)
+                config['DEFAULT']['sub_range']  = str(setting.SubRange)
                 config['DEFAULT']['sub_len']    = str(setting.SubLen)
                 config['DEFAULT']['sub_perfix'] = setting.SubPer
-                config['DEFAULT']['con_from']   = str(setting.ConFrom)
-                config['DEFAULT']['con_to']     = str(setting.ConTo)
+                config['DEFAULT']['con_range']  = str(setting.ConRange)
                 config['DEFAULT']['con_len']    = str(setting.ConLen)
                 config['DEFAULT']['con_perfix'] = setting.ConPer
-                config['DEFAULT']['run']        = setting.Run
+                config['DEFAULT']['run_range']  = setting.RunRange
                 config['DEFAULT']['run_len']    = str(setting.RunLen)
                 config['DEFAULT']['run_perfix'] = setting.RunPer
                 config['DEFAULT']['bold']       = setting.BOLD
@@ -442,8 +380,6 @@ class frmPreprocess(Ui_frmPreprocess):
                 config['DEFAULT']['FWHM']       = str(setting.FWHM)
                 config['DEFAULT']['deletevol']  = str(setting.DeleteVol)
                 config['DEFAULT']['totalvol']   = str(setting.TotalVol)
-
-
                 config['DEFAULT']['timeslice']  = str(setting.TimeSlice)
                 config['DEFAULT']['highpass']   = str(setting.HighPass)
                 config['DEFAULT']['denl']       = str(setting.DENL)
@@ -451,27 +387,15 @@ class frmPreprocess(Ui_frmPreprocess):
                 config['DEFAULT']['dezt']       = str(setting.DEZT)
                 config['DEFAULT']['ctzt']       = str(setting.CTZT)
                 config['DEFAULT']['ctpt']       = str(setting.CTPT)
-
                 config['DEFAULT']['motion']     = str(setting.Motion)
                 config['DEFAULT']['anat']       = str(setting.Anat)
-
-
-
-                #config['DEFAULT']['event_codes']= setting.EventCodes
-                efile = open(SettingFileName+".code","w")
-                efile.write(setting.EventCodes)
-                efile.close()
-
+                config.add_section("CODE")
+                config['CODE']['event_code']   = encoding(setting.EventCodes)
 
                 with open(SettingFileName, 'w') as configfile:
                     config.write(configfile)
-
-
-
-
                 ui.txtSetting.setText(SettingFileName)
                 ui.btnExtractor.setEnabled(setting.Anat)
-                ui.cbShowResult.setEnabled(setting.Anat)
 
                 history = History()
                 history.add_history(SettingFileName)
@@ -486,15 +410,20 @@ class frmPreprocess(Ui_frmPreprocess):
     def btnLoad_click(self):
         from Base.utility import getVersion
         global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open setting file ...", ui.txtDIR.text(), options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Open setting file ...", ['Easy fMRI setting files (*.ez)'], 'ez', currentDirectory=ui.txtDIR.text())
         if len(filename):
             setting = Setting()
             setting.Load(filename)
 
             if setting.Version != getVersion():
-                print("WARNING: You are using different version of Easy fMRI!!!")
+                if np.double(setting.Version) < np.double(getSettingVersion()):
+                    print("WARNING: You are using different version of Easy fMRI!!!")
+                    msgBox = QMessageBox()
+                    msgBox.setText("This version of setting is not supported!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return
 
             if not setting.empty:
                 ui.txtSetting.setText(filename)
@@ -508,15 +437,13 @@ class frmPreprocess(Ui_frmPreprocess):
                 ui.txtBETPDF.setText(setting.BETPDF)
                 ui.txtEventDIR.setText(setting.EventFolder)
                 ui.txtCondPre.setText(setting.CondPre)
-                ui.txtSubFrom.setValue(setting.SubFrom)
-                ui.txtSubTo.setValue(setting.SubTo)
+                ui.txtSubRange.setText(setting.SubRange)
                 ui.txtSubLen.setValue(setting.SubLen)
                 ui.txtSubPer.setText(setting.SubPer)
-                ui.txtConFrom.setValue(setting.ConFrom)
-                ui.txtConTo.setValue(setting.ConTo)
+                ui.txtConRange.setText(setting.ConRange)
                 ui.txtConLen.setValue(setting.ConLen)
                 ui.txtConPer.setText(setting.ConPer)
-                ui.txtRunNum.setText(setting.Run)
+                ui.txtRunRange.setText(setting.RunRange)
                 ui.txtRunPer.setText(setting.RunPer)
                 ui.txtRunLen.setValue(setting.RunLen)
                 ui.txtAnalysis.setText(setting.Analysis)
@@ -544,7 +471,6 @@ class frmPreprocess(Ui_frmPreprocess):
                 ui.cbRegAnat.setChecked(setting.Anat)
                 ui.txtVoxel.setText("Voxel Size: None")
                 ui.btnExtractor.setEnabled(setting.Anat)
-                ui.cbShowResult.setEnabled(setting.Anat)
 
                 history = History()
                 history.add_history(filename)
@@ -563,8 +489,14 @@ class frmPreprocess(Ui_frmPreprocess):
                 setting = Setting()
                 setting.Load(filename)
 
-                if setting.Version != getVersion():
+                if np.double(setting.Version) < np.double(getSettingVersion()):
                     print("WARNING: You are using different version of Easy fMRI!!!")
+                    msgBox = QMessageBox()
+                    msgBox.setText("This version of setting is not supported!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return
 
                 if not setting.empty:
                     ui.txtSetting.setText(filename)
@@ -578,15 +510,13 @@ class frmPreprocess(Ui_frmPreprocess):
                     ui.txtBETPDF.setText(setting.BETPDF)
                     ui.txtEventDIR.setText(setting.EventFolder)
                     ui.txtCondPre.setText(setting.CondPre)
-                    ui.txtSubFrom.setValue(setting.SubFrom)
-                    ui.txtSubTo.setValue(setting.SubTo)
+                    ui.txtSubRange.setText(setting.SubRange)
                     ui.txtSubLen.setValue(setting.SubLen)
                     ui.txtSubPer.setText(setting.SubPer)
-                    ui.txtConFrom.setValue(setting.ConFrom)
-                    ui.txtConTo.setValue(setting.ConTo)
+                    ui.txtConRange.setText(setting.ConRange)
                     ui.txtConLen.setValue(setting.ConLen)
                     ui.txtConPer.setText(setting.ConPer)
-                    ui.txtRunNum.setText(setting.Run)
+                    ui.txtRunRange.setText(setting.RunRange)
                     ui.txtRunPer.setText(setting.RunPer)
                     ui.txtRunLen.setValue(setting.RunLen)
                     ui.txtAnalysis.setText(setting.Analysis)
@@ -613,7 +543,6 @@ class frmPreprocess(Ui_frmPreprocess):
                     ui.cbMotionCorrection.setChecked(setting.Motion)
                     ui.cbRegAnat.setChecked(setting.Anat)
                     ui.btnExtractor.setEnabled(setting.Anat)
-                    ui.cbShowResult.setEnabled(setting.Anat)
                     ui.tabWidget.setCurrentIndex(3)
         except:
             return
@@ -623,6 +552,9 @@ class frmPreprocess(Ui_frmPreprocess):
         history = History()
         history.clear_history()
         ui.lwHistory.clear()
+
+    def btnImageInfo_click(self):
+        frmImageInfo.show(frmImageInfo)
 
     def btnRemoveHistory_click(self):
         global ui
@@ -663,15 +595,15 @@ class frmPreprocess(Ui_frmPreprocess):
                 return
             else:
                 brainExtractor = BrainExtractor()
-                brainExtractor.run(ui.txtSetting.text(),ui.cbShowResult.checkState(),\
-                                   ui.txtFSLDIR.text() + ui.txtbetcmd.text())
-                print("TASK FINISHED!")
-                msgBox = QMessageBox()
-                msgBox.setText("All brains are extracted!")
-                msgBox.setIcon(QMessageBox.Information)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return
+                Status, Jobs = brainExtractor.run(ui.txtSetting.text(), ui.txtFSLDIR.text() + ui.txtbetcmd.text())
+                if (not Status) or (Jobs is None):
+                    print("TASK FAILED!")
+                else:
+                    print("TASK DONE.")
+                    dialog.hide()
+                    from GUI.frmJobs import frmJobs
+                    frmJobs.show(frmJobs, Jobs, dialog)
+
 
     def btnEventGenerator_click(self):
             global ui
@@ -746,7 +678,7 @@ class frmPreprocess(Ui_frmPreprocess):
         global ui, dialog
         setting = Setting()
         isChange = setting.checkGUI(ui, ui.txtSetting.text(),checkGeneratedFiles=True)
-        if isChange == None:
+        if isChange is None:
             msgBox = QMessageBox()
             if len(ui.txtSetting.text()):
                 msgBox.setText("Please verify parameters")
@@ -787,16 +719,17 @@ class frmPreprocess(Ui_frmPreprocess):
                     return
                 else:
                     feat = ui.txtFSLDIR.text() + ui.txtFeat.text()
-                    runPreprocess.Run(ui.txtSetting.text(),ui.cbJustRun.checkState(),ui.cbRemoveOlds.checkState(),feat,SubID,RunID,ConID)
-                    print("TASK FINISHED!")
-                    msgBox = QMessageBox()
-                    msgBox.setText("All Script are generated!")
-                    msgBox.setIcon(QMessageBox.Information)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                    return
+                    Status, Jobs = runPreprocess.Run(ui.txtSetting.text(),ui.cbJustRun.checkState(),\
+                                                     ui.cbRemoveOlds.checkState(),feat,SubID,RunID,ConID)
 
-        pass
+                    if (not Status) or (Jobs is None):
+                        print("TASK FAILED!")
+                    else:
+                        print("TASK DONE.")
+                        dialog.hide()
+                        from GUI.frmJobs import frmJobs
+                        frmJobs.show(frmJobs, Jobs, dialog)
+                    return
 
     def btn_ViewParameters_click(self):
         global ui, dialog
@@ -953,20 +886,18 @@ class frmPreprocess(Ui_frmPreprocess):
 
     def btnGroupRenameFile_click(self):
         global ui
-        frmRenameFile.show(frmRenameFile,SubFrom=ui.txtSubFrom.value(),SubTo=ui.txtSubTo.value(),\
-                           SubLen=ui.txtSubLen.value(),SubPer=ui.txtSubPer.text(),Run=ui.txtRunNum.text(),\
-                           RunLen=ui.txtRunLen.value(),RunPer=ui.txtRunPer.text(),Task=ui.txtTask.currentText(),\
-                           DIR=ui.txtDIR.text())
-        pass
+        frmRenameFile.show(frmRenameFile,SubRange=ui.txtSubRange.text(),SubLen=ui.txtSubLen.value(),\
+                           SubPer=ui.txtSubPer.text(),ConRange=ui.txtConRange.text(),ConLen=ui.txtConLen.value(),\
+                           ConPer=ui.txtConPer.text(),RunRange=ui.txtRunRange.text(),RunLen=ui.txtRunLen.value(),\
+                           RunPer=ui.txtRunPer.text(),Task=ui.txtTask.currentText(),DIR=ui.txtDIR.text())
 
     def btnGroupScriptEditor_click(self):
         global ui
-        frmScriptEditor.show(frmScriptEditor,SubFrom=ui.txtSubFrom.value(),SubTo=ui.txtSubTo.value(),\
-                           SubLen=ui.txtSubLen.value(),SubPer=ui.txtSubPer.text(),Run=ui.txtRunNum.text(),\
-                           RunLen=ui.txtRunLen.value(),RunPer=ui.txtRunPer.text(),Task=ui.txtTask.currentText(),\
-                           DIR=ui.txtDIR.text())
+        frmScriptEditor.show(frmScriptEditor,SubRange=ui.txtSubRange.text(),SubLen=ui.txtSubLen.value(),\
+                           SubPer=ui.txtSubPer.text(),ConRange=ui.txtConRange.text(),ConLen=ui.txtConLen.value(),\
+                           ConPer=ui.txtConPer.text(),RunRange=ui.txtRunRange.text(),RunLen=ui.txtRunLen.value(),\
+                           RunPer=ui.txtRunPer.text(),Task=ui.txtTask.currentText(),DIR=ui.txtDIR.text())
 
-        pass
 
     def btnReportViewer_onclick(self):
         import webbrowser
@@ -1017,10 +948,296 @@ class frmPreprocess(Ui_frmPreprocess):
 
         pass
 
+    def btnVerify_click(self):
+        global ui
+        setting = Setting()
+        isChange = setting.checkGUI(ui, ui.txtSetting.text())
+        if isChange == None:
+            msgBox = QMessageBox()
+            if len(ui.txtSetting.text()):
+                msgBox.setText("Please verify parameters")
+            else:
+                msgBox.setText("You must save setting first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        else:
+            if isChange == True:
+                msgBox = QMessageBox()
+                msgBox.setText("Parameters are changed. Please save them first!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return
+            else:
+                ofile = SaveFile("Save log file",["Log file (*.txt)"],"txt")
+                if len(ofile):
+                    Subjects = strRange(setting.SubRange, Unique=True)
+                    if Subjects is None:
+                        print("Cannot load Subject Range!")
+                        return False
+                    SubSize = len(Subjects)
+
+                    Counters = strMultiRange(setting.ConRange, SubSize)
+                    if Counters is None:
+                        print("Cannot load Counter Range!")
+                        return False
+
+                    Runs = strMultiRange(setting.RunRange, SubSize)
+                    if Runs is None:
+                        print("Cannot load Run Range!")
+                        return False
+                    Log = 20*"#" + " easy fMRI - Files Verification " + 20*"#" + "\n"
+                    for si, s in enumerate(Subjects):
+                        for cnt in Counters[si]:
+                            # Anatomical Files
+                            Log = Log + "\t" + 10*"#" + "\tSubject: " + str(s) + " Counter: " + str(cnt) + "\t" + 10*"#" + "\n"
+                            # MRI Files
+                            if ui.cbVMRI.isChecked():
+                                file = setParameters3(setting.AnatDIR, setting.mainDIR,
+                                                        fixstr(s, setting.SubLen, setting.SubPer), "", setting.Task,
+                                                        fixstr(cnt, setting.ConLen, setting.ConPer))
+                                if os.path.isfile(file):
+                                    Log = Log + "OKAY: MRI FILE,\t" + file + "\n"
+                                else:
+                                    Log = Log + "NOT FOUND: MRI FILE,\t" + file + "\n"
+
+                            if ui.cbVBet.isChecked():
+                                file = setParameters3(setting.BET, setting.mainDIR,
+                                                     fixstr(s, setting.SubLen, setting.SubPer), "", setting.Task,
+                                                     fixstr(cnt, setting.ConLen, setting.ConPer))
+                                if os.path.isfile(file):
+                                    Log = Log + "OKAY: BET FILE,\t" + file + "\n"
+                                else:
+                                    Log = Log + "NOT FOUND: BET FILE,\t" + file + "\n"
+
+                                file = setParameters3(setting.BETPDF, setting.mainDIR,
+                                                     fixstr(s, setting.SubLen, setting.SubPer), "", setting.Task,
+                                                     fixstr(cnt, setting.ConLen, setting.ConPer))
+                                if os.path.isfile(file):
+                                    Log = Log + "OKAY: PDF FILE,\t" + file + "\n"
+                                else:
+                                    Log = Log + "NOT FOUND: PDF FILE,\t" + file + "\n"
+                            # Check run based files
+                            for r in Runs[si]:
+                                Log = Log + "\t\t" + 5 * "#" + "\tSubject: " + str(s) + " Counter: " + str(cnt) + \
+                                      " Run: " + str(r) + "\t" + 5 * "#" + "\n"
+
+                                # Image
+                                if ui.cbVImage.isChecked():
+                                    file = setParameters3(setting.BOLD,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
+                                                        fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
+                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
+                                    if os.path.isfile(file):
+                                        Log = Log + "OKAY: IMAGE FILE,\t" + file + "\n"
+                                    else:
+                                        Log = Log + "NOT FOUND: IMAGE FILE,\t" + file + "\n"
+
+
+                                # Event
+                                if ui.cbVImage.isChecked():
+                                    file = setParameters3(setting.Onset,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
+                                                        fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
+                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
+                                    if os.path.isfile(file):
+                                        Log = Log + "OKAY: EVENT FILE,\t" + file + "\n"
+                                    else:
+                                        Log = Log + "NOT FOUND: EVENT FILE,\t" + file + "\n"
+
+                                # ExEvent
+                                if ui.cbVExEvent.isChecked():
+                                    dir = setParameters3(setting.EventFolder,setting.mainDIR,\
+                                                          fixstr(s, np.int32(setting.SubLen), setting.SubPer)\
+                                                          ,fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,
+                                                          fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
+                                    if os.path.isdir(dir):
+                                        Log = Log + "OKAY: EVENT DIR,\t" + dir + "\n"
+                                        file = dir + setting.CondPre + ".mat"
+                                        if os.path.isfile(file):
+                                            Log = Log + "OKAY: MAT FILE,\t" + file + "\n"
+                                            try:
+                                                cond = io.loadmat(file)["Cond"]
+                                                Log = Log + "\t\t" + 2 * "#" + "\tSubject: " + str(s) + " Counter: " + \
+                                                      str(cnt) + " Run: " + str(r) + \
+                                                      " Number of conditions: " + str(len(cond)) + "\t" + 5 * "#" + "\n"
+                                            except:
+                                                Log = Log + "NOT LOAD: MAT FILE,\t" + file + "\n"
+                                            for cnd in cond:
+                                                file = dir + cnd[0][0] + ".tab"
+                                                if os.path.isfile(file):
+                                                    Log = Log + "OKAY: TAB FILE,\t" + file + "\n"
+                                                else:
+                                                    Log = Log + "NOT FOUND: TAB FILE,\t" + file + "\n"
+                                        else:
+                                            Log = Log + "NOT FOUND: MAT FILE,\t" + file + "\n"
+
+                                    else:
+                                        Log = Log + "NOT FOUND: EVENT DIR,\t" + dir + "\n"
+
+                                # Script
+                                if ui.cbVScript.isChecked():
+                                    file = setParameters3(setting.Script,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
+                                                               fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
+                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
+                                    if os.path.isfile(file):
+                                        Log = Log + "OKAY: SCRIPT,\t" + file + "\n"
+                                    else:
+                                        Log = Log + "NOT FOUND: SCRIPT,\t" + file + "\n"
+
+                                # Output
+                                if ui.cbVOutput.isChecked():
+                                    dir = setParameters3(setting.Analysis,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
+                                                               fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
+                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer)) + ".feat"
+                                    if os.path.isdir(dir):
+                                        Log = Log + "OKAY: ANALYZE,\t" + dir + "\n"
+                                        files = str(ui.txtVOutput.toPlainText()).split()
+                                        for file in files:
+                                            if len(file):
+                                                if os.path.isfile(dir + "/" + file):
+                                                    Log = Log + "OKAY: OUTPUT,\t" + dir +  "/" + file + "\n"
+                                                else:
+                                                    Log = Log + "NOT FOUND: OUTPUT,\t" + dir + "/" + file + "\n"
+                                    else:
+                                        Log = Log + "NOT FOUND: ANALYZE,\t" + dir + "\n"
+                                Log = Log + "\n"
+                            Log = Log + "\n\n\n\n"
+                    fileHandle = open(ofile, "w")
+                    fileHandle.write(Log)
+                    fileHandle.close()
+                    print("Log file is saved: ", ofile)
+                    OpenReport(ofile)
+
+
+    def btnDelete_click(self):
+        global ui
+        setting = Setting()
+        isChange = setting.checkGUI(ui, ui.txtSetting.text())
+        if isChange == None:
+            msgBox = QMessageBox()
+            if len(ui.txtSetting.text()):
+                msgBox.setText("Please verify parameters")
+            else:
+                msgBox.setText("You must save setting first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        else:
+            if isChange == True:
+                msgBox = QMessageBox()
+                msgBox.setText("Parameters are changed. Please save them first!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return
+            else:
+                msgBox = QMessageBox()
+                reply = msgBox.question(msgBox, 'DELETING OUTPUT FILES ...', 'Do you want to DELETE output files?'
+                                                   , QMessageBox.Yes, QMessageBox.No)
+                if reply == QMessageBox.Yes:
+                    Subjects = strRange(setting.SubRange, Unique=True)
+                    if Subjects is None:
+                        print("Cannot load Subject Range!")
+                        return False
+                    SubSize = len(Subjects)
+
+                    Counters = strMultiRange(setting.ConRange, SubSize)
+                    if Counters is None:
+                        print("Cannot load Counter Range!")
+                        return False
+
+                    Runs = strMultiRange(setting.RunRange, SubSize)
+                    if Runs is None:
+                        print("Cannot load Run Range!")
+                        return False
+
+                    print("Deleting Files ...")
+                    for si, s in enumerate(Subjects):
+                        for cnt in Counters[si]:
+                            # Anatomical Files
+                            if ui.cbVBet.isChecked():
+                                file = setParameters3(setting.BET, setting.mainDIR,
+                                                     fixstr(s, setting.SubLen, setting.SubPer), "", setting.Task,
+                                                     fixstr(cnt, setting.ConLen, setting.ConPer))
+                                if os.path.isfile(file):
+                                    try:
+                                        os.remove(file)
+                                        print("DELETE: BET FILE,\t" + file)
+                                    except:
+                                        print("CANNOT DELETE: BET FILE,\t" + file)
+                                else:
+                                    print("NOT FOUND: BET FILE,\t" + file)
+
+                                file = setParameters3(setting.BETPDF, setting.mainDIR,
+                                                     fixstr(s, setting.SubLen, setting.SubPer), "", setting.Task,
+                                                     fixstr(cnt, setting.ConLen, setting.ConPer))
+                                if os.path.isfile(file):
+                                    try:
+                                        os.remove(file)
+                                        print("DELETE: PDF FILE,\t" + file)
+                                    except:
+                                        print("NOT DELETE: PDF FILE,\t" + file)
+                                else:
+                                    print("NOT FOUND: PDF FILE,\t" + file)
+                            # Check run based files
+                            for r in Runs[si]:
+                                # ExEvent
+                                if ui.cbVExEvent.isChecked():
+                                    dir = setParameters3(setting.EventFolder,setting.mainDIR,\
+                                                          fixstr(s, np.int32(setting.SubLen), setting.SubPer)\
+                                                          ,fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,
+                                                          fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
+                                    if os.path.isdir(dir):
+                                        try:
+                                            shutil.rmtree(dir)
+                                            print("DELETE: EVENT DIR,\t" + dir)
+                                        except:
+                                            print("CANNOT DELETE: EVENT DIR,\t" + dir)
+                                    else:
+                                        print("NOT FOUND: EVENT DIR,\t" + dir)
+
+                                # Script
+                                if ui.cbVScript.isChecked():
+                                    file = setParameters3(setting.Script,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
+                                                               fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
+                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
+                                    if os.path.isfile(file):
+                                        try:
+                                            os.remove(file)
+                                            print("DELETE: SCRIPT,\t" + file)
+                                        except:
+                                            print("CANNOT DELETE: SCRIPT,\t" + file)
+                                    else:
+                                        print("NOT FOUND: SCRIPT,\t" + file)
+
+                                # Output
+                                if ui.cbVOutput.isChecked():
+                                    dir = setParameters3(setting.Analysis,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
+                                                               fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
+                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer)) + ".feat"
+                                    if os.path.isdir(dir):
+                                        try:
+                                            shutil.rmtree(dir)
+                                            print("DELETE: ANALYZE DIR,\t" + dir)
+                                        except:
+                                            print("CANNOT DELETE: ANALYZE DIR,\t" + dir)
+                                    else:
+                                        print("NOT FOUND: ANALYZE DIR,\t" + dir)
+
+                    print("Task is done.")
+                    msgBox.setText("All available output files are deleted!")
+                    msgBox.setIcon(QMessageBox.Information)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+
+
     def btnfMRIConcatenator_click(self):
         global ui
         frmfMRIConcatenator.show(frmfMRIConcatenator)
         pass
+
 
     def btnEventConcatenator_click(self):
         global ui

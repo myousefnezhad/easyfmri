@@ -4,8 +4,8 @@ import sys
 
 import numpy as np
 from PyQt5.QtWidgets import *
-
 from Base.utility import fixstr, setParameters3
+from Base.dialogs import SelectDir
 from GUI.frmScriptEditorGUI import *
 
 
@@ -15,8 +15,8 @@ class frmScriptEditor(Ui_frmScriptEditor):
 
     # This function is run when the main form start
     # and initiate the default parameters.
-    def show(self, SubFrom=None, SubTo=None, SubLen=None, SubPer=None,\
-             Run=None, RunLen=None, RunPer=None, Task=None, DIR=None):
+    def show(self, SubRange=None, SubLen=None, SubPer=None, ConRange=None, ConLen=None, ConPer=None,\
+             RunRange=None, RunLen=None, RunPer=None, Task=None, DIR=None):
         global dialog
         global ui
         ui = Ui_frmScriptEditor()
@@ -27,7 +27,8 @@ class frmScriptEditor(Ui_frmScriptEditor):
 
 
 
-        self.set_value(self=self,SubFrom=SubFrom, SubTo=SubTo, SubLen=SubLen, SubPer=SubPer,Run=Run, RunLen=RunLen, RunPer=RunPer, Task=Task, DIR=DIR)
+        self.set_value(self=self,SubRange=SubRange, SubLen=SubLen, SubPer=SubPer, ConRange=ConRange, ConLen=ConLen,\
+                       ConPer=ConPer, RunRange=RunRange, RunLen=RunLen, RunPer=RunPer, Task=Task, DIR=DIR)
 
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
@@ -42,42 +43,46 @@ class frmScriptEditor(Ui_frmScriptEditor):
         ui.btnRun.clicked.connect(self.btnRun_onclick)
 
 
-    def set_value(self, SubFrom=None, SubTo=None, SubLen=None, SubPer=None,\
-                 Run=None, RunLen=None, RunPer=None, Task=None, DIR=None):
+    def set_value(self, SubRange=None, SubLen=None, SubPer=None, ConRange=None, ConLen=None, ConPer=None,\
+                 RunRange=None, RunLen=None, RunPer=None, Task=None, DIR=None):
         global ui
-        try:
-            ui.txtSubFrom.setValue(int(SubFrom))
-        except:
-            pass
-        try:
-            ui.txtSubTo.setValue(int(SubTo))
-        except:
-            pass
 
+        try:
+            ui.txtSubRange.setText(SubRange)
+        except:
+            pass
         try:
             ui.txtSubLen.setValue(int(SubLen))
         except:
             pass
-
         if SubPer is not None:
             ui.txtSubPer.setText(SubPer)
-
-        if Run is not None:
-            ui.txtRunNum.setText(Run)
-
+        try:
+            ui.txtRunRange.setText(RunRange)
+        except:
+            pass
         try:
             ui.txtRunLen.setValue(int(RunLen))
         except:
             pass
-
         if RunPer is not None:
             ui.txtRunPer.setText(RunPer)
-
+        try:
+            ui.txtConRange.setText(ConRange)
+        except:
+            pass
+        try:
+            ui.txtConLen.setValue(int(ConLen))
+        except:
+            pass
+        if ConPer is not None:
+            ui.txtConPer.setText(ConPer)
         if DIR is not None:
             ui.txtDIR.setText(DIR)
 
         if Task is not None:
             ui.txtTask.setText(Task)
+
 
     def btnExit_click(self):
         global dialog
@@ -87,12 +92,7 @@ class frmScriptEditor(Ui_frmScriptEditor):
 
     def btnDIR_click(self):
             global ui
-            current = ui.txtDIR.text()
-            if not len(current):
-                current = os.getcwd()
-            flags = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly | QFileDialog.DontUseNativeDialog
-            dialog = QFileDialog()
-            directory = dialog.getExistingDirectory(None, "Open Main Directory", current, flags)
+            directory = SelectDir("Open Main Directory",ui.txtDIR.text())
             if len(directory):
                 if os.path.isdir(directory) == False:
                     ui.txtDIR.setText("")
@@ -100,84 +100,101 @@ class frmScriptEditor(Ui_frmScriptEditor):
                     ui.txtDIR.setText(directory)
 
     def btnRun_onclick(self):
+        from Base.utility import strRange, strMultiRange
+
         global ui
+        msgBox = QMessageBox()
 
-        SubFrom = np.int32(ui.txtSubFrom.value())
-        SubTo   = np.int32(ui.txtSubTo.value())
-        SubLen  = np.int32(ui.txtSubLen.value())
         SubPer  = ui.txtSubPer.text()
-
-        RunLen  = np.int32(ui.txtRunLen.value())
         RunPer  = ui.txtRunPer.text()
-
-        ConFrom = np.int32(ui.txtConFrom.value())
-        ConTo   = np.int32(ui.txtConTo.value())
-        ConLen  = np.int32(ui.txtConLen.value())
         ConPer  = ui.txtConPer.text()
-
         Input   = ui.txtInput.text()
         Output  = ui.txtOutput.text()
-
         Task    = ui.txtTask.text()
         DIR     = ui.txtDIR.text()
         Script  = ui.txtScript.text()
 
 
-        if SubFrom > SubTo:
-            msgBox = QMessageBox()
-            msgBox.setText("Subject To must be greater than Subject From")
+        try:
+            SubRange = strRange(ui.txtSubRange.text(),Unique=True)
+            if SubRange is None:
+                raise Exception
+            SubSize = len(SubRange)
+        except:
+            msgBox.setText("Subject Range is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
-            return
-
-        if SubLen < 1:
-            msgBox = QMessageBox()
-            msgBox.setText("Subject Len must be greater than 1!")
+            return False
+        print("Range of subjects is okay!")
+        try:
+            SubLen = np.int32(ui.txtSubLen.text())
+            1 / SubLen
+        except:
+            msgBox.setText("Length of subjects must be an integer number")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
-            return
+            return False
+        print("Length of subjects is okay!")
 
-        if len(ui.txtRunNum.text()) <= 0:
-            msgBox = QMessageBox()
-            msgBox.setText("There is no Run Number")
+
+        try:
+            ConRange = strMultiRange(ui.txtConRange.text(),SubSize)
+            if ConRange is None:
+                raise Exception
+            if not (len(ConRange) == SubSize):
+                msgBox.setText("Counter Size must be equal to Subject Size!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+        except:
+            msgBox.setText("Counter Range is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
-            return
-
-        RunList = np.int32(ui.txtRunNum.text().replace("\'", " ").replace(",", " ").replace("[", "").replace("]", "").split())
-        Run = []
-        if len(RunList) == 1:
-            for _ in range(SubFrom, SubTo + 1):
-                Run.append(RunList[0])
-
-        elif (len(RunList) == (SubTo - SubFrom + 1)):
-            Run = RunList.copy()
-        else:
-            msgBox = QMessageBox()
-            msgBox.setText("Run Number has wrong elements")
+            return False
+        print("Counter Range is okay!")
+        try:
+            ConLen = np.int32(ui.txtConLen.text())
+            1 / ConLen
+        except:
+            msgBox.setText("Length of counter must be an integer number")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
-            return
+            return False
+        print("Length of Counter is okay!")
 
-        if ConTo < ConFrom:
-            msgBox = QMessageBox()
-            msgBox.setText("Counter To is smaller than From")
+
+        try:
+            RunRange = strMultiRange(ui.txtRunRange.text(),SubSize)
+            if RunRange is None:
+                raise Exception
+            if not (len(RunRange) == SubSize):
+                msgBox.setText("Run Size must be equal to Subject Size!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+        except:
+            msgBox.setText("Run Range is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
-            return
-
-        if ConLen < 1:
-            msgBox = QMessageBox()
-            msgBox.setText("Counter Len is smaller than 1")
+            return False
+        print("Run Range is okay!")
+        try:
+            RunLen = np.int32(ui.txtRunLen.value())
+            1 / RunLen
+        except:
+            msgBox.setText("Length of runs must be an integer number")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
-            return
+            return False
+        print("Length of runs is valid")
 
 
         if Input == "":
@@ -222,9 +239,9 @@ class frmScriptEditor(Ui_frmScriptEditor):
             return
 
         RepCount = 0
-        for si, s in enumerate(range(SubFrom, SubTo + 1)):
-            for r in range(1, Run[si] + 1):
-                for c in range(ConFrom, ConTo+1):
+        for si, s in enumerate(SubRange):
+            for c in ConRange[si]:
+                for r in RunRange[si]:
                     SFile   =  setParameters3(Script, DIR, fixstr(s,SubLen,SubPer),\
                                                fixstr(r,RunLen,RunPer),Task,\
                                                fixstr(c,ConLen,ConPer))
@@ -268,7 +285,6 @@ class frmScriptEditor(Ui_frmScriptEditor):
                     else:
                         print("DEMO: " + str(CountCurrRep) + " is found!")
 
-        msgBox = QMessageBox()
         if ui.cbDEMO.isChecked():
             msgBox.setText(str(RepCount) + " items are found!")
         else:

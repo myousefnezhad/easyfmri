@@ -5,6 +5,7 @@ import os
 from PyQt5.QtWidgets import *
 
 from Base.utility import getVersion, getBuild
+from Base.dialogs import SaveFile, LoadFile
 from GUI.frmManuallyDesignROIGUI import *
 
 logging.basicConfig(level=logging.DEBUG)
@@ -52,7 +53,7 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
         ui.gridLayout.addWidget(ui.txtCode, 0, 0, 1, 1)
         ui.txtCode.setObjectName("txtCode")
 
-        ui.txtCode.backend.start('backend/server.py')
+        #ui.txtCode.backend.start('backend/server.py')
 
         ui.txtCode.modes.append(modes.CodeCompletionMode())
         ui.txtCode.modes.append(modes.CaretLineHighlighterMode())
@@ -60,23 +61,14 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
         ui.txtCode.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
         ui.txtCode.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
 
-
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         ui.txtCode.setFont(font)
         ui.txtCode.setPlainText(DefaultCode(),"","")
 
-
-
-
-
         dialog.setWindowTitle("easy fMRI manually design ROI - V" + getVersion() + "B" + getBuild())
-        #dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        #dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
-        #dialog.setFixedSize(dialog.size())
         dialog.show()
-
 
     # This function initiate the events procedures
     def set_events(self):
@@ -110,10 +102,8 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
     def btnNew_click(self):
         global currentFile
         MustSave = False
-
         if (currentFile == None) and (ui.txtCode.toPlainText() != DefaultCode()):
             MustSave = True
-
         if (currentFile != None):
             currCode = open(currentFile).read()
             if ui.txtCode.toPlainText() != currCode:
@@ -128,17 +118,13 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
                 if (currentFile != None):
                     filename = currentFile
                 else:
-                    fdialog = QFileDialog()
-                    filename = fdialog.getSaveFileName(None, "Save code file ...", os.path.dirname(str(currentFile)),
-                                                   options=QFileDialog.DontUseNativeDialog)
-                    filename = filename[0]
+                    filename = SaveFile('Save code file ...',['Code files (*.py)', 'All files (*.*)'], 'py',\
+                                        os.path.dirname(str(currentFile)))
                     if not len(filename):
                         return
-
                 file = open(filename,"w")
                 file.write(ui.txtCode.toPlainText())
                 file.close()
-
         ui.txtCode.setPlainText(DefaultCode(), "", "")
         ui.stb.showMessage("New File")
         currentFile = None
@@ -147,15 +133,12 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
     def btnOpen_click(self):
         global currentFile
         MustSave = False
-
         if (currentFile == None) and (ui.txtCode.toPlainText() != DefaultCode()):
             MustSave = True
-
         if (currentFile != None):
             currCode = open(currentFile).read()
             if ui.txtCode.toPlainText() != currCode:
                 MustSave = True
-
         if MustSave:
             msgBox = QMessageBox()
             msgBox.setText("Do you want to save current code?")
@@ -165,20 +148,14 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
                 if (currentFile != None):
                     filename = currentFile
                 else:
-                    fdialog = QFileDialog()
-                    filename = fdialog.getSaveFileName(None, "Save code file ...", os.path.dirname(str(currentFile)),
-                                                       options=QFileDialog.DontUseNativeDialog)
-                    filename = filename[0]
+                    filename = SaveFile('Save code file ...',['Code files (*.py)', 'All files (*.*)'], 'py', \
+                                        os.path.dirname(str(currentFile)))
                     if not len(filename):
                         return
-
                 file = open(filename, "w")
                 file.write(ui.txtCode.toPlainText())
                 file.close()
-
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open code file ...", "", options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile('Open code file ...',['Code files (*.py)', 'All files (*.*)'], 'py')
         if len(filename):
             ui.txtCode.setPlainText(open(filename).read(),"","")
             currentFile = filename
@@ -186,23 +163,16 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
 
     def btnSave_click(self):
         global currentFile
-
         if (currentFile == None):
-            fdialog = QFileDialog()
-            filename = fdialog.getSaveFileName(None, "Save code file ...", os.path.dirname(str(currentFile)),
-                                               options=QFileDialog.DontUseNativeDialog)
-            filename = filename[0]
+            filename = SaveFile('Save code file ...',['Code files (*.py)', 'All files (*.*)'], 'py',\
+                                        os.path.dirname(str(currentFile)))
             if not len(filename):
                 return
             currentFile = filename
             ui.stb.showMessage(filename)
-
         file = open(currentFile, "w")
         file.write(ui.txtCode.toPlainText())
         file.close()
-
-
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

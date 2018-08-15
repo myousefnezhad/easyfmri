@@ -7,6 +7,7 @@ import sys
 from PyQt5.QtWidgets import *
 
 from GUI.frmTransformationMatrixGUI import *
+from Base.fsl import FSL
 
 
 class frmTansformationMatrix(Ui_frmTansformationMatrix):
@@ -25,62 +26,20 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
 
-
-        if platform.system() == "Linux":
-            ui.txtFSLDIR.setText("")
-            if os.path.isfile("/usr/bin/fsl5.0-Flirt") and os.path.isfile("/usr/bin/fsl5.0-flirt"):
-                ui.txtFlirt.setText("/usr/bin/fsl5.0-flirt")
-                ui.txtFlirtGUI.setText("/usr/bin/fsl5.0-Flirt")
-            else:
-                msgBox = QMessageBox()
-                msgBox.setText("fsl5.0 cmds are not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-
+        fsl = FSL()
+        fsl.setting()
+        if not fsl.Validate:
+            msgBox = QMessageBox()
+            msgBox.setText("Cannot find FSL setting!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
         else:
-            hasFSL = False
-            FSLDIR = str(os.environ["FSLDIR"])
-            if FSLDIR == "":
-                msgBox = QMessageBox()
-                msgBox.setText("Cannot find $FSLDIR variable!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-            else:
-                if (os.path.isdir(FSLDIR) == False):
-                    msgBox = QMessageBox()
-                    msgBox.setText("$FSLDIR does not exist!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                else:
-                    ui.txtFSLDIR.setText(os.environ["FSLDIR"])
-                    hasFSL = True
+            ui.txtFSLDIR.setText(fsl.FSLDIR)
+            ui.txtFlirt.setText(fsl.flirt)
+            ui.txtFlirtGUI.setText(fsl.FlirtGUI)
 
 
-            if hasFSL:
-                if (os.path.isfile(FSLDIR + "/bin/flirt") == False):
-                    ui.txtFlirt.setText("")
-                    msgBox = QMessageBox()
-                    msgBox.setText("Cannot find flirt cmd!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                if (os.path.isfile(FSLDIR + "/bin/Flirt_gui") == False):
-                    # For Linux
-                    if os.path.isfile(FSLDIR + "/bin/Flirt"):
-                        ui.txtFlirtGUI.setText("/bin/Flirt")
-                    else:
-                        ui.txtFlirtGUI.setText("")
-                        msgBox = QMessageBox()
-                        msgBox.setText("Cannot find Feat_gui cmd!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
-            else:
-                ui.txtFlirt.setText("")
-                ui.txtFlirtGUI.setText("")
 
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)

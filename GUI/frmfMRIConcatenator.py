@@ -5,6 +5,7 @@ import sys
 import nibabel as nb
 import numpy as np
 from PyQt5.QtWidgets import *
+from Base.dialogs import SaveFile, LoadFile
 
 from GUI.frmfMRIConcatenatorGUI import *
 
@@ -47,10 +48,7 @@ class frmfMRIConcatenator(Ui_frmfMRIConcatenator):
 
     def btnAdd_click(self):
         global ui
-        current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ifile = dialog.getOpenFileName(None,"Open First File",current,"","",flags)[0]
+        ifile = LoadFile("Open (f)MRI image ...",['Image files (*.nii.gz)', 'All files (*.*)'],"nii.gz")
         if len(ifile):
             if os.path.isfile(ifile):
                 item = QtWidgets.QListWidgetItem(ifile)
@@ -70,12 +68,8 @@ class frmfMRIConcatenator(Ui_frmfMRIConcatenator):
 
     def btnOFile_click(self):
         global ui
-        current = ui.txtOFile.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ofile = dialog.getSaveFileName(None,"Output File",current,"","",flags)[0]
+        ofile = SaveFile("Output image file name ...",['Image files (*.nii.gz)'],'nii.gz',\
+                         os.path.dirname(ui.txtOFile.text()))
         if len(ofile):
                 ui.txtOFile.setText(ofile)
 

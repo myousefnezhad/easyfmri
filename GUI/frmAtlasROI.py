@@ -7,6 +7,7 @@ import numpy as np
 from PyQt5.QtWidgets import *
 
 from Base.utility import getDirFSLAtlas
+from Base.dialogs import LoadFile, SaveFile
 from GUI.frmAtlasROIGUI import *
 
 
@@ -32,7 +33,6 @@ class frmAtlasROI(Ui_frmAtlasROI):
         ui.tvArea.setColumnCount(4)
         ui.tvArea.setHeaderLabels(['Affine','From','To','File'])
         ui.tvArea.setColumnWidth(0,50)
-
 
         OutSize = None
         currentFile = None
@@ -61,27 +61,22 @@ class frmAtlasROI(Ui_frmAtlasROI):
 
     def btnOFile_click(self):
         global ui
-        current = ui.txtOFile.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ofile = dialog.getSaveFileName(None,"Output File",current,"","",flags)[0]
+        ofile = SaveFile('Save ROI ...',['ROI images (*.nii.gz)'],'nii.gz',os.path.dirname(ui.txtOFile.text()))
         if len(ofile):
                 ui.txtOFile.setText(ofile)
 
     def btnFile_click(self):
         global ui, OutSize, currentFile, currentSize
-        fdialog = QFileDialog()
 
-        filename = fdialog.getOpenFileName(None, "Open affine file ...", os.path.dirname(ui.txtFile.text()) if len(ui.txtFile.text()) else getDirFSLAtlas(),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        if len(ui.txtFile.text()):
+            currDIR = os.path.dirname(ui.txtFile.text())
+        else:
+            currDIR = getDirFSLAtlas()
+        filename = LoadFile('Open atlas image ...',['Atlas images (*.nii.gz)'],'nii.gz', currDIR)
         if len(filename):
             if not os.path.isfile(filename):
                 print("Image file not found!")
                 return
-
             ui.txtFile.setText(filename)
             try:
                 fileHDR = nb.load(filename)

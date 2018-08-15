@@ -1,17 +1,27 @@
 from PyQt5.QtWidgets import *
+from Base.utility import strRange,strMultiRange
+import numpy as np
 
 
 class frmSelectSession(QDialog):
     def __init__(self, parent=None,setting=None):
         super(frmSelectSession, self).__init__(parent)
         # inputs
-        self.SubFrom = setting.SubFrom
-        self.SubTo   = setting.SubTo
+        self.SubRange       = strRange(setting.SubRange,Unique=True)
+        if self.SubRange is None:
+            print("Subject Range is wrong!")
+            return
+        self.SubSize        = len(self.SubRange)
+        self.ConRange       = strMultiRange(setting.ConRange, self.SubSize)
+        if self.ConRange is None:
+            print("Counter Range is wrong!")
+            return
 
-        self.ConFrom = setting.ConFrom
-        self.ConTo   = setting.ConTo
+        self.RunRange       = strMultiRange(setting.RunRange, self.SubSize)
+        if self.RunRange is None:
+            print("Run Range is wrong!")
+            return
 
-        self.Run     = setting.Run
         # outputs
         self.SubID   = None
         self.RunID   = None
@@ -20,17 +30,21 @@ class frmSelectSession(QDialog):
 
         layout = QFormLayout()
 
-        self.btnSub = QPushButton("Subject")
-        self.btnSub.clicked.connect(self.getSub_onclick)
-        self.txtSub = QLineEdit()
-        self.txtSub.setReadOnly(True)
-        layout.addRow(self.btnSub, self.txtSub)
+        self.lblSub = QLabel("Subject: ")
+        self.txtSub = QComboBox()
+        self.txtSub.addItem("",None)
+        for subindx, sub in enumerate(self.SubRange):
+            self.txtSub.addItem(str(sub),subindx)
+        self.txtSub.currentIndexChanged.connect(self.txtSub_isChenged)
+        layout.addRow(self.lblSub, self.txtSub)
 
-        self.btnRun = QPushButton("Run")
-        self.btnRun.clicked.connect(self.getRun_onclick)
-        self.txtRun = QLineEdit()
-        self.txtRun.setReadOnly(True)
-        layout.addRow(self.btnRun, self.txtRun)
+        self.lblRun = QLabel("Run: ")
+        self.txtRun = QComboBox()
+        layout.addRow(self.lblRun, self.txtRun)
+
+        self.lblCon = QLabel("Counter: ")
+        self.txtCon = QComboBox()
+        layout.addRow(self.lblCon, self.txtCon)
 
 
         self.lblTask = QLabel()
@@ -40,11 +54,6 @@ class frmSelectSession(QDialog):
         self.txtTask.setReadOnly(True)
         layout.addRow(self.lblTask,self.txtTask)
 
-        self.btnCon = QPushButton("Counter")
-        self.btnCon.clicked.connect(self.getCon_onclick)
-        self.txtCon = QLineEdit()
-        self.txtCon.setReadOnly(True)
-        layout.addRow(self.btnCon, self.txtCon)
 
         self.btnOK = QPushButton("OK")
         self.btnOK.clicked.connect(self.btnOK_onclick)
@@ -59,67 +68,74 @@ class frmSelectSession(QDialog):
         self.exec_()
 
 
-    def getSub_onclick(self):
-        num, ok = QInputDialog.getInt(self, "Select Subject", "Enter Subject Number",value=self.SubFrom,min=self.SubFrom,max=self.SubTo)
+    def txtSub_isChenged(self):
+        subindx = self.txtSub.currentData()
+        self.txtRun.clear()
+        self.txtCon.clear()
+        if subindx is not None:
+            self.txtRun.addItem("")
+            for run in self.RunRange[subindx]:
+                self.txtRun.addItem(str(run))
 
-        if ok:
-            self.txtSub.setText(str(num))
-            self.txtRun.setText("")
-            self.SubID = num
-
-    def getCon_onclick(self):
-        num, ok = QInputDialog.getInt(self, "Select Counter", "Enter Subject Number",value=self.ConFrom,min=self.ConFrom,max=self.ConTo)
-
-        if ok:
-            self.txtCon.setText(str(num))
-            self.ConID = num
-
-    def getRun_onclick(self):
-        import numpy as np
-        if self.txtSub.text() == "":
-            msgBox = QMessageBox()
-            msgBox.setText("Please select a subject first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-        else:
-            Run = np.int32(str(self.Run).replace("\'", " ").replace(",", " ").replace("[", "").replace("]", "").split())
-            maxRun = Run[self.SubID - self.SubFrom]
-
-            num, ok = QInputDialog.getInt(self, "Select Run", "Enter Run Number", value=1,
-                                          min=1, max=maxRun)
-
-            if ok:
-                self.txtRun.setText(str(num))
-                self.RunID = num
-            pass
+            self.txtCon.addItem("")
+            for con in self.ConRange[subindx]:
+                self.txtCon.addItem(str(con))
 
 
     def btnOK_onclick(self):
-        if self.txtSub.text() == "":
+        try:
+            self.SubID = np.int32(self.txtSub.currentText())
+            SubIndex = None
+            for subinx,sub in enumerate(self.SubRange):
+                if sub == self.SubID:
+                    SubIndex = subinx
+                    break
+            if SubIndex is None:
+                raise Exception
+        except:
             msgBox = QMessageBox()
-            msgBox.setText("Please select a subject first!")
+            msgBox.setText("Subject is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
-        elif self.txtRun.text() == "":
+            return
+        try:
+            self.RunID = np.int32(self.txtRun.currentText())
+            find = False
+            for run in self.RunRange[SubIndex]:
+                if self.RunID == run:
+                    find = True
+                    break
+            if not find:
+                raise Exception
+        except:
             msgBox = QMessageBox()
-            msgBox.setText("Please select a run first!")
+            msgBox.setText("Run is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
-        elif self.txtCon.text() == "":
+            return
+        try:
+            self.ConID = np.int32(self.txtCon.currentText())
+            find = False
+            for cond in self.ConRange[SubIndex]:
+                if self.ConID == cond:
+                    find = True
+                    break
+            if not find:
+                raise Exception
+        except:
             msgBox = QMessageBox()
-            msgBox.setText("Please select a counter first!")
+            msgBox.setText("Counter is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
-        else:
-            self.PASS = True
-            self.close()
-        pass
+            return
+
+        self.PASS = True
+        self.close()
+
 
     def btnCan_onclick(self):
         self.PASS = False
         self.close()
-        pass

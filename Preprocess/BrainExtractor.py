@@ -1,17 +1,91 @@
-class BrainExtractor():
-    def run(self,SettingFileName,isshow=True,betcmd=None):
-        import os
+import threading
+
+class BrainExtractorThread(threading.Thread):
+    def __init__(self, bet=None, InAddr=None, OutAddr=None, PDFAddr=None, InFile=None, files=list()):
+        super(BrainExtractorThread, self).__init__()
+        self.bet    = bet
+        self.InAddr = InAddr
+        self.OutAddr= OutAddr
+        self.PDFAddr= PDFAddr
+        self.InFile = InFile
+
+        # Necessary
+        self.files  = files
+        self.open   = False
+        self.status = "Ready"
+        self.isKill   = False
+
+    def kill(self):
+        self.isKill = True
+
+    def run(self):
         import numpy as np
         import nibabel as nb
-        #from nipype.interfaces import fsl
         import subprocess
         import matplotlib
+        import os
         matplotlib.rcParams['backend'] = "Qt5Agg"
         matplotlib.interactive(False)
         import matplotlib.pyplot as plt
+        from Base.utility import OpenReport
+
+        self.status = "Running"
+
+        # Run Bet
+        cmd = subprocess.Popen([self.bet, self.InAddr, self.OutAddr])
+        while (not self.isKill) and (cmd.poll() is None):
+            pass
+        cmd.kill()
+        if self.isKill:
+            self.status = "Failed"
+            return
+        # Visualize In File
+        nii = nb.load(self.InAddr)
+        data = nii.get_data()
+        dim = np.shape(data)
+        if len(dim) > 3:
+            data = data[:, :, :, 0]
+        Ox = int(dim[0] / 2)
+        imgIn = data[Ox, :, :]
+        if self.isKill:
+            self.status = "Failed"
+            return
+        # Visualize Out File
+        nii = nb.load(self.OutAddr)
+        data = nii.get_data()
+        dim = np.shape(data)
+        if len(dim) > 3:
+            data = data[:, :, :, 0]
+        Ox = int(dim[0] / 2)
+        imgOut = data[Ox, :, :]
+        # Plot In and Out Images in a PDF file
+        fig, (ax1, ax2) = plt.subplots(1, 2, sharex='col', sharey='row')
+        ax1.set_title("Image: " + self.InFile)
+        ax1.imshow(np.flipud(np.transpose(imgIn)), interpolation='nearest', aspect='auto', cmap=plt.cm.gray)
+        ax2.imshow(np.flipud(np.transpose(imgOut)), interpolation='nearest', aspect='auto', cmap=plt.cm.gray)
+        if self.isKill:
+            self.status = "Failed"
+            return
+        plt.savefig(self.PDFAddr)
+        if self.open:
+            OpenReport(self.PDFAddr)
+        # Check Outputs
+        isFailed = False
+        for fil in self.files:
+            if not os.path.isfile(fil):
+                isFailed = True
+                break
+        if isFailed:
+            self.status = "Failed"
+        else:
+            self.status = "Done"
 
 
-        from Base.utility import fixstr,setParameters3
+class BrainExtractor():
+    def run(self,SettingFileName, betcmd=None):
+        import os
+
+        from Base.utility import fixstr,setParameters3, strRange, strMultiRange
         from Base.Setting import Setting
 
         if betcmd is None:
@@ -32,59 +106,41 @@ class BrainExtractor():
             return False
         else:
 
+            Subjects = strRange(setting.SubRange,Unique=True)
+            if Subjects is None:
+                print("Cannot load Subject Range!")
+                return False
+            SubSize = len(Subjects)
 
-            for s in range(setting.SubFrom, setting.SubTo + 1):
-              for cnt in range(setting.ConFrom, setting.ConTo + 1):
-                print("Analyzing Subject %d ..." % (s))
-                #SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
-                # checking anat file
-                #InFilename  = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_T1w." + setting.BOLD
-                InAddr = setParameters3(setting.AnatDIR,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
-                                           fixstr(cnt, setting.ConLen, setting.ConPer))
-                #OutFilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_T1w_BET." + setting.BOLD
-                OutAddr = setParameters3(setting.BET,setting.mainDIR,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
-                                            fixstr(cnt, setting.ConLen, setting.ConPer))
-                PDFAddr = setParameters3(setting.BETPDF,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
-                                            fixstr(cnt, setting.ConLen, setting.ConPer))
+            Counters = strMultiRange(setting.ConRange,SubSize)
+            if Counters is None:
+                print("Cannot load Counter Range!")
+                return False
 
-                if not os.path.isfile(InAddr):
-                    print(InAddr, " - file not find!")
-                    return False
-                else:
+            Runs = strMultiRange(setting.RunRange,SubSize)
+            if Runs is None:
+                print("Cannot load Run Range!")
+                return False
 
-
-                    #bet                 = fsl.BET()
-                    #bet.inputs.in_file  = InAddr
-                    #bet.inputs.out_file = OutAddr
-                    #bet.run()
-                    # Run bet cmd
-                    cmd = subprocess.Popen([betcmd,InAddr,OutAddr])
-                    cmd.wait()
-
-
-                    # Visualize In File
-                    nii  = nb.load(InAddr)
-                    data = nii.get_data()
-                    dim  = np.shape(data)
-                    if len(dim) > 3:
-                        data = data[:, :, :, 0]
-                    Ox = int(dim[0] / 2)
-                    imgIn = data[Ox, :, :]
-                    # Visualize Out File
-                    nii  = nb.load(OutAddr)
-                    data = nii.get_data()
-                    dim  = np.shape(data)
-                    if len(dim) > 3:
-                        data = data[:, :, :, 0]
-                    Ox = int(dim[0] / 2)
-                    imgOut = data[Ox, :, :]
-                    # Plot In and Out Images in a PDF file
-                    fig, (ax1, ax2) = plt.subplots(1, 2, sharex='col', sharey='row')
-                    ax1.set_title("Brain extractor for Subject: " + str(s) + ", Counter: " + str(cnt))
-                    ax1.imshow(np.flipud(np.transpose(imgIn)), interpolation='nearest',  aspect='auto', cmap=plt.cm.gray)
-                    ax2.imshow(np.flipud(np.transpose(imgOut)), interpolation='nearest', aspect='auto', cmap=plt.cm.gray)
-                    plt.savefig(PDFAddr)
-                    if isshow:
-                        import webbrowser
-                        webbrowser.open_new("file://"+PDFAddr)
-                    print("Anatomical Brain for Subject " + str(s) + " is extracted.")
+            Jobs = list()
+            for sindx, s in enumerate(Subjects):
+                  for cnt in Counters[sindx]:
+                        print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
+                        InAddr = setParameters3(setting.AnatDIR,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
+                                                   fixstr(cnt, setting.ConLen, setting.ConPer))
+                        InFile = setParameters3(setting.AnatDIR,"", fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
+                                                   fixstr(cnt, setting.ConLen, setting.ConPer))
+                        OutAddr = setParameters3(setting.BET,setting.mainDIR,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
+                                                    fixstr(cnt, setting.ConLen, setting.ConPer))
+                        PDFAddr = setParameters3(setting.BETPDF,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
+                                                    fixstr(cnt, setting.ConLen, setting.ConPer))
+                        if not os.path.isfile(InAddr):
+                            print(InAddr, " - file not find!")
+                            return False
+                        else:
+                            files = [OutAddr, PDFAddr]
+                            thread = BrainExtractorThread(bet=betcmd, InAddr=InAddr, OutAddr=OutAddr, PDFAddr=PDFAddr,\
+                                                          InFile=InFile, files=files)
+                            Jobs.append(["BrainExtractor", InFile, thread])
+                            print("Job: Anatomical Brain Extractor for Subject %d, Counter %d is created." % (s, cnt))
+            return True, Jobs

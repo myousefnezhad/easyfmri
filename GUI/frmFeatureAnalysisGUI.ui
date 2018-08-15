@@ -71,9 +71,9 @@
     <widget class="QComboBox" name="txtSSSpace">
      <property name="geometry">
       <rect>
-       <x>130</x>
+       <x>160</x>
        <y>120</y>
-       <width>601</width>
+       <width>571</width>
        <height>26</height>
       </rect>
      </property>
@@ -86,7 +86,7 @@
       <rect>
        <x>20</x>
        <y>120</y>
-       <width>111</width>
+       <width>141</width>
        <height>16</height>
       </rect>
      </property>
@@ -99,7 +99,7 @@
       <rect>
        <x>20</x>
        <y>170</y>
-       <width>101</width>
+       <width>141</width>
        <height>16</height>
       </rect>
      </property>
@@ -112,7 +112,7 @@
       <rect>
        <x>20</x>
        <y>220</y>
-       <width>101</width>
+       <width>141</width>
        <height>16</height>
       </rect>
      </property>
@@ -133,8 +133,8 @@
       <font>
        <family>Arial</family>
        <pointsize>11</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
+       <weight>50</weight>
+       <bold>false</bold>
       </font>
      </property>
      <property name="frameShadow">
@@ -161,9 +161,9 @@ It's case sensitive.</string>
     <widget class="QComboBox" name="txtSSSetting">
      <property name="geometry">
       <rect>
-       <x>78</x>
+       <x>88</x>
        <y>20</y>
-       <width>561</width>
+       <width>551</width>
        <height>26</height>
       </rect>
      </property>
@@ -203,9 +203,9 @@ It's case sensitive.</string>
       <widget class="QLineEdit" name="txtSSDIR">
        <property name="geometry">
         <rect>
-         <x>122</x>
+         <x>142</x>
          <y>26</y>
-         <width>621</width>
+         <width>601</width>
          <height>21</height>
         </rect>
        </property>
@@ -224,7 +224,7 @@ It's case sensitive.</string>
         <rect>
          <x>10</x>
          <y>26</y>
-         <width>111</width>
+         <width>131</width>
          <height>16</height>
         </rect>
        </property>
@@ -249,7 +249,7 @@ It's case sensitive.</string>
         <rect>
          <x>11</x>
          <y>60</y>
-         <width>81</width>
+         <width>131</width>
          <height>16</height>
         </rect>
        </property>
@@ -260,9 +260,9 @@ It's case sensitive.</string>
       <widget class="QLineEdit" name="txtSSTask">
        <property name="geometry">
         <rect>
-         <x>120</x>
+         <x>140</x>
          <y>60</y>
-         <width>621</width>
+         <width>601</width>
          <height>21</height>
         </rect>
        </property>
@@ -281,70 +281,6 @@ It's case sensitive.</string>
       <attribute name="title">
        <string>Subjects</string>
       </attribute>
-      <widget class="QLabel" name="label_13">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>20</y>
-         <width>60</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>To:</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="txtSSSubTo">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>20</y>
-         <width>80</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubFrom: subject counter will be ended from this number&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubTo &amp;gt; 0 &amp;amp;&amp;amp; SubFrom &amp;lt;= SubTo&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="maximum">
-        <number>999999999</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_10">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>20</y>
-         <width>60</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>From:</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="txtSSSubFrom">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>20</y>
-         <width>80</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubFrom: subject counter will be started from this number&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubForm &amp;gt; 0 &amp;amp;&amp;amp; SubFrom &amp;lt;= SubTo&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="maximum">
-        <number>999999999</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
       <widget class="QLabel" name="label_12">
        <property name="geometry">
         <rect>
@@ -412,6 +348,35 @@ It's case sensitive.</string>
         <number>2</number>
        </property>
       </widget>
+      <widget class="QLabel" name="label_10">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>20</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Range:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtSSSubRange">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>20</y>
+         <width>211</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubRange: a unique range of integers, i.e. Range=[1, 4-8, 10, 12-14]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>[1-1]</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="tab_10">
       <attribute name="title">
@@ -437,22 +402,6 @@ It's case sensitive.</string>
        </property>
        <property name="value">
         <number>2</number>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="txtSSRunNum">
-       <property name="geometry">
-        <rect>
-         <x>145</x>
-         <y>20</y>
-         <width>211</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum: sequence of run counters for corresponding subjects&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum = 12 then all subjects have 12 runs&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum = [11,2,10] then 1st subject has 11 runs, 2nd subject has 2 runs, and 3rd has 10 runs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>1</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="txtSSRunPer">
@@ -497,17 +446,33 @@ It's case sensitive.</string>
         <string>Perfix:</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_16">
+      <widget class="QLineEdit" name="txtSSRunRange">
        <property name="geometry">
         <rect>
-         <x>80</x>
+         <x>135</x>
          <y>20</y>
-         <width>60</width>
+         <width>211</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunRange: sequence of ranges, i.e. If all 12 subjects have runs from 2 to 5 then Range=[12*2-5]; If 3 subjects have runs from 1 to 4 and 2 subjects have runs from 5 to 7 then Range=[3*1-4, 2*5-7]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>[1*1-1]</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_22">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>20</y>
+         <width>71</width>
          <height>16</height>
         </rect>
        </property>
        <property name="text">
-        <string>Number:</string>
+        <string>Ranges:</string>
        </property>
       </widget>
      </widget>
@@ -515,19 +480,6 @@ It's case sensitive.</string>
       <attribute name="title">
        <string>Counter</string>
       </attribute>
-      <widget class="QLabel" name="label_17">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>20</y>
-         <width>60</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>From:</string>
-       </property>
-      </widget>
       <widget class="QSpinBox" name="txtSSConLen">
        <property name="geometry">
         <rect>
@@ -560,35 +512,6 @@ It's case sensitive.</string>
         <string>Length:</string>
        </property>
       </widget>
-      <widget class="QSpinBox" name="txtSSConFrom">
-       <property name="geometry">
-        <rect>
-         <x>136</x>
-         <y>20</y>
-         <width>80</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="maximum">
-        <number>100000</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_44">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>20</y>
-         <width>60</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>To:</string>
-       </property>
-      </widget>
       <widget class="QLabel" name="label_42">
        <property name="geometry">
         <rect>
@@ -615,20 +538,33 @@ It's case sensitive.</string>
         <string>0</string>
        </property>
       </widget>
-      <widget class="QSpinBox" name="txtSSConTo">
+      <widget class="QLabel" name="label_16">
        <property name="geometry">
         <rect>
-         <x>270</x>
+         <x>80</x>
          <y>20</y>
-         <width>80</width>
-         <height>24</height>
+         <width>71</width>
+         <height>16</height>
         </rect>
        </property>
-       <property name="maximum">
-        <number>100000</number>
+       <property name="text">
+        <string>Ranges:</string>
        </property>
-       <property name="value">
-        <number>1</number>
+      </widget>
+      <widget class="QLineEdit" name="txtSSConRange">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>20</y>
+         <width>201</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;CounterRange: sequence of ranges, i.e. If all 12 subjects have runs from 2 to 5 then Range=[12*2-5]; If 3 subjects have runs from 1 to 4 and 2 subjects have runs from 5 to 7 then Range=[3*1-4, 2*5-7]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>[1*1-1]</string>
        </property>
       </widget>
      </widget>
@@ -639,7 +575,7 @@ It's case sensitive.</string>
       <widget class="QComboBox" name="cbSSInter">
        <property name="geometry">
         <rect>
-         <x>280</x>
+         <x>330</x>
          <y>20</y>
          <width>201</width>
          <height>26</height>
@@ -664,9 +600,9 @@ It's case sensitive.</string>
     <widget class="QLineEdit" name="txtSSMatFile">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>200</x>
        <y>70</y>
-       <width>551</width>
+       <width>531</width>
        <height>21</height>
       </rect>
      </property>
@@ -679,7 +615,7 @@ It's case sensitive.</string>
       <rect>
        <x>20</x>
        <y>70</y>
-       <width>161</width>
+       <width>181</width>
        <height>16</height>
       </rect>
      </property>
@@ -703,9 +639,9 @@ It's case sensitive.</string>
     <widget class="QComboBox" name="txtSSOutFile">
      <property name="geometry">
       <rect>
-       <x>130</x>
+       <x>160</x>
        <y>220</y>
-       <width>651</width>
+       <width>621</width>
        <height>26</height>
       </rect>
      </property>
@@ -716,9 +652,9 @@ It's case sensitive.</string>
     <widget class="QComboBox" name="txtSSInFile">
      <property name="geometry">
       <rect>
-       <x>130</x>
+       <x>160</x>
        <y>170</y>
-       <width>651</width>
+       <width>621</width>
        <height>26</height>
       </rect>
      </property>
@@ -806,7 +742,7 @@ It's case sensitive.</string>
       <rect>
        <x>20</x>
        <y>180</y>
-       <width>101</width>
+       <width>141</width>
        <height>16</height>
       </rect>
      </property>
@@ -824,7 +760,7 @@ It's case sensitive.</string>
       </rect>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_13">
       <attribute name="title">
@@ -833,9 +769,9 @@ It's case sensitive.</string>
       <widget class="QLineEdit" name="txtDIDIR">
        <property name="geometry">
         <rect>
-         <x>122</x>
+         <x>152</x>
          <y>26</y>
-         <width>621</width>
+         <width>591</width>
          <height>21</height>
         </rect>
        </property>
@@ -854,7 +790,7 @@ It's case sensitive.</string>
         <rect>
          <x>10</x>
          <y>26</y>
-         <width>111</width>
+         <width>141</width>
          <height>16</height>
         </rect>
        </property>
@@ -879,7 +815,7 @@ It's case sensitive.</string>
         <rect>
          <x>11</x>
          <y>60</y>
-         <width>81</width>
+         <width>131</width>
          <height>16</height>
         </rect>
        </property>
@@ -890,9 +826,9 @@ It's case sensitive.</string>
       <widget class="QLineEdit" name="txtDITask">
        <property name="geometry">
         <rect>
-         <x>120</x>
+         <x>150</x>
          <y>60</y>
-         <width>621</width>
+         <width>591</width>
          <height>21</height>
         </rect>
        </property>
@@ -911,70 +847,6 @@ It's case sensitive.</string>
       <attribute name="title">
        <string>Subjects</string>
       </attribute>
-      <widget class="QLabel" name="label_20">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>20</y>
-         <width>60</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>To:</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="txtDISubTo">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>20</y>
-         <width>80</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubFrom: subject counter will be ended from this number&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubTo &amp;gt; 0 &amp;amp;&amp;amp; SubFrom &amp;lt;= SubTo&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="maximum">
-        <number>999999999</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_22">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>20</y>
-         <width>60</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>From:</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="txtDISubFrom">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>20</y>
-         <width>80</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubFrom: subject counter will be started from this number&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubForm &amp;gt; 0 &amp;amp;&amp;amp; SubFrom &amp;lt;= SubTo&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="maximum">
-        <number>999999999</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
       <widget class="QLabel" name="label_25">
        <property name="geometry">
         <rect>
@@ -1042,6 +914,35 @@ It's case sensitive.</string>
         <number>2</number>
        </property>
       </widget>
+      <widget class="QLabel" name="label_13">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>20</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Range:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtDISubRange">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>20</y>
+         <width>211</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubRange: a unique range of integers, i.e. Range=[1, 4-8, 10, 12-14]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>[1-1]</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="tab_15">
       <attribute name="title">
@@ -1067,22 +968,6 @@ It's case sensitive.</string>
        </property>
        <property name="value">
         <number>2</number>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="txtDIRunNum">
-       <property name="geometry">
-        <rect>
-         <x>145</x>
-         <y>20</y>
-         <width>211</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum: sequence of run counters for corresponding subjects&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum = 12 then all subjects have 12 runs&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum = [11,2,10] then 1st subject has 11 runs, 2nd subject has 2 runs, and 3rd has 10 runs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>1</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="txtDIRunPer">
@@ -1127,74 +1012,33 @@ It's case sensitive.</string>
         <string>Perfix:</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_29">
+      <widget class="QLineEdit" name="txtDIRunRange">
        <property name="geometry">
         <rect>
-         <x>80</x>
+         <x>135</x>
          <y>20</y>
-         <width>60</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Number:</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QWidget" name="tab_19">
-      <attribute name="title">
-       <string>Condition</string>
-      </attribute>
-      <widget class="QLineEdit" name="txtDIEventDIR">
-       <property name="geometry">
-        <rect>
-         <x>200</x>
-         <y>40</y>
-         <width>531</width>
+         <width>211</width>
          <height>21</height>
         </rect>
        </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunRange: sequence of ranges, i.e. If all 12 subjects have runs from 2 to 5 then Range=[12*2-5]; If 3 subjects have runs from 1 to 4 and 2 subjects have runs from 5 to 7 then Range=[3*1-4, 2*5-7]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
        <property name="text">
-        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_events/</string>
+        <string>[1*1-1]</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_41">
+      <widget class="QLabel" name="label_20">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>40</y>
-         <width>201</width>
+         <x>60</x>
+         <y>20</y>
+         <width>71</width>
          <height>16</height>
         </rect>
        </property>
        <property name="text">
-        <string>Generated Event Folders:</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_48">
-       <property name="geometry">
-        <rect>
-         <x>28</x>
-         <y>80</y>
-         <width>201</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Condition Prefix:</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="txtDICondPre">
-       <property name="geometry">
-        <rect>
-         <x>149</x>
-         <y>80</y>
-         <width>461</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>cond</string>
+        <string>Ranges:</string>
        </property>
       </widget>
      </widget>
@@ -1202,19 +1046,6 @@ It's case sensitive.</string>
       <attribute name="title">
        <string>Counter</string>
       </attribute>
-      <widget class="QLabel" name="label_30">
-       <property name="geometry">
-        <rect>
-         <x>90</x>
-         <y>20</y>
-         <width>60</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>From:</string>
-       </property>
-      </widget>
       <widget class="QSpinBox" name="txtDIConLen">
        <property name="geometry">
         <rect>
@@ -1247,35 +1078,6 @@ It's case sensitive.</string>
         <string>Length:</string>
        </property>
       </widget>
-      <widget class="QSpinBox" name="txtDIConFrom">
-       <property name="geometry">
-        <rect>
-         <x>136</x>
-         <y>20</y>
-         <width>80</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="maximum">
-        <number>100000</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_46">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>20</y>
-         <width>60</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>To:</string>
-       </property>
-      </widget>
       <widget class="QLabel" name="label_47">
        <property name="geometry">
         <rect>
@@ -1302,20 +1104,90 @@ It's case sensitive.</string>
         <string>0</string>
        </property>
       </widget>
-      <widget class="QSpinBox" name="txtDIConTo">
+      <widget class="QLineEdit" name="txtDIConRange">
        <property name="geometry">
         <rect>
-         <x>270</x>
+         <x>140</x>
          <y>20</y>
-         <width>80</width>
-         <height>24</height>
+         <width>201</width>
+         <height>21</height>
         </rect>
        </property>
-       <property name="maximum">
-        <number>100000</number>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;CounterRange: sequence of ranges, i.e. If all 12 subjects have runs from 2 to 5 then Range=[12*2-5]; If 3 subjects have runs from 1 to 4 and 2 subjects have runs from 5 to 7 then Range=[3*1-4, 2*5-7]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-       <property name="value">
-        <number>1</number>
+       <property name="text">
+        <string>[1*1-1]</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_17">
+       <property name="geometry">
+        <rect>
+         <x>70</x>
+         <y>20</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Ranges:</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_19">
+      <attribute name="title">
+       <string>Condition</string>
+      </attribute>
+      <widget class="QLineEdit" name="txtDIEventDIR">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>40</y>
+         <width>511</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_events/</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_41">
+       <property name="geometry">
+        <rect>
+         <x>14</x>
+         <y>40</y>
+         <width>221</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Generated Event Folders:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_48">
+       <property name="geometry">
+        <rect>
+         <x>14</x>
+         <y>80</y>
+         <width>201</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Condition Prefix:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtDICondPre">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>80</y>
+         <width>511</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>cond</string>
        </property>
       </widget>
      </widget>
@@ -1339,7 +1211,7 @@ It's case sensitive.</string>
       <widget class="QRadioButton" name="rbDIDynamic">
        <property name="geometry">
         <rect>
-         <x>80</x>
+         <x>100</x>
          <y>20</y>
          <width>100</width>
          <height>20</height>
@@ -1355,7 +1227,7 @@ It's case sensitive.</string>
       <widget class="QRadioButton" name="rbDIManual">
        <property name="geometry">
         <rect>
-         <x>170</x>
+         <x>200</x>
          <y>20</y>
          <width>100</width>
          <height>20</height>
@@ -1375,7 +1247,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_20">
         <attribute name="title">
@@ -1386,7 +1258,7 @@ It's case sensitive.</string>
           <rect>
            <x>20</x>
            <y>20</y>
-           <width>71</width>
+           <width>101</width>
            <height>16</height>
           </rect>
          </property>
@@ -1397,9 +1269,9 @@ It's case sensitive.</string>
         <widget class="QLineEdit" name="txtDIThreshold">
          <property name="geometry">
           <rect>
-           <x>100</x>
+           <x>120</x>
            <y>20</y>
-           <width>171</width>
+           <width>151</width>
            <height>21</height>
           </rect>
          </property>
@@ -1464,9 +1336,9 @@ It's case sensitive.</string>
          <widget class="QCheckBox" name="cbDIColor">
           <property name="geometry">
            <rect>
-            <x>280</x>
+            <x>290</x>
             <y>30</y>
-            <width>131</width>
+            <width>121</width>
             <height>20</height>
            </rect>
           </property>
@@ -1547,9 +1419,9 @@ It's case sensitive.</string>
         <widget class="QLineEdit" name="txtDILabels">
          <property name="geometry">
           <rect>
-           <x>80</x>
+           <x>100</x>
            <y>20</y>
-           <width>581</width>
+           <width>561</width>
            <height>21</height>
           </rect>
          </property>
@@ -1575,7 +1447,7 @@ It's case sensitive.</string>
           <rect>
            <x>20</x>
            <y>20</y>
-           <width>71</width>
+           <width>81</width>
            <height>16</height>
           </rect>
          </property>
@@ -1588,7 +1460,7 @@ It's case sensitive.</string>
           <rect>
            <x>10</x>
            <y>90</y>
-           <width>701</width>
+           <width>721</width>
            <height>51</height>
           </rect>
          </property>
@@ -1682,7 +1554,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
         <rect>
          <x>20</x>
          <y>140</y>
-         <width>111</width>
+         <width>151</width>
          <height>20</height>
         </rect>
        </property>
@@ -1698,7 +1570,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
         <rect>
          <x>20</x>
          <y>180</y>
-         <width>121</width>
+         <width>151</width>
          <height>20</height>
         </rect>
        </property>
@@ -1712,7 +1584,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QLineEdit" name="txtDIDataID">
        <property name="geometry">
         <rect>
-         <x>140</x>
+         <x>170</x>
          <y>20</y>
          <width>113</width>
          <height>21</height>
@@ -1725,7 +1597,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QLineEdit" name="txtDILabelID">
        <property name="geometry">
         <rect>
-         <x>140</x>
+         <x>170</x>
          <y>60</y>
          <width>113</width>
          <height>21</height>
@@ -1738,7 +1610,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QLineEdit" name="txtDICoID">
        <property name="geometry">
         <rect>
-         <x>140</x>
+         <x>170</x>
          <y>140</y>
          <width>113</width>
          <height>21</height>
@@ -1751,7 +1623,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QLineEdit" name="txtDIDMID">
        <property name="geometry">
         <rect>
-         <x>140</x>
+         <x>170</x>
          <y>180</y>
          <width>113</width>
          <height>21</height>
@@ -1764,7 +1636,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QLineEdit" name="txtDImLabelID">
        <property name="geometry">
         <rect>
-         <x>140</x>
+         <x>170</x>
          <y>100</y>
          <width>113</width>
          <height>21</height>
@@ -1777,7 +1649,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QLineEdit" name="txtDISubjectID">
        <property name="geometry">
         <rect>
-         <x>380</x>
+         <x>400</x>
          <y>20</y>
          <width>113</width>
          <height>21</height>
@@ -1790,9 +1662,9 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QCheckBox" name="cbDISubjectID">
        <property name="geometry">
         <rect>
-         <x>280</x>
+         <x>300</x>
          <y>20</y>
-         <width>81</width>
+         <width>101</width>
          <height>20</height>
         </rect>
        </property>
@@ -1806,7 +1678,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QLineEdit" name="txtDITaskID">
        <property name="geometry">
         <rect>
-         <x>380</x>
+         <x>400</x>
          <y>60</y>
          <width>113</width>
          <height>21</height>
@@ -1819,9 +1691,9 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QCheckBox" name="cbDITaskID">
        <property name="geometry">
         <rect>
-         <x>280</x>
+         <x>300</x>
          <y>60</y>
-         <width>81</width>
+         <width>101</width>
          <height>20</height>
         </rect>
        </property>
@@ -1835,9 +1707,9 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QCheckBox" name="cbDIRunID">
        <property name="geometry">
         <rect>
-         <x>280</x>
+         <x>300</x>
          <y>100</y>
-         <width>81</width>
+         <width>101</width>
          <height>20</height>
         </rect>
        </property>
@@ -1851,7 +1723,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QLineEdit" name="txtDIRunID">
        <property name="geometry">
         <rect>
-         <x>380</x>
+         <x>400</x>
          <y>100</y>
          <width>113</width>
          <height>21</height>
@@ -1864,9 +1736,9 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QCheckBox" name="cbDICounterID">
        <property name="geometry">
         <rect>
-         <x>280</x>
+         <x>300</x>
          <y>140</y>
-         <width>81</width>
+         <width>101</width>
          <height>20</height>
         </rect>
        </property>
@@ -1880,7 +1752,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QLineEdit" name="txtDICounterID">
        <property name="geometry">
         <rect>
-         <x>380</x>
+         <x>400</x>
          <y>140</y>
          <width>113</width>
          <height>21</height>
@@ -1893,7 +1765,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QCheckBox" name="cbDICondID">
        <property name="geometry">
         <rect>
-         <x>280</x>
+         <x>300</x>
          <y>180</y>
          <width>101</width>
          <height>20</height>
@@ -1909,7 +1781,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QLineEdit" name="txtDICoundID">
        <property name="geometry">
         <rect>
-         <x>380</x>
+         <x>400</x>
          <y>180</y>
          <width>113</width>
          <height>21</height>
@@ -1922,7 +1794,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QLineEdit" name="txtDINScanID">
        <property name="geometry">
         <rect>
-         <x>610</x>
+         <x>630</x>
          <y>20</y>
          <width>113</width>
          <height>21</height>
@@ -1935,9 +1807,9 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <widget class="QCheckBox" name="cbDINScanID">
        <property name="geometry">
         <rect>
-         <x>520</x>
+         <x>530</x>
          <y>20</y>
-         <width>91</width>
+         <width>101</width>
          <height>20</height>
         </rect>
        </property>
@@ -1966,9 +1838,9 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
     <widget class="QLineEdit" name="txtDIOutFile">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>160</x>
        <y>180</y>
-       <width>581</width>
+       <width>561</width>
        <height>21</height>
       </rect>
      </property>
@@ -1979,9 +1851,9 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
     <widget class="QComboBox" name="txtDISetting">
      <property name="geometry">
       <rect>
-       <x>78</x>
+       <x>88</x>
        <y>20</y>
-       <width>561</width>
+       <width>551</width>
        <height>26</height>
       </rect>
      </property>
@@ -2031,9 +1903,9 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
     <widget class="QComboBox" name="txtDIInFile">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>160</x>
        <y>60</y>
-       <width>641</width>
+       <width>621</width>
        <height>26</height>
       </rect>
      </property>
@@ -2046,7 +1918,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <rect>
        <x>20</x>
        <y>60</y>
-       <width>101</width>
+       <width>141</width>
        <height>16</height>
       </rect>
      </property>
@@ -2059,7 +1931,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <rect>
        <x>20</x>
        <y>140</y>
-       <width>101</width>
+       <width>141</width>
        <height>16</height>
       </rect>
      </property>
@@ -2083,9 +1955,9 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
     <widget class="QLineEdit" name="txtDIROIFile">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>160</x>
        <y>140</y>
-       <width>581</width>
+       <width>561</width>
        <height>21</height>
       </rect>
      </property>
@@ -2106,8 +1978,8 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <font>
        <family>Arial</family>
        <pointsize>11</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
+       <weight>50</weight>
+       <bold>false</bold>
       </font>
      </property>
      <property name="frameShadow">
@@ -2134,9 +2006,9 @@ It's case sensitive.</string>
     <widget class="QComboBox" name="txtDIDM">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>160</x>
        <y>100</y>
-       <width>641</width>
+       <width>621</width>
        <height>26</height>
       </rect>
      </property>
@@ -2149,7 +2021,7 @@ It's case sensitive.</string>
       <rect>
        <x>20</x>
        <y>100</y>
-       <width>101</width>
+       <width>141</width>
        <height>16</height>
       </rect>
      </property>
@@ -2417,14 +2289,27 @@ It's case sensitive.</string>
       <string>Create Transformation Matrix</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="btnImageInfo">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>220</y>
+       <width>761</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Image Information</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QPushButton" name="btnClose">
    <property name="geometry">
     <rect>
-     <x>640</x>
+     <x>10</x>
      <y>690</y>
-     <width>171</width>
+     <width>811</width>
      <height>32</height>
     </rect>
    </property>
@@ -2445,15 +2330,10 @@ It's case sensitive.</string>
   <tabstop>tabWidget_2</tabstop>
   <tabstop>txtSSDIR</tabstop>
   <tabstop>txtSSTask</tabstop>
-  <tabstop>txtSSSubFrom</tabstop>
-  <tabstop>txtSSSubTo</tabstop>
   <tabstop>txtSSSubLen</tabstop>
   <tabstop>txtSSSubPer</tabstop>
-  <tabstop>txtSSRunNum</tabstop>
   <tabstop>txtSSRunLen</tabstop>
   <tabstop>txtSSRunPer</tabstop>
-  <tabstop>txtSSConFrom</tabstop>
-  <tabstop>txtSSConTo</tabstop>
   <tabstop>txtSSConLen</tabstop>
   <tabstop>txtSSConPer</tabstop>
   <tabstop>btnSSRUN</tabstop>

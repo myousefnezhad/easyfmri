@@ -11,6 +11,7 @@ import scipy.io as io
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
 from sklearn.preprocessing import label_binarize
+import threading
 
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
@@ -26,13 +27,57 @@ from GUI.frmRemoveRestScan import frmRemoveRestScan
 from GUI.frmRemoveRestScanCross import frmRemoveRestScanCross
 from GUI.frmCombineData import frmCombineData
 from GUI.frmFECrossValidation import frmFECrossValidation
-
-
+from GUI.frmImageInfo import frmImageInfo
 from GUI.frmSelectSession import frmSelectSession
+
 from Base.utility import fixstr, getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
+from Base.utility import strRange, strMultiRange, getSettingVersion
 from Base.Setting import Setting
 from Base.SettingHistory import History
 from Base.Conditions import Conditions
+from Base.dialogs import LoadFile, SaveFile
+from Base.fsl import FSL
+
+
+class RegistrationThread(threading.Thread):
+    def __init__(self, flirt=None, arg=None, InTitle=None, files=list()):
+        super(RegistrationThread, self).__init__()
+        self.flirt  = flirt
+        self.arg    = arg
+        self.InTitle= InTitle
+
+        # Necessary
+        self.open   = False
+        self.files  = files
+        self.status = "Ready"
+        self.isKill   = False
+
+    def kill(self):
+        self.isKill = True
+
+    def run(self):
+        import subprocess, os
+        self.status = "Running"
+        print("Registering " + self.InTitle + " ...")
+        cmd = subprocess.Popen(self.flirt + " " + self.arg, shell=True)
+        while (not self.isKill) and (cmd.poll() is None):
+            pass
+        cmd.kill()
+
+        if self.isKill:
+            self.status = "Failed"
+            return
+
+        isFailed = False
+        for fil in self.files:
+            if not os.path.isfile(fil):
+                isFailed = True
+                break
+        if isFailed:
+            self.status = "Failed"
+        else:
+            self.status = "Done"
+            print(self.InTitle + " - is done.")
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -129,48 +174,18 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
 
-        # FSL Parameters
-        if platform.system() == "Linux":
-            ui.txtFSLDIR.setText("")
-            if os.path.isfile("/usr/bin/fsl5.0-flirt"):
-                ui.txtFlirt.setText("/usr/bin/fsl5.0-flirt")
-            else:
-                msgBox = QMessageBox()
-                msgBox.setText("fsl5.0 cmds are not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
 
+        fsl = FSL()
+        fsl.setting()
+        if not fsl.Validate:
+            msgBox = QMessageBox()
+            msgBox.setText("Cannot find FSL setting!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
         else:
-            hasFSL = False
-            FSLDIR = str(os.environ["FSLDIR"])
-            if FSLDIR == "":
-                msgBox = QMessageBox()
-                msgBox.setText("Cannot find $FSLDIR variable!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-            else:
-                if (os.path.isdir(FSLDIR) == False):
-                    msgBox = QMessageBox()
-                    msgBox.setText("$FSLDIR does not exist!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                else:
-                    ui.txtFSLDIR.setText(os.environ["FSLDIR"])
-                    hasFSL = True
-
-            if hasFSL:
-                if (os.path.isfile(FSLDIR + "/bin/flirt") == False):
-                    ui.txtFlirt.setText("")
-                    msgBox = QMessageBox()
-                    msgBox.setText("Cannot find flirt cmd!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-            else:
-                ui.txtFlirt.setText("")
+            ui.txtFSLDIR.setText(fsl.FSLDIR)
+            ui.txtFlirt.setText(fsl.flirt)
 
 
         # Unsupervised Feature Engineering
@@ -226,6 +241,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnDIDraw.clicked.connect(self.btnDIDraw_click)
         ui.btnFECross.clicked.connect(self.btnFECross_click)
         ui.btnFARun.clicked.connect(self.btnFA_click)
+        ui.btnImageInfo.clicked.connect(self.btnImageInfo_click)
 
 
     # Exit function
@@ -233,19 +249,16 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         global dialog, parent
         dialog.close()
 
-    def btnSSSetting_click(self):
-        from Base.utility import getVersion
-        global ui
+    def btnImageInfo_click(self):
+        frmImageInfo.show(frmImageInfo)
 
+    def btnSSSetting_click(self):
+        global ui
         if os.path.isfile(ui.txtSSSetting.currentText()):
             currDir = os.path.dirname(ui.txtSSSetting.currentText())
         else:
-            currDir = ""
-
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open setting file ...", currDir,
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+            currDir = None
+        filename = LoadFile("Open setting file ...",['easy fMRI setting (*.ez)'],'ez',currDir)
         if len(filename):
             if not os.path.isfile(filename):
                 msgBox = QMessageBox()
@@ -258,39 +271,38 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             setting = Setting()
             setting.Load(filename)
 
-            if setting.Version != getVersion():
+            if np.double(setting.Version) < np.double(getSettingVersion()):
                 print("WARNING: You are using different version of Easy fMRI!!!")
+                msgBox = QMessageBox()
+                msgBox.setText("This version of setting is not supported!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return
 
             if not setting.empty:
                 ui.txtSSSetting.setCurrentText(filename)
                 ui.txtSSDIR.setText(setting.mainDIR)
-                # ui.txtSSSpace.setCurrentText(setting.MNISpace)
                 ui.txtSSTask.setText(setting.Task)
-                ui.txtSSSubFrom.setValue(setting.SubFrom)
-                ui.txtSSSubTo.setValue(setting.SubTo)
+                ui.txtSSSubRange.setText(setting.SubRange)
                 ui.txtSSSubLen.setValue(setting.SubLen)
                 ui.txtSSSubPer.setText(setting.SubPer)
-                ui.txtSSConFrom.setValue(setting.ConFrom)
-                ui.txtSSConTo.setValue(setting.ConTo)
+                ui.txtSSConRange.setText(setting.ConRange)
                 ui.txtSSConLen.setValue(setting.ConLen)
                 ui.txtSSConPer.setText(setting.ConPer)
-                ui.txtSSRunNum.setText(setting.Run)
+                ui.txtSSRunRange.setText(setting.RunRange)
                 ui.txtSSRunPer.setText(setting.RunPer)
                 ui.txtSSRunLen.setValue(setting.RunLen)
 
     def btnDISetting_click(self):
-        from Base.utility import getVersion
         global ui
 
         if os.path.isfile(ui.txtDISetting.currentText()):
             currDir = os.path.dirname(ui.txtDISetting.currentText())
         else:
-            currDir = ""
+            currDir = None
 
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open setting file ...", currDir,
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Open setting file ...",['easy fMRI setting (*.ez)'],'ez',currDir)
         if len(filename):
             if not os.path.isfile(filename):
                 msgBox = QMessageBox()
@@ -303,28 +315,30 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             setting = Setting()
             setting.Load(filename)
 
-            if setting.Version != getVersion():
+            if np.double(setting.Version) < np.double(getSettingVersion()):
                 print("WARNING: You are using different version of Easy fMRI!!!")
+                msgBox = QMessageBox()
+                msgBox.setText("This version of setting is not supported!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return
 
             if not setting.empty:
                 ui.txtDISetting.setCurrentText(filename)
                 ui.txtDIDIR.setText(setting.mainDIR)
-                # ui.txtSSSpace.setCurrentText(setting.MNISpace)
                 ui.txtDITask.setText(setting.Task)
-                ui.txtDISubFrom.setValue(setting.SubFrom)
-                ui.txtDISubTo.setValue(setting.SubTo)
+                ui.txtDISubRange.setText(setting.SubRange)
                 ui.txtDISubLen.setValue(setting.SubLen)
                 ui.txtDISubPer.setText(setting.SubPer)
-                ui.txtDIConFrom.setValue(setting.ConFrom)
-                ui.txtDIConTo.setValue(setting.ConTo)
+                ui.txtDIConRange.setText(setting.ConRange)
                 ui.txtDIConLen.setValue(setting.ConLen)
                 ui.txtDIConPer.setText(setting.ConPer)
-                ui.txtDIRunNum.setText(setting.Run)
+                ui.txtDIRunRange.setText(setting.RunRange)
                 ui.txtDIRunPer.setText(setting.RunPer)
                 ui.txtDIRunLen.setValue(setting.RunLen)
 
     def btnSSSettingReload_click(self):
-        from Base.utility import getVersion
         global ui
         filename = ui.txtSSSetting.currentText()
         if os.path.isfile(filename):
@@ -332,23 +346,26 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 setting = Setting()
                 setting.Load(filename)
 
-                if setting.Version != getVersion():
+                if np.double(setting.Version) < np.double(getSettingVersion()):
                     print("WARNING: You are using different version of Easy fMRI!!!")
+                    msgBox = QMessageBox()
+                    msgBox.setText("This version of setting is not supported!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return
 
                 if not setting.empty:
                     ui.txtSSSetting.setCurrentText(filename)
                     ui.txtSSDIR.setText(setting.mainDIR)
-                    # ui.txtSSSpace.setCurrentText(setting.MNISpace)
                     ui.txtSSTask.setText(setting.Task)
-                    ui.txtSSSubFrom.setValue(setting.SubFrom)
-                    ui.txtSSSubTo.setValue(setting.SubTo)
+                    ui.txtSSSubRange.setText(setting.SubRange)
                     ui.txtSSSubLen.setValue(setting.SubLen)
                     ui.txtSSSubPer.setText(setting.SubPer)
-                    ui.txtSSConFrom.setValue(setting.ConFrom)
-                    ui.txtSSConTo.setValue(setting.ConTo)
+                    ui.txtSSConRange.setText(setting.ConRange)
                     ui.txtSSConLen.setValue(setting.ConLen)
                     ui.txtSSConPer.setText(setting.ConPer)
-                    ui.txtSSRunNum.setText(setting.Run)
+                    ui.txtSSRunRange.setText(setting.RunRange)
                     ui.txtSSRunPer.setText(setting.RunPer)
                     ui.txtSSRunLen.setValue(setting.RunLen)
         else:
@@ -363,23 +380,26 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 setting = Setting()
                 setting.Load(filename)
 
-                if setting.Version != getVersion():
+                if np.double(setting.Version) < np.double(getSettingVersion()):
                     print("WARNING: You are using different version of Easy fMRI!!!")
+                    msgBox = QMessageBox()
+                    msgBox.setText("This version of setting is not supported!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return
 
                 if not setting.empty:
                     ui.txtDISetting.setCurrentText(filename)
                     ui.txtDIDIR.setText(setting.mainDIR)
-                    # ui.txtSSSpace.setCurrentText(setting.MNISpace)
                     ui.txtDITask.setText(setting.Task)
-                    ui.txtDISubFrom.setValue(setting.SubFrom)
-                    ui.txtDISubTo.setValue(setting.SubTo)
+                    ui.txtDISubRange.setText(setting.SubRange)
                     ui.txtDISubLen.setValue(setting.SubLen)
                     ui.txtDISubPer.setText(setting.SubPer)
-                    ui.txtDIConFrom.setValue(setting.ConFrom)
-                    ui.txtDIConTo.setValue(setting.ConTo)
+                    ui.txtDIConRange.setText(setting.ConRange)
                     ui.txtDIConLen.setValue(setting.ConLen)
                     ui.txtDIConPer.setText(setting.ConPer)
-                    ui.txtDIRunNum.setText(setting.Run)
+                    ui.txtDIRunRange.setText(setting.RunRange)
                     ui.txtDIRunPer.setText(setting.RunPer)
                     ui.txtDIRunLen.setValue(setting.RunLen)
         else:
@@ -387,10 +407,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
     def btnSSMatFile_click(self):
         global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open image file ...", os.path.dirname(ui.txtSSMatFile.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Open Transformation Matrix ...",['Matrix files (*.mat)'],'mat',\
+                            os.path.dirname(ui.txtSSMatFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtSSMatFile.setText(filename)
@@ -399,10 +417,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
     def btnSSSpace_click(self):
         global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open space file ...", os.path.dirname(ui.txtSSSpace.currentText()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile("Open image file ...",['Image files (*.nii.gz)','All files (*.*)'],'nii.gz', \
+                            os.path.dirname(ui.txtSSSpace.currentText()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtSSSpace.setCurrentText(filename)
@@ -447,31 +463,19 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
+
         try:
-            SubFrom = np.int32(ui.txtSSSubFrom.value())
-            1 / SubFrom
+            SubRange = strRange(ui.txtSSSubRange.text(),Unique=True)
+            if SubRange is None:
+                raise Exception
+            SubSize = len(SubRange)
         except:
-            msgBox.setText("Subject From must be an integer number")
+            msgBox.setText("Subject Range is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        try:
-            SubTo = np.int32(ui.txtSSSubTo.value())
-            1 / SubTo
-        except:
-            msgBox.setText("Subject To must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        if SubTo < SubFrom:
-            msgBox.setText("Subject To is smaller then Subject From!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Number of subjects is valid")
+        print("Range of subjects is okay!")
         try:
             SubLen = np.int32(ui.txtSSSubLen.text())
             1 / SubLen
@@ -481,33 +485,26 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        print("Length of subjects is valid")
+        print("Length of subjects is okay!")
+
 
         try:
-            ConFrom = np.int32(ui.txtSSConFrom.value())
-            1 / ConFrom
+            ConRange = strMultiRange(ui.txtSSConRange.text(),SubSize)
+            if ConRange is None:
+                raise Exception
+            if not (len(ConRange) == SubSize):
+                msgBox.setText("Counter Size must be equal to Subject Size!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
         except:
-            msgBox.setText("Counter From must be an integer number")
+            msgBox.setText("Counter Range is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        try:
-            ConTo = np.int32(ui.txtSSConTo.value())
-            1 / ConTo
-        except:
-            msgBox.setText("Counter To must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        if ConTo < ConFrom:
-            msgBox.setText("Conunter To is smaller then Subject From!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter is valid")
+        print("Counter Range is okay!")
         try:
             ConLen = np.int32(ui.txtSSConLen.text())
             1 / ConLen
@@ -517,8 +514,26 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        print("Length of counter is valid")
+        print("Length of Counter is okay!")
 
+
+        try:
+            RunRange = strMultiRange(ui.txtSSRunRange.text(),SubSize)
+            if RunRange is None:
+                raise Exception
+            if not (len(RunRange) == SubSize):
+                msgBox.setText("Run Size must be equal to Subject Size!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+        except:
+            msgBox.setText("Run Range is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Run Range is okay!")
         try:
             RunLen = np.int32(ui.txtSSRunLen.value())
             1 / RunLen
@@ -530,32 +545,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             return False
         print("Length of runs is valid")
 
-        StrRuns = str(ui.txtSSRunNum.text()).replace("\'", " ").replace(",", " ").replace("[", "").replace("]",
-                                                                                                           "").split()
-        Run = []
-        for srun in StrRuns:
-            try:
-                Run.append(np.int32(srun))
-            except:
-                msgBox.setText("Run must include an integer array")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        if (len(Run) == 1):
-            runValue = Run[0]
-            Run = []
-            for _ in range(int(ui.txtSSSubFrom.value()), int(ui.txtSSSubTo.value()) + 1):
-                Run.append(runValue)
-        else:
-            if (len(Run) != (ui.txtSSSubTo.value() - ui.txtSSSubFrom.value() + 1)):
-                msgBox.setText(
-                    "Number of Runs must include a unique number for all subject or an array with size of number of subject, e.g. [1,2,2,1]")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        print("Number of Runs are okay.")
 
         Mat = ui.txtSSMatFile.text()
         if not len(Mat):
@@ -599,11 +588,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             return
 
         print("Checking files ...")
-        for si, s in enumerate(range(SubFrom, SubTo + 1)):
-            for cnt in range(ConFrom, ConTo + 1):
+        for si, s in enumerate(SubRange):
+            for cnt in ConRange[si]:
                 print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                # SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
-                for r in range(1, Run[si] + 1):
+                for r in RunRange[si]:
                     MatFile = setParameters3(Mat, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
                                              fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
                                              fixstr(cnt, ConLen, ui.txtSSConPer.text()))
@@ -631,12 +619,12 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                         print(InFile + " - not found!")
                         return
 
+        Jobs = list()
         print("Registration ...")
-        for si, s in enumerate(range(SubFrom, SubTo + 1)):
-            for cnt in range(ConFrom, ConTo + 1):
+        for si, s in enumerate(SubRange):
+            for cnt in ConRange[si]:
                 print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                # SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
-                for r in range(1, Run[si] + 1):
+                for r in RunRange[si]:
                     MatFile = setParameters3(Mat, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
                                              fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
                                              fixstr(cnt, ConLen, ui.txtSSConPer.text()))
@@ -648,21 +636,30 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
                                             fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
                                             fixstr(cnt, ConLen, ui.txtSSConPer.text()))
+                    InTitle = setParameters3(In, "", fixstr(s, SubLen, ui.txtSSSubPer.text()), \
+                                            fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
+                                            fixstr(cnt, ConLen, ui.txtSSConPer.text()))
 
                     OutFile = setParameters3(Out, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
                                              fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
                                              fixstr(cnt, ConLen, ui.txtSSConPer.text()))
 
-                    RunScript = Flirt + " -in " + InFile + " -applyxfm -init " + MatFile + " -out " + OutFile + \
+
+                    files  = [OutFile]
+                    arg    = " -in " + InFile + " -applyxfm -init " + MatFile + " -out " + OutFile + \
                                 " -paddingsize 0.0 -interp " + ui.cbSSInter.currentData() + " -ref " + SpaceFile
+                    thread = RegistrationThread(flirt=Flirt, arg=arg, files=files, InTitle=InTitle)
+                    Jobs.append(["Registration", InTitle, thread])
+                    print("Job: Registration for " + InTitle + " - is created.")
 
-                    os.system(RunScript)
-                    print(OutFile + " - is created.")
+        if not len(Jobs):
+            print("TASK FAILED!")
+        else:
+            print("TASK DONE.")
+            dialog.hide()
+            from GUI.frmJobs import frmJobs
+            frmJobs.show(frmJobs, Jobs, dialog)
 
-        msgBox.setText("Registration is done!")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
 
     def btnROIWholeBrain_click(self):
         frmWholeBrainROI.show(frmWholeBrainROI)
@@ -681,23 +678,15 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
     def btnDIOutFile_click(self):
         global ui
-        current = ui.txtDIOutFile.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ofile = dialog.getSaveFileName(None, "Output File", current, "", "", flags)[0]
+        ofile = SaveFile("Output data file ...",['Data file (*.mat)'],'mat',\
+                         os.path.dirname(ui.txtDIOutFile.text()))
         if len(ofile):
             ui.txtDIOutFile.setText(ofile)
 
     def btnDIROIFile_click(self):
         global ui
-        current = ui.txtDIROIFile.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        roi_file = dialog.getOpenFileName(None, "Select ROI File", current, "", "", flags)[0]
+        roi_file = LoadFile('Select ROI image file ...',['ROI image (*.nii.gz)','All files (*.*)'], 'nii.gz',\
+                            os.path.dirname(ui.txtDIROIFile.text()))
         if len(roi_file):
             if os.path.isfile(roi_file):
                 ui.txtDIROIFile.setText(roi_file)
@@ -706,10 +695,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
     def btnDILabels_click(self):
         global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open label file ...", os.path.dirname(ui.txtDILabels.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile('Open label file ...', ['Text files (*.txt)', 'All files (*.*)'], 'txt',\
+                            os.path.dirname(ui.txtDILabels.text()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtDILabels.setText(filename)
@@ -720,9 +707,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
     def btnDIRUN_click(self):
         global ui
 
-
         msgBox = QMessageBox()
-
         mainDIR = ui.txtDIDIR.text()
         Task = ui.txtDITask.text()
         # Check Directory
@@ -746,30 +731,17 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.exec_()
             return False
         try:
-            SubFrom = np.int32(ui.txtDISubFrom.value())
-            1 / SubFrom
+            SubRange = strRange(ui.txtDISubRange.text(),Unique=True)
+            if SubRange is None:
+                raise Exception
+            SubSize = len(SubRange)
         except:
-            msgBox.setText("Subject From must be an integer number")
+            msgBox.setText("Subject Range is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        try:
-            SubTo = np.int32(ui.txtDISubTo.value())
-            1 / SubTo
-        except:
-            msgBox.setText("Subject To must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        if SubTo < SubFrom:
-            msgBox.setText("Subject To is smaller then Subject From!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Number of subjects is valid")
+        print("Range of subjects is okay!")
         try:
             SubLen = np.int32(ui.txtDISubLen.text())
             1 / SubLen
@@ -779,33 +751,24 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        print("Length of subjects is valid")
-
+        print("Length of subjects is okay!")
         try:
-            ConFrom = np.int32(ui.txtDIConFrom.value())
-            1 / ConFrom
+            ConRange = strMultiRange(ui.txtDIConRange.text(),SubSize)
+            if ConRange is None:
+                raise Exception
+            if not (len(ConRange) == SubSize):
+                msgBox.setText("Counter Size must be equal to Subject Size!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
         except:
-            msgBox.setText("Counter From must be an integer number")
+            msgBox.setText("Counter Range is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        try:
-            ConTo = np.int32(ui.txtDIConTo.value())
-            1 / ConTo
-        except:
-            msgBox.setText("Counter To must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        if ConTo < ConFrom:
-            msgBox.setText("Conunter To is smaller then Subject From!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter is valid")
+        print("Counter Range is okay!")
         try:
             ConLen = np.int32(ui.txtDIConLen.text())
             1 / ConLen
@@ -815,8 +778,24 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        print("Length of counter is valid")
-
+        print("Length of Counter is okay!")
+        try:
+            RunRange = strMultiRange(ui.txtDIRunRange.text(),SubSize)
+            if RunRange is None:
+                raise Exception
+            if not (len(RunRange) == SubSize):
+                msgBox.setText("Run Size must be equal to Subject Size!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+        except:
+            msgBox.setText("Run Range is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Run Range is okay!")
         try:
             RunLen = np.int32(ui.txtDIRunLen.value())
             1 / RunLen
@@ -827,34 +806,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.exec_()
             return False
         print("Length of runs is valid")
-
-
-        StrRuns = str(ui.txtDIRunNum.text()).replace("\'", " ").replace(",", " ").replace("[", "").replace("]",
-                                                                                                           "").split()
-        Run = []
-        for srun in StrRuns:
-            try:
-                Run.append(np.int32(srun))
-            except:
-                msgBox.setText("Run must include an integer array")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        if (len(Run) == 1):
-            runValue = Run[0]
-            Run = []
-            for _ in range(int(ui.txtDISubFrom.value()), int(ui.txtDISubTo.value()) + 1):
-                Run.append(runValue)
-        else:
-            if (len(Run) != (ui.txtDISubTo.value() - ui.txtDISubFrom.value() + 1)):
-                msgBox.setText(
-                    "Number of Runs must include a unique number for all subject or an array with size of number of subject, e.g. [1,2,2,1]")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        print("Number of Runs are okay.")
 
         OutFile = ui.txtDIOutFile.text()
         if not len(OutFile):
@@ -884,7 +835,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             roiIMG = roiHDR.get_data()
             roiSize = np.shape(roiIMG)
             roiIND = np.where(roiIMG != 0)
-            #roiShape = np.shape(roiIMG)
         except:
             msgBox.setText("Cannot load ROI File!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -1040,11 +990,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         print("Checking files ...")
-        for si, s in enumerate(range(SubFrom, SubTo + 1)):
-            for cnt in range(ConFrom, ConTo + 1):
+        for si, s in enumerate(SubRange):
+            for cnt in ConRange[si]:
                 print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                # SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
-                for r in range(1, Run[si] + 1):
+                for r in RunRange[si]:
                     InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtDISubPer.text()), \
                                             fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
                                             fixstr(cnt, ConLen, ui.txtDIConPer.text()))
@@ -1101,11 +1050,11 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         print("Extraction ...")
-        for si, s in enumerate(range(SubFrom, SubTo + 1)):
-            for cnt in range(ConFrom, ConTo + 1):
+        for si, s in enumerate(SubRange):
+            for cnt in ConRange[si]:
                 print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
                 # SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
-                for r in range(1, Run[si] + 1):
+                for r in RunRange[si]:
                     try:
                         InFile = setParameters3(In, mainDIR,
                                     fixstr(s, SubLen, ui.txtDISubPer.text()), \
@@ -1294,12 +1243,11 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
 
+
+
     def btnDIDraw_click(self):
         global ui
-
-
         msgBox = QMessageBox()
-
         mainDIR = ui.txtDIDIR.text()
         Task = ui.txtDITask.text()
         # Check Directory
@@ -1323,30 +1271,17 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.exec_()
             return False
         try:
-            SubFrom = np.int32(ui.txtDISubFrom.value())
-            1 / SubFrom
+            SubRange = strRange(ui.txtDISubRange.text(),Unique=True)
+            if SubRange is None:
+                raise Exception
+            SubSize = len(SubRange)
         except:
-            msgBox.setText("Subject From must be an integer number")
+            msgBox.setText("Subject Range is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        try:
-            SubTo = np.int32(ui.txtDISubTo.value())
-            1 / SubTo
-        except:
-            msgBox.setText("Subject To must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        if SubTo < SubFrom:
-            msgBox.setText("Subject To is smaller then Subject From!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Number of subjects is valid")
+        print("Range of subjects is okay!")
         try:
             SubLen = np.int32(ui.txtDISubLen.text())
             1 / SubLen
@@ -1356,33 +1291,24 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        print("Length of subjects is valid")
-
+        print("Length of subjects is okay!")
         try:
-            ConFrom = np.int32(ui.txtDIConFrom.value())
-            1 / ConFrom
+            ConRange = strMultiRange(ui.txtDIConRange.text(),SubSize)
+            if ConRange is None:
+                raise Exception
+            if not (len(ConRange) == SubSize):
+                msgBox.setText("Counter Size must be equal to Subject Size!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
         except:
-            msgBox.setText("Counter From must be an integer number")
+            msgBox.setText("Counter Range is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        try:
-            ConTo = np.int32(ui.txtDIConTo.value())
-            1 / ConTo
-        except:
-            msgBox.setText("Counter To must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        if ConTo < ConFrom:
-            msgBox.setText("Conunter To is smaller then Subject From!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter is valid")
+        print("Counter Range is okay!")
         try:
             ConLen = np.int32(ui.txtDIConLen.text())
             1 / ConLen
@@ -1392,8 +1318,24 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        print("Length of counter is valid")
-
+        print("Length of Counter is okay!")
+        try:
+            RunRange = strMultiRange(ui.txtDIRunRange.text(),SubSize)
+            if RunRange is None:
+                raise Exception
+            if not (len(RunRange) == SubSize):
+                msgBox.setText("Run Size must be equal to Subject Size!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+        except:
+            msgBox.setText("Run Range is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Run Range is okay!")
         try:
             RunLen = np.int32(ui.txtDIRunLen.value())
             1 / RunLen
@@ -1405,32 +1347,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             return False
         print("Length of runs is valid")
 
-
-        StrRuns = str(ui.txtDIRunNum.text()).replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()
-        Run = []
-        for srun in StrRuns:
-            try:
-                Run.append(np.int32(srun))
-            except:
-                msgBox.setText("Run must include an integer array")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        if (len(Run) == 1):
-            runValue = Run[0]
-            Run = []
-            for _ in range(int(ui.txtDISubFrom.value()), int(ui.txtDISubTo.value()) + 1):
-                Run.append(runValue)
-        else:
-            if (len(Run) != (ui.txtDISubTo.value() - ui.txtDISubFrom.value() + 1)):
-                msgBox.setText(
-                    "Number of Runs must include a unique number for all subject or an array with size of number of subject, e.g. [1,2,2,1]")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        print("Number of Runs are okay.")
 
         if not ui.rbDIDynamic.isChecked():
             msgBox.setText("Please select dynamic method first")
@@ -1465,24 +1381,20 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             return False
 
         setting = Setting()
-
         setting.Task = Task
 
-        setting.SubFrom = SubFrom
-        setting.SubTo = SubTo
-        setting.SubLen = SubLen
-        setting.SubPer = ui.txtDISubPer.text()
+        setting.SubRange    = ui.txtDISubRange.text()
+        setting.SubLen      = SubLen
+        setting.SubPer      = ui.txtDISubPer.text()
 
-        setting.Run    = Run
-        setting.RunLen = RunLen
-        setting.RunPer = ui.txtDIRunPer.text()
+        setting.RunRange    = ui.txtDIRunRange.text()
+        setting.RunLen      = RunLen
+        setting.RunPer      = ui.txtDIRunPer.text()
 
 
-        setting.ConFrom = ConFrom
-        setting.ConTo = ConTo
-        setting.ConLen = ConLen
-        setting.ConPer = ui.txtDIConPer.text()
-
+        setting.ConRange     = ui.txtDIConRange.text()
+        setting.ConLen      = ConLen
+        setting.ConPer      = ui.txtDIConPer.text()
         sSess = frmSelectSession(None, setting=setting)
 
         try:
@@ -1643,10 +1555,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             from GUI.frmFAHA import frmFAHA
             frmFAHA.show(frmFAHA)
             return
-
-
-
-
 
 # Auto Run
 if __name__ == "__main__":

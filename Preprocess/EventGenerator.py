@@ -27,98 +27,112 @@ class EventGenerator:
         import os
 
         from Base.utility import fixstr,setParameters3
-        from Base.Setting import Setting
+        from Base.Setting import Setting, strRange, strMultiRange
         setting = Setting()
         setting.Load(SettingFileName)
         if setting.empty:
             print("Error in loading the setting file!")
             return False
         else:
-
-            Run     = np.int32(str(setting.Run).replace("\'", " ").replace(",", " ").replace("[", "").replace("]", "").split())
             self.ConditionTitles = []
             Events = []
+
+            Subjects = strRange(setting.SubRange, Unique=True)
+            if Subjects is None:
+                print("Cannot load Subject Range!")
+                return False
+            SubSize = len(Subjects)
+
+            Counters = strMultiRange(setting.ConRange, SubSize)
+            if Counters is None:
+                print("Cannot load Counter Range!")
+                return False
+
+            Runs = strMultiRange(setting.RunRange, SubSize)
+            if Runs is None:
+                print("Cannot load Run Range!")
+                return False
+
             # COLECT ALL EVENTS AND CALCULATE THE LIST OF CONDITION
-            for si, s in enumerate(range(setting.SubFrom, setting.SubTo + 1)):
-              for cnt in range(setting.ConFrom, setting.ConTo + 1):
-                print("Analyzing Subject %d ..." % (s))
-
-                for r in range(1,Run[si] + 1):
-                    # Event File Check
-                    EventAddr = setParameters3(setting.Onset,setting.mainDIR,fixstr(s, setting.SubLen, setting.SubPer)\
-                                                  ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task, \
-                                                  fixstr(cnt, setting.ConLen, setting.ConPer))
-                    #EventFilename = "sub-" +  + "_task-" + setting.Task + "_run-" + \
-                                #+ "_events." + setting.Onset
-                    EventFolder = setParameters3(setting.EventFolder,setting.mainDIR,fixstr(s, setting.SubLen, setting.SubPer)\
-                                                  ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task,
-                                                                  fixstr(cnt, setting.ConLen, setting.ConPer))
-                    #EventFolder = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
-                               #fixstr(r, RunLen, setting.RunPer) + "_events/"
-                    MatAddr     =  EventFolder + setting.CondPre + ".mat"
-                    if not os.path.isfile(EventAddr):
-                        print(EventAddr, " - file not find!")
-                        return False
-                    else:
-                        file = open(EventAddr, "r")
-                        lines = file.readlines()
-                        file.close()
-                        dir = {}
-                        dir.clear()
-
-                        for k in range(0, len(lines)):
-                            Event = lines[k].rsplit()
-                            try:
-                                allvars = dict(locals(), **globals())
-                                exec(setting.EventCodes,allvars,allvars)
-                            
-                            except Exception as e:
-                                print("Event codes generated following error:\n")
-                                print(e)
+            for si, s in enumerate(Subjects):
+                  for cnt in Counters[si]:
+                        print("Analyzing Subject %d, Counter %d ..." % (s,cnt))
+                        for r in Runs[si]:
+                            # Event File Check
+                            EventAddr = setParameters3(setting.Onset,setting.mainDIR,fixstr(s, setting.SubLen, setting.SubPer)\
+                                                          ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task, \
+                                                          fixstr(cnt, setting.ConLen, setting.ConPer))
+                            #EventFilename = "sub-" +  + "_task-" + setting.Task + "_run-" + \
+                                        #+ "_events." + setting.Onset
+                            EventFolder = setParameters3(setting.EventFolder,setting.mainDIR,fixstr(s, setting.SubLen, setting.SubPer)\
+                                                          ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task,
+                                                                          fixstr(cnt, setting.ConLen, setting.ConPer))
+                            #EventFolder = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
+                                       #fixstr(r, RunLen, setting.RunPer) + "_events/"
+                            MatAddr     =  EventFolder + setting.CondPre + ".mat"
+                            if not os.path.isfile(EventAddr):
+                                print(EventAddr, " - file not find!")
                                 return False
+                            else:
+                                file = open(EventAddr, "r")
+                                lines = file.readlines()
+                                file.close()
+                                dir = {}
+                                dir.clear()
 
-                            try:
-                                RowStartID = allvars['RowStartID']
-                            except:
-                                print("Cannot find RowStartID variable in event code")
-                                return False
-                            try:
-                                Condition = allvars['Condition']
-                            except:
-                                print("Cannot find Condition variable in event code")
-                                return False
-                            try:
-                                Onset = allvars['Onset']
-                            except:
-                                print("Cannot find Onset variable in event code")
-                                return False
-                            try:
-                                Duration = allvars['Duration']
-                            except:
-                                print("Cannot find Duration variable in event code")
-                                return False
+                                for k in range(0, len(lines)):
+                                    Event = lines[k].rsplit()
+                                    try:
+                                        allvars = dict(locals(), **globals())
+                                        exec(setting.EventCodes,allvars,allvars)
 
-                            try:
-                                Skip = int(allvars["Skip"])
-                            except:
-                                print("Cannot find Skip variable in event code")
-                                return False
-                            if RowStartID <= k and Skip == 0:
-                                # Create Condition Directory
-                                try:
-                                    value = dir[Condition]
-                                    value.append([float(Onset), float(Duration)])
-                                    dir[Condition] = value
-                                except KeyError:
-                                    value = list()
-                                    value.append([float(Onset), float(Duration)])
-                                    dir[Condition] = value
+                                    except Exception as e:
+                                        print("Event codes generated following error:\n")
+                                        print(e)
+                                        return False
 
-                        for condinx, cond in enumerate(dir):
-                            self.add_condTitle(title=cond,ConditionTitles=self.ConditionTitles)
+                                    try:
+                                        RowStartID = allvars['RowStartID']
+                                    except:
+                                        print("Cannot find RowStartID variable in event code")
+                                        return False
+                                    try:
+                                        Condition = allvars['Condition']
+                                    except:
+                                        print("Cannot find Condition variable in event code")
+                                        return False
+                                    try:
+                                        Onset = allvars['Onset']
+                                    except:
+                                        print("Cannot find Onset variable in event code")
+                                        return False
+                                    try:
+                                        Duration = allvars['Duration']
+                                    except:
+                                        print("Cannot find Duration variable in event code")
+                                        return False
 
-                        Events.append([MatAddr, EventFolder, dir])
-                        print("Subject %d, Run %d is verified." % (s,r))
+                                    try:
+                                        Skip = int(allvars["Skip"])
+                                    except:
+                                        print("Cannot find Skip variable in event code")
+                                        return False
+                                    if RowStartID <= k and Skip == 0:
+                                        # Create Condition Directory
+                                        try:
+                                            value = dir[Condition]
+                                            value.append([float(Onset), float(Duration)])
+                                            dir[Condition] = value
+                                        except KeyError:
+                                            value = list()
+                                            value.append([float(Onset), float(Duration)])
+                                            dir[Condition] = value
+
+                                for condinx, cond in enumerate(dir):
+                                    self.add_condTitle(title=cond,ConditionTitles=self.ConditionTitles)
+
+                                Events.append([MatAddr, EventFolder, dir])
+                                print("Subject %d, Counter %d, Run %d is verified." % (s,cnt, r))
             # Create Standard Condition Titles list
             conditions = []
             for cond in self.ConditionTitles:

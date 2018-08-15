@@ -442,6 +442,8 @@ class frmFEPCA(Ui_frmFEPCA):
         msgBox.exec_()
 
 
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmFEPCA.show(frmFEPCA)

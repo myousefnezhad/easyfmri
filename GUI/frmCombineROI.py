@@ -7,6 +7,7 @@ import numpy as np
 from PyQt5.QtWidgets import *
 
 from Base.utility import getVersion, getBuild
+from Base.dialogs import LoadFile, SaveFile
 from GUI.frmCombineROIGUI import *
 
 
@@ -23,7 +24,6 @@ class frmCombineROI(Ui_frmCombineROI):
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
-
 
         ui.cbMetric.addItem("Intersection","int")
         ui.cbMetric.addItem("Union","uni")
@@ -52,10 +52,7 @@ class frmCombineROI(Ui_frmCombineROI):
 
     def btnFROI_click(self):
         global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open image file ...", os.path.dirname(ui.txtFROI.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile('Open ROI image ...', ['ROI images (*.nii.gz)'], 'nii.gz',os.path.dirname(ui.txtFROI.text()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtFROI.setText(filename)
@@ -65,10 +62,7 @@ class frmCombineROI(Ui_frmCombineROI):
 
     def btnSROI_click(self):
         global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getOpenFileName(None, "Open image file ...", os.path.dirname(ui.txtSROI.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = LoadFile('Open ROI image ...', ['ROI images (*.nii.gz)'], 'nii.gz',os.path.dirname(ui.txtSROI.text()))
         if len(filename):
             if os.path.isfile(filename):
                 ui.txtSROI.setText(filename)
@@ -78,10 +72,7 @@ class frmCombineROI(Ui_frmCombineROI):
 
     def btnOROI_click(self):
         global ui
-        fdialog = QFileDialog()
-        filename = fdialog.getSaveFileName(None, "Save matrix file ...", os.path.dirname(ui.txtOROI.text()),
-                                           options=QFileDialog.DontUseNativeDialog)
-        filename = filename[0]
+        filename = SaveFile('Save ROI image ...', ['ROI images (*.nii.gz)'], 'nii.gz',os.path.dirname(ui.txtOROI.text()))
         if len(filename):
                 ui.txtOROI.setText(filename)
 

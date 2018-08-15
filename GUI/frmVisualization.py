@@ -10,13 +10,15 @@ import nibabel as nb
 import numpy as np
 from PyQt5.QtWidgets import *
 
-from GUI.frmTransformationMatrix import *
 
-from Base.utility import getSUMADir, getSUMABothHem, getSUMALeftHem, getSUMARightHem, getSUMAMNI, RunCMD
+from Base.utility import RunCMD
+from Base.afni import AFNI
 
 from GUI.frmVisualizationGUI import *
 from GUI.frmMatNITF import *
 from GUI.frmNITFAFNI import *
+from GUI.frmImageInfo import frmImageInfo
+from GUI.frmTransformationMatrix import *
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -58,46 +60,24 @@ class frmVisalization(Ui_frmVisalization):
         ui.cbHemisphere.addItem("Left")
         ui.cbHemisphere.addItem("Right")
 
-        p = sub.Popen(['which', 'afni'], stdout=sub.PIPE, stderr=sub.PIPE)
-        FAFNI, errors = p.communicate()
-        FAFNI = FAFNI.decode("utf-8").replace("\n","")
-        if not len(FAFNI):
-            print("Cannot find AFNI Path!")
-        elif not os.path.isfile(FAFNI):
-            print("Cannot find AFNI binary file!")
+
+        afni = AFNI()
+        afni.setting()
+
+        if not afni.Validate:
+            msgBox = QMessageBox()
+            msgBox.setText("Cannot find AFNI setting!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
         else:
-            ui.txtFAFNI.setText(FAFNI)
-
-        p = sub.Popen(['which', 'suma'], stdout=sub.PIPE, stderr=sub.PIPE)
-        FSUMA, errors = p.communicate()
-        FSUMA = FSUMA.decode("utf-8").replace("\n","")
-        if not len(FSUMA):
-            print("Cannot find SUMA Path!")
-        elif not os.path.isfile(FSUMA):
-            print("Cannot find SUMA binary file!")
-        else:
-            ui.txtFSUMA.setText(FSUMA)
-
-        if not os.path.isdir(getSUMADir()):
-            print("Cannot find SUMA directory!")
-        else:
-            ui.txtDSUMA.setText(getSUMADir())
-            ui.txtSUMAMNI.setText(getSUMAMNI())
-
-            if not os.path.isfile(getSUMADir() + getSUMABothHem()):
-                print("Cannot find SUMA Both Hemisphere!")
-            else:
-                ui.txtBSUMA.setText(getSUMABothHem())
-
-            if not os.path.isfile(getSUMADir() + getSUMALeftHem()):
-                print("Cannot find SUMA Left Hemisphere!")
-            else:
-                ui.txtLSUMA.setText(getSUMALeftHem())
-
-            if not os.path.isfile(getSUMADir() + getSUMARightHem()):
-                print("Cannot find SUMA Right Hemisphere!")
-            else:
-                ui.txtRSUMA.setText(getSUMARightHem())
+            ui.txtFAFNI.setText(afni.AFNI)
+            ui.txtFSUMA.setText(afni.SUMA)
+            ui.txtDSUMA.setText(afni.SUMADIR)
+            ui.txtSUMAMNI.setText(afni.MNI)
+            ui.txtBSUMA.setText(afni.Both)
+            ui.txtLSUMA.setText(afni.Left)
+            ui.txtRSUMA.setText(afni.Right)
 
         dialog.setWindowTitle("easy fMRI visualization - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -118,6 +98,7 @@ class frmVisalization(Ui_frmVisalization):
         ui.btnMNConvert.clicked.connect(self.btnMNConvert_click)
         ui.btnNAConvert.clicked.connect(self.btnNAConvert_click)
         ui.btnTranformation.clicked.connect(self.btnTranformation_click)
+        ui.btnImageInfo.clicked.connect(self.btnImageInfo_click)
 
 # Exit function
     def btnClose_click(self):
@@ -132,6 +113,9 @@ class frmVisalization(Ui_frmVisalization):
 
     def btnTranformation_click(self):
         frmTansformationMatrix.show(frmTansformationMatrix)
+
+    def btnImageInfo_click(self):
+        frmImageInfo.show(frmImageInfo)
 
     def btnFAFNI_click(self):
         fdialog = QFileDialog()

@@ -52,12 +52,12 @@
        <rect>
         <x>10</x>
         <y>35</y>
-        <width>60</width>
+        <width>71</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>From:</string>
+       <string>Range:</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_3">
@@ -65,7 +65,7 @@
        <rect>
         <x>300</x>
         <y>35</y>
-        <width>60</width>
+        <width>71</width>
         <height>21</height>
        </rect>
       </property>
@@ -127,55 +127,20 @@
        <number>2</number>
       </property>
      </widget>
-     <widget class="QSpinBox" name="txtSubFrom">
+     <widget class="QLineEdit" name="txtSubRange">
       <property name="geometry">
        <rect>
-        <x>60</x>
+        <x>70</x>
         <y>35</y>
-        <width>80</width>
-        <height>24</height>
+        <width>211</width>
+        <height>21</height>
        </rect>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubFrom: subject counter will be started from this number&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubForm &amp;gt; 0 &amp;amp;&amp;amp; SubFrom &amp;lt;= SubTo&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="maximum">
-       <number>999999999</number>
-      </property>
-      <property name="value">
-       <number>1</number>
-      </property>
-     </widget>
-     <widget class="QSpinBox" name="txtSubTo">
-      <property name="geometry">
-       <rect>
-        <x>200</x>
-        <y>35</y>
-        <width>80</width>
-        <height>24</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubFrom: subject counter will be ended from this number&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubTo &amp;gt; 0 &amp;amp;&amp;amp; SubFrom &amp;lt;= SubTo&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="maximum">
-       <number>999999999</number>
-      </property>
-      <property name="value">
-       <number>1</number>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_7">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>35</y>
-        <width>60</width>
-        <height>16</height>
-       </rect>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubRange: a unique range of integers, i.e. Range=[1, 4-8, 10, 12-14]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="text">
-       <string>To:</string>
+       <string>[1-1]</string>
       </property>
      </widget>
     </widget>
@@ -305,12 +270,12 @@
        <rect>
         <x>10</x>
         <y>35</y>
-        <width>60</width>
+        <width>71</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>Number:</string>
+       <string>Ranges:</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_9">
@@ -318,7 +283,7 @@
        <rect>
         <x>300</x>
         <y>35</y>
-        <width>60</width>
+        <width>71</width>
         <height>21</height>
        </rect>
       </property>
@@ -331,7 +296,7 @@
        <rect>
         <x>480</x>
         <y>35</y>
-        <width>60</width>
+        <width>61</width>
         <height>16</height>
        </rect>
       </property>
@@ -377,7 +342,7 @@
        <number>2</number>
       </property>
      </widget>
-     <widget class="QLineEdit" name="txtRunNum">
+     <widget class="QLineEdit" name="txtRunRange">
       <property name="geometry">
        <rect>
         <x>75</x>
@@ -387,10 +352,10 @@
        </rect>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum: sequence of run counters for corresponding subjects&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum = 12 then all subjects have 12 runs&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum = [11,2,10] then 1st subject has 11 runs, 2nd subject has 2 runs, and 3rd has 10 runs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunRange: sequence of ranges, i.e. If all 12 subjects have runs from 2 to 5 then Range=[12*2-5]; If 3 subjects have runs from 1 to 4 and 2 subjects have runs from 5 to 7 then Range=[3*1-4, 2*5-7]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="text">
-       <string>1</string>
+       <string>[1*1-1]</string>
       </property>
      </widget>
     </widget>
@@ -742,24 +707,11 @@ It's case sensitive.</string>
       <attribute name="title">
        <string>Counter</string>
       </attribute>
-      <widget class="QLabel" name="label_17">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>60</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>From:</string>
-       </property>
-      </widget>
       <widget class="QLabel" name="label_41">
        <property name="geometry">
         <rect>
-         <x>460</x>
-         <y>20</y>
+         <x>470</x>
+         <y>30</y>
          <width>60</width>
          <height>16</height>
         </rect>
@@ -771,8 +723,8 @@ It's case sensitive.</string>
       <widget class="QLabel" name="label_42">
        <property name="geometry">
         <rect>
-         <x>290</x>
-         <y>20</y>
+         <x>300</x>
+         <y>30</y>
          <width>60</width>
          <height>21</height>
         </rect>
@@ -781,27 +733,11 @@ It's case sensitive.</string>
         <string>Length:</string>
        </property>
       </widget>
-      <widget class="QSpinBox" name="txtConTo">
-       <property name="geometry">
-        <rect>
-         <x>190</x>
-         <y>20</y>
-         <width>80</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="maximum">
-        <number>100000</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
       <widget class="QLineEdit" name="txtConPer">
        <property name="geometry">
         <rect>
-         <x>510</x>
-         <y>20</y>
+         <x>520</x>
+         <y>30</y>
          <width>80</width>
          <height>21</height>
         </rect>
@@ -810,40 +746,11 @@ It's case sensitive.</string>
         <string>0</string>
        </property>
       </widget>
-      <widget class="QSpinBox" name="txtConFrom">
-       <property name="geometry">
-        <rect>
-         <x>56</x>
-         <y>20</y>
-         <width>80</width>
-         <height>24</height>
-        </rect>
-       </property>
-       <property name="maximum">
-        <number>100000</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_43">
-       <property name="geometry">
-        <rect>
-         <x>150</x>
-         <y>20</y>
-         <width>60</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>To:</string>
-       </property>
-      </widget>
       <widget class="QSpinBox" name="txtConLen">
        <property name="geometry">
         <rect>
-         <x>360</x>
-         <y>20</y>
+         <x>370</x>
+         <y>30</y>
          <width>80</width>
          <height>24</height>
         </rect>
@@ -858,6 +765,35 @@ It's case sensitive.</string>
         <number>2</number>
        </property>
       </widget>
+      <widget class="QLineEdit" name="txtConRange">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>30</y>
+         <width>201</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;CounterRange: sequence of ranges, i.e. If all 12 subjects have runs from 2 to 5 then Range=[12*2-5]; If 3 subjects have runs from 1 to 4 and 2 subjects have runs from 5 to 7 then Range=[3*1-4, 2*5-7]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>[1*1-1]</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_7">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>30</y>
+         <width>61</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Ranges:</string>
+       </property>
+      </widget>
      </widget>
     </widget>
     <widget class="QLabel" name="label_23">
@@ -865,24 +801,24 @@ It's case sensitive.</string>
       <rect>
        <x>20</x>
        <y>470</y>
-       <width>591</width>
-       <height>31</height>
+       <width>641</width>
+       <height>40</height>
       </rect>
      </property>
      <property name="font">
       <font>
        <family>Arial</family>
        <pointsize>11</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
+       <weight>50</weight>
+       <bold>false</bold>
       </font>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
      <property name="text">
-      <string>$MAINDIR$, $SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
-It's case sensitive.</string>
+      <string>$MAINDIR$, $SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by
+the preprocessing parameters. It's case sensitive.</string>
      </property>
     </widget>
    </widget>
@@ -1253,7 +1189,7 @@ It's case sensitive.</string>
    </widget>
    <widget class="QWidget" name="tab_3">
     <attribute name="title">
-     <string>Events</string>
+     <string>Event</string>
     </attribute>
     <widget class="QPushButton" name="btnEventTest">
      <property name="geometry">
@@ -1307,7 +1243,7 @@ It's case sensitive.</string>
       <rect>
        <x>23</x>
        <y>70</y>
-       <width>521</width>
+       <width>631</width>
        <height>40</height>
       </rect>
      </property>
@@ -1331,25 +1267,6 @@ It's case sensitive.</string>
       <string>Generate Preprocessing Scripts</string>
      </property>
     </widget>
-    <widget class="QCheckBox" name="cbShowResult">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="geometry">
-      <rect>
-       <x>550</x>
-       <y>80</y>
-       <width>110</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Show Result</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
     <widget class="QGroupBox" name="groupBox_5">
      <property name="geometry">
       <rect>
@@ -1367,7 +1284,7 @@ It's case sensitive.</string>
        <rect>
         <x>30</x>
         <y>30</y>
-        <width>171</width>
+        <width>201</width>
         <height>20</height>
        </rect>
       </property>
@@ -1378,9 +1295,9 @@ It's case sensitive.</string>
      <widget class="QCheckBox" name="cbRemoveOlds">
       <property name="geometry">
        <rect>
-        <x>210</x>
+        <x>230</x>
         <y>30</y>
-        <width>160</width>
+        <width>191</width>
         <height>20</height>
        </rect>
       </property>
@@ -1407,6 +1324,206 @@ It's case sensitive.</string>
        <string>Preprocessing</string>
       </property>
      </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_12">
+    <attribute name="title">
+     <string>Verify</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox_7">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>631</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>&lt;Input&gt;</string>
+     </property>
+     <widget class="QCheckBox" name="cbVImage">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>40</y>
+        <width>231</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>fMRI images</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbVEvent">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>80</y>
+        <width>411</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Raw event files (tsv)</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbVMRI">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>40</y>
+        <width>351</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>MRI (anatomical) images</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_8">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>160</y>
+       <width>631</width>
+       <height>291</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>&lt;Output&gt;</string>
+     </property>
+     <widget class="QCheckBox" name="cbVExEvent">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>40</y>
+        <width>281</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Extracted events</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbVBet">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>40</y>
+        <width>361</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Extracted Brain images</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbVScript">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>80</y>
+        <width>261</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Extracted scripts</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbVOutput">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>80</y>
+        <width>361</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Preprocessed outputs</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="txtVOutput">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>140</y>
+        <width>591</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="html">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;filtered_func_data.nii.gz&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;mask.nii.gz&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_17">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>116</y>
+        <width>591</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Verify following files in output folders (each file per line)</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QPushButton" name="btnDelete">
+     <property name="geometry">
+      <rect>
+       <x>22</x>
+       <y>466</y>
+       <width>301</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Delete Ouputs</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnVerify">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>466</y>
+       <width>301</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Verify</string>
+     </property>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_5">
@@ -1710,12 +1827,25 @@ It's case sensitive.</string>
       <string>Event Concatenator</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="btnImageInfo">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>390</y>
+       <width>630</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Image Information</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QPushButton" name="btnTest">
    <property name="geometry">
     <rect>
-     <x>300</x>
+     <x>280</x>
      <y>600</y>
      <width>113</width>
      <height>32</height>
@@ -1728,7 +1858,7 @@ It's case sensitive.</string>
   <widget class="QPushButton" name="btnClose">
    <property name="geometry">
     <rect>
-     <x>560</x>
+     <x>580</x>
      <y>600</y>
      <width>113</width>
      <height>32</height>
@@ -1741,7 +1871,7 @@ It's case sensitive.</string>
   <widget class="QPushButton" name="btnSave">
    <property name="geometry">
     <rect>
-     <x>170</x>
+     <x>150</x>
      <y>600</y>
      <width>113</width>
      <height>32</height>
@@ -1754,7 +1884,7 @@ It's case sensitive.</string>
   <widget class="QPushButton" name="btnLoad">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>20</x>
      <y>600</y>
      <width>113</width>
      <height>32</height>
@@ -1802,11 +1932,9 @@ It's case sensitive.</string>
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>txtSubFrom</tabstop>
-  <tabstop>txtSubTo</tabstop>
   <tabstop>txtSubLen</tabstop>
   <tabstop>txtSubPer</tabstop>
-  <tabstop>txtRunNum</tabstop>
+  <tabstop>txtRunRange</tabstop>
   <tabstop>txtRunLen</tabstop>
   <tabstop>txtRunPer</tabstop>
   <tabstop>txtDIR</tabstop>
@@ -1828,7 +1956,6 @@ It's case sensitive.</string>
   <tabstop>cbRegAnat</tabstop>
   <tabstop>btnEvent</tabstop>
   <tabstop>btnExtractor</tabstop>
-  <tabstop>cbShowResult</tabstop>
   <tabstop>btnPreprocessScripts</tabstop>
   <tabstop>cbJustRun</tabstop>
   <tabstop>cbRemoveOlds</tabstop>
@@ -1853,9 +1980,7 @@ It's case sensitive.</string>
   <tabstop>txtEvents</tabstop>
   <tabstop>txtAnalysis</tabstop>
   <tabstop>txtScript</tabstop>
-  <tabstop>txtConTo</tabstop>
   <tabstop>txtConPer</tabstop>
-  <tabstop>txtConFrom</tabstop>
   <tabstop>txtConLen</tabstop>
   <tabstop>txtDENL</tabstop>
   <tabstop>txtDETS</tabstop>

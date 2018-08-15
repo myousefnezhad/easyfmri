@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 
 from Base.utility import strRange
-
+from Base.afni import AFNI
 from Base.utility import getVersion, getBuild, getDirSpaceINI, getDirSpace
 from GUI.frmNITFAFNIGUI import *
 
@@ -31,27 +31,17 @@ class frmNITFAFNI(Ui_frmNITFAFNI):
         self.set_events(self)
 
 
-        p = sub.Popen(['which', '3dcopy'], stdout=sub.PIPE, stderr=sub.PIPE)
-        FAFNI, errors = p.communicate()
-        FAFNI = FAFNI.decode("utf-8").replace("\n","")
-        if not len(FAFNI):
-            print("Cannot find 3dcopy Path!")
-        elif not os.path.isfile(FAFNI):
-            print("Cannot find 3dcopy binary file!")
+        afni = AFNI()
+        afni.setting()
+        if not afni.Validate:
+            msgBox = QMessageBox()
+            msgBox.setText("Cannot find AFNI setting!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
         else:
-            ui.txtFAFNI.setText(FAFNI)
-
-        p = sub.Popen(['which', '3drefit'], stdout=sub.PIPE, stderr=sub.PIPE)
-        FSUMA, errors = p.communicate()
-        FSUMA = FSUMA.decode("utf-8").replace("\n","")
-        if not len(FSUMA):
-            print("Cannot find 3drefit Path!")
-        elif not os.path.isfile(FSUMA):
-            print("Cannot find 3drefit binary file!")
-        else:
-            ui.txtFSUMA.setText(FSUMA)
-
-
+            ui.txtFAFNI.setText(afni.COPY)
+            ui.txtFSUMA.setText(afni.REFIT)
 
         dialog.setWindowTitle("easy fMRI Convert Nifti1 to AFNI - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)

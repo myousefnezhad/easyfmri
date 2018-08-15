@@ -1,3 +1,4 @@
+# This is for supporting old version
 from GUI.frmMainMenu import *
 
 # Auto Run

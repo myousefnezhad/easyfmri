@@ -6,18 +6,10 @@ from GUI.frmModelAnalysis import *
 from GUI.frmPreprocess import *
 from GUI.frmVisualization import *
 
+from Base.utility import About
 
-#import PyQt5.QtCore as QtCore
 
 
-def About():
-    return """<h1>easy fMRI project</h1>
-<h3>A toolbox for Human Brain Mapping and Decoding</h3>
-<h4>Website: <a href=\"https://easyfmri.github.io\">https://easyfmri.github.io</a></h4>
-<p>Created by:</p>
-<p><a href=\"https://myousefnezhad.github.io\">Muhammad Yousefnezhad</a>, <a href=\"http://ibrain.nuaa.edu.cn\">iBRAIN Group</a>,</p>
-<p><a href=\"http://iao.nuaa.edu.cn\">Nanjing University of Aeronautics and Astronautics</a>, China.<p></h6>
-"""
 
 
 class frmMainMenuGUI(QtWidgets.QMainWindow):

@@ -5,6 +5,7 @@ import sys
 from PyQt5.QtWidgets import *
 
 from GUI.frmEventConcatenatorGUI import *
+from Base.dialogs import SaveFile, LoadFile
 
 
 class frmEventConcatenator(Ui_frmEventConcatenator):
@@ -49,10 +50,7 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
 
     def btnAdd_click(self):
         global ui
-        current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ifile = dialog.getOpenFileName(None,"Open First File",current,"","",flags)[0]
+        ifile = LoadFile("Select an event file ...",['Event files (*.tsv)','Text files (*.txt)','All files (*.*)'],"tsv")
         if len(ifile):
             if os.path.isfile(ifile):
                 item = QtWidgets.QTreeWidgetItem()
@@ -72,12 +70,7 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
 
     def btnOFile_click(self):
         global ui
-        current = ui.txtOFile.text()
-        if not len(current):
-            current = os.getcwd()
-        flags = QFileDialog.DontUseNativeDialog
-        dialog = QFileDialog()
-        ofile = dialog.getSaveFileName(None,"Output File",current,"","",flags)[0]
+        ofile = SaveFile("Output event files ...",['Event files (*.tsv)'], 'tsv',os.path.dirname(ui.txtOFile.text()))
         if len(ofile):
                 ui.txtOFile.setText(ofile)
 
@@ -119,9 +112,6 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return
-
-
-
         print("Generating Output File ...")
 
         with open(ofile,"w") as outfile:
