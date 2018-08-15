@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.metrics import mean_squared_error
 from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild, strRange
+from Base.utility import getVersion, getBuild, strRange, SimilarityMatrixBetweenClass
 from RSA.DeepRSA import DeepRSA
 import time
 
@@ -395,7 +395,6 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
             return False
 
         OutData = dict()
-        OutData["ModelAnalysis"] = "DeepRSA"
 
         # InFile
         InFile = ui.txtInFile.text()
@@ -642,6 +641,10 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
         LUnique = np.unique(L)
         LNum    = np.shape(LUnique)[0]
         OutData["Label"] = LUnique
+        OutData["ModelAnalysis"] = "Tensorflow.Session.Deep.RSA"
+
+
+
 
         if np.shape(X)[0] == 0:
             msgBox.setText("The selected data is empty!")
@@ -684,13 +687,24 @@ class frmMADeepRSA(Ui_frmMADeepRSA):
         if ui.cbCorr.isChecked():
             print("Calculating Correlation ...")
             Corr = np.corrcoef(Betas)
-            #print("Correlation: Max %f, Min %f" % (np.max(Corr), np.min(Corr)))
-            OutData["Correlation"] = Corr
+            corClass = SimilarityMatrixBetweenClass(Corr)
+            OutData["Correlation"]      = Corr
+            OutData["Correlation_min"]  = corClass.min()
+            OutData["Correlation_max"]  = corClass.max()
+            OutData["Correlation_std"]  = corClass.std()
+            OutData["Correlation_mean"] = corClass.mean()
+
+
         if ui.cbCov.isChecked():
             print("Calculating Covariance ...")
             Cov = np.cov(Betas)
-            #print("Covariance: Max %f, Min %f" % (np.max(Cov), np.min(Cov)))
-            OutData["Covariance"]  = Cov
+            covClass = SimilarityMatrixBetweenClass(Cov)
+            OutData["Covariance"]       = Cov
+            OutData["Covariance_min"]   = covClass.min()
+            OutData["Covariance_max"]   = covClass.max()
+            OutData["Covariance_std"]   = covClass.std()
+            OutData["Covariance_mean"]  = covClass.mean()
+
 
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))

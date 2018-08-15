@@ -78,7 +78,7 @@ def getVersion():
 
 
 def getBuild():
-    return "1000"
+    return "2000"
 
 def getSettingVersion():
     return "2.0"
@@ -351,9 +351,35 @@ def LoadEzData(Header=None,data=None):
         return None
     return Out
 
+
+class SimilarityMatrixBetweenClass:
+    def __init__(self, Matrix):
+        Sx, Sy = np.shape(Matrix)
+        if Sx != Sy:
+            print("Matrix must have square size!")
+            return None
+        self.Matrix = list()
+        for i in range(Sx):
+            for j in range(i + 1, Sy):
+                self.Matrix.append(Matrix[i,j])
+        self.Matrix = np.array(self.Matrix)
+
+    def mean(self):
+        return  np.mean(self.Matrix)
+
+    def max(self):
+        return np.max(self.Matrix)
+
+    def min(self):
+        return np.min(self.Matrix)
+
+    def std(self):
+        return np.std(self.Matrix)
+
 # Auto Run
 if __name__ == "__main__":
-    dat = LoadEzData("/home/Workspace/Integration/DS107/Preprocessed.R2.0.2/Integration/roi/data-onebacktask.ezdata","test")
-
-
-    pass
+    x = np.array([[1,2,3],\
+                  [2,5,6],\
+                  [3,6,8]])
+    cov = SimilarityMatrixBetweenClass(x)
+    print(cov.Matrix, cov.mean(), cov.max(), cov.min(), cov.std())

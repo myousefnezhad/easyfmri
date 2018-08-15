@@ -7,9 +7,10 @@ import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.metrics import mean_squared_error
+import sklearn.linear_model as linmdl
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
-from GUI.frmMAGRSAGUI import *
+from GUI.frmMASKGRSAGUI import *
 
 # Plot
 import matplotlib
@@ -18,22 +19,42 @@ import matplotlib.pyplot as plt
 
 
 
-class frmMAGRSA(Ui_frmMAGRSA):
-    ui = Ui_frmMAGRSA()
+class frmMASKGRSA(Ui_frmMASKGRSA):
+    ui = Ui_frmMASKGRSA()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmMAGRSA()
+        ui = Ui_frmMASKGRSA()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
 
-        dialog.setWindowTitle("easy fMRI Group Representational Similarity Analysis (RSA) - V" + getVersion() + "B" + getBuild())
+        # Method
+        ui.cbMethod.addItem("Ridge Regression","ridge")
+        ui.cbMethod.addItem("Ordinary Least Squares","ols")
+        ui.cbMethod.addItem("LASSO","lasso")
+        ui.cbMethod.addItem("Elastic Net","elast")
+
+        # Selection
+        ui.cbSelection.addItem("cyclic")
+        ui.cbSelection.addItem("random")
+
+        # Solver {‘auto’, ‘svd’, ‘cholesky’, ‘lsqr’, ‘sparse_cg’, ‘sag’, ‘saga’}
+        ui.cbSolver.addItem("auto")
+        ui.cbSolver.addItem("svd")
+        ui.cbSolver.addItem("cholesky")
+        ui.cbSolver.addItem("lsqr")
+        ui.cbSolver.addItem("sparse_cg")
+        ui.cbSolver.addItem("sag")
+        ui.cbSolver.addItem("saga")
+
+
+        dialog.setWindowTitle("easy fMRI SK Group Representational Similarity Analysis (RSA) - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -172,6 +193,68 @@ class frmMAGRSA(Ui_frmMAGRSA):
             msgBox.exec_()
             return False
 
+        # Method
+        method      = ui.cbMethod.currentData()
+
+        # Solver
+        solver      = ui.cbSolver.currentText()
+
+        # Selection
+        selection   = ui.cbSelection.currentText()
+
+        # Fit
+        fit         = ui.cbFit.isChecked()
+
+        # normalize
+        normalize   = ui.cbNormalize.isChecked()
+
+        try:
+            alpha = np.float(ui.txtAlpha.text())
+        except:
+            msgBox.setText("Alpha is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
+        try:
+            iter = np.int(ui.txtMaxIter.text())
+        except:
+            msgBox.setText("Max Iteration is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
+        try:
+            tol = np.float(ui.txtTole.text())
+        except:
+            msgBox.setText("Tolerance is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            l1 = np.float(ui.txtL1.text())
+        except:
+            msgBox.setText("L1 is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            njob = np.float(ui.txtJobs.text())
+        except:
+            msgBox.setText("Number of jobs is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
         # Filter
         try:
             Filter = ui.txtFilter.text()
@@ -194,7 +277,6 @@ class frmMAGRSA(Ui_frmMAGRSA):
             return False
 
         OutData = dict()
-        OutData["ModelAnalysis"] = "RSA"
 
         # InFile
         InFile = ui.txtInFile.text()
@@ -432,9 +514,8 @@ class frmMAGRSA(Ui_frmMAGRSA):
         FoldInfo["Unique"]  = UniqFold
         FoldInfo["Folds"]   = UnitFold
 
-        OutData = dict()
         OutData["FoldInfo"] = FoldInfo
-        OutData["ModelAnalysis"] = "Numpy.Group.RSA"
+        OutData["ModelAnalysis"] = "SK.Group.RSA." + ui.cbMethod.currentText()
 
 
         print("Number of all levels is: " + str(len(UniqFold)))
@@ -454,7 +535,21 @@ class frmMAGRSA(Ui_frmMAGRSA):
                 XLi = preprocessing.scale(XLi)
                 print("Whole of data is scaled X%d~N(0,1)." % (foldID + 1))
             RegLi       =  np.insert(Design[Index], 0, 1, axis=1)
-            BetaLi      = np.linalg.lstsq(RegLi, XLi)[0][1:,:]
+
+            if method == "ols":
+                model = linmdl.LinearRegression(fit_intercept=fit, normalize=normalize, n_jobs=njob)
+            elif method == "ridge":
+                model = linmdl.Ridge(alpha=alpha, fit_intercept=fit, normalize=normalize, max_iter=iter, tol=tol,
+                                     solver=solver)
+            elif method == "lasso":
+                model = linmdl.Lasso(alpha=alpha, fit_intercept=fit, normalize=normalize, max_iter=iter, tol=tol,
+                                     selection=selection)
+            elif method == "elast":
+                model = linmdl.ElasticNet(alpha=alpha, l1_ratio=l1, fit_intercept=fit, normalize=normalize, \
+                                          max_iter=iter, tol=tol, selection=selection)
+            model.fit(RegLi, XLi)
+            BetaLi = np.transpose(model.coef_)[1:, :]
+
             print("Calculating MSE for level %d ..." % (foldID + 1))
             MSE = mean_squared_error(XLi, np.matmul(Design[Index], BetaLi))
             print("MSE%d: %f" % (foldID + 1, MSE))
@@ -500,7 +595,6 @@ class frmMAGRSA(Ui_frmMAGRSA):
             OutData["Covariance_max"]   = covClass.max()
             OutData["Covariance_std"]   = covClass.std()
             OutData["Covariance_mean"]  = covClass.mean()
-
         if ui.cbCorr.isChecked():
             if ui.rbAvg.isChecked():
                 Corr = Corr / CoEff
@@ -511,8 +605,7 @@ class frmMAGRSA(Ui_frmMAGRSA):
             OutData["Correlation_std"]  = corClass.std()
             OutData["Correlation_mean"] = corClass.mean()
 
-        OutData["MSE"]      = np.mean(AMSE)
-        OutData["MSE_std"]  = np.std(AMSE)
+        OutData["MSE"] = np.mean(AMSE)
         print("Average MSE: %f" % (OutData["MSE"]))
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))
@@ -610,5 +703,5 @@ class frmMAGRSA(Ui_frmMAGRSA):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmMAGRSA.show(frmMAGRSA)
+    frmMASKGRSA.show(frmMASKGRSA)
     sys.exit(app.exec_())

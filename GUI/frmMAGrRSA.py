@@ -6,9 +6,8 @@ import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
-from sklearn.metrics import mean_squared_error
 from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild
+from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
 from RSA.GradientRSA import GradientRSA
 
 from GUI.frmMAGrRSAGUI import *
@@ -451,7 +450,6 @@ class frmMAGrRSA(Ui_frmMAGrRSA):
             return False
 
         OutData = dict()
-        OutData["ModelAnalysis"] = "GradientRSA"
 
         # InFile
         InFile = ui.txtInFile.text()
@@ -698,6 +696,8 @@ class frmMAGrRSA(Ui_frmMAGrRSA):
         LUnique = np.unique(L)
         LNum    = np.shape(LUnique)[0]
         OutData["Label"] = LUnique
+        OutData["ModelAnalysis"] = "Tensorflow.Session.Gradient.RSA." + ui.cbMethod.currentText()
+
 
         if np.shape(X)[0] == 0:
             msgBox.setText("The selected data is empty!")
@@ -742,11 +742,23 @@ class frmMAGrRSA(Ui_frmMAGrRSA):
         if ui.cbCorr.isChecked():
             print("Calculating Correlation ...")
             Corr = np.corrcoef(Betas)
-            OutData["Correlation"] = Corr
+            corClass = SimilarityMatrixBetweenClass(Corr)
+            OutData["Correlation"]      = Corr
+            OutData["Correlation_min"]  = corClass.min()
+            OutData["Correlation_max"]  = corClass.max()
+            OutData["Correlation_std"]  = corClass.std()
+            OutData["Correlation_mean"] = corClass.mean()
+
         if ui.cbCov.isChecked():
             print("Calculating Covariance ...")
             Cov = np.cov(Betas)
-            OutData["Covariance"]  = Cov
+            covClass = SimilarityMatrixBetweenClass(Cov)
+            OutData["Covariance"]       = Cov
+            OutData["Covariance_min"]   = covClass.min()
+            OutData["Covariance_max"]   = covClass.max()
+            OutData["Covariance_std"]   = covClass.std()
+            OutData["Covariance_mean"]  = covClass.mean()
+
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))
         print("Saving results ...")

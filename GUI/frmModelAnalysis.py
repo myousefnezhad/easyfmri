@@ -52,13 +52,15 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("MatLab, SK Clustering: Gaussian Mixture",10004)
         ui.cbMAU.addItem("MatLab, SK Clustering: KMeans",10000)
         ui.cbMAU.addItem("MatLab, SK Clustering: Spectral",10001)
-        ui.cbMAU.addItem("MatLab, RSA: Session Level Representational Similarity Analysis",20000)
-        ui.cbMAU.addItem("MatLab, RSA: Group Level Representational Similarity Analysis",20001)
-        ui.cbMAU.addItem("MatLab, Tensorflow, RSA: Session Level Gradient Representational Similarity Analysis",20002)
-        ui.cbMAU.addItem("MatLab, Tensorflow, RSA: Session Level Deep-Kernel Representational Similarity Analysis",20004)
-        ui.cbMAU.addItem("MatLab, Tensorflow, RSA: Group Level Gradient Representational Similarity Analysis",20003)
-        ui.cbMAU.addItem("MatLab, Tensorflow, RSA: Group Level Multi-Deep-Kernel Representational Similarity Analysis",20005)
-        ui.cbMAU.addItem("MatLab, Tensorflow, RSA: Group Level Single-Deep-Kernel Representational Similarity Analysis",20006)
+        ui.cbMAU.addItem("MatLab, SK RSA: Session Level Representational Similarity Analysis",20007)
+        ui.cbMAU.addItem("MatLab, SK RSA: Group Level Representational Similarity Analysis",20008)
+        ui.cbMAU.addItem("MatLab, NumPy RSA: Session Level Representational Similarity Analysis",20000)
+        ui.cbMAU.addItem("MatLab, NumPy RSA: Group Level Representational Similarity Analysis",20001)
+        ui.cbMAU.addItem("MatLab, Tensorflow RSA: Session Level Gradient Representational Similarity Analysis",20002)
+        ui.cbMAU.addItem("MatLab, Tensorflow RSA: Session Level Deep-Kernel Representational Similarity Analysis",20004)
+        ui.cbMAU.addItem("MatLab, Tensorflow RSA: Group Level Gradient Representational Similarity Analysis",20003)
+        ui.cbMAU.addItem("MatLab, Tensorflow RSA: Group Level Multi-Deep-Kernel Representational Similarity Analysis",20005)
+        ui.cbMAU.addItem("MatLab, Tensorflow RSA: Group Level Single-Deep-Kernel Representational Similarity Analysis",20006)
 
         # Supervised
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: AdaBoost",80005)
@@ -151,6 +153,15 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMADeepGroupRSA import frmMADeepGroupRSA
             frmMADeepGroupRSA.show(frmMADeepGroupRSA)
             return
+        if MAID == 20007:
+            from GUI.frmMASKRSA import frmMASKRSA
+            frmMASKRSA.show(frmMASKRSA)
+            return
+        if MAID == 20008:
+            from GUI.frmMASKGRSA import frmMASKGRSA
+            frmMASKGRSA.show(frmMASKGRSA)
+            return
+
 
 
     def btnMAS_click(self):

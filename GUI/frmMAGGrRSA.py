@@ -7,7 +7,7 @@ import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild
+from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
 from RSA.GradientRSA import GradientRSA
 from GUI.frmMAGGrRSAGUI import *
 
@@ -328,7 +328,6 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
             return False
 
         OutData = dict()
-        OutData["ModelAnalysis"] = "GroupGradientRSA"
 
         # InFile
         InFile = ui.txtInFile.text()
@@ -566,8 +565,9 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
         FoldInfo["Unique"]  = UniqFold
         FoldInfo["Folds"]   = UnitFold
 
-        OutData = dict()
         OutData["FoldInfo"] = FoldInfo
+        OutData["ModelAnalysis"] = "Tensorflow.Group.Gradient.RSA." + ui.cbMethod.currentText()
+
 
         print("Number of all levels is: " + str(len(UniqFold)))
 
@@ -650,12 +650,25 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
         if ui.cbCov.isChecked():
             if ui.rbAvg.isChecked():
                 Cov = Cov / len(UniqFold)
-            OutData["Covariance"] = Cov
+            covClass = SimilarityMatrixBetweenClass(Cov)
+            OutData["Covariance"]       = Cov
+            OutData["Covariance_min"]   = covClass.min()
+            OutData["Covariance_max"]   = covClass.max()
+            OutData["Covariance_std"]   = covClass.std()
+            OutData["Covariance_mean"]  = covClass.mean()
+
         if ui.cbCorr.isChecked():
             if ui.rbAvg.isChecked():
                 Corr = Corr / len(UniqFold)
-            OutData["Correlation"] = Corr
-        OutData["MSE"] = np.mean(AMSE)
+            corClass = SimilarityMatrixBetweenClass(Corr)
+            OutData["Correlation"]      = Corr
+            OutData["Correlation_min"]  = corClass.min()
+            OutData["Correlation_max"]  = corClass.max()
+            OutData["Correlation_std"]  = corClass.std()
+            OutData["Correlation_mean"] = corClass.mean()
+
+        OutData["MSE"]      = np.mean(AMSE)
+        OutData["MSE_std"]  = np.std(AMSE)
         print("Average MSE: %f" % (OutData["MSE"]))
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))

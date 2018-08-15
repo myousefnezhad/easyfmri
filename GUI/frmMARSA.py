@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.metrics import mean_squared_error
 from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild
+from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
 from GUI.frmMARSAGUI import *
 
 # Plot
@@ -317,7 +317,6 @@ class frmMARSA(Ui_frmMARSA):
             return False
 
         OutData = dict()
-        OutData["ModelAnalysis"] = "RSA"
 
         # InFile
         InFile = ui.txtInFile.text()
@@ -564,6 +563,8 @@ class frmMARSA(Ui_frmMARSA):
         LUnique = np.unique(L)
         LNum    = np.shape(LUnique)[0]
         OutData["Label"] = LUnique
+        OutData["ModelAnalysis"] = "Numpy.Session.RSA"
+
 
         if np.shape(X)[0] == 0:
             msgBox.setText("The selected data is empty!")
@@ -578,9 +579,9 @@ class frmMARSA(Ui_frmMARSA):
         print("Running RSA ...")
         # RSA Method
         Reg     = np.insert(Design, 0, 1, axis=1)
-        Betas   = np.linalg.lstsq(Reg, X)[0]
+        Betas   = np.linalg.lstsq(Reg, X)[0][1:,:]
         print("Calculating MSE ...")
-        MSE = mean_squared_error(X, np.matmul(Reg, Betas))
+        MSE = mean_squared_error(X, np.matmul(Design, Betas))
         print("MSE: %f" % (MSE))
         OutData["MSE"] = MSE
 
@@ -589,12 +590,24 @@ class frmMARSA(Ui_frmMARSA):
         # Calculate Results
         if ui.cbCorr.isChecked():
             print("Calculating Correlation ...")
-            Corr = np.corrcoef(Betas[1:, :])
-            OutData["Correlation"] = Corr
+            Corr = np.corrcoef(Betas)
+            corClass = SimilarityMatrixBetweenClass(Corr)
+            OutData["Correlation"]      = Corr
+            OutData["Correlation_min"]  = corClass.min()
+            OutData["Correlation_max"]  = corClass.max()
+            OutData["Correlation_std"]  = corClass.std()
+            OutData["Correlation_mean"] = corClass.mean()
+
         if ui.cbCov.isChecked():
             print("Calculating Covariance ...")
-            Cov = np.cov(Betas[1:, :])
-            OutData["Covariance"]  = Cov
+            Cov = np.cov(Betas)
+            covClass = SimilarityMatrixBetweenClass(Cov)
+            OutData["Covariance"]       = Cov
+            OutData["Covariance_min"]   = covClass.min()
+            OutData["Covariance_max"]   = covClass.max()
+            OutData["Covariance_std"]   = covClass.std()
+            OutData["Covariance_mean"]  = covClass.mean()
+
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))
         print("Saving results ...")

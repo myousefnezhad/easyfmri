@@ -1,4 +1,4 @@
-easy fMRI project (V1.8B1000 beta)
+easy fMRI project (V1.8B2000 beta)
 ===============
 
 ### Introduction
@@ -61,7 +61,7 @@ sudo cp ~/.easyfmri/Script/ezfmri  /usr/local/bin/
 -- Set environment variables (see example at the end)
 
 
-#### STEP B) Install Python 3.6.2 or above
+#### STEP B) Install Python 3.6.x 
 
 -- Download [Anaconda3](https://anaconda.org/anaconda/python) and Install Python3 by using Anaconda3
 
@@ -90,7 +90,7 @@ pip install tensorflow
 
 For GPU Vesion: You must install [CUDA](https://developer.nvidia.com/cuda-toolkit) and [CUDNN](https://developer.nvidia.com/cudnn). Then, you can install [Tensorflow](https://www.tensorflow.org/install/)
 
-Note: By employing `CUDA 8.0`, `CUDNN 6.0` and `Ubuntu 16.04.x`, you can use following command to install tensorflow:
+Note: By employing `CUDA 9.0`, `CUDNN 7.0` and `Ubuntu 16.04.x`, you can use following command to install tensorflow:
 
 ```
 pip install tensorflow-gpu

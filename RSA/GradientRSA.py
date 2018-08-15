@@ -58,14 +58,14 @@ class GradientRSA:
         model_output = tf.add(tf.matmul(D, Beta), Eps)
         if  self.regression_type == "linregl1":
             if self.loss_type == "norm":
-                loss = tf.square(tf.norm(F - model_output, ord=self.loss_norm))
+                loss = tf.add(tf.square(tf.norm(F - model_output, ord=self.loss_norm)), tf.reduce_mean(tf.abs(Beta)))
             else:
-                loss = tf.reduce_mean(tf.abs(F - model_output))
+                loss = tf.add(tf.reduce_mean(tf.abs(F - model_output)), tf.reduce_mean(tf.abs(Beta)))
         elif self.regression_type == "linregl2":
             if self.loss_type == "norm":
-                loss = tf.square(tf.norm(F - model_output, ord=self.loss_norm))
+                loss = tf.add(tf.square(tf.norm(F - model_output, ord=self.loss_norm)), tf.reduce_mean(tf.square(Beta)))
             else:
-                loss = tf.reduce_mean(tf.square(F - model_output))
+                loss = tf.add(tf.reduce_mean(tf.square(F - model_output)), tf.reduce_mean(tf.square(Beta)))
         elif self.regression_type == "ridgereg":
             ridge = tf.multiply(tf.constant(self.ridge_param), tf.reduce_mean(tf.square(Beta)))
             if self.loss_type == "norm":
@@ -73,15 +73,17 @@ class GradientRSA:
             else:
                 loss = tf.add(tf.reduce_mean(tf.square(F - model_output)), ridge)
         elif self.regression_type == "lasso":
-            heavyside_step = tf.truediv(1., tf.add(1., tf.exp(tf.multiply(-50., tf.subtract(tf.reduce_max(Beta) , tf.constant(self.lasso_param))))))
-            regularization_param = tf.multiply(heavyside_step, self.lasso_penalty)
             if self.loss_type == "norm":
+                regularization_param = tf.multiply(tf.constant(self.lasso_param), tf.reduce_mean(tf.abs(Beta)))
                 loss = tf.add(tf.square(tf.norm(F - model_output, ord=self.loss_norm)), regularization_param)
             else:
+                heavyside_step = tf.truediv(1., tf.add(1., tf.exp(tf.multiply(-50., tf.subtract(tf.reduce_max(Beta), tf.constant(self.lasso_param))))))
+                regularization_param = tf.multiply(heavyside_step, self.lasso_penalty)
                 loss = tf.add(tf.reduce_mean(tf.square(F - model_output)), regularization_param)
         elif self.regression_type == "elasticnet":
-            e1_term = tf.multiply(tf.constant(self.elstnet_lamda1), tf.reduce_mean(tf.abs(Beta)))
-            e2_term = tf.multiply(tf.constant(self.elstnet_lamda2), tf.reduce_mean(tf.square(Beta)))
+            e1_term  = tf.multiply(tf.multiply(tf.constant(self.elstnet_lamda1), tf.constant(self.elstnet_lamda2)), tf.reduce_mean(tf.abs(Beta)))
+            e2_coeff = tf.multiply(tf.constant(0.5,dtype=tf.float32),tf.multiply(self.elstnet_lamda2, tf.subtract(tf.constant(1,dtype=tf.float32), tf.constant(self.elstnet_lamda1))))
+            e2_term = tf.multiply(e2_coeff, tf.reduce_mean(tf.square(Beta)))
             if self.loss_type == "norm":
                 loss = tf.add(tf.add(tf.square(tf.norm(F - model_output, ord=self.loss_norm)), e1_term), e2_term)
             else:

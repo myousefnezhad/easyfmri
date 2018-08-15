@@ -7,7 +7,7 @@ import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild, strRange
+from Base.utility import getVersion, getBuild, strRange, SimilarityMatrixBetweenClass
 from RSA.DeepGroupRSA import DeepGroupRSA
 from GUI.frmMADeepGroupRSAGUI import *
 
@@ -268,7 +268,6 @@ class frmMADeepGroupRSA(Ui_frmMADeepGroupRSA):
             return False
 
         OutData = dict()
-        OutData["ModelAnalysis"] = "GroupMultiParametersDeepRSA"
 
         # InFile
         InFile = ui.txtInFile.text()
@@ -506,14 +505,12 @@ class frmMADeepGroupRSA(Ui_frmMADeepGroupRSA):
         FoldInfo["Unique"]  = UniqFold
         FoldInfo["Folds"]   = UnitFold
 
-        OutData = dict()
         OutData["FoldInfo"] = FoldInfo
+        OutData["ModelAnalysis"] = "Tensorflow.Group.Single-Deep-Kernel.RSA"
+
 
         print("Number of all levels is: " + str(len(UniqFold)))
 
-        Cov = None
-        Corr = None
-        AMSE = list()
 
         # RSA Method
         OutData['Method'] = dict()
@@ -526,8 +523,6 @@ class frmMADeepGroupRSA(Ui_frmMADeepGroupRSA):
         OutData['Method']['BatchSize']      = BatchSize
         OutData['Method']['ReportStep']     = ReportStep
         OutData['Method']['Verbose']        = ui.cbVerbose.isChecked()
-
-
         TData = list()
         TReg  = list()
         print("Reshaping Data ...")
@@ -557,6 +552,7 @@ class frmMADeepGroupRSA(Ui_frmMADeepGroupRSA):
         OutData["Bias"]     = Bias
         OutData["MSE"]      = MSE
         OutData["AMSE"]     = rsa.AMSE
+        OutData["MSE_std"]  = np.std(rsa.AMSE)
         OutData["LossMat"]  = loss_mat
         print("Average MSE: %f" % (OutData["MSE"]))
 
@@ -579,11 +575,23 @@ class frmMADeepGroupRSA(Ui_frmMADeepGroupRSA):
 
         if ui.cbCov.isChecked():
             AvgCov = AvgCov / len(TData)
-            OutData["Covariance"]   = AvgCov
+            covClass = SimilarityMatrixBetweenClass(AvgCov)
+            OutData["Covariance"]       = AvgCov
+            OutData["Covariance_min"]   = covClass.min()
+            OutData["Covariance_max"]   = covClass.max()
+            OutData["Covariance_mean"]  = covClass.mean()
+            OutData["Covariance_std"]   = covClass.std()
 
         if ui.cbCorr.isChecked():
             AvgCorr = AvgCorr / len(TData)
-            OutData["Correlation"]  = AvgCorr
+            corClass = SimilarityMatrixBetweenClass(AvgCorr)
+            OutData["Correlation"]      = AvgCorr
+            OutData["Correlation_min"]  = corClass.min()
+            OutData["Correlation_max"]  = corClass.max()
+            OutData["Correlation_mean"] = corClass.mean()
+            OutData["Correlation_std"]  = corClass.std()
+
+
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))
         print("Saving results ...")
