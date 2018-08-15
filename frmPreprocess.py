@@ -13,12 +13,13 @@ import glob
 import nibabel as nb
 import numpy as np
 
-from frmPreprocessGUI   import *
-from frmSelectSession   import frmSelectSession
-from frmEventViewer     import frmEventViewer
-from frmRenameFile      import frmRenameFile
-from frmScriptEditor    import frmScriptEditor
-
+from frmPreprocessGUI       import *
+from frmSelectSession       import frmSelectSession
+from frmEventViewer         import frmEventViewer
+from frmRenameFile          import frmRenameFile
+from frmScriptEditor        import frmScriptEditor
+from frmfMRIConcatenator    import frmfMRIConcatenator
+from frmEventConcatenator   import frmEventConcatenator
 
 from utility            import getTimeSliceText,fixstr,setParameters
 from Setting            import Setting
@@ -238,6 +239,8 @@ class frmPreprocess(Ui_frmPreprocess):
         ui.btnFilesRename.clicked.connect(self.btnGroupRenameFile_click)
         ui.btnScriptEditor.clicked.connect(self.btnGroupScriptEditor_click)
         ui.btnReportViewer.clicked.connect(self.btnReportViewer_onclick)
+        ui.btnfMRIConcatenator.clicked.connect(self.btnfMRIConcatenator_click)
+        ui.btnEventConcatenator.clicked.connect(self.btnEventConcatenator_click)
 
 
 # Read history from file and visualized in the History tab
@@ -928,6 +931,16 @@ class frmPreprocess(Ui_frmPreprocess):
 
                     return
 
+        pass
+
+    def btnfMRIConcatenator_click(self):
+        global ui
+        frmfMRIConcatenator.show(frmfMRIConcatenator)
+        pass
+
+    def btnEventConcatenator_click(self):
+        global ui
+        frmEventConcatenator.show(frmEventConcatenator)
         pass
 
 

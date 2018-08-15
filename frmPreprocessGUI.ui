@@ -245,14 +245,14 @@
       <property name="toolTip">
        <string/>
       </property>
-      <property name="toolTipDuration">
-       <number>-1</number>
-      </property>
       <property name="statusTip">
        <string/>
       </property>
       <property name="text">
        <string>Main Directory:</string>
+      </property>
+      <property name="toolTipDuration" stdset="0">
+       <number>-1</number>
       </property>
       <property name="setToolTip" stdset="0">
        <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
@@ -1389,11 +1389,11 @@ It's case sensitive.</string>
      <property name="toolTip">
       <string/>
      </property>
-     <property name="toolTipDuration">
-      <number>-1</number>
-     </property>
      <property name="statusTip">
       <string/>
+     </property>
+     <property name="toolTipDuration" stdset="0">
+      <number>-1</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_19">
@@ -1421,11 +1421,11 @@ It's case sensitive.</string>
      <property name="toolTip">
       <string/>
      </property>
-     <property name="toolTipDuration">
-      <number>-1</number>
-     </property>
      <property name="statusTip">
       <string/>
+     </property>
+     <property name="toolTipDuration" stdset="0">
+      <number>-1</number>
      </property>
     </widget>
     <widget class="QLineEdit" name="txtFeat">
@@ -1440,14 +1440,14 @@ It's case sensitive.</string>
      <property name="toolTip">
       <string/>
      </property>
-     <property name="toolTipDuration">
-      <number>-1</number>
-     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/feat</string>
+     </property>
+     <property name="toolTipDuration" stdset="0">
+      <number>-1</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_24">
@@ -1488,14 +1488,14 @@ It's case sensitive.</string>
      <property name="toolTip">
       <string/>
      </property>
-     <property name="toolTipDuration">
-      <number>-1</number>
-     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/Feat_gui</string>
+     </property>
+     <property name="toolTipDuration" stdset="0">
+      <number>-1</number>
      </property>
     </widget>
     <widget class="QLineEdit" name="txtbetcmd">
@@ -1510,14 +1510,14 @@ It's case sensitive.</string>
      <property name="toolTip">
       <string/>
      </property>
-     <property name="toolTipDuration">
-      <number>-1</number>
-     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/bet</string>
+     </property>
+     <property name="toolTipDuration" stdset="0">
+      <number>-1</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_40">
@@ -1588,6 +1588,32 @@ It's case sensitive.</string>
      </property>
      <property name="text">
       <string>View Generated Report</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnfMRIConcatenator">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>270</y>
+       <width>630</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>fMRI Concatenator</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnEventConcatenator">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>330</y>
+       <width>630</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Event Concatenator</string>
      </property>
     </widget>
    </widget>
