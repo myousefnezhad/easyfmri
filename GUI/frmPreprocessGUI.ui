@@ -1,0 +1,1872 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>frmPreprocess</class>
+ <widget class="QDialog" name="frmPreprocess">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>703</width>
+    <height>649</height>
+   </rect>
+  </property>
+  <property name="acceptDrops">
+   <bool>false</bool>
+  </property>
+  <property name="windowTitle">
+   <string>easy fMRI: Preprosessing - </string>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>50</y>
+     <width>671</width>
+     <height>541</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>Directory</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>10</y>
+       <width>621</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>&lt;Subjects&gt;</string>
+     </property>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>35</y>
+        <width>60</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>From:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>35</y>
+        <width>60</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Length:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>35</y>
+        <width>60</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Perfix:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtSubPer">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>35</y>
+        <width>80</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubPer: content of subject counter, e.g. SubPer = 0 -&amp;gt; sub-001 OR SubPer = A -&amp;gt; sub-AA1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="txtSubLen">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>35</y>
+        <width>80</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubLen: the length of subject counter, e.g. SubLen=3 -&amp;gt; output sub-001, sub-002&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubLen &amp;gt; 1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>999999999</number>
+      </property>
+      <property name="singleStep">
+       <number>1</number>
+      </property>
+      <property name="value">
+       <number>2</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="txtSubFrom">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>35</y>
+        <width>80</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubFrom: subject counter will be started from this number&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubForm &amp;gt; 0 &amp;amp;&amp;amp; SubFrom &amp;lt;= SubTo&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="maximum">
+       <number>999999999</number>
+      </property>
+      <property name="value">
+       <number>1</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="txtSubTo">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>35</y>
+        <width>80</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubFrom: subject counter will be ended from this number&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;SubTo &amp;gt; 0 &amp;amp;&amp;amp; SubFrom &amp;lt;= SubTo&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="maximum">
+       <number>999999999</number>
+      </property>
+      <property name="value">
+       <number>1</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>35</y>
+        <width>60</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>To:</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>190</y>
+       <width>621</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>&lt;General&gt;</string>
+     </property>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>11</x>
+        <y>69</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Task Name:</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnDIR">
+      <property name="geometry">
+       <rect>
+        <x>559</x>
+        <y>26</y>
+        <width>51</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>31</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string/>
+      </property>
+      <property name="toolTipDuration">
+       <number>-1</number>
+      </property>
+      <property name="statusTip">
+       <string/>
+      </property>
+      <property name="text">
+       <string>Main Directory:</string>
+      </property>
+      <property name="setToolTip" stdset="0">
+       <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtDIR">
+      <property name="geometry">
+       <rect>
+        <x>118</x>
+        <y>31</y>
+        <width>431</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;mainDIR: main folder that is included all dataset files, i.e. support BIDS format: &lt;/span&gt;&lt;a href=&quot;https://www.nature.com/articles/sdata201644&quot;&gt;&lt;span style=&quot; font-size:18pt; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.nature.com/articles/sdata201644&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="statusTip">
+       <string/>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnReadTask">
+      <property name="geometry">
+       <rect>
+        <x>529</x>
+        <y>66</y>
+        <width>81</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Read</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="txtTask">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>67</y>
+        <width>421</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>98</y>
+       <width>621</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>&lt;Runs&gt;</string>
+     </property>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>35</y>
+        <width>60</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Number:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>35</y>
+        <width>60</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Length:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>480</x>
+        <y>35</y>
+        <width>60</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Perfix:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtRunPer">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>35</y>
+        <width>80</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunPer: content of subject counter, e.g. RunPer = 0 -&amp;gt; run-001 OR RunPer = A -&amp;gt; run-AA1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="txtRunLen">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>35</y>
+        <width>80</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunLen: the length of run counter, e.g. RunLen=3 -&amp;gt; output run-001, rub-002&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunLen &amp;gt; 1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>999999999</number>
+      </property>
+      <property name="value">
+       <number>2</number>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtRunNum">
+      <property name="geometry">
+       <rect>
+        <x>75</x>
+        <y>35</y>
+        <width>211</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum: sequence of run counters for corresponding subjects&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum = 12 then all subjects have 12 runs&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunNum = [11,2,10] then 1st subject has 11 runs, 2nd subject has 2 runs, and 3rd has 10 runs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QTabWidget" name="tabWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>310</y>
+       <width>621</width>
+       <height>151</height>
+      </rect>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab_8">
+      <attribute name="title">
+       <string>fMRI</string>
+      </attribute>
+      <widget class="QLineEdit" name="txtBOLD">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>20</y>
+         <width>481</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_bold.nii.gz</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_12">
+       <property name="geometry">
+        <rect>
+         <x>17</x>
+         <y>20</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>BOLD Images:</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_9">
+      <attribute name="title">
+       <string>MRI</string>
+      </attribute>
+      <widget class="QLabel" name="label_26">
+       <property name="geometry">
+        <rect>
+         <x>12</x>
+         <y>50</y>
+         <width>231</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Anatomical Extracted Brain File:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtBET">
+       <property name="geometry">
+        <rect>
+         <x>254</x>
+         <y>50</y>
+         <width>341</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>$MAINDIR$/sub-$SUB$/anat/sub-$SUB$_T1w_BET.nii.gz</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_29">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>124</y>
+         <width>591</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>11</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="text">
+        <string>$SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
+It's case sensitive.</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_30">
+       <property name="geometry">
+        <rect>
+         <x>12</x>
+         <y>90</y>
+         <width>251</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Anatomical Extracted Brain Report:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtBETPDF">
+       <property name="geometry">
+        <rect>
+         <x>263</x>
+         <y>90</y>
+         <width>331</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>$MAINDIR$/sub-$SUB$/anat/sub-$SUB$_T1w_BET.pdf</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_22">
+       <property name="geometry">
+        <rect>
+         <x>14</x>
+         <y>10</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Anatomical Images:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtAnat">
+       <property name="geometry">
+        <rect>
+         <x>163</x>
+         <y>10</y>
+         <width>431</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>$MAINDIR$/sub-$SUB$/anat/sub-$SUB$_T1w.nii.gz</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="Report">
+      <attribute name="title">
+       <string>Event</string>
+      </attribute>
+      <widget class="QLabel" name="label_31">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>124</y>
+         <width>591</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>11</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="text">
+        <string>$SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
+It's case sensitive.</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtCondPre">
+       <property name="geometry">
+        <rect>
+         <x>131</x>
+         <y>90</y>
+         <width>461</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>cond</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtEventDIR">
+       <property name="geometry">
+        <rect>
+         <x>202</x>
+         <y>50</y>
+         <width>391</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_events/</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_28">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>90</y>
+         <width>201</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Condition Prefix:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_27">
+       <property name="geometry">
+        <rect>
+         <x>12</x>
+         <y>50</y>
+         <width>201</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Generated Event Folders:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_11">
+       <property name="geometry">
+        <rect>
+         <x>13</x>
+         <y>10</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Event Files:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtOnset">
+       <property name="geometry">
+        <rect>
+         <x>101</x>
+         <y>9</y>
+         <width>491</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="cursor">
+        <cursorShape>ArrowCursor</cursorShape>
+       </property>
+       <property name="text">
+        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_events.tsv</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_10">
+      <attribute name="title">
+       <string>Analysis</string>
+      </attribute>
+      <widget class="QLabel" name="label_32">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>124</y>
+         <width>591</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>11</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="text">
+        <string>$SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
+It's case sensitive.</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtAnalysis">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>60</y>
+         <width>461</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_analyze</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_33">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>201</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Analysis Folders:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtScript">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>20</y>
+         <width>481</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>$MAINDIR$/sub-$SUB$/func/sub-$SUB$_task-$TASK$_run-$RUN$_script.fsf</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_34">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>201</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Analysis Script:</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_11">
+      <attribute name="title">
+       <string>Counter</string>
+      </attribute>
+      <widget class="QLabel" name="label_17">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>60</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>From:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_41">
+       <property name="geometry">
+        <rect>
+         <x>460</x>
+         <y>20</y>
+         <width>60</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Perfix:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_42">
+       <property name="geometry">
+        <rect>
+         <x>290</x>
+         <y>20</y>
+         <width>60</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Length:</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="txtConTo">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>20</y>
+         <width>80</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtConPer">
+       <property name="geometry">
+        <rect>
+         <x>510</x>
+         <y>20</y>
+         <width>80</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="txtConFrom">
+       <property name="geometry">
+        <rect>
+         <x>56</x>
+         <y>20</y>
+         <width>80</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_43">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>20</y>
+         <width>60</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>To:</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="txtConLen">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>20</y>
+         <width>80</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>2</number>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QLabel" name="label_23">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>470</y>
+       <width>591</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>11</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="text">
+      <string>$MAINDIR$, $SUB$, $TASK$, $RUN$, $COUNT$ will be replaced by the preprocessing parameters.
+It's case sensitive.</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Basic</string>
+    </attribute>
+    <widget class="QLabel" name="label_13">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>23</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TR (sec):</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_16">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>231</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Spatial Smoothing FWHM (mm):</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_15">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>221</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Total Volumes (Auto=0): </string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_20">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>110</y>
+       <width>231</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>High pass filter cutoff (sec):</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_21">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>154</y>
+       <width>231</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Slice timing correction:</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbSliceTime">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>150</y>
+       <width>251</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="txtVoxel">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>23</y>
+       <width>401</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Voxel Size: None</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_14">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>60</y>
+       <width>151</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Delete Volumes: </string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="cbRegAnat">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>190</y>
+       <width>271</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Register to Anatomical Image</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="cbMotionCorrection">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>160</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Motion Correction</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="txtTotalVol">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>60</y>
+       <width>121</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>999999999</number>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="txtDeleteVol">
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>60</y>
+       <width>121</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>999999999</number>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>240</y>
+       <width>631</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>&lt;Design Efficiency&gt;</string>
+     </property>
+     <widget class="QLabel" name="label_35">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>231</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Noise Level %</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_36">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>40</y>
+        <width>231</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Temporal Smoothness:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_37">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>40</y>
+        <width>231</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Z threshold:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtDENL">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>40</y>
+        <width>80</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0.66</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtDETS">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>40</y>
+        <width>80</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0.34</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtDEZT">
+      <property name="geometry">
+       <rect>
+        <x>536</x>
+        <y>40</y>
+        <width>80</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>5.3</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_6">
+     <property name="geometry">
+      <rect>
+       <x>19</x>
+       <y>350</y>
+       <width>631</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>&lt;Clustering Thresholding&gt;</string>
+     </property>
+     <widget class="QLabel" name="label_38">
+      <property name="geometry">
+       <rect>
+        <x>14</x>
+        <y>39</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Z threshold:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_39">
+      <property name="geometry">
+       <rect>
+        <x>214</x>
+        <y>40</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cluster P threshold:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtCTZT">
+      <property name="geometry">
+       <rect>
+        <x>104</x>
+        <y>40</y>
+        <width>80</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>2.3</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtCTPT">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>40</y>
+        <width>80</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0.05</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QLineEdit" name="txtTR">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>20</y>
+       <width>100</width>
+       <height>21</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtHighPass">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>108</y>
+       <width>100</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>100</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtFWHM">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>108</y>
+       <width>100</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>5</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_3">
+    <attribute name="title">
+     <string>Events</string>
+    </attribute>
+    <widget class="QPushButton" name="btnEventTest">
+     <property name="geometry">
+      <rect>
+       <x>432</x>
+       <y>470</y>
+       <width>221</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Extract Events</string>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="txtEvents">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>641</width>
+       <height>451</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_4">
+    <attribute name="title">
+     <string>Run</string>
+    </attribute>
+    <widget class="QPushButton" name="btnEvent">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>23</x>
+       <y>20</y>
+       <width>631</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Generate Event Files</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnExtractor">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>23</x>
+       <y>70</y>
+       <width>521</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Brain Extractor</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnPreprocessScripts">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>23</x>
+       <y>120</y>
+       <width>631</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Generate Preprocessing Scripts</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="cbShowResult">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>80</y>
+       <width>110</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Show Result</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>170</y>
+       <width>631</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>&lt;Preprocessing&gt;</string>
+     </property>
+     <widget class="QCheckBox" name="cbJustRun">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>30</y>
+        <width>171</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Just Run One for test</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbRemoveOlds">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>30</y>
+        <width>160</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Remove Old Results</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnPreprocess">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>80</y>
+        <width>591</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Preprocessing</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_5">
+    <attribute name="title">
+     <string>History</string>
+    </attribute>
+    <widget class="QPushButton" name="btnLoadHistory">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>470</y>
+       <width>131</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Load Selected</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="lwHistory">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>10</y>
+       <width>641</width>
+       <height>441</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnRemoveHistory">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>470</y>
+       <width>131</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Remove Selected</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnClearAllHistory">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>470</y>
+       <width>101</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Clear All</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_6">
+    <attribute name="title">
+     <string>System</string>
+    </attribute>
+    <widget class="QLabel" name="label_18">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>121</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>MNI Space:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_19">
+     <property name="geometry">
+      <rect>
+       <x>21</x>
+       <y>80</y>
+       <width>121</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>$FSLDIR:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtFSLDIR">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>80</y>
+       <width>510</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtFeat">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>130</y>
+       <width>510</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string>/bin/feat</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_24">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>130</y>
+       <width>121</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>feat cmd:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_25">
+     <property name="geometry">
+      <rect>
+       <x>21</x>
+       <y>180</y>
+       <width>121</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Feat_gui cmd:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtFeat_gui">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>180</y>
+       <width>510</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string>/bin/Feat_gui</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtbetcmd">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>230</y>
+       <width>510</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string>/bin/bet</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_40">
+     <property name="geometry">
+      <rect>
+       <x>21</x>
+       <y>230</y>
+       <width>121</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>bet cmd:</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="txtMNI">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>25</y>
+       <width>510</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_7">
+    <attribute name="title">
+     <string>Tools</string>
+    </attribute>
+    <widget class="QPushButton" name="btnFilesRename">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>210</y>
+       <width>630</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Group Rename Files</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnEstimate">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>630</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>View Parameters (Feat_gui)</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnScriptEditor">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>150</y>
+       <width>630</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Group Script Editor</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnReportViewer">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>90</y>
+       <width>630</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>View Generated Report</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnfMRIConcatenator">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>270</y>
+       <width>630</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>fMRI Concatenator</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnEventConcatenator">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>330</y>
+       <width>630</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Event Concatenator</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="btnTest">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>600</y>
+     <width>113</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Test</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnClose">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>600</y>
+     <width>113</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnSave">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>600</y>
+     <width>113</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnLoad">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>600</y>
+     <width>113</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Load</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>10</y>
+     <width>68</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Setting:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txtSetting">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>7</y>
+     <width>601</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>601</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is current setting file address&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>txtSubFrom</tabstop>
+  <tabstop>txtSubTo</tabstop>
+  <tabstop>txtSubLen</tabstop>
+  <tabstop>txtSubPer</tabstop>
+  <tabstop>txtRunNum</tabstop>
+  <tabstop>txtRunLen</tabstop>
+  <tabstop>txtRunPer</tabstop>
+  <tabstop>txtDIR</tabstop>
+  <tabstop>txtTask</tabstop>
+  <tabstop>btnDIR</tabstop>
+  <tabstop>btnReadTask</tabstop>
+  <tabstop>tabWidget_2</tabstop>
+  <tabstop>txtBOLD</tabstop>
+  <tabstop>txtAnat</tabstop>
+  <tabstop>txtBET</tabstop>
+  <tabstop>txtBETPDF</tabstop>
+  <tabstop>txtOnset</tabstop>
+  <tabstop>txtEventDIR</tabstop>
+  <tabstop>txtCondPre</tabstop>
+  <tabstop>txtTotalVol</tabstop>
+  <tabstop>txtDeleteVol</tabstop>
+  <tabstop>cbSliceTime</tabstop>
+  <tabstop>cbMotionCorrection</tabstop>
+  <tabstop>cbRegAnat</tabstop>
+  <tabstop>btnEvent</tabstop>
+  <tabstop>btnExtractor</tabstop>
+  <tabstop>cbShowResult</tabstop>
+  <tabstop>btnPreprocessScripts</tabstop>
+  <tabstop>cbJustRun</tabstop>
+  <tabstop>cbRemoveOlds</tabstop>
+  <tabstop>btnPreprocess</tabstop>
+  <tabstop>lwHistory</tabstop>
+  <tabstop>btnLoadHistory</tabstop>
+  <tabstop>btnRemoveHistory</tabstop>
+  <tabstop>btnClearAllHistory</tabstop>
+  <tabstop>txtFSLDIR</tabstop>
+  <tabstop>txtFeat</tabstop>
+  <tabstop>txtFeat_gui</tabstop>
+  <tabstop>btnEstimate</tabstop>
+  <tabstop>btnReportViewer</tabstop>
+  <tabstop>btnScriptEditor</tabstop>
+  <tabstop>btnFilesRename</tabstop>
+  <tabstop>btnEventTest</tabstop>
+  <tabstop>btnLoad</tabstop>
+  <tabstop>btnSave</tabstop>
+  <tabstop>btnTest</tabstop>
+  <tabstop>btnClose</tabstop>
+  <tabstop>txtSetting</tabstop>
+  <tabstop>txtEvents</tabstop>
+  <tabstop>txtAnalysis</tabstop>
+  <tabstop>txtScript</tabstop>
+  <tabstop>txtConTo</tabstop>
+  <tabstop>txtConPer</tabstop>
+  <tabstop>txtConFrom</tabstop>
+  <tabstop>txtConLen</tabstop>
+  <tabstop>txtDENL</tabstop>
+  <tabstop>txtDETS</tabstop>
+  <tabstop>txtDEZT</tabstop>
+  <tabstop>txtCTZT</tabstop>
+  <tabstop>txtCTPT</tabstop>
+  <tabstop>txtbetcmd</tabstop>
+  <tabstop>txtMNI</tabstop>
+  <tabstop>btnfMRIConcatenator</tabstop>
+  <tabstop>btnEventConcatenator</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

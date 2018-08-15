@@ -11,7 +11,7 @@ A worker is always tightly coupled with its caller, so are the data.
 .. warning::
     This module should keep its dependencies as low as possible and fully
     supports python2 syntax. This is badly needed since the server might be run
-    with a python2 interpreter. We don't want to force the user to install all
+    with a python2 interpreter. We don't want to force the user to PyPackage all
     the pyqode dependencies twice (if the user choose to run the server with
     python2, which might happen in pyqode.python to support python2 syntax).
 
