@@ -4,6 +4,7 @@ from GUI.frmMainMenuGUI import *
 from GUI.frmFeatureAnalysis import *
 from GUI.frmModelAnalysis import *
 from GUI.frmPreprocess import *
+from GUI.frmVisualization import *
 
 
 #import PyQt5.QtCore as QtCore
@@ -39,11 +40,6 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
-
-
-        ui.btnVisualization.setEnabled(False)
-
-
         dialog.show()
 
 
@@ -54,6 +50,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         ui.btnFeatureAnalysis.clicked.connect(self.btnFeatureAnalysis_click)
         ui.btnModelAnalysis.clicked.connect(self.btnModelAnalysis_click)
         ui.btnAbout.clicked.connect(self.btnAbout_click)
+        ui.btnVisualization.clicked.connect(self.btnVisualization_click)
 
 
     def btnExit_click(self):
@@ -87,6 +84,11 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         global dialog
         dialog.hide()
         frmModelAnalysis.show(frmModelAnalysis,dialog)
+
+    def btnVisualization_click(self):
+        global dialog
+        dialog.hide()
+        frmVisalization.show(frmVisalization,dialog)
 
 
 # Auto Run

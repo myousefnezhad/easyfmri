@@ -1,13 +1,33 @@
 from PyQt5.QtWidgets import QMessageBox, QSizePolicy, QTextEdit
 
+import numpy as np
+import os
 from dir import getDIR
 
+import threading
+
+
+class MyThread(threading.Thread):
+    def __init__(self, cmd):
+        threading.Thread.__init__(self)
+        self.cmd = cmd
+
+    def run(self):
+        os.system(self.cmd)
+
+
+def RunCMD(cmd):
+    thread = MyThread(cmd)
+    thread.daemon = True
+    thread.start()
+
+
 def getVersion():
-    return "1.4"
+    return "1.5"
 
 
 def getBuild():
-    return "2000"
+    return "1000"
 
 
 def fixstr(Value, Length, Perfix="0"):
@@ -86,28 +106,36 @@ def setParameters3(STR, Dir, Sub, Run, Task, Counter=None,Condition=None):
 
 
 def getDirSpaceINI():
-    import os
     ProgramPath = getDIR()
     return ProgramPath + "/data/space.ini"
 
-
 def getDirSpace():
-    import os
     ProgramPath = getDIR()
     return ProgramPath + "/data/space/"
 
-
 def getDirFSLAtlas():
-    import os
     ProgramPath = getDIR()
     return ProgramPath + "/data/atlas/"
 
-
 def getFSLxml():
-    import os
     ProgramPath = getDIR()
     return ProgramPath + "/data/fslatlas.ini"
 
+def getSUMADir():
+    ProgramPath = getDIR()
+    return ProgramPath + "/data/suma/"
+
+def getSUMAMNI():
+    return "MNI_N27+tlrc."
+
+def getSUMALeftHem():
+    return "N27_lh_tlrc.spec"
+
+def getSUMARightHem():
+    return "N27_rh_tlrc.spec"
+
+def getSUMABothHem():
+    return "N27_both_tlrc.spec"
 
 def convertDesignMatrix(filename,cond=None):
     import os
@@ -150,16 +178,35 @@ def fitLine(interval):
         errors.append(err)
     return coeffs[np.argmin(errors)]
 
-def strRange(x):
-    result = []
-    for part in x.split(','):
-        if '-' in part:
-            a, b = part.split('-')
-            a, b = int(a), int(b)
-            result.extend(range(a, b + 1))
-        else:
-            a = int(part)
-            result.append(a)
+def strRange(data):
+    if not len(data):
+        return None
+    result = list()
+    try:
+        strData = data.replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()
+        for D in strData:
+            reformD = D.replace("-"," ").split()
+            if len(reformD) == 1:
+                result.append(np.int(reformD[0]))
+            elif len(reformD) == 2:
+                LoBand = np.int(reformD[0])
+                HiBand = np.int(reformD[1])
+                if LoBand == HiBand:
+                    result.append(np.int(reformD[0]))
+                elif LoBand < HiBand:
+                    ren = np.arange(LoBand, HiBand + 1, 1)
+                    for x in ren:
+                        result.append(x)
+                elif LoBand > HiBand:
+                    ren = np.arange(LoBand, HiBand - 1, -1)
+                    for x in ren:
+                        result.append(x)
+            else:
+                print("Wrong Format!")
+                return None
+    except:
+        print("Wrong Format!")
+        return None
     return result
 
 

@@ -1,0 +1,119 @@
+
+type = string-attribute
+name = HISTORY_NOTE
+count = 204
+'[ziad@eomer.nimh.nih.gov: Wed Jan 18 16:00:54 2006] 3dcopy ./Zilles/v12//colin27T1_seg.hdr N27/MNI_N27+tlrc\n[ziad@eomer.nimh.nih.gov: Mon Jan 30 14:19:24 2006] 3dcopy ../N27/MNI_N27+tlrc. ./MNI_N27+tlrc~
+
+type = string-attribute
+name = TYPESTRING
+count = 15
+'3DIM_HEAD_ANAT~
+
+type = string-attribute
+name = IDCODE_STRING
+count = 27
+'XYZ_lbCJj_dZCakHquRmmYvTDg~
+
+type = string-attribute
+name = IDCODE_DATE
+count = 25
+'Mon Jan 30 14:19:24 2006~
+
+type = integer-attribute
+name = SCENE_DATA
+count = 8
+ 2 3 0 -999 -999
+ -999 -999 -999
+
+type = string-attribute
+name = LABEL_1
+count = 5
+'zyxt~
+
+type = string-attribute
+name = LABEL_2
+count = 5
+'zyxt~
+
+type = string-attribute
+name = DATASET_NAME
+count = 5
+'zyxt~
+
+type = integer-attribute
+name = ORIENT_SPECIFIC
+count = 3
+ 1 2 4
+
+type  = float-attribute
+name  = ORIGIN
+count = 3
+             75            111            -68
+
+type  = float-attribute
+name  = DELTA
+count = 3
+             -1             -1              1
+
+type  = float-attribute
+name  = IJK_TO_DICOM
+count = 12
+             -1             -0              0             75             -0
+             -1              0            111             -0             -0
+              1            -68
+
+type  = float-attribute
+name  = BRICK_STATS
+count = 2
+              0            222
+
+type = integer-attribute
+name = DATASET_RANK
+count = 8
+ 3 1 0 0 0
+ 0 0 0
+
+type = integer-attribute
+name = DATASET_DIMENSIONS
+count = 5
+ 151 188 154 0 0
+
+type = integer-attribute
+name = BRICK_TYPES
+count = 1
+ 0
+
+type  = float-attribute
+name  = BRICK_FLOAT_FACS
+count = 1
+              0
+
+type = string-attribute
+name = BYTEORDER_STRING
+count = 10
+'MSB_FIRST~
+
+type = integer-attribute
+name = NOTES_COUNT
+count = 1
+ 1
+
+type = string-attribute
+name = NOTE_NUMBER_001
+count = 112
+'Dataset in standard MNI space (this was the case for colin27T1_seg.hdr in the Eickhoff and Zilles v12 database)~
+
+type = string-attribute
+name = NOTE_DATE_001
+count = 25
+'Wed Jan 18 16:36:55 2006~
+
+type = string-attribute
+name = BRICK_LABS
+count = 3
+'#0~
+
+type = string-attribute
+name = BRICK_KEYWORDS
+count = 1
+'~
