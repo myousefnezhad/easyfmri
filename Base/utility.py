@@ -78,7 +78,7 @@ def getVersion():
 
 
 def getBuild():
-    return "3500"
+    return "4000"
 
 def getSettingVersion():
     return "2.0"
@@ -315,11 +315,12 @@ def LoadEzData(Header=None,data=None):
 
     try:
         Out = io.loadmat(Header,appendmat=False)
+        Int = Out["Integration"]
     except:
         print("Cannot load header file!")
         return None
     try:
-        DataStruct = Out["DataStructure"]
+        DataStruct = Int["DataStructure"][0]
         DataKey = list()
         for key in DataStruct:
             if data is None:
@@ -333,19 +334,19 @@ def LoadEzData(Header=None,data=None):
         else:
             for dkey in DataKey:
                 X = None
-                dfiles = np.array(Out[dkey + "_files"])
+                dfiles = np.array(Int[dkey[0] + "_files"])[0][0]
                 for fdata in dfiles:
                     try:
                         del io
                         import scipy.io as io
-                        dat = io.loadmat(os.path.dirname(Header) + "/" + fdata,appendmat=False)[dkey]
+                        dat = io.loadmat(os.path.dirname(Header) + "/" + fdata,appendmat=False)[dkey[0]]
                         X = dat if X is None else np.concatenate((X,dat))
                         del dat
                         print("Data %s is load!" % (fdata))
                     except Exception as e:
                         print(str(e))
                         return None
-                Out[dkey] = X
+                Out[dkey[0]] = X
     except:
         print("DEBUG: Error in loading data files!")
         return None

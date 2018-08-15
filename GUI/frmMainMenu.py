@@ -6,10 +6,8 @@ from GUI.frmModelAnalysis import *
 from GUI.frmPreprocess import *
 from GUI.frmVisualization import *
 
+from Base.tools import Tools
 from Base.utility import About
-
-
-
 
 
 class frmMainMenuGUI(QtWidgets.QMainWindow):
@@ -26,6 +24,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         ui.setupUi(dialog)
         self.set_events(self)
 
+        tools = Tools()
+        tools.combo(ui.cbTools)
 
         dialog.setWindowTitle("easy fMRI - V" + getVersion() + "B" + getBuild())
 
@@ -43,6 +43,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         ui.btnModelAnalysis.clicked.connect(self.btnModelAnalysis_click)
         ui.btnAbout.clicked.connect(self.btnAbout_click)
         ui.btnVisualization.clicked.connect(self.btnVisualization_click)
+        ui.btnTools.clicked.connect(self.btnTools_click)
 
 
     def btnExit_click(self):
@@ -64,7 +65,6 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         global dialog
         dialog.hide()
         frmPreprocess.show(frmPreprocess,dialog)
-        #dialog.show()
 
 
     def btnFeatureAnalysis_click(self):
@@ -81,6 +81,11 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         global dialog
         dialog.hide()
         frmVisalization.show(frmVisalization,dialog)
+
+
+    def btnTools_click(self):
+        tools = Tools()
+        tools.run(ui.cbTools.currentData())
 
 
 # Auto Run

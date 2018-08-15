@@ -2,10 +2,8 @@
 import sys
 
 from GUI.frmModelAnalysisGUI import *
-from GUI.frmDataEditor import frmDataEditor
-from GUI.frmSKModelEditor import frmSKModelEditor
-from GUI.frmSKCModelEditor import frmSKCModelEditor
-from GUI.frmResultReport import frmResultReport
+from Base.tools import Tools
+
 
 class MainWindow(QtWidgets.QMainWindow):
     parent = None
@@ -44,6 +42,10 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             dialog = MainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
+
+        tools = Tools()
+        tools.combo(ui.cbTools)
+
 
         ui.tabWidget.setCurrentIndex(0)
         # Unsupervised
@@ -84,10 +86,8 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.btnClose.clicked.connect(self.btnClose_click)
         ui.btnMASRun.clicked.connect(self.btnMAS_click)
         ui.btnMAURun.clicked.connect(self.btnMAU_click)
-        ui.btnDataEditor.clicked.connect(self.btnDataEditor_click)
-        ui.btnSKModel.clicked.connect(self.btnSKModelEdior_click)
-        ui.btnSKCModel.clicked.connect(self.btnSKCModelEdior_click)
-        ui.btnReport.clicked.connect(self.btnReport_click)
+        ui.btnTools.clicked.connect(self.btnTools_click)
+
 
 
     # Exit function
@@ -95,14 +95,10 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         global dialog, parent
         dialog.close()
 
-    def btnDataEditor_click(self):
-        frmDataEditor.show(frmDataEditor)
+    def btnTools_click(self):
+        tools = Tools()
+        tools.run(ui.cbTools.currentData())
 
-    def btnSKModelEdior_click(self):
-        frmSKModelEditor.show(frmSKModelEditor)
-
-    def btnSKCModelEdior_click(self):
-        frmSKCModelEditor.show(frmSKCModelEditor)
 
     def btnMAU_click(self):
         MAID = ui.cbMAU.currentData()
@@ -201,9 +197,6 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMAAdaBoost import frmMAAdaBoost
             frmMAAdaBoost.show(frmMAAdaBoost)
             return
-
-    def btnReport_click(self):
-        frmResultReport.show(frmResultReport)
 
 # Auto Run
 if __name__ == "__main__":

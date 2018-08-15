@@ -205,7 +205,7 @@ It's case sensitive.</string>
         <rect>
          <x>142</x>
          <y>26</y>
-         <width>601</width>
+         <width>531</width>
          <height>21</height>
         </rect>
        </property>
@@ -231,14 +231,14 @@ It's case sensitive.</string>
        <property name="toolTip">
         <string/>
        </property>
+       <property name="toolTipDuration">
+        <number>-1</number>
+       </property>
        <property name="statusTip">
         <string/>
        </property>
        <property name="text">
         <string>Main Directory:</string>
-       </property>
-       <property name="toolTipDuration" stdset="0">
-        <number>-1</number>
        </property>
        <property name="setToolTip" stdset="0">
         <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
@@ -248,7 +248,7 @@ It's case sensitive.</string>
        <property name="geometry">
         <rect>
          <x>11</x>
-         <y>60</y>
+         <y>80</y>
          <width>131</width>
          <height>16</height>
         </rect>
@@ -261,7 +261,7 @@ It's case sensitive.</string>
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>60</y>
+         <y>80</y>
          <width>601</width>
          <height>21</height>
         </rect>
@@ -274,6 +274,19 @@ It's case sensitive.</string>
        </property>
        <property name="text">
         <string/>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btnSSDIR">
+       <property name="geometry">
+        <rect>
+         <x>690</x>
+         <y>24</y>
+         <width>51</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>...</string>
        </property>
       </widget>
      </widget>
@@ -641,7 +654,7 @@ It's case sensitive.</string>
       <rect>
        <x>160</x>
        <y>220</y>
-       <width>621</width>
+       <width>571</width>
        <height>26</height>
       </rect>
      </property>
@@ -654,12 +667,38 @@ It's case sensitive.</string>
       <rect>
        <x>160</x>
        <y>170</y>
-       <width>621</width>
+       <width>571</width>
        <height>26</height>
       </rect>
      </property>
      <property name="editable">
       <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnSSInFile">
+     <property name="geometry">
+      <rect>
+       <x>740</x>
+       <y>170</y>
+       <width>51</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnSSOutFile">
+     <property name="geometry">
+      <rect>
+       <x>740</x>
+       <y>220</y>
+       <width>51</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>...</string>
      </property>
     </widget>
    </widget>
@@ -758,7 +797,7 @@ It's case sensitive.</string>
         <rect>
          <x>162</x>
          <y>20</y>
-         <width>591</width>
+         <width>521</width>
          <height>21</height>
         </rect>
        </property>
@@ -784,14 +823,14 @@ It's case sensitive.</string>
        <property name="toolTip">
         <string/>
        </property>
+       <property name="toolTipDuration">
+        <number>-1</number>
+       </property>
        <property name="statusTip">
         <string/>
        </property>
        <property name="text">
         <string>Main Directory:</string>
-       </property>
-       <property name="toolTipDuration" stdset="0">
-        <number>-1</number>
        </property>
        <property name="setToolTip" stdset="0">
         <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
@@ -873,7 +912,7 @@ It's case sensitive.</string>
         <rect>
          <x>160</x>
          <y>100</y>
-         <width>531</width>
+         <width>521</width>
          <height>21</height>
         </rect>
        </property>
@@ -918,6 +957,19 @@ It's case sensitive.</string>
        </property>
        <property name="text">
         <string>Ouput Directory:</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btnDIDIR">
+       <property name="geometry">
+        <rect>
+         <x>700</x>
+         <y>17</y>
+         <width>51</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>...</string>
        </property>
       </widget>
      </widget>
@@ -1219,9 +1271,9 @@ It's case sensitive.</string>
       <widget class="QLineEdit" name="txtDIEventDIR">
        <property name="geometry">
         <rect>
-         <x>220</x>
+         <x>190</x>
          <y>40</y>
-         <width>511</width>
+         <width>501</width>
          <height>21</height>
         </rect>
        </property>
@@ -1246,7 +1298,7 @@ It's case sensitive.</string>
        <property name="geometry">
         <rect>
          <x>14</x>
-         <y>80</y>
+         <y>100</y>
          <width>201</width>
          <height>16</height>
         </rect>
@@ -1258,14 +1310,27 @@ It's case sensitive.</string>
       <widget class="QLineEdit" name="txtDICondPre">
        <property name="geometry">
         <rect>
-         <x>220</x>
-         <y>80</y>
-         <width>511</width>
+         <x>190</x>
+         <y>100</y>
+         <width>501</width>
          <height>21</height>
         </rect>
        </property>
        <property name="text">
         <string>cond</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btnDIEventDIR">
+       <property name="geometry">
+        <rect>
+         <x>700</x>
+         <y>39</y>
+         <width>51</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>...</string>
        </property>
       </widget>
      </widget>
@@ -1916,19 +1981,6 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLabel" name="label_31">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>68</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Setting:</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="btnDISetting">
      <property name="geometry">
       <rect>
@@ -1960,7 +2012,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
       <rect>
        <x>160</x>
        <y>60</y>
-       <width>621</width>
+       <width>561</width>
        <height>26</height>
       </rect>
      </property>
@@ -1997,7 +2049,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
     <widget class="QPushButton" name="btnDIROIFile">
      <property name="geometry">
       <rect>
-       <x>730</x>
+       <x>740</x>
        <y>140</y>
        <width>51</width>
        <height>32</height>
@@ -2063,7 +2115,7 @@ It's case sensitive.</string>
       <rect>
        <x>160</x>
        <y>100</y>
-       <width>621</width>
+       <width>561</width>
        <height>26</height>
       </rect>
      </property>
@@ -2082,6 +2134,45 @@ It's case sensitive.</string>
      </property>
      <property name="text">
       <string>Design Matrix</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="cbDISetting">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>87</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Setting:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnDIInFile">
+     <property name="geometry">
+      <rect>
+       <x>740</x>
+       <y>60</y>
+       <width>51</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnDIDM">
+     <property name="geometry">
+      <rect>
+       <x>740</x>
+       <y>100</y>
+       <width>51</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>...</string>
      </property>
     </widget>
    </widget>
@@ -2129,7 +2220,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>12</x>
-       <y>170</y>
+       <y>220</y>
        <width>781</width>
        <height>32</height>
       </rect>
@@ -2142,7 +2233,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>220</y>
+       <y>270</y>
        <width>181</width>
        <height>16</height>
       </rect>
@@ -2155,7 +2246,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>220</y>
+       <y>270</y>
        <width>581</width>
        <height>26</height>
       </rect>
@@ -2165,7 +2256,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>12</x>
-       <y>270</y>
+       <y>320</y>
        <width>781</width>
        <height>32</height>
       </rect>
@@ -2178,13 +2269,26 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>12</x>
-       <y>120</y>
+       <y>170</y>
        <width>781</width>
        <height>32</height>
       </rect>
      </property>
      <property name="text">
       <string>EasyData: Cross Validation</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnFETempAlign">
+     <property name="geometry">
+      <rect>
+       <x>12</x>
+       <y>120</y>
+       <width>781</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Temporal Alignment Report</string>
      </property>
     </widget>
    </widget>
@@ -2271,11 +2375,11 @@ It's case sensitive.</string>
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
     <widget class="QLineEdit" name="txtFlirt">
@@ -2290,14 +2394,14 @@ It's case sensitive.</string>
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/flirt</string>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
    </widget>
@@ -2305,82 +2409,40 @@ It's case sensitive.</string>
     <attribute name="title">
      <string>Tools</string>
     </attribute>
-    <widget class="QPushButton" name="btnDICombineData">
+    <widget class="QComboBox" name="cbTools">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>170</y>
-       <width>761</width>
-       <height>32</height>
+       <y>40</y>
+       <width>771</width>
+       <height>26</height>
       </rect>
      </property>
-     <property name="text">
-      <string>MatLab: Combine Datasets</string>
-     </property>
     </widget>
-    <widget class="QPushButton" name="btnDIRemoveRest">
+    <widget class="QLabel" name="label_44">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>220</y>
-       <width>761</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>MatLab: Remove Rest Scans (before cross validation)</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnDIRemoveRest2">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>270</y>
-       <width>761</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>MatLab: Remove Rest Scans (after cross validation)</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnSSMatCreator">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>70</y>
-       <width>761</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Create Transformation Matrix</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnImageInfo">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
+       <x>24</x>
        <y>20</y>
-       <width>761</width>
-       <height>32</height>
+       <width>471</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="text">
-      <string>Image Information</string>
+      <string>Select a tool:</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnDIConvertEzData">
+    <widget class="QPushButton" name="btnTools">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>120</y>
-       <width>761</width>
-       <height>32</height>
+       <y>90</y>
+       <width>771</width>
+       <height>51</height>
       </rect>
      </property>
      <property name="text">
-      <string>Convert EasyData to MatLab</string>
+      <string>Run</string>
      </property>
     </widget>
    </widget>

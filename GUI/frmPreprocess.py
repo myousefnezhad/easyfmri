@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import QMessageBox
 from Base.Setting import Setting
 from Base.SettingHistory import History
 from Base.fsl import FSL
+from Base.tools import Tools
 from Base.utility import getTimeSliceText, fixstr, setParameters3, getSettingVersion, encoding, strRange, strMultiRange, OpenReport
 from Base.dialogs import SaveFile, LoadFile, SelectDir
 
@@ -115,6 +116,10 @@ class frmPreprocess(Ui_frmPreprocess):
         ui.setupUi(dialog)
         self.set_events(self)
         self.set_history(self)
+
+        tools = Tools()
+        tools.combo(ui.cbTools)
+
         ui.txtEvents.setText(EventCode())
         ui.tabWidget.setCurrentIndex(0)
         ui.tabWidget_2.setCurrentIndex(0)
@@ -181,7 +186,6 @@ class frmPreprocess(Ui_frmPreprocess):
 
 # This function initiate the events procedures
     def set_events(self):
-        global ui
         ui.btnClose.clicked.connect(self.btnClose_click)
         ui.btnDIR.clicked.connect(self.btnDIR_click)
         ui.btnTest.clicked.connect(self.btnTest_click)
@@ -201,11 +205,10 @@ class frmPreprocess(Ui_frmPreprocess):
         ui.btnFilesRename.clicked.connect(self.btnGroupRenameFile_click)
         ui.btnScriptEditor.clicked.connect(self.btnGroupScriptEditor_click)
         ui.btnReportViewer.clicked.connect(self.btnReportViewer_onclick)
-        ui.btnfMRIConcatenator.clicked.connect(self.btnfMRIConcatenator_click)
-        ui.btnEventConcatenator.clicked.connect(self.btnEventConcatenator_click)
-        ui.btnImageInfo.clicked.connect(self.btnImageInfo_click)
         ui.btnVerify.clicked.connect(self.btnVerify_click)
         ui.btnDelete.clicked.connect(self.btnDelete_click)
+        ui.btnTools.clicked.connect(self.btnTools_click)
+
 
 # Read history from file and visualized in the History tab
     def set_history(self):
@@ -221,6 +224,10 @@ class frmPreprocess(Ui_frmPreprocess):
     def btnClose_click(self):
        global dialog, parent
        dialog.close()
+
+    def btnTools_click(self):
+        tools = Tools()
+        tools.run(ui.cbTools.currentData())
 
 # This is the main directory in the Directory tab
     def btnDIR_click(self):
@@ -553,8 +560,6 @@ class frmPreprocess(Ui_frmPreprocess):
         history.clear_history()
         ui.lwHistory.clear()
 
-    def btnImageInfo_click(self):
-        frmImageInfo.show(frmImageInfo)
 
     def btnRemoveHistory_click(self):
         global ui
@@ -1231,18 +1236,6 @@ class frmPreprocess(Ui_frmPreprocess):
                     msgBox.setIcon(QMessageBox.Information)
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
-
-
-    def btnfMRIConcatenator_click(self):
-        global ui
-        frmfMRIConcatenator.show(frmfMRIConcatenator)
-        pass
-
-
-    def btnEventConcatenator_click(self):
-        global ui
-        frmEventConcatenator.show(frmEventConcatenator)
-        pass
 
 
 # Auto Run

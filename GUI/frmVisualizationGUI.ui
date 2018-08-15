@@ -119,56 +119,40 @@
     <attribute name="title">
      <string>Tools</string>
     </attribute>
-    <widget class="QPushButton" name="btnMNConvert">
+    <widget class="QPushButton" name="btnTools">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>791</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Convert Matrix to Nifti1</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnNAConvert">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
+       <x>16</x>
        <y>90</y>
        <width>791</width>
-       <height>32</height>
+       <height>51</height>
       </rect>
      </property>
      <property name="text">
-      <string>Convert Nifti1 to AFNI</string>
+      <string>Run</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnTranformation">
+    <widget class="QComboBox" name="cbTools">
+     <property name="geometry">
+      <rect>
+       <x>16</x>
+       <y>40</y>
+       <width>791</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>150</y>
-       <width>791</width>
-       <height>32</height>
+       <y>20</y>
+       <width>471</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="text">
-      <string>Create Transformation Matrix</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnImageInfo">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>210</y>
-       <width>791</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Image Information</string>
+      <string>Select a tool:</string>
      </property>
     </widget>
    </widget>

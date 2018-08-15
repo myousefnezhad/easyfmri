@@ -1,17 +1,17 @@
-easy fMRI project (V1.8B3500 beta)
+easy fMRI project (V1.8B4000 beta)
 ===============
 
 ### Introduction
 
 Easy fMRI is an open source toolbox for the Human Brain Mapping and Decoding. This project is developing by [Muhammad Yousefnezhad](https://myousefnezhad.sourceforge.io), [iBRAIN Group](http://ibrain.nuaa.edu.cn), [Nanjing University of Aeronautics and Astronautics](http://iao.nuaa.edu.cn), China.
 
-The project website is https://easyfmri.sourceforge.io/.
+The project website is [https://easyfmri.github.io/](https://easyfmri.github.io/) or [https://easyfmri.sourceforge.io/](https://easyfmri.sourceforge.io/).
 
 ### Dependencies
 
 Easy fMRI needs following software:
 
-  -Platform: Linux, Mac (NOTE: you can use virtual machine for Windows platform)
+  -Platform: Linux (recommended), Mac, Windows (via Linux Virtual Machine, or Bash for Windows 10 or above)
 
   -[Python3](https://anaconda.org/anaconda/python) (version=3.6.2 or above)
 
@@ -28,6 +28,30 @@ Easy fMRI needs following software:
 
 ### How to install easy fMRI
 
+### Pre-install for Windows 10 users:
+
+-- Install Windows Subsystem for Linux [https://docs.microsoft.com/en-us/windows/wsl/install-win10](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+
+NOTE: You have to install UBUNTU Linux from Windows Store.
+
+-- Install Xming X Server for Windows: [https://sourceforge.net/projects/xming/files/latest/download](https://sourceforge.net/projects/xming/files/latest/download)
+
+-- Open command prompt (press Windows key + R, then in run window type `cmd` and press enter)
+
+-- Open bash via cmd:
+
+```
+bash
+```
+
+-- Set Display:
+
+```
+echo "export DISPLAY=:0.0" >> ~/.profile
+source ~/.profile
+```
+
+Now you can install easy fMRI same as a linux system
 
 #### STEP A) Copy Files
 
@@ -68,16 +92,24 @@ sudo cp ~/.easyfmri/Script/ezfmri  /usr/local/bin/
 For Linux:
 
 ```
-sudo sh Anaconda3-<version>-Linux<platform>.sh
+sh Anaconda3-<version>-Linux<platform>.sh
 ```
 
 For Mac: click PKG file and continue installation.
+
+-- Set environment variables (see example at the end)
 
 -- Install all packages in `~/.easyfmri/PyPackage` directory
 
 ```
 cd ~/.easyfmri/PyPackage
-sudo pip install *
+pip install *
+```
+
+-- Install MPI packages:
+
+```
+conda install openmpi mpi4py
 ```
 
 -- Install Tensorflow package:
@@ -88,15 +120,13 @@ For CPU version:
 pip install tensorflow
 ```
 
-For GPU Vesion: You must install [CUDA](https://developer.nvidia.com/cuda-toolkit) and [CUDNN](https://developer.nvidia.com/cudnn). Then, you can install [Tensorflow](https://www.tensorflow.org/install/)
+For GPU Vesion: You must install [CUDA](https://developer.nvidia.com/cuda-toolkit) and [CuDNN](https://developer.nvidia.com/cudnn). Then, you can install [Tensorflow](https://www.tensorflow.org/install/)
 
 Note: By employing `CUDA 9.0`, `CUDNN 7.0` and `Ubuntu 16.04.x`, you can use following command to install tensorflow:
 
 ```
 pip install tensorflow-gpu
 ```
-
--- Set environment variables (see example at the end)
 
 
 #### STEP C) Install FSL 5.0.10 or above
@@ -105,18 +135,35 @@ pip install tensorflow-gpu
 
 -- Download `fslinstaller.py`
 
--- Run following for downloading installation file (Mac: `fsl-<version>-macOS_64.tar.gz` or Linux: `fsl-<version>-centos7_64.tar.gz`)
+-- Run following for downloading installation file (e.g. In version 5.0.10, the file name is `fsl-5.0.10-macOS_64.tar.gz` for Mac or `fsl-5.0.10-centos7_64.tar.gz` for all Linux distribution)
+
+For Linux:
 
 ```
 python2 fslinstaller.py -o
-md5sum fsl-5.x.x-centosY_64.tar.gz
+md5sum fsl-5.0.10-centos7_64.tar.gz
 ```
 
+For Mac:
+
+
+```
+python2 fslinstaller.py -o
+md5sum fsl-5.0.10-macOS_64.tar.gz
+```
 
 -- Install the downloaded file:
 
+For Linux:
+
 ```
-python2 fslinstaller.py -f <downloaded file name, e.g. fsl-5.x.x-centosY_64.tar.gz> -M
+python2 fslinstaller.py -f fsl-5.0.10-centos7_64.tar.gz -M
+```
+
+For Mac:
+
+```
+python2 fslinstaller.py -f fsl-5.0.10-macOS_64.tar.gz -M
 ```
 
 -- Set environment variables (see example at the end)

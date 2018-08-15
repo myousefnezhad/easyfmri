@@ -31,15 +31,6 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         self.set_events(self)
 
 
-        # Load Setting History
-        history = History()
-        histories = history.load_history()
-        for history in histories:
-            ui.txtDISetting.addItem(history)
-        ui.txtDISetting.setCurrentText("")
-
-
-
         dialog.setWindowTitle("easy fMRI Cross Validation on EzData - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
@@ -52,84 +43,12 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         ui.btnInFile.clicked.connect(self.btnInFile_click)
         ui.btnReload.clicked.connect(self.btnReload_click)
         ui.btnConvert.clicked.connect(self.btnConvert_click)
-        ui.btnDISetting.clicked.connect(self.btnDISetting_click)
-        ui.btnDISettingReload.clicked.connect(self.btnDISettingReload_click)
-
 
 
     def btnClose_click(self):
         global dialog
         dialog.close()
         pass
-
-    def btnDISetting_click(self):
-        msgBox = QMessageBox()
-
-        if os.path.isfile(ui.txtDISetting.currentText()):
-            currDir = os.path.dirname(ui.txtDISetting.currentText())
-        else:
-            currDir = None
-
-        filename = LoadFile("Open setting file ...",['easy fMRI setting (*.ez)'],'ez',currDir)
-        if len(filename):
-            if not os.path.isfile(filename):
-                msgBox.setText("Setting file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return
-
-            setting = Setting()
-            setting.Load(filename)
-
-            if np.double(setting.Version) < np.double(getSettingVersion()):
-                print("WARNING: You are using different version of Easy fMRI!!!")
-                msgBox.setText("This version of setting is not supported!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return
-
-            if not setting.empty:
-                ui.txtDISetting.setCurrentText(filename)
-                ui.txtDISubLen.setValue(setting.SubLen)
-                ui.txtDISubPer.setText(setting.SubPer)
-                ui.txtDIConLen.setValue(setting.ConLen)
-                ui.txtDIConPer.setText(setting.ConPer)
-                ui.txtDIRunPer.setText(setting.RunPer)
-                ui.txtDIRunLen.setValue(setting.RunLen)
-        else:
-            print("Cannot load setting!")
-
-
-
-    def btnDISettingReload_click(self):
-        msgBox = QMessageBox()
-
-        filename = ui.txtDISetting.currentText()
-        if os.path.isfile(filename):
-            if len(filename):
-                setting = Setting()
-                setting.Load(filename)
-
-                if np.double(setting.Version) < np.double(getSettingVersion()):
-                    print("WARNING: You are using different version of Easy fMRI!!!")
-                    msgBox.setText("This version of setting is not supported!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                    return
-
-                if not setting.empty:
-                    ui.txtDISetting.setCurrentText(filename)
-                    ui.txtDISubLen.setValue(setting.SubLen)
-                    ui.txtDISubPer.setText(setting.SubPer)
-                    ui.txtDIConLen.setValue(setting.ConLen)
-                    ui.txtDIConPer.setText(setting.ConPer)
-                    ui.txtDIRunPer.setText(setting.RunPer)
-                    ui.txtDIRunLen.setValue(setting.RunLen)
-        else:
-            print("Setting file not found!")
 
 
     def btnInFile_click(self):
@@ -191,20 +110,54 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
                     if HasDefualt:
                         ui.txtCounter.setCurrentText("counter")
 
+                    try:
+                        ui.txtDISubLen.setValue(np.int32(data["Integration"]["SubLen"][0][0]))
+                    except:
+                        print("Cannot load Subject Length!")
+
+                    try:
+                        ui.txtDIRunLen.setValue(np.int32(data["Integration"]["RunLen"][0][0]))
+                    except:
+                        print("Cannot load Run Length!")
+
+                    try:
+                        ui.txtDIConLen.setValue(np.int32(data["Integration"]["ConLen"][0][0]))
+                    except:
+                        print("Cannot load Counter Length!")
+
+                    try:
+                        ui.txtDISubPer.setText(data["Integration"]["SubPer"][0][0][0])
+                    except:
+                        print("Cannot load Subject Perfix!")
+
+                    try:
+                        ui.txtDIRunPer.setText(data["Integration"]["RunPer"][0][0][0])
+                    except:
+                        print("Cannot load Run Perfix!")
+
+                    try:
+                        ui.txtDIConPer.setText(data["Integration"]["ConPer"][0][0][0])
+                    except:
+                        print("Cannot load Counter Perfix!")
+
+                    try:
+                        ui.txtDIOutDAT.setText(data["Integration"]["OutData"][0][0][0])
+                    except:
+                        print("Cannot load out data format!")
 
                     # Data Files
                     ui.txtDataFiles.clear()
                     try:
                         HasDefualt = False
-                        dstr = data["DataStructure"]
+                        dstr = data["Integration"]["DataStructure"][0][0]
                         for st in dstr:
                             ui.txtData.addItem(st + "_files")
-                            if st == "data":
+                            if len(st):
                                 HasDefualt = True
                         if HasDefualt:
-                            ui.txtData.setCurrentText("data_files")
+                            ui.txtData.setCurrentText(dstr[0] + "_files")
                             try:
-                                for dfile in data["data_files"]:
+                                for dfile in data["Integration"][dstr[0] + "_files"][0][0]:
                                     ui.txtDataFiles.append(dfile)
                             except:
                                 print("Cannot load data files!")
@@ -236,7 +189,7 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
             try:
                 data = io.loadmat(filename)
                 ui.txtDataFiles.clear()
-                for dfile in data[ui.txtData.currentText()]:
+                for dfile in data["Integration"][ui.txtData.currentText()][0][0]:
                     ui.txtDataFiles.append(dfile)
                 ui.lblDataStr.setText("Data Structure: DETECT")
                 print("Data files are reloaded")
@@ -362,7 +315,7 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
             return
 
         try:
-            DataFiles = InData[ui.txtData.currentText()]
+            DataFiles = InData["Integration"][ui.txtData.currentText()][0][0]
         except:
             print("Cannot load data files!")
             msgBox.setText("Cannot load data files!")
@@ -501,8 +454,6 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         GroupFold = np.transpose(GroupFold)
         UniqFold = np.array(list(set(tuple(i) for i in GroupFold.tolist())))
 
-        print("UniqFold",np.shape(UniqFold),UniqFold)
-
         if len(UniqFold) <= Unit:
             msgBox.setText("Unit for the test set must be smaller than all possible folds! Number of all folds is: " + str(len(UniqFold)))
             msgBox.setIcon(QMessageBox.Critical)
@@ -521,8 +472,7 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         if not Unit == 1:
             FoldIDs = np.int32((FoldIDs - 0.1) / Unit) + 1
 
-
-        DataStructure = list(InData["DataStructure"])
+        DataStructure = list(InData["Integration"]["DataStructure"][0][0])
         try:
             FoldCounter = np.int32(InData["FoldCounter"][0][0]) + 1
         except:
@@ -678,20 +628,12 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
             FoldInfo[currTrainVal + "_files"] = np.array(currTrainFiles, dtype=object)
             FoldInfo[currTestVal  + "_files"] = np.array(currTestFiles,  dtype=object)
 
-
-
-
-
         FoldInfo["DataStructure"] = np.array(DataStructure,dtype=object)
         InData["FoldInfo" + str(FoldCounter)] = FoldInfo
         #InData["DataFold"] = np.array(DataStructure,dtype=object)
         InData["FoldCounter"] = FoldCounter
 
-
-
         print("Saving ...")
-
-
 
         io.savemat(InFile, InData, appendmat=False, do_compression=True)
         print("DONE.")
@@ -700,15 +642,6 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
-
-
-
-
-
-
-
-
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

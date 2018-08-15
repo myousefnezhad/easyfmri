@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>369</width>
-    <height>417</height>
+    <width>555</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <rect>
      <x>0</x>
      <y>10</y>
-     <width>371</width>
+     <width>551</width>
      <height>61</height>
     </rect>
    </property>
@@ -34,64 +34,123 @@
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="btnPreprocess">
+  <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>100</y>
-     <width>311</width>
-     <height>51</height>
+     <x>20</x>
+     <y>90</y>
+     <width>521</width>
+     <height>301</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Preprocessing (FSL)</string>
+   <property name="currentIndex">
+    <number>0</number>
    </property>
-  </widget>
-  <widget class="QPushButton" name="btnFeatureAnalysis">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>160</y>
-     <width>311</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Feature Analysis</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnModelAnalysis">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>220</y>
-     <width>311</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Model Analysis</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnVisualization">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>280</y>
-     <width>311</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Visualization (AFNI)</string>
-   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>Main</string>
+    </attribute>
+    <widget class="QPushButton" name="btnFeatureAnalysis">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>490</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Feature Analysis</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnModelAnalysis">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>490</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Model Analysis</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnPreprocess">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>490</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Preprocessing (FSL)</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnVisualization">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>200</y>
+       <width>490</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Visualization (AFNI)</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Tools</string>
+    </attribute>
+    <widget class="QComboBox" name="cbTools">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>490</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnTools">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>90</y>
+       <width>490</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Run</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>471</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Select a tool:</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QPushButton" name="btnExit">
    <property name="geometry">
     <rect>
-     <x>191</x>
-     <y>340</y>
-     <width>150</width>
+     <x>290</x>
+     <y>410</y>
+     <width>255</width>
      <height>51</height>
     </rect>
    </property>
@@ -102,9 +161,9 @@
   <widget class="QPushButton" name="btnAbout">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>340</y>
-     <width>150</width>
+     <x>20</x>
+     <y>410</y>
+     <width>255</width>
      <height>51</height>
     </rect>
    </property>

@@ -11,12 +11,10 @@ from PyQt5.QtWidgets import *
 
 from Base.utility import RunCMD
 from Base.afni import AFNI
+from Base.tools import Tools
 from Base.dialogs import LoadFile, SaveFile, SelectDir
+
 from GUI.frmVisualizationGUI import *
-from GUI.frmMatNITF import *
-from GUI.frmNITFAFNI import *
-from GUI.frmImageInfo import frmImageInfo
-from GUI.frmTransformationMatrix import *
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -53,6 +51,9 @@ class frmVisalization(Ui_frmVisalization):
         ui.setupUi(dialog)
         ui.tabWidget.setCurrentIndex(0)
         self.set_events(self)
+
+        tools = Tools()
+        tools.combo(ui.cbTools)
 
         ui.cbHemisphere.addItem("Both")
         ui.cbHemisphere.addItem("Left")
@@ -93,27 +94,18 @@ class frmVisalization(Ui_frmVisalization):
         ui.btnDSUMA.clicked.connect(self.btnDSUMA_click)
         ui.btnAFNI.clicked.connect(self.btnRunAFNI_click)
         ui.btnSUMA.clicked.connect(self.btnRunSUMA_click)
-        ui.btnMNConvert.clicked.connect(self.btnMNConvert_click)
-        ui.btnNAConvert.clicked.connect(self.btnNAConvert_click)
-        ui.btnTranformation.clicked.connect(self.btnTranformation_click)
-        ui.btnImageInfo.clicked.connect(self.btnImageInfo_click)
+        ui.btnTools.clicked.connect(self.btnTools_click)
+
 
 # Exit function
     def btnClose_click(self):
        global dialog, parent
        dialog.close()
 
-    def btnMNConvert_click(self):
-        frmMatNITF.show(frmMatNITF)
+    def btnTools_click(self):
+        tools = Tools()
+        tools.run(ui.cbTools.currentData())
 
-    def btnNAConvert_click(self):
-        frmNITFAFNI.show(frmNITFAFNI)
-
-    def btnTranformation_click(self):
-        frmTansformationMatrix.show(frmTansformationMatrix)
-
-    def btnImageInfo_click(self):
-        frmImageInfo.show(frmImageInfo)
 
     def btnFAFNI_click(self):
         filename = LoadFile("Open AFNI binary file ...",currentDirectory=os.path.dirname(ui.txtFAFNI.text()))

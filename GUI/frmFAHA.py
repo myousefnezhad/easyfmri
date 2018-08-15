@@ -879,9 +879,9 @@ class frmFAHA(Ui_frmFAHA):
                     TrShape = np.shape(dat)
                 else:
                     if not(TrShape == np.shape(dat)):
-                        print("Train: Reshape problem for Fold " + str(foldindx + 1))
+                        print("ERROR: Train, Reshape problem for Fold " + str(foldindx + 1) + ", Shape: " + str(np.shape(dat)))
                         return
-                print("Train: View " + str(foldindx + 1) + " is extracted.")
+                print("Train: View " + str(foldindx + 1) + " is extracted. Shape: " + str(np.shape(dat)))
 
             print("Training Shape: " + str(np.shape(TrX)))
 

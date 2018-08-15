@@ -1749,24 +1749,11 @@ p, li { white-space: pre-wrap; }
     <attribute name="title">
      <string>Tools</string>
     </attribute>
-    <widget class="QPushButton" name="btnFilesRename">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>210</y>
-       <width>630</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Group Rename Files</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="btnEstimate">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>30</y>
+       <y>290</y>
        <width>630</width>
        <height>32</height>
       </rect>
@@ -1775,24 +1762,11 @@ p, li { white-space: pre-wrap; }
       <string>View Parameters (Feat_gui)</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnScriptEditor">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>150</y>
-       <width>630</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Group Script Editor</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="btnReportViewer">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>90</y>
+       <y>350</y>
        <width>630</width>
        <height>32</height>
       </rect>
@@ -1801,43 +1775,66 @@ p, li { white-space: pre-wrap; }
       <string>View Generated Report</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnfMRIConcatenator">
+    <widget class="QLabel" name="label_43">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>270</y>
-       <width>630</width>
-       <height>32</height>
+       <y>30</y>
+       <width>471</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="text">
-      <string>fMRI Concatenator</string>
+      <string>Select a tool:</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnEventConcatenator">
+    <widget class="QComboBox" name="cbTools">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>330</y>
+       <y>50</y>
        <width>630</width>
-       <height>32</height>
+       <height>26</height>
       </rect>
-     </property>
-     <property name="text">
-      <string>Event Concatenator</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnImageInfo">
+    <widget class="QPushButton" name="btnTools">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>390</y>
+       <y>110</y>
        <width>630</width>
        <height>32</height>
       </rect>
      </property>
      <property name="text">
-      <string>Image Information</string>
+      <string>Run</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnScriptEditor">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>170</y>
+       <width>630</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Group Script Editor</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnFilesRename">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>230</y>
+       <width>630</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Group Rename Files</string>
      </property>
     </widget>
    </widget>
@@ -1969,8 +1966,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>txtFeat_gui</tabstop>
   <tabstop>btnEstimate</tabstop>
   <tabstop>btnReportViewer</tabstop>
-  <tabstop>btnScriptEditor</tabstop>
-  <tabstop>btnFilesRename</tabstop>
   <tabstop>btnEventTest</tabstop>
   <tabstop>btnLoad</tabstop>
   <tabstop>btnSave</tabstop>
@@ -1989,8 +1984,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>txtCTPT</tabstop>
   <tabstop>txtbetcmd</tabstop>
   <tabstop>txtMNI</tabstop>
-  <tabstop>btnfMRIConcatenator</tabstop>
-  <tabstop>btnEventConcatenator</tabstop>
  </tabstops>
  <resources/>
  <connections/>

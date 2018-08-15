@@ -23,14 +23,10 @@ from GUI.frmProbabilisticROI import frmProbabilisticROI
 from GUI.frmCombineROI import frmCombineROI
 from GUI.frmManuallyDesignROI import frmManuallyDesignROI
 from GUI.frmAtlasROI import frmAtlasROI
-from GUI.frmRemoveRestScan import frmRemoveRestScan
-from GUI.frmRemoveRestScanCross import frmRemoveRestScanCross
-from GUI.frmCombineData import frmCombineData
 from GUI.frmFECrossValidation import frmFECrossValidation
-from GUI.frmImageInfo import frmImageInfo
 from GUI.frmSelectSession import frmSelectSession
 from GUI.frmFEEZCrossValidation import frmFEEZCrossValidation
-from GUI.frmEzMat import frmEzMat
+from GUI.frmFETempAlign import frmFETempAlign
 
 from Base.utility import fixstr, getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
 from Base.utility import strRange, strMultiRange, getSettingVersion
@@ -39,6 +35,7 @@ from Base.SettingHistory import History
 from Base.Conditions import Conditions
 from Base.dialogs import LoadFile, SaveFile, SelectDir
 from Base.fsl import FSL
+from Base.tools import Tools
 
 
 class RegistrationThread(threading.Thread):
@@ -120,6 +117,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             dialog = MainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
+
+        tools = Tools()
+        tools.combo(ui.cbTools)
+
         ui.tabWidget.setCurrentIndex(0)
         ui.tabWidget_2.setCurrentIndex(0)
         ui.tabWidget_3.setCurrentIndex(0)
@@ -222,7 +223,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnDISetting.clicked.connect(self.btnDISetting_click)
         ui.btnSSSettingReload.clicked.connect(self.btnSSSettingReload_click)
         ui.btnDISettingReload.clicked.connect(self.btnDISettingReload_click)
-        ui.btnSSMatCreator.clicked.connect(self.btnSSMatCreator_click)
         ui.btnSSSpace.clicked.connect(self.btnSSSpace_click)
         ui.btnSSMatFile.clicked.connect(self.btnSSMatFile_click)
         ui.btnSSRUN.clicked.connect(self.btnSSRUN_click)
@@ -235,17 +235,21 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnDIOutFile.clicked.connect(self.btnDIOutFile_click)
         ui.btnDIROIFile.clicked.connect(self.btnDIROIFile_click)
         ui.btnDILabels.clicked.connect(self.btnDILabels_click)
-        ui.btnDIRemoveRest.clicked.connect(self.btnDIRemoveRest_click)
-        ui.btnDIRemoveRest2.clicked.connect(self.btnDIRemoveRest2_click)
-        ui.btnDICombineData.clicked.connect(self.btnDICombineData_click)
         ui.btnFEURun.clicked.connect(self.btnFEU_click)
         ui.btnFESRun.clicked.connect(self.btnFES_click)
         ui.btnDIDraw.clicked.connect(self.btnDIDraw_click)
         ui.btnFECross.clicked.connect(self.btnFECross_click)
         ui.btnFARun.clicked.connect(self.btnFA_click)
-        ui.btnImageInfo.clicked.connect(self.btnImageInfo_click)
-        ui.btnDIConvertEzData.clicked.connect(self.btnDIConverEzData_click)
         ui.btnFECrossEzData.clicked.connect(self.btnFECrossEzData_click)
+        ui.btnTools.clicked.connect(self.btnTools_click)
+        ui.btnSSDIR.clicked.connect(self.btnSSDIR_click)
+        ui.btnDIDIR.clicked.connect(self.btnDIDIR_click)
+        ui.btnSSInFile.clicked.connect(self.btnSSInFile_click)
+        ui.btnSSOutFile.clicked.connect(self.btnSSOutFile_click)
+        ui.btnDIInFile.clicked.connect(self.btnDIInFile_click)
+        ui.btnDIDM.clicked.connect(self.btnDIDM_click)
+        ui.btnDIEventDIR.clicked.connect(self.btnDIEventDIR_click)
+        ui.btnFETempAlign.clicked.connect(self.btnFETempAlign_click)
 
 
     # Exit function
@@ -253,8 +257,58 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         global dialog, parent
         dialog.close()
 
-    def btnImageInfo_click(self):
-        frmImageInfo.show(frmImageInfo)
+    def btnFETempAlign_click(self):
+        frmFETempAlign.show(frmFETempAlign)
+
+
+    def btnDIEventDIR_click(self):
+        directory = SelectDir("Select event directory", ui.txtDIEventDIR.text())
+        if len(directory):
+            ui.txtDIEventDIR.setText(directory)
+
+
+    def btnDIDM_click(self):
+        filename = LoadFile("Select Design Matrix ...",['Design Matrix(*.mat)','All files(*.*)'],
+                            'mat',os.path.dirname(ui.txtDIDM.currentText()))
+        if len(filename):
+            ui.txtDIDM.setCurrentText(filename)
+
+    def btnDIInFile_click(self):
+        filename = LoadFile("Select Image File ...",['Image Files(*.nii.gz *.nii)','All files(*.*)'],
+                            'nii.gz',os.path.dirname(ui.txtDIInFile.currentText()))
+        if len(filename):
+            ui.txtDIInFile.setCurrentText(filename)
+
+    def btnSSOutFile_click(self):
+        filename = LoadFile("Select Image File ...",['Image Files(*.nii.gz *.nii)','All files(*.*)'],
+                            'nii.gz',os.path.dirname(ui.txtSSOutFile.currentText()))
+        if len(filename):
+            ui.txtSSOutFile.setCurrentText(filename)
+
+
+    def btnSSInFile_click(self):
+        filename = LoadFile("Select Image File ...",['Image Files(*.nii.gz *.nii)','All files(*.*)'],
+                            'nii.gz',os.path.dirname(ui.txtSSInFile.currentText()))
+        if len(filename):
+            ui.txtSSInFile.setCurrentText(filename)
+
+
+    def btnDIDIR_click(self):
+        directory = SelectDir("Select main directory", ui.txtDIDIR.text())
+        if len(directory):
+            ui.txtDIDIR.setText(directory)
+
+
+    def btnSSDIR_click(self):
+        directory = SelectDir("Select main directory", ui.txtSSDIR.text())
+        if len(directory):
+            ui.txtSSDIR.setText(directory)
+
+
+    def btnTools_click(self):
+        tools = Tools()
+        tools.run(ui.cbTools.currentData())
+
 
     def btnSSSetting_click(self):
         global ui
@@ -303,7 +357,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
     def btnDISetting_click(self):
         global ui
-
+        ui.cbDISetting.setChecked(False)
         if os.path.isfile(ui.txtDISetting.currentText()):
             currDir = os.path.dirname(ui.txtDISetting.currentText())
         else:
@@ -332,6 +386,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 return
 
             if not setting.empty:
+                ui.cbDISetting.setChecked(True)
                 ui.txtDISetting.setCurrentText(filename)
                 ui.txtDIDIR.setText(setting.mainDIR)
                 ui.txtDITask.setText(setting.Task)
@@ -387,8 +442,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
     def btnDISettingReload_click(self):
         from Base.utility import getVersion
-        global ui
         filename = ui.txtDISetting.currentText()
+        ui.cbDISetting.setChecked(False)
         if os.path.isfile(filename):
             if len(filename):
                 setting = Setting()
@@ -404,6 +459,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     return
 
                 if not setting.empty:
+                    ui.cbDISetting.setChecked(True)
                     ui.txtDISetting.setCurrentText(filename)
                     ui.txtDIDIR.setText(setting.mainDIR)
                     ui.txtDITask.setText(setting.Task)
@@ -444,9 +500,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 ui.txtSSSpace.setCurrentText(filename)
             else:
                 print("Image file not found!")
-
-    def btnSSMatCreator_click(self):
-        frmTansformationMatrix.show(frmTansformationMatrix)
 
     def btnSSRUN_click(self):
         global ui
@@ -735,6 +788,31 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         msgBox = QMessageBox()
         mainDIR = ui.txtDIDIR.text()
         Task = ui.txtDITask.text()
+
+        if not(ui.txtDISetting.currentText()):
+            msgBox.setText("In order to save setting, you must load setting file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if not os.path.isfile(ui.txtDISetting.currentText()):
+            msgBox.setText("Setting file not found!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        setting = Setting()
+        if ui.cbDISetting.isChecked():
+            setting.Load(ui.txtDISetting.currentText())
+            if setting.empty:
+                msgBox.setText("Cannot load setting file!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
         # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
@@ -1090,6 +1168,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         CondID      = Conditions()
         NumberOFExtract = 0
         NumberOFALL = 0
+
         # RUNNING ...
         try:
             os.stat(OutDIR)
@@ -1265,10 +1344,65 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         print("Saving Header " + OutHDR + "...")
         OutData = dict()
         OutData["imgShape"] = np.array(fMRISize)
-        OutData["DataStructure"] = []
+
+        Integration = dict()
+        Integration["DataStructure"] = list()
         if len(DataFiles):
-            OutData["DataStructure"] = [ui.txtDIDataID.text()]
-            OutData[ui.txtDIDataID.text() + "_files"] = DataFiles
+            Integration["DataStructure"].append(ui.txtDIDataID.text())
+            Integration[ui.txtDIDataID.text() + "_files"] = DataFiles
+
+        Integration["Preprocess"] = list()
+        if ui.cbDISetting.isChecked():
+            # Save Preprocessing Setting
+            Preprocess  = dict()
+            Preprocess["Version"]       = setting.Version
+            Preprocess["mainDIR"]       = setting.mainDIR
+            Preprocess["MNISpace"]      = setting.MNISpace
+            Preprocess["Task"]          = setting.Task
+            Preprocess["SubRange"]      = setting.SubRange
+            Preprocess["SubLen"]        = setting.SubLen
+            Preprocess["SubPer"]        = setting.SubPer
+            Preprocess["ConRange"]      = setting.ConRange
+            Preprocess["ConLen"]        = setting.ConLen
+            Preprocess["ConPer"]        = setting.ConPer
+            Preprocess["RunRange"]      = setting.RunRange
+            Preprocess["RunLen"]        = setting.RunLen
+            Preprocess["RunPer"]        = setting.RunPer
+            Preprocess["Onset"]         = setting.Onset
+            Preprocess["BOLD"]          = setting.BOLD
+            Preprocess["AnatDIR"]       = setting.AnatDIR
+            Preprocess["EventFolder"]   = setting.EventFolder
+            Preprocess["CondPre"]       = setting.CondPre
+            Preprocess["BET"]           = setting.BET
+            Preprocess["BETPDF"]        = setting.BETPDF
+            Preprocess["Analysis"]      = setting.Analysis
+            Preprocess["Script"]        = setting.Script
+            Preprocess["TR"]            = setting.TR
+            Preprocess["FWHM"]          = setting.FWHM
+            Preprocess["TotalVol"]      = setting.TotalVol
+            Preprocess["DeleteVol"]     = setting.DeleteVol
+            Preprocess["Motion"]        = setting.Motion
+            Preprocess["Anat"]          = setting.Anat
+            Preprocess["HighPass"]      = setting.HighPass
+            Preprocess["DENL"]          = setting.DENL
+            Preprocess["DETS"]          = setting.DETS
+            Preprocess["DEZT"]          = setting.DEZT
+            Preprocess["CTZT"]          = setting.CTZT
+            Preprocess["CTPT"]          = setting.CTPT
+            Preprocess["TimeSlice"]     = setting.TimeSlice
+            Preprocess["EventCodes"]    = setting.EventCodes
+            OutData["setting_" + Task]  = Preprocess
+            Integration["Preprocess"].append("Setting_" + Task)
+
+        Integration["OutHeader"] = ui.txtDIOutHDR.text()
+        Integration["OutData"]   = ui.txtDIOutDAT.text()
+        Integration["SubLen"]    = SubLen
+        Integration["SubPer"]    = ui.txtDISubPer.text()
+        Integration["RunLen"]    = RunLen
+        Integration["RunPer"]    = ui.txtDIRunPer.text()
+        Integration["ConLen"]    = ConLen
+        Integration["ConPer"]    = ui.txtDIConPer.text()
+        OutData["Integration"]   = Integration
 
         # NScan
         if ui.cbDINScanID.isChecked():
@@ -1555,17 +1689,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 leg.draggable()
         plt.show()
 
-    def btnDIConverEzData_click(self):
-        frmEzMat.show(frmEzMat)
-
-    def btnDIRemoveRest_click(self):
-        frmRemoveRestScan.show(frmRemoveRestScan)
-
-    def btnDIRemoveRest2_click(self):
-        frmRemoveRestScanCross.show(frmRemoveRestScanCross)
-
-    def btnDICombineData_click(self):
-        frmCombineData.show(frmCombineData)
 
     def btnFEU_click(self):
         FEID = ui.cbFEU.currentData()
@@ -1624,6 +1747,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             from GUI.frmFAHA import frmFAHA
             frmFAHA.show(frmFAHA)
             return
+
 
 # Auto Run
 if __name__ == "__main__":

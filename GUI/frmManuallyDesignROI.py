@@ -53,7 +53,7 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
         ui.gridLayout.addWidget(ui.txtCode, 0, 0, 1, 1)
         ui.txtCode.setObjectName("txtCode")
 
-        #ui.txtCode.backend.start('backend/server.py')
+        ui.txtCode.backend.start('backend/server.py')
 
         ui.txtCode.modes.append(modes.CodeCompletionMode())
         ui.txtCode.modes.append(modes.CaretLineHighlighterMode())
