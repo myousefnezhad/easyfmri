@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmMainMenuGUI.ui'
 #
-# Created by: PyQt5 UI code generator 5.8.2
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -43,7 +43,7 @@ class Ui_frmMainMenuGUI(object):
 
     def retranslateUi(self, frmMainMenuGUI):
         _translate = QtCore.QCoreApplication.translate
-        frmMainMenuGUI.setWindowTitle(_translate("frmMainMenuGUI", "easy fMRI (0.0.1)"))
+        frmMainMenuGUI.setWindowTitle(_translate("frmMainMenuGUI", "easy fMRI (1.0)"))
         self.label.setText(_translate("frmMainMenuGUI", "easy fMRI"))
         self.btnPreprocess.setText(_translate("frmMainMenuGUI", "Preprocessing (FSL)"))
         self.btnFeatureAnalysis.setText(_translate("frmMainMenuGUI", "Feature Analysis"))

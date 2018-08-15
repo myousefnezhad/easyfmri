@@ -26,7 +26,7 @@ class EventGenerator:
         import scipy.io as io
         import os
 
-        from utility import fixstr
+        from utility import fixstr,setParameters
         from Setting import Setting
         setting = Setting()
         setting.Load(SettingFileName)
@@ -35,24 +35,25 @@ class EventGenerator:
             return False
         else:
 
-            SubNum = np.int32(setting.SubNum)
-            SubLen = np.int32(setting.SubLen)
-            RunLen = np.int32(setting.RunLen)
-            Run    = np.int32(str(setting.Run).replace("\'", " ").replace(",", " ").replace("[", "").replace("]", "").split())
+            Run     = np.int32(str(setting.Run).replace("\'", " ").replace(",", " ").replace("[", "").replace("]", "").split())
             self.ConditionTitles = []
             Events = []
             # COLECT ALL EVENTS AND CALCULATE THE LIST OF CONDITION
-            for s in range(1, SubNum + 1):
+            for si, s in enumerate(range(setting.SubFrom, setting.SubTo + 1)):
                 print("Analyzing Subject %d ..." % (s))
-                SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
-                for r in range(1,Run[s-1]+1):
+                #SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
+                for r in range(1,Run[si] + 1):
                     # Event File Check
-                    EventFilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
-                               fixstr(r, RunLen, setting.RunPer) + "_events." + setting.Onset
-                    EventFolder = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
-                               fixstr(r, RunLen, setting.RunPer) + "_events/"
-                    EventAddr   = SubDIR + "/func/" + EventFilename
-                    MatAddr     =  EventFolder + "Cond.mat"
+                    EventFilename = setParameters(setting.Onset,fixstr(s, setting.SubLen, setting.SubPer)\
+                                                  ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task)
+                    #EventFilename = "sub-" +  + "_task-" + setting.Task + "_run-" + \
+                                #+ "_events." + setting.Onset
+                    EventFolder = setting.mainDIR + setParameters(setting.EventFolder,fixstr(s, setting.SubLen, setting.SubPer)\
+                                                  ,fixstr(r, setting.RunLen, setting.RunPer), setting.Task)
+                    #EventFolder = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
+                               #fixstr(r, RunLen, setting.RunPer) + "_events/"
+                    EventAddr   = setting.mainDIR + EventFilename
+                    MatAddr     =  EventFolder + setting.CondPre + ".mat"
                     if not os.path.isfile(EventAddr):
                         print(EventAddr, " - file not find!")
                         return False
@@ -62,22 +63,49 @@ class EventGenerator:
                         file.close()
                         dir = {}
                         dir.clear()
-                        # Adapt by real index
-                        OnRID = setting.OnsetRID     - 1
-                        CoRID = setting.ConditionRID - 1
-                        DuRID = setting.DurationRID  - 1
-                        startRow = setting.RowStart  - 1
 
-                        for k in range(startRow, len(lines)):
-                            lines[k] = lines[k].rsplit()
+                        for k in range(0, len(lines)):
+                            Event = lines[k].rsplit()
                             try:
-                                value = dir[lines[k][CoRID]]
-                                value.append([float(lines[k][OnRID]), float(lines[k][DuRID])])
-                                dir[lines[k][CoRID]] = value
-                            except KeyError:
-                                value = list()
-                                value.append([float(lines[k][OnRID]), float(lines[k][DuRID])])
-                                dir[lines[k][CoRID]] = value
+                                allvars = dict(locals(), **globals())
+                                exec(setting.EventCodes,allvars,allvars)
+                            
+                            except Exception as e:
+                                print("Event codes generated following error:\n")
+                                print(e)
+                                return False
+
+                            try:
+                                RowStartID = allvars['RowStartID']
+                            except:
+                                print("Cannot find RowStartID variable in event code")
+                                return False
+                            try:
+                                Condition = allvars['Condition']
+                            except:
+                                print("Cannot find Condition variable in event code")
+                                return False
+                            try:
+                                Onset = allvars['Onset']
+                            except:
+                                print("Cannot find Onset variable in event code")
+                                return False
+                            try:
+                                Duration = allvars['Duration']
+                            except:
+                                print("Cannot find Duration variable in event code")
+                                return False
+                            if RowStartID <= k:
+                                # Create Condition Directory
+                                try:
+                                    value = dir[Condition]
+                                    value.append([float(Onset), float(Duration)])
+                                    dir[Condition] = value
+                                except KeyError:
+                                    value = list()
+                                    value.append([float(Onset), float(Duration)])
+                                    dir[Condition] = value
+
                         for condinx, cond in enumerate(dir):
                             self.add_condTitle(title=cond,ConditionTitles=self.ConditionTitles)
 
@@ -86,7 +114,7 @@ class EventGenerator:
             # Create Standard Condition Titles list
             conditions = []
             for cond in self.ConditionTitles:
-                conditions.append(["Cond_"+str(self.get_condID(cond[0],self.ConditionTitles)), cond[0]])
+                conditions.append([setting.CondPre + "_" + str(self.get_condID(cond[0],self.ConditionTitles)), cond[0]])
 
             conditions = np.array(conditions,dtype=object)
 
@@ -97,7 +125,7 @@ class EventGenerator:
                 StandardEvent = dict()
                 StandardEvent["Cond"] = conditions
                 for cond in event[2]:
-                    StandardEvent["Cond_"+str(self.get_condID(cond,self.ConditionTitles))] = event[2][cond]
+                    StandardEvent[setting.CondPre + "_" + str(self.get_condID(cond,self.ConditionTitles))] = event[2][cond]
                 # Add list of titles
                 StandardEvents.append([event[0], event[1], StandardEvent])
             print("Events were normalized! Generating event files ...")

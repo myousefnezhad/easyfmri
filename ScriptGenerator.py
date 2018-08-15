@@ -1,11 +1,11 @@
 class ScriptGenerator:
-    def run(self,SettingFileName):
+    def run(self,SettingFileName,StandardTemp):
         import numpy as np
         import nibabel as nb
         import scipy.io as io
         import os
 
-        from utility import fixstr
+        from utility import fixstr,setParameters
         from Setting import Setting
         setting = Setting()
         setting.Load(SettingFileName)
@@ -13,30 +13,38 @@ class ScriptGenerator:
             print("Error in loading the setting file!")
             return False
         else:
-            SubNum = np.int32(setting.SubNum)
-            SubLen = np.int32(setting.SubLen)
-            RunLen = np.int32(setting.RunLen)
+            #SubNum = np.int32(setting.SubNum)
+            #SubLen = np.int32(setting.SubLen)
+            #RunLen = np.int32(setting.RunLen)
             Run    = np.int32(str(setting.Run).replace("\'", " ").replace(",", " ").replace("[", "").replace("]", "").split())
-            for s in range(1, SubNum + 1):
+            for si, s in enumerate(range(setting.SubFrom, setting.SubTo + 1)):
                 print("Analyzing Subject %d ..." % (s))
-                SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
-                for r in range(1,Run[s-1]+1):
-                    ScriptFilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
-                               fixstr(r, RunLen, setting.RunPer) + "_script.fsf"
+                #SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
+                for r in range(1,Run[si] + 1):
+                    #ScriptFilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
+                    #           fixstr(r, RunLen, setting.RunPer) + "_script.fsf"
+                    ScriptFilename = setParameters(setting.Script,fixstr(s, setting.SubLen, setting.SubPer),\
+                                                   fixstr(r, setting.RunLen, setting.RunPer), setting.Task)
 
-                    ScriptAddr       = SubDIR + "/func/" + ScriptFilename
+                    ScriptAddr       = setting.mainDIR + ScriptFilename
 
-                    ScriptOutputFolder = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
-                               fixstr(r, RunLen, setting.RunPer) + "_analyze"
-                    ScriptOutputAddr = SubDIR + "/func/" + ScriptOutputFolder
+                    #ScriptOutputFolder = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
+                    #           fixstr(r, RunLen, setting.RunPer) + "_analyze"
+                    ScriptOutputFolder = setParameters(setting.Analysis,fixstr(s, setting.SubLen, setting.SubPer),\
+                                                       fixstr(r, setting.RunLen, setting.RunPer), setting.Task)
 
-                    BOLDfilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
-                               fixstr(r, RunLen, setting.RunPer) + "_bold"
+                    ScriptOutputAddr = setting.mainDIR + ScriptOutputFolder
+
+                    #BOLDfilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + \
+                    #           fixstr(r, RunLen, setting.RunPer) + "_bold"
+                    BOLDfilename = setParameters(setting.BOLD,fixstr(s, setting.SubLen, setting.SubPer),\
+                                                fixstr(r, setting.RunLen, setting.RunPer), setting.Task)
 
 
-                    BOLDaddr   = SubDIR + "/func/" + BOLDfilename + "." + setting.BOLD
 
-                    BOLDaddrWE = SubDIR + "/func/" + BOLDfilename
+                    BOLDaddr   = setting.mainDIR + BOLDfilename
+
+                    #BOLDaddrWE = setting.mainDIR + setting.Analysis
 
                     # Generate Script
                     scriptFile = open(ScriptAddr,"w")
@@ -60,9 +68,9 @@ class ScriptGenerator:
                     scriptFile.write("# Number of first-level analyses\nset fmri(multiple) 1\n\n")
                     scriptFile.write("# Higher-level input type\n# 1 : Inputs are lower-level FEAT directories\n# 2 : Inputs are cope images from FEAT directories\nset fmri(inputtype) 2\n\n")
                     scriptFile.write("# Carry out pre-stats processing?\nset fmri(filtering_yn) 1\n\n")
-                    scriptFile.write("# Brain/background threshold, %\nset fmri(brain_thresh) 10\n\n")
-                    scriptFile.write("# Critical z for design efficiency calculation\nset fmri(critical_z) 5.3\n\n")
-                    scriptFile.write("# Noise level\nset fmri(noise) 0.66\n\n# Noise AR(1)\nset fmri(noisear) 0.34\n\n")
+                    scriptFile.write("# Brain/background threshold, %\nset fmri(brain_thresfh) 10\n\n")
+                    scriptFile.write("# Critical z for design efficiency calculation\nset fmri(critical_z) " + str(setting.DEZT) + "\n\n")
+                    scriptFile.write("# Noise level\nset fmri(noise) " + str(setting.DENL) + "\n\n# Noise AR(1)\nset fmri(noisear) " + str(setting.DETS) + "\n\n")
                     # Motion Correction: ALWAYS ON
                     scriptFile.write("# Motion correction\n# 0 : None\n# 1 : MCFLIRT\nset fmri(mc) 1\n\n")
 
@@ -93,7 +101,10 @@ class ScriptGenerator:
                     scriptFile.write("# Robust outlier detection in FLAME?\nset fmri(robust_yn) 0\n\n")
                     scriptFile.write("# Higher-level modelling\n# 3 : Fixed effects\n# 0 : Mixed Effects: Simple OLS\n# 2 : Mixed Effects: FLAME 1\n# 1 : Mixed Effects: FLAME 1+2\nset fmri(mixed_yn) 2\n\n")
                     # Conditions
-                    ConditionFile = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + fixstr(r, RunLen, setting.RunPer) + "_events/Cond.mat"
+                    #ConditionFile = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + fixstr(r, RunLen, setting.RunPer) + "_events/Cond.mat"
+                    ConditionFile = setting.mainDIR + setParameters(setting.EventFolder,fixstr(s, setting.SubLen, setting.SubPer),\
+                                                fixstr(r, setting.RunLen, setting.RunPer), setting.Task) + setting.CondPre + ".mat"
+
                     Cond = io.loadmat(ConditionFile)
                     Conditions = Cond["Cond"]
                     CondLen = len(Conditions)
@@ -106,9 +117,9 @@ class ScriptGenerator:
 
                     # Clustering
                     scriptFile.write("# Thresholding\n# 0 : None\n# 1 : Uncorrected\n# 2 : Voxel\n# 3 : Cluster\nset fmri(thresh) 3\n\n")
-                    scriptFile.write("# P threshold\nset fmri(prob_thresh) 0.05\n\n")
+                    scriptFile.write("# P threshold\nset fmri(prob_thresh) " + str(setting.CTPT) + "\n\n")
 
-                    scriptFile.write("# Z threshold\nset fmri(z_thresh) 2.3\n\n")
+                    scriptFile.write("# Z threshold\nset fmri(z_thresh) " + str(setting.CTZT) + "\n\n")
                     scriptFile.write("# Z min/max for colour rendering\n# 0 : Use actual Z min/max\n# 1 : Use preset Z min/max\nset fmri(zdisplay) 0\n\n")
                     scriptFile.write("# Z min in colour rendering\nset fmri(zmin) 2\n\n")
                     scriptFile.write("# Z max in colour rendering\nset fmri(zmax) 8\n\n")
@@ -135,7 +146,7 @@ class ScriptGenerator:
                     scriptFile.write("# Use alternate reference images?\nset fmri(alternateReference_yn) 0\n\n")
 
                     # Get {FSLDIR}
-                    StandardTemp = os.path.dirname(os.path.realpath(__file__)) + "/MNI152_T1_2mm_brain"
+                    #StandardTemp = os.path.dirname(os.path.realpath(__file__)) + "/MNI152_T1_2mm_brain"
                     scriptFile.write("# Standard image\nset fmri(regstandard) \"" + StandardTemp + "\"\n\n")
 
                     scriptFile.write("# Search space for registration to standard space\n# 0   : No search\n# 90  : Normal search\n# 180 : Full search\nset fmri(regstandard_search) 90\n\n")
@@ -153,22 +164,25 @@ class ScriptGenerator:
                     scriptFile.write("# Total voxels\nset fmri(totalVoxels) " + str(TotalVoxel) + "\n\n\n")
 
                     scriptFile.write("# Number of lower-level copes feeding into higher-level analysis\nset fmri(ncopeinputs) 0\n\n")
-                    scriptFile.write("# 4D AVW data or FEAT directory (1)\nset feat_files(1) \"" + BOLDaddrWE + "\"\n\n")
+                    scriptFile.write("# 4D AVW data or FEAT directory (1)\nset feat_files(1) \"" + BOLDaddr + "\"\n\n")
                     scriptFile.write("# Add confound EVs text file\nset fmri(confoundevs) 0\n\n")
                     if setting.Anat:
-                        AnatFilename = "sub-" + fixstr(s, SubLen, setting.SubPer) + "_T1w." + setting.BOLD
-                        AnatAddr = SubDIR + "/anat/" + AnatFilename
+                        AnatFilename = setParameters(setting.BET,fixstr(s, setting.SubLen, setting.SubPer),"",setting.Task)
+                        #"sub-" + fixstr(s, SubLen, setting.SubPer) + "_T1w." + setting.BOLD
+                        AnatAddr = setting.mainDIR + AnatFilename
                         scriptFile.write("# Subject's structural image for analysis 1\nset highres_files(1) \"" + AnatAddr + "\"\n\n")
 
                     # Condition Files
                     for cond in range(1,CondLen + 1):
-                        scriptFile.write("# EV " + str(cond) + " title\nset fmri(evtitle"+str(cond)+") \"Cond"+str(cond)+"\"\n\n")
+                        scriptFile.write("# EV " + str(cond) + " title\nset fmri(evtitle"+str(cond)+") \""+Conditions[cond-1][1][0]+"\"\n\n")
                         scriptFile.write("# Basic waveform shape (EV " + str(cond) + ")\n# 0 : Square\n# 1 : Sinusoid\n# 2 : Custom (1 entry per volume)\n# 3 : Custom (3 column format)\n# 4 : Interaction\n# 10 : Empty (all zeros)\nset fmri(shape" + str(cond) + ") 3\n\n")
                         scriptFile.write("# Convolution (EV " + str(cond) + ")\n# 0 : None\n# 1 : Gaussian\n# 2 : Gamma\n# 3 : Double-Gamma HRF\n# 4 : Gamma basis functions\n# 5 : Sine basis functions\n# 6 : FIR basis functions\nset fmri(convolve" + str(cond) + ") 2\n\n")
                         scriptFile.write("# Convolve phase (EV " + str(cond) + ")\nset fmri(convolve_phase" + str(cond) + ") 0\n\n")
                         scriptFile.write("# Apply temporal filtering (EV " + str(cond) + ")\nset fmri(tempfilt_yn" + str(cond) + ") 1\n\n")
                         scriptFile.write("# Add temporal derivative (EV " + str(cond) + ")\nset fmri(deriv_yn" + str(cond) + ") 0\n\n")
-                        ConditionFile = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen,setting.SubPer) + "_task-" + setting.Task + "_run-" + fixstr(r, RunLen, setting.RunPer) + "_events/Cond_" + str(cond) + ".tab"
+                        #ConditionFile = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen,setting.SubPer) + "_task-" + setting.Task + "_run-" + fixstr(r, RunLen, setting.RunPer) + "_events/Cond_" + str(cond) + ".tab"
+                        ConditionFile = setting.mainDIR + setParameters(setting.EventFolder,fixstr(s, setting.SubLen,setting.SubPer), \
+                                                                        fixstr(r, setting.RunLen, setting.RunPer), setting.Task) + setting.CondPre + "_" +  str(cond) + ".tab"
                         scriptFile.write("# Custom EV file (EV " + str(cond) + ")\nset fmri(custom" + str(cond) + ") \"" + ConditionFile + "\"\n\n")
                         scriptFile.write("# Gamma sigma (EV " + str(cond) + ")\nset fmri(gammasigma" + str(cond) + ") 3\n\n")
                         scriptFile.write("# Gamma delay (EV " + str(cond) + ")\nset fmri(gammadelay" + str(cond) + ") 6\n\n")
@@ -179,7 +193,7 @@ class ScriptGenerator:
                     # Contrast & F-tests mode
                     for cond in range(1,CondLen + 1):
                         scriptFile.write("# Display images for contrast_real " + str(cond) + "\nset fmri(conpic_real." + str(cond) + ") 1\n\n")
-                        scriptFile.write("# Title for contrast_real " + str(cond) + "\nset fmri(conname_real." + str(cond) + ") \"OC" + str(cond) + "\"\n\n")
+                        scriptFile.write("# Title for contrast_real " + str(cond) + "\nset fmri(conname_real." + str(cond) + ") \"" + Conditions[cond-1][1][0] + "\"\n\n")
                         for ev in range(1, CondLen + 1):
                             if ev == cond:
                                 scriptFile.write("# Real contrast_real vector " + str(cond) + " element " + str(ev) + "\nset fmri(con_real" + str(cond) + "." + str(ev) + ") " + str(CondLen) + "\n\n")
@@ -188,7 +202,7 @@ class ScriptGenerator:
 
                     for cond in range(1,CondLen + 1):
                         scriptFile.write("# Display images for contrast_orig " + str(cond) + "\nset fmri(conpic_orig." + str(cond) + ") 1\n\n")
-                        scriptFile.write("# Title for contrast_orig " + str(cond) + "\nset fmri(conname_orig." + str(cond) + ") \"OC" + str(cond) + "\"\n\n")
+                        scriptFile.write("# Title for contrast_orig " + str(cond) + "\nset fmri(conname_orig." + str(cond) + ") \"" + Conditions[cond-1][1][0] + "\"\n\n")
                         for ev in range(1, CondLen + 1):
                             if ev == cond:
                                 scriptFile.write("# Real contrast_orig vector " + str(cond) + " element " + str(ev) + "\nset fmri(con_orig" + str(cond) + "." + str(ev) + ") " + str(CondLen) + "\n\n")

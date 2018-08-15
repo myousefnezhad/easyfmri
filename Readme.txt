@@ -22,7 +22,9 @@ How to install:
 
 # Python3
 brew install python3
-pip3 install numpy scipy sklearn ipython jupyter matplotlib PyQt5
+pip3 install numpy scipy sklearn ipython jupyter matplotlib PyQt5 nipype nibabel
+
+# Then respectively install pyqode.qt.zip and pyqode.core.zip from install directory
 
 # Python3 ENV
 export PATH="/usr/local/bin:$PATH"

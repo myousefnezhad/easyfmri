@@ -36,3 +36,13 @@ def getTimeSliceText(ID):
     elif ID == 5:
         return "Interleaved (2, 4, 6, ...), (1, 3, 5, ...)"
     return None
+
+def setParameters(STR, Sub, Run, Task, Counter=None):
+    outSTR = str(STR)
+    outSTR = outSTR.replace("$SUB$",Sub)
+    outSTR = outSTR.replace("$RUN$",Run)
+    outSTR = outSTR.replace("$TASK$",Task)
+    if Counter is not None:
+        outSTR = outSTR.replace("$COUNT$", Counter)
+    return outSTR
+

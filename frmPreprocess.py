@@ -1,14 +1,26 @@
+#!/usr/bin/env python3
 import sys
 from PyQt5.QtWidgets import QMessageBox
+import os, platform
+import subprocess
+from PyQt5.QtWidgets import QFileDialog, QDialog
+
 import PyQt5.QtWidgets as QtWidgets
-import os
-from PyQt5.QtWidgets import QFileDialog
+import PyQt5.QtGui as QtGui
+
 import configparser as cp
 import glob
 import nibabel as nb
+import numpy as np
 
-from frmPreprocessingGUI import *
-from utility            import getTimeSliceText
+from frmPreprocessGUI   import *
+from frmSelectSession   import frmSelectSession
+from frmEventViewer     import frmEventViewer
+from frmRenameFile      import frmRenameFile
+from frmScriptEditor    import frmScriptEditor
+
+
+from utility            import getTimeSliceText,fixstr,setParameters
 from Setting            import Setting
 from SettingHistory     import History
 from BrainExtractor     import BrainExtractor
@@ -17,41 +29,196 @@ from ScriptGenerator    import ScriptGenerator
 from RunPreprocess      import RunPreprocess
 
 
+def EventCode():
+    return\
+"""# This procedure extracts information from the event files.
+# Note 1: You can write any Python 3 style codes in order to extract the information.
+# Note 2: Numpy can be called by using np, e.g. np.int32()
+#
+# Input:
+# \tEvent[] includes each line of the event files in each iteration.
+# Output:
+# \t1. RowStartID: denotes the first row of each files that is contained the information.
+# \t   It starts from 0, and the default value is 1 (the first row is considered as the header).
+# \t2. Onset: the time that each stimulus happens. Its type is float.
+# \t3. Duration:  the echo time (TE). Its type is float.
+# \t4. Condition: the condition title (category of stimuli). Its type is str.
+
+# Handling headers ->
+RowStartID = 1
+
+# Extracting onset ->
+# In order to handle the headers, you must use this style:
+try:
+    Onset = float(Event[0])
+except:
+    Onset = None
+
+# Extracting echo time ->
+# In order to handle the headers, you must use this style:
+try:
+    Duration = float(Event[1])
+except:
+    Duration = None
+
+Condition = Event[2]"""
+
+class MainWindow(QtWidgets.QMainWindow):
+    parent = None
+    def __init__(self,parentin=None):
+        super().__init__()
+        global parent
+        if parentin is not None:
+            parent = parentin
+
+    def closeEvent(self,event):
+        global parent
+        try:
+            if parent is not None:
+                parent.show()
+        except:
+            pass
+    pass
+
 class frmPreprocess(Ui_frmPreprocess):
-    ui = Ui_frmPreprocess()
-
-    def show(self,ui=ui):
-        app = QtWidgets.QApplication(sys.argv)
+    ui      = Ui_frmPreprocess()
+    dialog  = None
+# This function is run when the main form start
+# and initiate the default parameters.
+    def show(self,parentin=None):
+        global dialog, ui, parent
+        ui = Ui_frmPreprocess()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
-        frmMainGUI = QtWidgets.QDialog()
-        ui.setupUi(frmMainGUI)
+        if parentin is not None:
+            dialog = MainWindow(parentin)
+        else:
+            dialog = MainWindow()
+        ui.setupUi(dialog)
         self.set_events(self)
         self.set_history(self)
+        ui.txtEvents.setText(EventCode())
         ui.tabWidget.setCurrentIndex(0)
+        ui.tabWidget_2.setCurrentIndex(0)
         ui.cbSliceTime.addItem("None")
         ui.cbSliceTime.addItem("Regular up (1, 2, ..., n)")
         ui.cbSliceTime.addItem("Regular down (n, n-1, ..., 1)")
         ui.cbSliceTime.addItem("Interleaved (2, 4, 6, ...), (1, 3, 5, ...)")
-        frmMainGUI.show()
-        sys.exit(app.exec_())
+        if (os.path.isfile(os.path.dirname(os.path.abspath(__file__)) + "/space/MNI152_T1_2mm_brain.nii.gz")):
+                ui.txtMNI.setText(os.path.dirname(os.path.abspath(__file__)) + "/space/MNI152_T1_2mm_brain.nii.gz")
+        else:
+            msgBox = QMessageBox()
+            msgBox.setText("Cannot find MNI file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
 
-    def showIn(self,ui=ui):
-        app = QtWidgets.QApplication(sys.argv)
-        QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
-        frmMainGUI = QtWidgets.QDialog()
-        ui.setupUi(frmMainGUI)
-        self.set_events(self)
-        self.set_history(self)
-        ui.tabWidget.setCurrentIndex(0)
-        ui.cbSliceTime.addItem("None")
-        ui.cbSliceTime.addItem("Regular up (1, 2, ..., n)")
-        ui.cbSliceTime.addItem("Regular down (n, n-1, ..., 1)")
-        ui.cbSliceTime.addItem("Interleaved (2, 4, 6, ...), (1, 3, 5, ...)")
-        frmMainGUI.show()
-        #sys.exit(app.exec_())
+        if platform.system() == "Linux":
+            ui.txtFSLDIR.setText("")
+            if os.path.isfile("/usr/bin/fsl5.0-Feat") and os.path.isfile("/usr/bin/fsl5.0-feat") and os.path.isfile("/usr/bin/fsl5.0-bet"):
+                ui.txtFeat.setText("/usr/bin/fsl5.0-feat")
+                ui.txtFeat_gui.setText("/usr/bin/fsl5.0-Feat")
+                ui.txtbetcmd.setText("/usr/bin/fsl5.0-bet")
+
+            else:
+                msgBox = QMessageBox()
+                msgBox.setText("fsl5.0 cmds are not found!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+
+        else:
+            hasFSL = False
+            FSLDIR = str(os.environ["FSLDIR"])
+            if FSLDIR == "":
+                msgBox = QMessageBox()
+                msgBox.setText("Cannot find $FSLDIR variable!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+            else:
+                if (os.path.isdir(FSLDIR) == False):
+                    msgBox = QMessageBox()
+                    msgBox.setText("$FSLDIR does not exist!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                else:
+                    ui.txtFSLDIR.setText(os.environ["FSLDIR"])
+                    hasFSL = True
+            hasMNI = False
+
+            if hasFSL:
+                if (os.path.isfile(FSLDIR + "/bin/feat") == False):
+                    ui.txtFeat.setText("")
+                    msgBox = QMessageBox()
+                    msgBox.setText("Cannot find feat cmd!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                if (os.path.isfile(FSLDIR + "/bin/Feat_gui") == False):
+                    # For Linux
+                    if os.path.isfile(FSLDIR + "/bin/Feat"):
+                        ui.txtFeat_gui.setText("/bin/Feat")
+                    else:
+                        ui.txtFeat_gui.setText("")
+                        msgBox = QMessageBox()
+                        msgBox.setText("Cannot find Feat_gui cmd!")
+                        msgBox.setIcon(QMessageBox.Critical)
+                        msgBox.setStandardButtons(QMessageBox.Ok)
+                        msgBox.exec_()
+                if (os.path.isfile(FSLDIR + "/bin/bet") == False):
+                    ui.txtFeat.setText("")
+                    msgBox = QMessageBox()
+                    msgBox.setText("Cannot find bet cmd!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+            else:
+                ui.txtFeat.setText("")
+                ui.txtFeat_gui.setText("")
+        try:
+            import logging
+            logging.basicConfig(level=logging.DEBUG)
+            import sys
+            from pyqode.core import api
+            from pyqode.core import modes
+            from pyqode.core import panels
+            from pyqode.qt import QtWidgets as pyWidgets
 
 
-    def set_events(self,ui=ui):
+        finally:
+            ui.txtEvents = api.CodeEdit(ui.tab_3)
+            ui.txtEvents.setGeometry(QtCore.QRect(10, 10, 641, 451))
+            ui.txtEvents.setObjectName("txtEvents")
+
+            ui.txtEvents.backend.start('backend/server.py')
+
+            ui.txtEvents.modes.append(modes.CodeCompletionMode())
+            ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())
+            ui.txtEvents.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
+            ui.txtEvents.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
+            ui.txtEvents.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
+
+
+            font = QtGui.QFont()
+            font.setBold(True)
+            font.setWeight(75)
+            ui.txtEvents.setFont(font)
+            ui.txtEvents.setPlainText(EventCode(),"","")
+
+            pass
+
+
+
+
+        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        dialog.setFixedSize(dialog.size())
+        dialog.show()
+
+# This function initiate the events procedures
+    def set_events(self):
+        global ui
         ui.btnClose.clicked.connect(self.btnClose_click)
         ui.btnDIR.clicked.connect(self.btnDIR_click)
         ui.btnTest.clicked.connect(self.btnTest_click)
@@ -65,8 +232,17 @@ class frmPreprocess(Ui_frmPreprocess):
         ui.btnEvent.clicked.connect(self.btnEventGenerator_click)
         ui.btnPreprocessScripts.clicked.connect(self.btnPreprocessingScript_click)
         ui.btnPreprocess.clicked.connect(self.btn_RunProcess_click)
+        ui.btnReadTask.clicked.connect(self.btnTaskRead_click)
+        ui.btnEstimate.clicked.connect(self.btn_ViewParameters_click)
+        ui.btnEventTest.clicked.connect(self.btnEventExtractor_click)
+        ui.btnFilesRename.clicked.connect(self.btnGroupRenameFile_click)
+        ui.btnScriptEditor.clicked.connect(self.btnGroupScriptEditor_click)
+        ui.btnReportViewer.clicked.connect(self.btnReportViewer_onclick)
 
-    def set_history(self,ui=ui):
+
+# Read history from file and visualized in the History tab
+    def set_history(self):
+        global ui
         history = History()
         histories = history.load_history()
         ui.lwHistory.clear()
@@ -74,13 +250,16 @@ class frmPreprocess(Ui_frmPreprocess):
             item = QtWidgets.QListWidgetItem(hist)
             ui.lwHistory.addItem(item)
 
-
+# Exit function
     def btnClose_click(self):
-       sys.exit()
+       global dialog, parent
+       dialog.close()
 
-    def btnDIR_click(self,ui=ui):
-        from utility import fixstr
+# This is the main directory in the Directory tab
+    def btnDIR_click(self):
+        from utility import fixstr,setParameters
         import numpy as np
+        global ui
         current = ui.txtDIR.text()
         if not len(current):
             current = os.getcwd()
@@ -88,27 +267,72 @@ class frmPreprocess(Ui_frmPreprocess):
         dialog = QFileDialog()
         directory = dialog.getExistingDirectory(None,"Open Main Directory",current,flags)
         if len(directory):
+            if os.path.isdir(directory) == False:
+                ui.txtDIR.setText("")
+            else:
+                ui.txtDIR.setText(directory)
+                #BOLDDIR = os.path.dirname(directory + ui.txtBOLD.text())
+                #BOLDDIR = setParameters(BOLDDIR,fixstr(ui.txtSubFrom.value(), np.int32(ui.txtSubLen.text()), ui.txtSubPer.text()),"","")
+                #FileList = glob.glob(BOLDDIR + "/*.*")
+                #print(FileList)
+
+
+# This function read the basic features from datasets, i.e. TR, Voxel size, etc.
+    def btnTaskRead_click(self):
+        from utility import fixstr,setParameters
+        import numpy as np
+        global ui
+        if ui.txtTask.text() == "":
+            msgBox = QMessageBox()
+            msgBox.setText("Please enter the task name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+
+        directory = ui.txtDIR.text()
+        if len(directory):
             ui.txtDIR.setText(directory)
-            listFiles = glob.glob(directory+"/sub-" + fixstr(1, np.int32(ui.txtSubLen.text()), ui.txtSubPer.text()) + "/func/*."+ui.txtBOLD.text())
-            if not len(listFiles):
+            FirstFile = directory + setParameters(ui.txtBOLD.text(),fixstr(ui.txtSubFrom.value(), np.int32(ui.txtSubLen.text()), ui.txtSubPer.text()), fixstr(1, np.int32(ui.txtRunLen.text()), ui.txtRunPer.text()),ui.txtTask.text())
+            #print(FirstFile)
+            if not os.path.isfile(FirstFile):
                 msgBox = QMessageBox()
                 msgBox.setText("Cannot find the BOLD data for the first subject, please check the parameters")
                 msgBox.setIcon(QMessageBox.Critical)
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return
-            ui.txtTask.setText(str(listFiles[0]).replace(directory+"/sub-" + fixstr(1, np.int32(ui.txtSubLen.text()), ui.txtSubPer.text()) + "/func/sub-" + fixstr(1, np.int32(ui.txtSubLen.text()), ui.txtSubPer.text()) + "_task-","").replace("_run-01_bold." + ui.txtBOLD.text(),""))
             try:
-                BoldHDR = nb.load(listFiles[0])
-                ui.txtTR.setText(str(BoldHDR.header.get_zooms()[3]))
-                ui.txtTotalVol.setText(str(BoldHDR.get_shape()[3]))
+                BoldHDR = nb.load(FirstFile)
+                ui.txtTR.setValue(float(BoldHDR.header.get_zooms()[3]))
+                ui.txtTotalVol.setValue(int(BoldHDR.get_shape()[3]))
                 Voxels = BoldHDR.header.get_zooms()[0:3]
                 ui.txtVoxel.setText("Voxel Size: " + str(Voxels))
-                ui.txtFWHM.setText(str(np.max(Voxels)*3))
+                ui.txtFWHM.setValue(float(np.max(Voxels)*3))
+
+                msgBox = QMessageBox()
+                msgBox.setText("Basic information is read from the 1st BOLD file\n\nTR: " +\
+                               ui.txtTR.text() + "\nTotal Voxels: " + ui.txtTotalVol.text() +\
+                               " \n" + ui.txtVoxel.text() + "\nEstimated FWHM: " + ui.txtFWHM.text() +\
+                               "\n\n\nYou can manually change these parameters in the Basic tab!")
+                msgBox.setIcon(QMessageBox.Information)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+
+
+
             except:
+                msgBox = QMessageBox()
+                msgBox.setText("Cannot read file. Please check parameters!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
                 pass
 
-    def btnTest_click(self,ui=ui):
+
+
+    def btnTest_click(self):
+        global ui
         setting = Setting()
         if setting.checkValue(ui):
             msgBox = QMessageBox()
@@ -117,7 +341,8 @@ class frmPreprocess(Ui_frmPreprocess):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
 
-    def btnSave_click(self,ui=ui):
+    def btnSave_click(self):
+        global ui
         SettingFileName = ui.txtSetting.text()
         setting = Setting()
         if not setting.checkValue(ui):
@@ -150,34 +375,55 @@ class frmPreprocess(Ui_frmPreprocess):
             if len(SettingFileName):
                 config = cp.ConfigParser()
                 config.read(SettingFileName)
+                config['DEFAULT']['ver']        = "1.0"
                 config['DEFAULT']['maindir']    = setting.mainDIR
                 config['DEFAULT']['task']       = setting.Task
-                config['DEFAULT']['sub_num']    = setting.SubNum
-                config['DEFAULT']['sub_len']    = setting.SubLen
+                config['DEFAULT']['sub_from']   = str(setting.SubFrom)
+                config['DEFAULT']['sub_to']     = str(setting.SubTo)
+                config['DEFAULT']['sub_len']    = str(setting.SubLen)
                 config['DEFAULT']['sub_perfix'] = setting.SubPer
                 config['DEFAULT']['run']        = setting.Run
-                config['DEFAULT']['run_len']    = setting.RunLen
+                config['DEFAULT']['run_len']    = str(setting.RunLen)
                 config['DEFAULT']['run_perfix'] = setting.RunPer
                 config['DEFAULT']['bold']       = setting.BOLD
                 config['DEFAULT']['onset']      = setting.Onset
+                config['DEFAULT']['anat_dir']   = setting.AnatDIR
+                config['DEFAULT']['bet']        = setting.BET
+                config['DEFAULT']['bet_pdf']    = setting.BETPDF
+                config['DEFAULT']['analysis']   = setting.Analysis
+                config['DEFAULT']['script']     = setting.Script
+                config['DEFAULT']['event_dir']  = setting.EventFolder
+                config['DEFAULT']['cond_per']   = setting.CondPre
                 config['DEFAULT']['TR']         = str(setting.TR)
                 config['DEFAULT']['FWHM']       = str(setting.FWHM)
                 config['DEFAULT']['deletevol']  = str(setting.DeleteVol)
                 config['DEFAULT']['totalvol']   = str(setting.TotalVol)
 
-                config['DEFAULT']['onsetrid']   = str(setting.OnsetRID)
-                config['DEFAULT']['conditionrid'] = str(setting.ConditionRID)
-                config['DEFAULT']['durationrid'] = str(setting.DurationRID)
 
                 config['DEFAULT']['timeslice']  = str(setting.TimeSlice)
                 config['DEFAULT']['highpass']   = str(setting.HighPass)
-                config['DEFAULT']['rowstart']   = str(setting.RowStart)
+                config['DEFAULT']['denl']       = str(setting.DENL)
+                config['DEFAULT']['dets']       = str(setting.DETS)
+                config['DEFAULT']['dezt']       = str(setting.DEZT)
+                config['DEFAULT']['ctzt']       = str(setting.CTZT)
+                config['DEFAULT']['ctpt']       = str(setting.CTPT)
 
                 config['DEFAULT']['motion']     = str(setting.Motion)
                 config['DEFAULT']['anat']       = str(setting.Anat)
 
+
+
+                #config['DEFAULT']['event_codes']= setting.EventCodes
+                efile = open(SettingFileName+".code","w")
+                efile.write(setting.EventCodes)
+                efile.close()
+
+
                 with open(SettingFileName, 'w') as configfile:
                     config.write(configfile)
+
+
+
 
                 ui.txtSetting.setText(SettingFileName)
                 ui.btnExtractor.setEnabled(setting.Anat)
@@ -193,9 +439,10 @@ class frmPreprocess(Ui_frmPreprocess):
 
                 print("Saved setting in ",SettingFileName)
 
-    def btnLoad_click(self,ui=ui):
-        dialog = QFileDialog()
-        filename = dialog.getOpenFileName(None, "Open setting file ...", ui.txtDIR.text(), options=QFileDialog.DontUseNativeDialog)
+    def btnLoad_click(self):
+        global ui
+        fdialog = QFileDialog()
+        filename = fdialog.getOpenFileName(None, "Open setting file ...", ui.txtDIR.text(), options=QFileDialog.DontUseNativeDialog)
         filename = filename[0]
         if len(filename):
             setting = Setting()
@@ -206,21 +453,34 @@ class frmPreprocess(Ui_frmPreprocess):
                 ui.txtTask.setText(setting.Task)
                 ui.txtBOLD.setText(setting.BOLD)
                 ui.txtOnset.setText(setting.Onset)
-                ui.txtSubNum.setText(setting.SubNum)
-                ui.txtSubLen.setText(setting.SubLen)
+                ui.txtAnat.setText(setting.AnatDIR)
+                ui.txtBET.setText(setting.BET)
+                ui.txtBETPDF.setText(setting.BETPDF)
+                ui.txtEventDIR.setText(setting.EventFolder)
+                ui.txtCondPre.setText(setting.CondPre)
+                ui.txtSubFrom.setValue(setting.SubFrom)
+                ui.txtSubTo.setValue(setting.SubTo)
+                ui.txtSubLen.setValue(setting.SubLen)
                 ui.txtSubPer.setText(setting.SubPer)
                 ui.txtRunNum.setText(setting.Run)
                 ui.txtRunPer.setText(setting.RunPer)
-                ui.txtRunNum.setText(setting.Run)
-                ui.txtTR.setText(str(setting.TR))
-                ui.txtFWHM.setText(str(setting.FWHM))
-                ui.txtTotalVol.setText(str(setting.TotalVol))
-                ui.txtDeleteVol.setText(str(setting.DeleteVol))
-                ui.txtOnsetRID.setText(str(setting.OnsetRID))
-                ui.txtDurationRID.setText(str(setting.DurationRID))
-                ui.txtConditionRID.setText(str(setting.ConditionRID))
-                ui.txtRowStart.setText(str(setting.RowStart))
-                ui.txtHighPass.setText(str(setting.HighPass))
+                ui.txtRunLen.setValue(setting.RunLen)
+                ui.txtAnalysis.setText(setting.Analysis)
+                ui.txtScript.setText(setting.Script)
+                ui.txtTR.setValue(setting.TR)
+                ui.txtFWHM.setValue(setting.FWHM)
+                ui.txtTotalVol.setValue(setting.TotalVol)
+                ui.txtDeleteVol.setValue(setting.DeleteVol)
+                ui.txtHighPass.setValue(setting.HighPass)
+                ui.txtDENL.setText(str(setting.DENL))
+                ui.txtDETS.setText(str(setting.DETS))
+                ui.txtDEZT.setText(str(setting.DEZT))
+                ui.txtCTZT.setText(str(setting.CTZT))
+                ui.txtCTPT.setText(str(setting.CTPT))
+                try:
+                    ui.txtEvents.setPlainText(setting.EventCodes,"","")
+                except:
+                    ui.txtEvents.setText(setting.EventCodes)
                 Title = getTimeSliceText(setting.TimeSlice)
                 if Title is None:
                     print("Time Slice loading error!")
@@ -240,7 +500,8 @@ class frmPreprocess(Ui_frmPreprocess):
                     item = QtWidgets.QListWidgetItem(hist)
                     ui.lwHistory.addItem(item)
 
-    def btnLoadHistory_click(self,ui=ui):
+    def btnLoadHistory_click(self):
+        global ui
         try:
             filename = ui.lwHistory.selectedItems()[0].text()
             if len(filename):
@@ -252,22 +513,34 @@ class frmPreprocess(Ui_frmPreprocess):
                     ui.txtTask.setText(setting.Task)
                     ui.txtBOLD.setText(setting.BOLD)
                     ui.txtOnset.setText(setting.Onset)
-                    ui.txtSubNum.setText(setting.SubNum)
-                    ui.txtSubLen.setText(setting.SubLen)
+                    ui.txtAnat.setText(setting.AnatDIR)
+                    ui.txtBET.setText(setting.BET)
+                    ui.txtBETPDF.setText(setting.BETPDF)
+                    ui.txtEventDIR.setText(setting.EventFolder)
+                    ui.txtCondPre.setText(setting.CondPre)
+                    ui.txtSubFrom.setValue(setting.SubFrom)
+                    ui.txtSubTo.setValue(setting.SubTo)
+                    ui.txtSubLen.setValue(setting.SubLen)
                     ui.txtSubPer.setText(setting.SubPer)
                     ui.txtRunNum.setText(setting.Run)
                     ui.txtRunPer.setText(setting.RunPer)
-                    ui.txtRunNum.setText(setting.Run)
-                    ui.txtTR.setText(str(setting.TR))
-                    ui.txtFWHM.setText(str(setting.FWHM))
-                    ui.txtTotalVol.setText(str(setting.TotalVol))
-                    ui.txtDeleteVol.setText(str(setting.DeleteVol))
-                    ui.txtOnsetRID.setText(str(setting.OnsetRID))
-                    ui.txtDurationRID.setText(str(setting.DurationRID))
-                    ui.txtConditionRID.setText(str(setting.ConditionRID))
-                    ui.txtRowStart.setText(str(setting.RowStart))
-                    ui.txtHighPass.setText(str(setting.HighPass))
-                    ui.txtVoxel.setText("Voxel Size: None")
+                    ui.txtRunLen.setValue(setting.RunLen)
+                    ui.txtAnalysis.setText(setting.Analysis)
+                    ui.txtScript.setText(setting.Script)
+                    ui.txtTR.setValue(setting.TR)
+                    ui.txtFWHM.setValue(setting.FWHM)
+                    ui.txtTotalVol.setValue(setting.TotalVol)
+                    ui.txtDeleteVol.setValue(setting.DeleteVol)
+                    ui.txtHighPass.setValue(setting.HighPass)
+                    ui.txtDENL.setText(str(setting.DENL))
+                    ui.txtDETS.setText(str(setting.DETS))
+                    ui.txtDEZT.setText(str(setting.DEZT))
+                    ui.txtCTZT.setText(str(setting.CTZT))
+                    ui.txtCTPT.setText(str(setting.CTPT))
+                    try:
+                        ui.txtEvents.setPlainText(setting.EventCodes,"","")
+                    except:
+                        ui.txtEvents.setText(setting.EventCodes)
                     Title = getTimeSliceText(setting.TimeSlice)
                     if Title is None:
                         print("Time Slice loading error!")
@@ -281,12 +554,14 @@ class frmPreprocess(Ui_frmPreprocess):
         except:
             return
 
-    def btnClearAllHistory_click(self,ui=ui):
+    def btnClearAllHistory_click(self):
+        global ui
         history = History()
         history.clear_history()
         ui.lwHistory.clear()
 
-    def btnRemoveHistory_click(self,ui=ui):
+    def btnRemoveHistory_click(self):
+        global ui
         try:
             filename = ui.lwHistory.selectedItems()[0].text()
             if len(filename):
@@ -300,7 +575,8 @@ class frmPreprocess(Ui_frmPreprocess):
         except:
             return
 
-    def btnBrainExtractor_click(self,ui=ui):
+    def btnBrainExtractor_click(self):
+        global ui
         setting = Setting()
         isChange = setting.checkGUI(ui,ui.txtSetting.text())
         if isChange == None:
@@ -323,7 +599,8 @@ class frmPreprocess(Ui_frmPreprocess):
                 return
             else:
                 brainExtractor = BrainExtractor()
-                brainExtractor.run(ui.txtSetting.text(),ui.cbShowResult.checkState())
+                brainExtractor.run(ui.txtSetting.text(),ui.cbShowResult.checkState(),\
+                                   ui.txtFSLDIR.text() + ui.txtbetcmd.text())
                 print("TASK FINISHED!")
                 msgBox = QMessageBox()
                 msgBox.setText("All brains are extracted!")
@@ -332,7 +609,8 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.exec_()
                 return
 
-    def btnEventGenerator_click(self, ui=ui):
+    def btnEventGenerator_click(self):
+            global ui
             setting = Setting()
             isChange = setting.checkGUI(ui, ui.txtSetting.text())
             if isChange == None:
@@ -365,7 +643,8 @@ class frmPreprocess(Ui_frmPreprocess):
                     msgBox.exec_()
                     return
 
-    def btnPreprocessingScript_click(self,ui=ui):
+    def btnPreprocessingScript_click(self):
+        global ui
         setting = Setting()
         isChange = setting.checkGUI(ui, ui.txtSetting.text(),checkGeneratedFiles=True)
         if isChange == None:
@@ -388,7 +667,7 @@ class frmPreprocess(Ui_frmPreprocess):
                 return
             else:
                 scriptGenerator = ScriptGenerator()
-                scriptGenerator.run(ui.txtSetting.text())
+                scriptGenerator.run(ui.txtSetting.text(),ui.txtMNI.text())
                 print("TASK FINISHED!")
                 msgBox = QMessageBox()
                 msgBox.setText("All scripts are generated!")
@@ -396,9 +675,11 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return
+        pass
 
 
-    def btn_RunProcess_click(self,ui=ui):
+    def btn_RunProcess_click(self):
+        global ui, dialog
         setting = Setting()
         isChange = setting.checkGUI(ui, ui.txtSetting.text(),checkGeneratedFiles=True)
         if isChange == None:
@@ -429,7 +710,8 @@ class frmPreprocess(Ui_frmPreprocess):
                     msgBox.exec_()
                     return
                 else:
-                    runPreprocess.Run(ui.txtSetting.text(),ui.cbJustRun.checkState(),ui.cbRemoveOlds.checkState())
+                    feat = ui.txtFSLDIR.text() + ui.txtFeat.text()
+                    runPreprocess.Run(ui.txtSetting.text(),ui.cbJustRun.checkState(),ui.cbRemoveOlds.checkState(),feat)
                     print("TASK FINISHED!")
                     msgBox = QMessageBox()
                     msgBox.setText("All scripts are generated!")
@@ -438,11 +720,220 @@ class frmPreprocess(Ui_frmPreprocess):
                     msgBox.exec_()
                     return
 
+        pass
+
+    def btn_ViewParameters_click(self):
+        global ui, dialog
+        Feat_gui = ui.txtFSLDIR.text() + ui.txtFeat_gui.text()
+        if not os.path.isfile(Feat_gui):
+            msgBox = QMessageBox()
+            msgBox.setText("Cannot find Feat_gui cmd!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+
+        setting = Setting()
+        isChange = setting.checkGUI(ui, ui.txtSetting.text(), checkGeneratedFiles=True)
+        if isChange == None:
+            msgBox = QMessageBox()
+            if len(ui.txtSetting.text()):
+                msgBox.setText("Please verify parameters")
+            else:
+                msgBox.setText("You must save setting first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        else:
+            if isChange == True:
+                msgBox = QMessageBox()
+                msgBox.setText("Parameters are changed. Please save them first!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return
+            else:
+                sSess = frmSelectSession(None,setting=setting)
+                if sSess.PASS:
+                    ScriptFile = setParameters(setting.Script,fixstr(int(sSess.SubID),setting.SubLen,setting.SubPer),\
+                                               fixstr(int(sSess.RunID),int(setting.RunLen),setting.RunPer),setting.Task)
+                    ScriptAdd = setting.mainDIR + ScriptFile
+                    subprocess.Popen([Feat_gui, ScriptAdd])
+    pass
 
 
+    def btnEventExtractor_click(self):
+        global ui
+        setting = Setting()
+        isChange = setting.checkGUI(ui, ui.txtSetting.text())
+        if isChange == None:
+           msgBox = QMessageBox()
+           if len(ui.txtSetting.text()):
+               msgBox.setText("Please verify parameters")
+           else:
+               msgBox.setText("You must save setting first!")
+           msgBox.setIcon(QMessageBox.Critical)
+           msgBox.setStandardButtons(QMessageBox.Ok)
+           msgBox.exec_()
+           return
+        else:
+            if isChange == True:
+                msgBox = QMessageBox()
+                msgBox.setText("Parameters are changed. Please save them first!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return
+            else:
+                sSess = frmSelectSession(None, setting=setting)
+                if sSess.PASS:
+                    EventFilename = setParameters(setting.Onset, fixstr(sSess.SubID, int(setting.SubLen), setting.SubPer) \
+                                                 , fixstr(sSess.RunID, int(setting.RunLen), setting.RunPer), setting.Task)
+
+                    EventAddr = setting.mainDIR + EventFilename
+
+                    if not os.path.isfile(EventAddr):
+                        print(EventAddr, " - file not find!")
+                        return
+                    else:
+                        file = open(EventAddr, "r")
+                        lines = file.readlines()
+                        file.close()
+                        GenEvents = list()
+
+                        for k in range(0, len(lines)):
+                            Event = lines[k].rsplit()
+                            try:
+                                allvars = dict(locals(), **globals())
+                                exec(setting.EventCodes, allvars, allvars)
+
+                            except Exception as e:
+                                print("Event codes generated following error:")
+                                print(e)
+                                msgBox = QMessageBox()
+                                msgBox.setText(str(e))
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
+                                return
+                            try:
+                                RowStartID = allvars['RowStartID']
+                            except:
+                                print("Cannot find RowStartID variable in event code")
+                                msgBox = QMessageBox()
+                                msgBox.setText("Cannot find RowStartID variable in event code")
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
+                                return
+                            try:
+                               Condition = allvars['Condition']
+                            except:
+                                print("Cannot find Condition variable in event code")
+                                msgBox = QMessageBox()
+                                msgBox.setText("Cannot find Condition variable in event code")
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
+                                return
+                            try:
+                                Onset = allvars['Onset']
+                            except:
+                                print("Cannot find Onset variable in event code")
+                                msgBox = QMessageBox()
+                                msgBox.setText("Cannot find Onset variable in event code")
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
+                                return
+                            try:
+                                Duration = allvars['Duration']
+                            except:
+                                print("Cannot find Duration variable in event code")
+                                msgBox = QMessageBox()
+                                msgBox.setText("Cannot find Duration variable in event code")
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
+                                return
+                            if RowStartID <= k:
+                                GenEvents.append([Onset,Duration,Condition])
+
+                    EventViewer = frmEventViewer(Events=GenEvents,StartRow=RowStartID,SubID=sSess.SubID,\
+                                                RowID=sSess.RunID, Task=setting.Task)
+        pass
+
+    def btnGroupRenameFile_click(self):
+        global ui
+        frmRenameFile.show(frmRenameFile,SubFrom=ui.txtSubFrom.value(),SubTo=ui.txtSubTo.value(),\
+                           SubLen=ui.txtSubLen.value(),SubPer=ui.txtSubPer.text(),Run=ui.txtRunNum.text(),\
+                           RunLen=ui.txtRunLen.value(),RunPer=ui.txtRunPer.text(),Task=ui.txtTask.text(),\
+                           DIR=ui.txtDIR.text())
+        pass
+
+    def btnGroupScriptEditor_click(self):
+        global ui
+        frmScriptEditor.show(frmScriptEditor,SubFrom=ui.txtSubFrom.value(),SubTo=ui.txtSubTo.value(),\
+                           SubLen=ui.txtSubLen.value(),SubPer=ui.txtSubPer.text(),Run=ui.txtRunNum.text(),\
+                           RunLen=ui.txtRunLen.value(),RunPer=ui.txtRunPer.text(),Task=ui.txtTask.text(),\
+                           DIR=ui.txtDIR.text())
+
+        pass
+
+    def btnReportViewer_onclick(self):
+        import webbrowser
+        global ui, dialog
+        setting = Setting()
+        isChange = setting.checkGUI(ui, ui.txtSetting.text(),checkGeneratedFiles=True)
+        if isChange == None:
+            msgBox = QMessageBox()
+            if len(ui.txtSetting.text()):
+                msgBox.setText("Please verify parameters")
+            else:
+                msgBox.setText("You must save setting first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        else:
+            if isChange == True:
+                msgBox = QMessageBox()
+                msgBox.setText("Parameters are changed. Please save them first!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return
+            else:
+                runPreprocess = RunPreprocess()
+                if not runPreprocess.Check(ui.txtSetting.text(),False):
+                    msgBox = QMessageBox()
+                    msgBox.setText("Script(s) are not found!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return
+                else:
+                    sSess = frmSelectSession(None, setting=setting)
+                    if sSess.PASS:
+                        AnalysisFile = setParameters(setting.Analysis,
+                                                   fixstr(int(sSess.SubID), setting.SubLen, setting.SubPer), \
+                                                   fixstr(int(sSess.RunID), int(setting.RunLen), setting.RunPer),
+                                                   setting.Task)
+                        AnalysisAdd = setting.mainDIR + AnalysisFile + ".feat/report.html"
+                        if not os.path.isfile(AnalysisAdd):
+                            print(AnalysisAdd + " - not found!")
+                        else:
+                            webbrowser.open_new("file://" + AnalysisAdd)
+
+                    return
+
+        pass
 
 
 
 # Auto Run
 if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
     frmPreprocess.show(frmPreprocess)
+    sys.exit(app.exec_())

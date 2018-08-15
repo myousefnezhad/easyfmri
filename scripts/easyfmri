@@ -1,0 +1,2 @@
+export EASYFMRI="/Users/my/.easyfmri"
+#export PATH="/Users/my/.easyfmri/:$PATH"

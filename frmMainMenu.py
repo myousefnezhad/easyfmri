@@ -1,21 +1,57 @@
+#!/usr/bin/env python3
 from frmMainMenuGUI import *
 from frmPreprocess import *
+import PyQt5.QtWidgets as QtWidgets
+#import PyQt5.QtCore as QtCore
+from pyqode.core import api
+from pyqode.core import modes
+from pyqode.core import panels
+from pyqode.qt import QtWidgets as pyWidgets
+import numpy, scipy, sklearn
+import os, platform
+import nibabel, nipype
 
-class frmMainMenuGUI(Ui_frmMainMenuGUI):
+import sys
+import subprocess
+import configparser as cp
+import glob
+
+from frmSelectSession   import frmSelectSession
+from frmEventViewer     import frmEventViewer
+from frmRenameFile      import frmRenameFile
+from frmScriptEditor    import frmScriptEditor
+
+from utility            import getTimeSliceText,fixstr,setParameters
+from Setting            import Setting
+from SettingHistory     import History
+from BrainExtractor     import BrainExtractor
+from EventGenerator     import EventGenerator
+from ScriptGenerator    import ScriptGenerator
+from RunPreprocess      import RunPreprocess
+
+
+
+class frmMainMenuGUI(QtWidgets.QMainWindow):
+    dialog = None
     ui = Ui_frmMainMenuGUI()
-    import sys
-    import PyQt5.QtWidgets as QtWidgets
-    app = QtWidgets.QApplication(sys.argv)
-    QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
-    frmMainGUI = QtWidgets.QDialog()
 
-    def show(self, ui=ui, frmMainGUI=frmMainGUI, app=app):
-        ui.setupUi(frmMainGUI)
+
+    def show(self):
+        global dialog, ui
+        ui = Ui_frmMainMenuGUI()
+        QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
+        dialog = QtWidgets.QMainWindow()
+        ui.setupUi(dialog)
         self.set_events(self)
-        frmMainGUI.show()
-        sys.exit(app.exec_())
 
-    def set_events(self, ui=ui):
+        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        dialog.setFixedSize(dialog.size())
+        dialog.show()
+
+
+    def set_events(self):
+        global ui
         ui.btnExit.clicked.connect(self.btnExit_click)
         ui.btnPreprocess.clicked.connect(self.btnPreprocess_click)
 
@@ -25,12 +61,15 @@ class frmMainMenuGUI(Ui_frmMainMenuGUI):
          sys.exit()
 
 
-    def btnPreprocess_click(self, ui=ui, frmMainGUI=frmMainGUI):
-        import os
-        frmMainGUI.hide()
-        os.system("python3 frmPreprocess.py")
-        frmMainGUI.show()
+    def btnPreprocess_click(self):
+        global dialog
+        dialog.hide()
+        frmPreprocess.show(frmPreprocess,dialog)
+        #dialog.show()
 
 # Auto Run
 if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
     frmMainMenuGUI.show(frmMainMenuGUI)
+    sys.exit(app.exec_())

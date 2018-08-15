@@ -3,40 +3,84 @@
 class Setting:
     def __init__(self):
         self.mainDIR        = None
-        self.SubNum         = None
+        self.Task           = None
+        self.SubFrom        = None
+        self.SubTo          = None
         self.SubLen         = None
         self.SubPer         = None
-        self.Task           = None
-        self.Run            = None
+        self.RunNum         = None
         self.RunLen         = None
         self.RunPer         = None
         self.Onset          = None
         self.BOLD           = None
+        self.AnatDIR        = None
+        self.EventFolder    = None
+        self.CondPre        = None
+        self.BET            = None
+        self.BETPDF         = None
+        self.Analysis       = None
+        self.Script         = None
         self.TR             = None
         self.FWHM           = None
         self.TotalVol       = 0
         self.DeleteVol      = 0
         self.Motion         = True
         self.Anat           = True
-        self.empty          = True
-        self.OnsetRID       = None
-        self.ConditionRID   = None
-        self.DurationRID    = None
-
-        self.RowStart       = None
         self.HighPass       = None
+        self.DENL           = None
+        self.DETS           = None
+        self.DEZT           = None
+        self.CTZT           = None
+        self.CTPT           = None
         self.TimeSlice      = None
+        self.EventCodes     = None
+
+        self.empty          = True
+
 
 
     def checkValue(self, ui, checkFiles=True, checkGeneratedFiles=False):
         import numpy as np
         import scipy.io as io
         from PyQt5.QtWidgets import QMessageBox
-        from utility import fixstr,getTimeSliceID
+        from utility import fixstr,getTimeSliceID,setParameters
         import os
 
         self.empty = True
         msgBox = QMessageBox()
+        FSLDIR = ui.txtFSLDIR.text()
+
+        #if (os.path.isdir(FSLDIR) == False):
+        #    msgBox = QMessageBox()
+        #    msgBox.setText("$FSLDIR does not exist!")
+        #    msgBox.setIcon(QMessageBox.Critical)
+        #    msgBox.setStandardButtons(QMessageBox.Ok)
+        #    msgBox.exec_()
+        #    return False
+
+        if (os.path.isfile(ui.txtMNI.text()) == False):
+            msgBox = QMessageBox()
+            msgBox.setText("Cannot find MNI file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if (os.path.isfile(FSLDIR + ui.txtFeat.text()) == False):
+            msgBox = QMessageBox()
+            msgBox.setText("Cannot find feat cmd!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if (os.path.isfile(FSLDIR + ui.txtFeat_gui.text()) == False):
+            msgBox = QMessageBox()
+            msgBox.setText("Cannot find Feat_gui cmd!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
 
         mainDIR = ui.txtDIR.text()
         Task = ui.txtTask.text()
@@ -61,10 +105,25 @@ class Setting:
             msgBox.exec_()
             return False
         try:
-            SubNum = np.int32(ui.txtSubNum.text())
-            1 / SubNum
+            SubFrom = np.int32(ui.txtSubFrom.value())
+            1 / SubFrom
         except:
-            msgBox.setText("Number of subjects must be an integer number")
+            msgBox.setText("Subject From must be an integer number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            SubTo = np.int32(ui.txtSubTo.value())
+            1 / SubTo
+        except:
+            msgBox.setText("Subject To must be an integer number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if SubTo < SubFrom:
+            msgBox.setText("Subject To is smaller then Subject From!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
@@ -80,8 +139,9 @@ class Setting:
             msgBox.exec_()
             return False
         print("Length of subjects is valid")
+
         try:
-            RunLen = np.int32(ui.txtRunLen.text())
+            RunLen = np.int32(ui.txtRunLen.value())
             1 / RunLen
         except:
             msgBox.setText("Length of runs must be an integer number")
@@ -105,10 +165,10 @@ class Setting:
         if (len(Run) == 1):
             runValue = Run[0]
             Run = []
-            for _ in range(0,SubNum):
+            for _ in range(int(ui.txtSubFrom.value()),int(ui.txtSubTo.value())+1):
                 Run.append(runValue)
         else:
-            if (len(Run) != SubNum):
+            if (len(Run) != (ui.txtSubTo.value() - ui.txtSubFrom.value() + 1)):
                 msgBox.setText("Number of Runs must include a unique number for all subject or an array with size of number of subject, e.g. [1,2,2,1]")
                 msgBox.setIcon(QMessageBox.Critical)
                 msgBox.setStandardButtons(QMessageBox.Ok)
@@ -117,7 +177,7 @@ class Setting:
         print("Number of Runs are okay.")
         # Check fMRI Images
         try:
-            TR = np.double(ui.txtTR.text())
+            TR = np.double(ui.txtTR.value())
             1 / TR
         except:
             msgBox.setText("TR must be a number")
@@ -133,7 +193,7 @@ class Setting:
             return False
         print("TR is okay")
         try:
-            FWHM = np.double(ui.txtFWHM.text())
+            FWHM = np.double(ui.txtFWHM.value())
             1 / FWHM
         except:
             msgBox.setText("FWHM must be a number")
@@ -150,14 +210,14 @@ class Setting:
         print("FWHM is okay")
         # Advance
         try:
-            TotalVol = np.int32(ui.txtTotalVol.text())
+            TotalVol = np.int32(ui.txtTotalVol.value())
         except:
             msgBox.setText("Total Volumn must be a number")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        if TotalVol < 0:
+        if TotalVol <= 0:
             msgBox.setText("Total Volumn must be a positive number")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
@@ -165,7 +225,7 @@ class Setting:
             return False
         print("Total Volumn is okay")
         try:
-            DeleteVol = np.int32(ui.txtDeleteVol.text())
+            DeleteVol = np.int32(ui.txtDeleteVol.value())
         except:
             msgBox.setText("Delete Volumn must be a number")
             msgBox.setIcon(QMessageBox.Critical)
@@ -179,68 +239,19 @@ class Setting:
             msgBox.exec_()
             return False
         print("Delete Volumn is okay")
+
+        ECodes = ui.txtEvents.toPlainText()
+
+        if ECodes == "":
+            msgBox.setText("Event code is empty")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Event codes are okay")
+
         try:
-            OnsetRID = np.int32(ui.txtOnsetRID.text())
-        except:
-            msgBox.setText("Onset Row ID must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        if OnsetRID < 0:
-            msgBox.setText("Onset Row ID must be a positive number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Onset Row ID is okay")
-        try:
-            ConditionRID = np.int32(ui.txtConditionRID.text())
-        except:
-            msgBox.setText("Condition Row ID must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        if ConditionRID < 0:
-            msgBox.setText("Condition Row ID must be a positive number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Condition Row ID is okay")
-        try:
-            DurationRID = np.int32(ui.txtDurationRID.text())
-        except:
-            msgBox.setText("Duration Row ID must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        if DurationRID < 0:
-            msgBox.setText("Duration Row ID must be a positive number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Duration Row ID is okay")
-        try:
-            RowStart = np.int32(ui.txtRowStart.text())
-        except:
-            msgBox.setText("Row Start must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        if DurationRID <= 0:
-            msgBox.setText("Row Start must be a positive number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Row Start is okay")
-        try:
-            HighPass = np.double(ui.txtHighPass.text())
+            HighPass = np.double(ui.txtHighPass.value())
         except:
             msgBox.setText("High Pass cutoff must be a number")
             msgBox.setIcon(QMessageBox.Critical)
@@ -255,15 +266,135 @@ class Setting:
             return False
         print("High Pass cutoff is okay")
 
+
+        try:
+            DENL = np.double(ui.txtDENL.text())
+        except:
+            msgBox.setText("Noise level must be a number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Noise level is okay")
+
+        try:
+            DETS = np.double(ui.txtDETS.text())
+        except:
+            msgBox.setText("Temporal smoothness must be a number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Temporal smoothness is okay")
+
+        try:
+            DEZT = np.double(ui.txtDEZT.text())
+        except:
+            msgBox.setText("Z threshold in the design efficiency must be a number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Z threshold in the design efficiency is okay")
+
+        try:
+            CTZT = np.double(ui.txtCTZT.text())
+        except:
+            msgBox.setText("Z threshold in the clustering must be a number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Z threshold in the clustering is okay")
+
+        try:
+            CTPT = np.double(ui.txtCTPT.text())
+        except:
+            msgBox.setText("Clustering P threshold must be a number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Clustering P threshold is okay")
+
+        if ui.txtBOLD.text() == "":
+            msgBox.setText("Structure of the BOLD files is empty!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if ui.txtScript.text() == "":
+            msgBox.setText("Structure of the script files is empty!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
+        if ui.txtAnat.text() == "":
+            msgBox.setText("Structure of the Anatomical files is empty!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if ui.txtOnset.text() == "":
+            msgBox.setText("Structure of the BOLD files is empty!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if ui.txtBET.text() == "":
+            msgBox.setText("Structure of the BET files is empty!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if ui.txtBETPDF.text() == "":
+            msgBox.setText("Structure of the BET report (PDF) is empty!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if ui.txtAnalysis.text() == "":
+            msgBox.setText("Structure of the analysis folder is empty!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
+        if ui.txtEventDIR.text() == "":
+            msgBox.setText("Structure of the event folders is empty!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
+        if ui.txtCondPre.text() == "":
+            msgBox.setText("The prefix of condition files is empty!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
         if checkFiles:
             print("Validating files ...")
 
-            for s in range(1, SubNum + 1):
+            for si, s in enumerate(range(SubFrom, SubTo + 1)):
                 print("Analyzing Subject %d ..." % (s))
-                SubDIR = mainDIR + "/" + "sub-" + fixstr(s, SubLen, ui.txtSubPer.text())
+
+                #SubDIR = mainDIR + "/" + "sub-" + fixstr(s, SubLen, ui.txtSubPer.text())
+
                 # checking anat file
-                filename = "sub-" + fixstr(s, SubLen, ui.txtSubPer.text()) + "_T1w." + ui.txtBOLD.text()
-                addr = SubDIR + "/anat/" + filename
+                filename =  setParameters(ui.txtAnat.text(),fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.text())
+                addr = mainDIR + filename
                 if os.path.isfile(addr):
                     print(addr, " - OKAY.")
                 else:
@@ -271,20 +402,20 @@ class Setting:
                     return False
                 if checkGeneratedFiles and ui.cbRegAnat.isChecked():
                     # BET Files
-                    filename = "sub-" + fixstr(s, SubLen, ui.txtSubPer.text()) + "_T1w_BET." + ui.txtBOLD.text()
-                    addr = SubDIR + "/anat/" + filename
+                    filename = setParameters(ui.txtBET.text(), fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.text())
+                    addr = mainDIR + filename
                     if os.path.isfile(addr):
                         print(addr, " - OKAY.")
                     else:
                         print(addr, " - file not find!")
                         return False
 
-                for r in range(1,Run[s-1]+1):
+                for r in range(1,Run[si] + 1):
 
                     # BOLD File Check
-                    filename = "sub-" + fixstr(s, SubLen, ui.txtSubPer.text()) + "_task-" + Task + "_run-" + \
-                               fixstr(r, RunLen, ui.txtRunPer.text()) + "_bold." + ui.txtBOLD.text()
-                    addr = SubDIR + "/func/" + filename
+                    filename = setParameters(ui.txtBOLD.text(), fixstr(s, SubLen, ui.txtSubPer.text()), \
+                                             fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.text())
+                    addr = mainDIR + filename
                     if os.path.isfile(addr):
                         print(addr, " - OKAY.")
                     else:
@@ -292,9 +423,9 @@ class Setting:
                         return False
 
                     # Event File Check
-                    filename = "sub-" + fixstr(s, SubLen, ui.txtSubPer.text()) + "_task-" + Task + "_run-" + \
-                               fixstr(r, RunLen, ui.txtRunPer.text()) + "_events." + ui.txtOnset.text()
-                    addr = SubDIR + "/func/" + filename
+                    filename = setParameters(ui.txtOnset.text(), fixstr(s, SubLen, ui.txtSubPer.text()), \
+                                             fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.text())
+                    addr = mainDIR + filename
                     if os.path.isfile(addr):
                         print(addr, " - OKAY.")
                     else:
@@ -302,30 +433,31 @@ class Setting:
                         return False
 
                     if checkGeneratedFiles:
-                        EventFolder = "sub-" + fixstr(s, SubLen, ui.txtSubPer.text()) + "_task-" + Task + "_run-" + \
-                                   fixstr(r, RunLen, ui.txtRunPer.text()) + "_events/"
-                        addr = SubDIR + "/func/" + EventFolder
+                        EventFolder = setParameters(ui.txtEventDIR.text(), fixstr(s, SubLen, ui.txtSubPer.text()), \
+                                             fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.text())
+                        addr = mainDIR + EventFolder
                         if os.path.isdir(addr):
                             print(addr, " - OKAY.")
                             try:
-                                Cond = io.loadmat(addr + "Cond.mat")
+                                Cond = io.loadmat(addr + ui.txtCondPre.text() + ".mat")
                                 for fileID in range(1,Cond["Cond"].shape[0]+1):
-                                    if os.path.isfile(addr + "/Cond_" + str(fileID) + ".tab"):
-                                        print(addr + "Cond_" + str(fileID) + ".tab - OKAY.")
+                                    if os.path.isfile(addr + ui.txtCondPre.text() + "_" + str(fileID) + ".tab"):
+                                        print(addr + ui.txtCondPre.text() + "_" + str(fileID) + ".tab - OKAY.")
                                     else:
-                                        print(addr + "Cond_" + str(fileID) + ".tab - file not find!")
+                                        print(addr + ui.txtCondPre.text() + "_" + str(fileID) + ".tab - file not find!")
                                         return False
                             except:
-                                print(addr + "Cond.mat - loading error!")
+                                print(addr + ui.txtCondPre.text() + ".mat - loading error!")
                                 return False
                         else:
-                            print(addr, " - file not find!")
+                            print(addr + ui.txtCondPre.text() + ".mat - file not find!")
                             return False
 
         self.mainDIR = mainDIR
 
-        self.SubNum = str(SubNum)
-        self.SubLen = str(SubLen)
+        self.SubFrom = SubFrom
+        self.SubTo   = SubTo
+        self.SubLen = SubLen
         self.SubPer = ui.txtSubPer.text()
 
         self.Task = str(Task)
@@ -334,21 +466,30 @@ class Setting:
         self.RunLen = str(RunLen)
         self.RunPer = ui.txtRunPer.text()
 
-        self.BOLD = ui.txtBOLD.text()
-        self.Onset= ui.txtOnset.text()
+        self.BOLD           = ui.txtBOLD.text()
+        self.Onset          = ui.txtOnset.text()
+        self.AnatDIR        = ui.txtAnat.text()
+        self.BET            = ui.txtBET.text()
+        self.BETPDF         = ui.txtBETPDF.text()
+        self.Analysis       = ui.txtAnalysis.text()
+        self.Script         = ui.txtScript.text()
+        self.EventFolder    = ui.txtEventDIR.text()
+        self.EventCodes     = ui.txtEvents.toPlainText()
+        self.CondPre        = ui.txtCondPre.text()
 
         self.TR = TR
         self.FWHM = FWHM
 
         self.DeleteVol = DeleteVol
         self.TotalVol = TotalVol
-        self.OnsetRID = OnsetRID
-        self.ConditionRID = ConditionRID
-        self.DurationRID = DurationRID
+
 
         self.HighPass = HighPass
-        self.RowStart = RowStart
-
+        self.DENL     = DENL
+        self.DETS     = DETS
+        self.DEZT     = DEZT
+        self.CTZT     = CTZT
+        self.CTPT     = CTPT
 
         TimeSlice = getTimeSliceID(ui.cbSliceTime.currentText())
         if TimeSlice is None:
@@ -370,29 +511,42 @@ class Setting:
         from utility import Str2Bool
 
         self.mainDIR        = None
-        self.SubNum         = None
+        self.Task           = None
+        self.SubFrom        = None
+        self.SubTo          = None
         self.SubLen         = None
         self.SubPer         = None
-        self.Task           = None
-        self.Run            = None
+        self.RunNum         = None
         self.RunLen         = None
         self.RunPer         = None
         self.Onset          = None
         self.BOLD           = None
+        self.AnatDIR        = None
+        self.EventFolder    = None
+        self.CondPre        = None
+        self.BET            = None
+        self.BETPDF         = None
+        self.Analysis       = None
+        self.Script         = None
         self.TR             = None
         self.FWHM           = None
         self.TotalVol       = 0
         self.DeleteVol      = 0
         self.Motion         = True
         self.Anat           = True
-        self.empty          = True
-        self.OnsetRID       = None
-        self.ConditionRID   = None
-        self.DurationRID    = None
-        self.RowStart       = None
         self.HighPass       = None
+        self.DENL           = None
+        self.DETS           = None
+        self.DEZT           = None
+        self.CTZT           = None
+        self.CTPT           = None
         self.TimeSlice      = None
+        self.EventCodes     = None
+
         self.empty          = True
+
+
+
         if len(filename):
             try:
                 config = cp.ConfigParser()
@@ -400,32 +554,50 @@ class Setting:
                 self.mainDIR    = config['DEFAULT']['maindir']
                 self.Task       = config['DEFAULT']['task']
 
-                self.SubNum     = config['DEFAULT']['sub_num']
-                self.SubLen     = config['DEFAULT']['sub_len']
+                self.SubFrom    = np.int32(config['DEFAULT']['sub_from'])
+                self.SubTo      = np.int32(config['DEFAULT']['sub_to'])
+                self.SubLen     = np.int32(config['DEFAULT']['sub_len'])
                 self.SubPer     = config['DEFAULT']['sub_perfix']
 
                 self.Run        = config['DEFAULT']['run']
-                self.RunLen     = config['DEFAULT']['run_len']
+                self.RunLen     = np.int32(config['DEFAULT']['run_len'])
                 self.RunPer     = config['DEFAULT']['run_perfix']
 
                 self.BOLD       = config['DEFAULT']['bold']
                 self.Onset      = config['DEFAULT']['onset']
+                self.AnatDIR    = config['DEFAULT']['anat_dir']
+                self.BET        = config['DEFAULT']['bet']
+                self.BETPDF     = config['DEFAULT']['bet_pdf']
+                self.EventFolder= config['DEFAULT']['event_dir']
+                self.CondPre    = config['DEFAULT']['cond_per']
+                self.Analysis   = config['DEFAULT']['analysis']
+                self.Script     = config['DEFAULT']['script']
+
+                #self.EventCodes = config['DEFAULT']['event_codes']
+                self.EventCodes = open(filename+".code").read()
+
                 self.TR         = np.double(config['DEFAULT']['TR'])
                 self.FWHM       = np.double(config['DEFAULT']['FWHM'])
+
                 self.DeleteVol  = np.int32(config['DEFAULT']['deletevol'])
                 self.TotalVol   = np.int32(config['DEFAULT']['totalvol'])
-                self.OnsetRID   = np.int32(config['DEFAULT']['onsetrid'])
-                self.ConditionRID   = np.int32(config['DEFAULT']['conditionrid'])
-                self.DurationRID    = np.int32(np.int32(config['DEFAULT']['durationrid']))
 
-                self.DurationRID    = np.int32(np.int32(config['DEFAULT']['durationrid']))
+                #self.OnsetRID   = np.int32(config['DEFAULT']['onsetrid'])
+                #self.ConditionRID   = np.int32(config['DEFAULT']['conditionrid'])
+                #self.DurationRID    = np.int32(np.int32(config['DEFAULT']['durationrid']))
+
+                #self.DurationRID    = np.int32(np.int32(config['DEFAULT']['durationrid']))
 
                 self.Motion     = Str2Bool(config['DEFAULT']['motion'])
                 self.Anat       = Str2Bool(config['DEFAULT']['anat'])
 
                 self.TimeSlice = np.int32(config['DEFAULT']['timeslice'])
                 self.HighPass  = np.double(config['DEFAULT']['highpass'])
-                self.RowStart  = np.int32(config['DEFAULT']['rowstart'])
+                self.DENL  = np.double(config['DEFAULT']['denl'])
+                self.DETS  = np.double(config['DEFAULT']['dets'])
+                self.DEZT  = np.double(config['DEFAULT']['dezt'])
+                self.CTZT  = np.double(config['DEFAULT']['ctzt'])
+                self.CTPT  = np.double(config['DEFAULT']['ctpt'])
 
                 self.empty = False
 
@@ -442,29 +614,40 @@ class Setting:
         from utility import Str2Bool
         # init Empty
         self.mainDIR        = None
-        self.SubNum         = None
+        self.Task           = None
+        self.SubFrom        = None
+        self.SubTo          = None
         self.SubLen         = None
         self.SubPer         = None
-        self.Task           = None
-        self.Run            = None
+        self.RunNum         = None
         self.RunLen         = None
         self.RunPer         = None
         self.Onset          = None
         self.BOLD           = None
+        self.AnatDIR        = None
+        self.EventFolder    = None
+        self.CondPre        = None
+        self.BET            = None
+        self.BETPDF         = None
+        self.Analysis       = None
+        self.Script         = None
         self.TR             = None
         self.FWHM           = None
         self.TotalVol       = 0
         self.DeleteVol      = 0
         self.Motion         = True
         self.Anat           = True
-        self.empty          = True
-        self.OnsetRID       = None
-        self.ConditionRID   = None
-        self.DurationRID    = None
-        self.RowStart       = None
         self.HighPass       = None
+        self.DENL           = None
+        self.DETS           = None
+        self.DEZT           = None
+        self.CTZT           = None
+        self.CTPT           = None
         self.TimeSlice      = None
+        self.EventCodes     = None
+
         self.empty          = True
+
         self.checkValue(ui,checkGeneratedFiles=checkGeneratedFiles)
         if self.empty:
             print("Error in GUI parameters")
@@ -481,7 +664,9 @@ class Setting:
                         return True
                     elif self.Task != config['DEFAULT']['task']:
                         return True
-                    elif np.double(self.SubNum) != np.double(config['DEFAULT']['sub_num']):
+                    elif np.double(self.SubFrom) != np.double(config['DEFAULT']['sub_from']):
+                        return True
+                    elif np.double(self.SubTo) != np.double(config['DEFAULT']['sub_to']):
                         return True
                     elif np.double(self.SubLen) != np.double(config['DEFAULT']['sub_len']):
                         return True
@@ -497,6 +682,22 @@ class Setting:
                         return True
                     elif self.Onset != config['DEFAULT']['onset']:
                         return True
+                    elif self.AnatDIR != config['DEFAULT']['anat_dir']:
+                        return True
+                    elif self.BET != config['DEFAULT']['bet']:
+                        return True
+                    elif self.BETPDF != config['DEFAULT']['bet_pdf']:
+                        return True
+                    elif self.Analysis != config['DEFAULT']['analysis']:
+                        return True
+                    elif self.Script   !=  config['DEFAULT']['script']:
+                        return True
+                    elif self.EventFolder != config['DEFAULT']['event_dir']:
+                        return True
+                    elif self.CondPre != config['DEFAULT']['cond_per']:
+                        return True
+                    elif self.EventCodes != open(SettingFileName+".code").read():
+                        return True
                     elif np.double(self.TR) != np.double(config['DEFAULT']['TR']):
                         return True
                     elif np.double(self.FWHM) != np.double(config['DEFAULT']['FWHM']):
@@ -505,19 +706,21 @@ class Setting:
                         return True
                     elif np.double(self.TotalVol) != np.double(config['DEFAULT']['totalvol']):
                         return True
-                    elif np.double(self.OnsetRID) != np.double(config['DEFAULT']['onsetrid']):
-                        return True
-                    elif np.double(self.ConditionRID) != np.double(config['DEFAULT']['conditionrid']):
-                        return True
-                    elif np.double(self.DurationRID) != np.double(np.int32(config['DEFAULT']['durationrid'])):
-                        return True
                     elif self.Motion != Str2Bool(config['DEFAULT']['motion']):
                         return True
                     elif self.Anat != Str2Bool(config['DEFAULT']['anat']):
                         return True
-                    elif self.RowStart != np.int32(config['DEFAULT']['rowstart']):
-                        return True
                     elif self.HighPass != np.double(config['DEFAULT']['highpass']):
+                        return True
+                    elif self.DENL != np.double(config['DEFAULT']['denl']):
+                        return True
+                    elif self.DETS != np.double(config['DEFAULT']['dets']):
+                        return True
+                    elif self.DEZT != np.double(config['DEFAULT']['dezt']):
+                        return True
+                    elif self.CTZT != np.double(config['DEFAULT']['ctzt']):
+                        return True
+                    elif self.CTPT != np.double(config['DEFAULT']['ctpt']):
                         return True
                     elif self.TimeSlice != np.int32(config['DEFAULT']['timeslice']):
                         return True

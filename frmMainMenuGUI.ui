@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>easy fMRI (0.0.1)</string>
+   <string>easy fMRI (1.0)</string>
   </property>
   <widget class="QLabel" name="label">
    <property name="geometry">
