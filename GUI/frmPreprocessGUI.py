@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmPreprocessGUI.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,6 +17,15 @@ class Ui_frmPreprocess(object):
         self.tabWidget.setEnabled(True)
         self.tabWidget.setGeometry(QtCore.QRect(20, 50, 671, 541))
         self.tabWidget.setObjectName("tabWidget")
+        self.tab_13 = QtWidgets.QWidget()
+        self.tab_13.setObjectName("tab_13")
+        self.label_44 = QtWidgets.QLabel(self.tab_13)
+        self.label_44.setGeometry(QtCore.QRect(20, 50, 171, 16))
+        self.label_44.setObjectName("label_44")
+        self.cbMode = QtWidgets.QComboBox(self.tab_13)
+        self.cbMode.setGeometry(QtCore.QRect(150, 50, 421, 23))
+        self.cbMode.setObjectName("cbMode")
+        self.tabWidget.addTab(self.tab_13, "")
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.groupBox = QtWidgets.QGroupBox(self.tab)
@@ -576,6 +585,8 @@ class Ui_frmPreprocess(object):
     def retranslateUi(self, frmPreprocess):
         _translate = QtCore.QCoreApplication.translate
         frmPreprocess.setWindowTitle(_translate("frmPreprocess", "easy fMRI: Preprosessing - "))
+        self.label_44.setText(_translate("frmPreprocess", "Analysis Mode:"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_13), _translate("frmPreprocess", "Mode"))
         self.groupBox.setTitle(_translate("frmPreprocess", "<Subjects>"))
         self.label_2.setText(_translate("frmPreprocess", "Range:"))
         self.label_3.setText(_translate("frmPreprocess", "Length:"))
@@ -685,9 +696,9 @@ class Ui_frmPreprocess(object):
         self.txtVOutput.setHtml(_translate("frmPreprocess", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'.SF NS Text\'; font-size:13pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">filtered_func_data.nii.gz</p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">mask.nii.gz</p></body></html>"))
+"</style></head><body style=\" font-family:\'Sans Serif\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'.SF NS Text\'; font-size:13pt;\">filtered_func_data.nii.gz</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'.SF NS Text\'; font-size:13pt;\">mask.nii.gz</span></p></body></html>"))
         self.label_17.setText(_translate("frmPreprocess", "Verify following files in output folders (each file per line)"))
         self.btnDelete.setText(_translate("frmPreprocess", "Delete Ouputs"))
         self.btnVerify.setText(_translate("frmPreprocess", "Verify"))

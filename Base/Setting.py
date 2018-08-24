@@ -10,6 +10,7 @@ from Base.utility import getSettingVersion, strRange, strMultiRange, Str2Bool
 class Setting:
     def __init__(self):
         self.Version        = None
+        self.Mode           = None
         self.mainDIR        = None
         self.MNISpace       = None
         self.Task           = None
@@ -440,15 +441,16 @@ class Setting:
                                 return False
 
                             # Event File Check
-                            addr = setParameters3(ui.txtOnset.text(), mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), \
-                                                     fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                            if os.path.isfile(addr):
-                                print(addr, " - OKAY.")
-                            else:
-                                print(addr, " - file not find!")
-                                return False
+                            if ui.cbMode.currentIndex() == 0:
+                                addr = setParameters3(ui.txtOnset.text(), mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), \
+                                                         fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
+                                if os.path.isfile(addr):
+                                    print(addr, " - OKAY.")
+                                else:
+                                    print(addr, " - file not find!")
+                                    return False
 
-                            if checkGeneratedFiles:
+                            if checkGeneratedFiles and ui.cbMode.currentIndex() == 0:
                                 addr = setParameters3(ui.txtEventDIR.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), \
                                                      fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
                                 if os.path.isdir(addr):
@@ -469,6 +471,7 @@ class Setting:
                                     return False
 
         self.Version        = getSettingVersion()
+        self.Mode           = ui.cbMode.currentIndex()
         self.mainDIR        = mainDIR
         self.MNISpace       = ui.txtMNI.currentText()
         self.SubRange       = ui.txtSubRange.text()
@@ -514,6 +517,7 @@ class Setting:
 
     def Load(self,filename):
         self.Version        = None
+        self.Mode           = None
         self.mainDIR        = None
         self.MNISpace       = None
         self.Task           = None
@@ -561,6 +565,7 @@ class Setting:
                 config = cp.ConfigParser()
                 config.read(filename)
                 self.Version    = config['DEFAULT']['ver']
+                self.Mode       = np.int32(config['DEFAULT']['mode'])
                 self.mainDIR    = config['DEFAULT']['maindir']
                 self.MNISpace   = config['DEFAULT']['mni_space']
                 self.Task       = config['DEFAULT']['task']
@@ -610,6 +615,7 @@ class Setting:
     def checkGUI(self,ui, SettingFileName,checkGeneratedFiles=False):
         # init Empty
         self.Version        = getSettingVersion()
+        self.Mode           = None
         self.mainDIR        = None
         self.MNISpace       = None
         self.Task           = None
@@ -660,6 +666,8 @@ class Setting:
                     config = cp.ConfigParser()
                     config.read(SettingFileName)
                     if self.mainDIR != config['DEFAULT']['maindir']:
+                        return True
+                    if self.Mode != np.int32(config['DEFAULT']['mode']):
                         return True
                     if self.MNISpace != config['DEFAULT']['mni_space']:
                         return True

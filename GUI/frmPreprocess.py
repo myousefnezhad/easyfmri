@@ -120,6 +120,9 @@ class frmPreprocess(Ui_frmPreprocess):
         tools = Tools()
         tools.combo(ui.cbTools)
 
+        ui.cbMode.addItem("Full Analysis")
+        ui.cbMode.addItem("Only Preprocessing")
+
         ui.txtEvents.setText(EventCode())
         ui.tabWidget.setCurrentIndex(0)
         ui.tabWidget_2.setCurrentIndex(0)
@@ -208,6 +211,7 @@ class frmPreprocess(Ui_frmPreprocess):
         ui.btnVerify.clicked.connect(self.btnVerify_click)
         ui.btnDelete.clicked.connect(self.btnDelete_click)
         ui.btnTools.clicked.connect(self.btnTools_click)
+        ui.cbMode.currentIndexChanged.connect(self.cbMode_change)
 
 
 # Read history from file and visualized in the History tab
@@ -228,6 +232,20 @@ class frmPreprocess(Ui_frmPreprocess):
     def btnTools_click(self):
         tools = Tools()
         tools.run(ui.cbTools.currentData())
+
+
+    def cbMode_change(self):
+        currInx = ui.cbMode.currentIndex()
+        if (currInx == 0):
+            ui.txtEvents.setEnabled(True)
+            ui.btnEvent.setEnabled(True)
+            ui.btnEventTest.setEnabled(True)
+        else:
+            ui.txtEvents.setEnabled(False)
+            ui.btnEvent.setEnabled(False)
+            ui.btnEventTest.setEnabled(False)
+
+
 
 # This is the main directory in the Directory tab
     def btnDIR_click(self):
@@ -362,6 +380,7 @@ class frmPreprocess(Ui_frmPreprocess):
                 config = cp.ConfigParser()
                 config.read(SettingFileName)
                 config['DEFAULT']['ver']        = setting.Version
+                config['DEFAULT']['mode']       = str(setting.Mode)
                 config['DEFAULT']['maindir']    = setting.mainDIR
                 config['DEFAULT']['mni_space']  = setting.MNISpace
                 config['DEFAULT']['task']       = setting.Task
@@ -416,7 +435,7 @@ class frmPreprocess(Ui_frmPreprocess):
 
     def btnLoad_click(self):
         from Base.utility import getVersion
-        global ui
+        #global ui
         filename = LoadFile("Open setting file ...", ['Easy fMRI setting files (*.ez)'], 'ez', currentDirectory=ui.txtDIR.text())
         if len(filename):
             setting = Setting()
@@ -435,6 +454,7 @@ class frmPreprocess(Ui_frmPreprocess):
             if not setting.empty:
                 ui.txtSetting.setText(filename)
                 ui.txtDIR.setText(setting.mainDIR)
+                ui.cbMode.setCurrentIndex(setting.Mode)
                 ui.txtMNI.setCurrentText(setting.MNISpace)
                 ui.txtTask.setCurrentText(setting.Task)
                 ui.txtBOLD.setText(setting.BOLD)
@@ -508,6 +528,7 @@ class frmPreprocess(Ui_frmPreprocess):
                 if not setting.empty:
                     ui.txtSetting.setText(filename)
                     ui.txtDIR.setText(setting.mainDIR)
+                    ui.cbMode.setCurrentIndex(setting.Mode)
                     ui.txtMNI.setCurrentText(setting.MNISpace)
                     ui.txtTask.setCurrentText(setting.Task)
                     ui.txtBOLD.setText(setting.BOLD)
@@ -550,7 +571,7 @@ class frmPreprocess(Ui_frmPreprocess):
                     ui.cbMotionCorrection.setChecked(setting.Motion)
                     ui.cbRegAnat.setChecked(setting.Anat)
                     ui.btnExtractor.setEnabled(setting.Anat)
-                    ui.tabWidget.setCurrentIndex(3)
+                    ui.tabWidget.setCurrentIndex(4)
         except:
             return
 
@@ -668,7 +689,10 @@ class frmPreprocess(Ui_frmPreprocess):
                 return
             else:
                 scriptGenerator = ScriptGenerator()
-                scriptGenerator.run(ui.txtSetting.text())
+                if ui.cbMode.currentIndex() == 0 or setting.Mode == 0:
+                    scriptGenerator.run(ui.txtSetting.text())
+                else:
+                    scriptGenerator.runbase(ui.txtSetting.text())
                 print("TASK FINISHED!")
                 msgBox = QMessageBox()
                 msgBox.setText("All Script are generated!")
