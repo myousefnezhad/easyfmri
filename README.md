@@ -5,7 +5,13 @@ easy fMRI project (V1.8B5000 beta)
 
 Easy fMRI is an open source toolbox for the Human Brain Mapping and Decoding. This project is developing by [Muhammad Yousefnezhad](https://myousefnezhad.sourceforge.io), [iBRAIN Group](http://ibrain.nuaa.edu.cn), [Nanjing University of Aeronautics and Astronautics](http://iao.nuaa.edu.cn), China.
 
-The project website is [https://easyfmri.github.io/](https://easyfmri.github.io/) or [https://easyfmri.sourceforge.io/](https://easyfmri.sourceforge.io/).
+The project websites are 
+
+[https://easyfmri.gitlab.io/](https://easyfmri.gitlab.io/) [preferred]
+
+[https://easyfmri.github.io/](https://easyfmri.github.io/) 
+
+[https://easyfmri.sourceforge.io/](https://easyfmri.sourceforge.io/)
 
 ### Dependencies
 
@@ -21,9 +27,9 @@ Easy fMRI needs following software:
 
   -[CUDA](https://developer.nvidia.com/cuda-toolkit) for GPU-based algorithms
 
-  -[CUDNN](https://developer.nvidia.com/cudnn) for GPU-based algorithms
+  -[cuDNN](https://developer.nvidia.com/cudnn) for GPU-based algorithms
 
-  -[Tensorflow](https://www.tensorflow.org/install/) for Gradient-based Optimization and Learning
+  -[PyTorch](https://pytorch.org/) for Gradient-based Optimization and Learning
 
 
 ### How to install easy fMRI
@@ -57,16 +63,16 @@ Now you can install easy fMRI same as a linux system
 
 -- Download easy fMRI files:
 
+From [GitLab](https://gitlab.com/easyfmri/easyfmri):
+
+```
+git clone https://gitlab.com/easyfmri/easyfmri.git  ~/.easyfmri
+```
+
 From [GitHub](https://github.com/easyfmri/easyfmri):
 
 ```
 git clone https://github.com/easyfmri/easyfmri.git ~/.easyfmri
-```
-
-From [SourceForge Git](https://sourceforge.net/p/easyfmri/code/ci/master/tree/):
-
-```
-git clone git://git.code.sf.net/p/easyfmri/code ~/.easyfmri
 ```
 
 From [SourceForge](https://sourceforge.net/projects/easyfmri/files/) as a zip file
@@ -169,20 +175,26 @@ pip install *
 conda install mpi4py
 ```
 
--- Install Tensorflow package:
+-- Install PyTorch package:
 
 For CPU version:
 
+In Mac OS:
 ```
-pip install tensorflow
+conda install pytorch torchvision -c pytorch
 ```
 
-For GPU Vesion: You must install [CUDA](https://developer.nvidia.com/cuda-toolkit) and [CuDNN](https://developer.nvidia.com/cudnn). Then, you can install [Tensorflow](https://www.tensorflow.org/install/)
+In Linux:
+```
+conda install pytorch-cpu torchvision-cpu -c pytorch
+```
 
-Note: By employing `CUDA 9.0`, `CUDNN 7.0` and `Ubuntu 16.04.x`, you can use following command to install tensorflow:
+For GPU Vesion: You must install [CUDA](https://developer.nvidia.com/cuda-toolkit) and [cuDNN](https://developer.nvidia.com/cudnn). Then, you can install [PyTorch](https://pytorch.org/)
+
+Note: By employing `CUDA 9.2`, `CUDNN 7.2.1` and `Ubuntu 18.04.x`, you can use following command to install PyTorch:
 
 ```
-pip install tensorflow-gpu
+conda install pytorch torchvision cuda92 -c pytorch
 ```
 
 
