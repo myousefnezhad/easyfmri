@@ -222,16 +222,14 @@ git clone https://github.com/easyfmri/easyfmri.git ~/.easyfmri
 
 You can install this script automatically as follows:
 
-For Linux:
 ```
 cd ~/.easyfmri/Script
-./install_script_linux
+./install_script_bashrc
 ```
-
-For Mac:
+or
 ```
 cd ~/.easyfmri/Script
-./install_script_mac
+./install_script_profile
 ```
 
 Or just copy following to in `.profile` or `.bashrc` and restart your computer
