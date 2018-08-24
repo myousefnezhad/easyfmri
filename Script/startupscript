@@ -17,21 +17,26 @@ export EN_AFNI="1"
 export EN_FSL="1"
 export EN_CUDA="1"
 export EN_BASH="1"
-export EN_MC="1"
+export EN_MC="0"
 export EN_COLOR="1"
+export EN_SCALE="0"  # Turn it on for OLED display, default is 200x
+export EN_GIT="1"
+export EN_AENV="1"
+export RUN_AENV="0"
 ######################################
 # Proxy for terminal                 #
 ######################################
 alias proxyon='export http_proxy=http://127.0.0.1:3213 && export https_proxy=http://127.0.0.1:3213'
 alias proxyoff='export http_proxy= && export https_proxy='
 ######################################
-# Directories                        #
+# Directories & Parameters           #
 ######################################
 export INSTALL_DIR="$HOME"      # Base dir for Anaconda, easy fMRI, and AFNI
-export FSLDIR="/usr/local/fsl"  # for FSL 5.0.10
+export FSLDIR="/usr/local/fsl"  # for FSL 5.0.1x
 export ANACON_PATH="$INSTALL_DIR/anaconda3/bin"
 export AFNI_PATH="$INSTALL_DIR/abin"
 export CUDA_HOME="/usr/local/cuda"
+export SCREEN_SCALE=2     # Set it for OLED display, 2 means 200x
 # export FSLDIR="/usr/share/fsl/5.0" # for FSL 5.0.9
 # export DISPLAY=:0.0 # Enable for Windows 10
 ######################################
@@ -42,6 +47,14 @@ export CUDA_HOME="/usr/local/cuda"
 if (( $EN_EZFMRI != "0" )); then
   export EASYFMRI="$INSTALL_DIR/.easyfmri"
 fi
+
+######## QT Scale Factor
+if (( $EN_SCALE != "0" )); then
+    export QT_SCALE_FACTOR=1
+    export QT_AUTO_SCREEN_SCALE_FACTOR=0
+    export QT_SCREEN_SCALE_FACTORS=$SCREEN_SCALE
+fi
+
 ######## Python
 if (( $EN_PYTHON != "0" )); then
   export PATH="$ANACON_PATH:$PATH"
@@ -64,9 +77,11 @@ fi
 ####### CUDA
 if (( $EN_CUDA != "0" )); then
   export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$CUDA_HOME/lib"
-  export LD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$CUDA_HOME/lib:/usr/local/cuda/lib64/"
+  export LD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$CUDA_HOME/lib:/usr/local/cuda/lib64"
   export PATH="$CUDA_HOME/bin:$PATH"
+  export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/cuda/samples/common/inc
 fi
+
 ####### BASH
 if (( $EN_BASH != "0" )); then
   [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
@@ -75,9 +90,7 @@ fi
 if (( $EN_MC != "0" )); then
   alias mc=". /usr/local/opt/midnight-commander/libexec/mc/mc-wrapper.sh"
 fi
-####### BASH COLOR
-if (( $EN_COLOR != "0" )); then
-  # Define Colors
+####### Define Colors
   C_DEFAULT="\[\033[m\]"
   C_WHITE="\[\033[1m\]"
   C_BLACK="\[\033[30m\]"
@@ -103,13 +116,77 @@ if (( $EN_COLOR != "0" )); then
   C_BG_PURPLE="\[\033[45m\]"
   C_BG_CYAN="\[\033[46m\]"
   C_BG_LIGHTGRAY="\[\033[47m\]"
-  # Set Terminal Colors
+
+###### Anaconda envs
+if (( $EN_AENV != "0" )); then
+env_var=""
+## Activate env (default env = base)
+aenv() {
+
+    if [ -z $1 ];
+    then
+        ENV="base"
+    else
+        ENV="${1}"
+    fi
+
+    source activate ${ENV}
+
+    env_var="${ENV}"
+}
+
+## Deactivate env
+denv() {
+    source deactivate
+    env_var=""
+}
+
+## Information env
+ienv() {
+    if [[ ${env_var} == "" ]]
+    then
+        echo ""
+    else
+        echo "${env_var}"
+    fi
+}
+fi
+
+####### Git Prompt
+if (( $EN_GIT != "0" )); then
+parse_git_branch() {
+ git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+git_info() {
+   echo "$(parse_git_branch)"
+}
+fi
+
+
+####### BASH SETUP
+if (( $EN_COLOR != "0" )); then
+  export PS1=""
+# Set Terminal Colors
   export CLICOLOR=1
-  export LSCOLORS=GxacCxDxBxegedabagaced
   alias ls='ls -GFh'
-  export PS1="\n$C_LIGHTPURPLE\u$C_DEFAULT@$C_LIGHTCYAN\h$C_DEFAULT:$C_LIGHTBLUE\W$C_DEFAULT\$$C_LIGHTYELLOW "
+  export LSCOLORS=GxacCxDxBxegedabagaced
+# Root User
   if (( $EUID != 0 )); then
     export LSCOLORS=GxacCxDxBxegedabagaced
-    export PS1="\n$C_LIGHTGREEN\u$C_DEFAULT@$C_LIGHTCYAN\h$C_DEFAULT:$C_LIGHTBLUE\W$C_DEFAULT\$$C_LIGHTYELLOW "
+    export PS1+="$C_LIGHTGREEN\u$C_DEFAULT@$C_LIGHTCYAN\h$C_DEFAULT:$C_LIGHTBLUE\W"
+  else
+    export PS1+="$C_LIGHTPURPLE\u$C_DEFAULT@$C_LIGHTCYAN\h$C_DEFAULT:$C_LIGHTBLUE\W"
   fi
+  if (( $EN_GIT != "0" )); then
+# Git Information
+    PS1+='\[\033[01;31m\]$(parse_git_branch)'
+  fi
+# Prompot Symbol
+  PS1+="$C_DEFAULT\$$C_LIGHTYELLOW "
+fi
+
+####### Run Anaconda env in startup
+if (( $RUN_AENV != "0" )); then
+  aenv
 fi
