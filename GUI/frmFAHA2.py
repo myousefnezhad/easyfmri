@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
-
+import time
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
@@ -300,10 +300,10 @@ class frmFAHA(Ui_frmFAHA):
                     # set number of features
                     data = io.loadmat(filename)
                     XShape = np.shape(data[ui.txtITrData.currentText()])
-                    ui.txtNumFea.setMaximum(1)
+                    ui.txtNumFea.setMaximum(0)
                     ui.txtNumFea.setMaximum(XShape[1])
-                    ui.txtNumFea.setValue(XShape[1])
-                    ui.lblFeaNum.setText("1 ... " + str(XShape[1]))
+                    ui.txtNumFea.setValue(0)
+                    ui.lblFeaNum.setText("1 ... " + str(XShape[1]) + ", 0 = auto")
                     if ui.cbFoldID.isChecked():
                         ui.lbFoldID.setText("ID=" + str(data[ui.txtFoldID.currentText()][0][0]))
 
@@ -323,6 +323,7 @@ class frmFAHA(Ui_frmFAHA):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
+        runtime = time.time()
         msgBox = QMessageBox()
 
         TrFoldErr = list()
@@ -427,7 +428,7 @@ class frmFAHA(Ui_frmFAHA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            if NumFea < 1:
+            if NumFea < 0:
                 msgBox.setText("Number of features must be greater than zero!")
                 msgBox.setIcon(QMessageBox.Critical)
                 msgBox.setStandardButtons(QMessageBox.Ok)
@@ -439,6 +440,8 @@ class frmFAHA(Ui_frmFAHA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
+            if NumFea == 0:
+                NumFea = None
 
             # Label
             if not len(ui.txtITrLabel.currentText()):
@@ -943,6 +946,7 @@ class frmFAHA(Ui_frmFAHA):
             HAParam["Share"] = G
             HAParam["Level"] = FoldStr
             OutData["FunctionalAlignment"] = HAParam
+            OutData["Runtime"] = time.time() - runtime
 
             print("Saving ...")
             io.savemat(OutFile, mdict=OutData)
@@ -950,6 +954,7 @@ class frmFAHA(Ui_frmFAHA):
 
         print("Training -> Alignment Error: mean " + str(np.mean(TrFoldErr)) + " std " + str(np.std(TrFoldErr)))
         print("Testing  -> Alignment Error: mean " + str(np.mean(TeFoldErr)) + " std " + str(np.std(TeFoldErr)))
+        print("Runtime: ", OutData["Runtime"])
         print("Regularized Hyperalignment is done.")
         msgBox.setText("Regularized Hyperalignment is done.")
         msgBox.setIcon(QMessageBox.Information)

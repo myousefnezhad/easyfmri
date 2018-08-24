@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
-
+import time
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
@@ -338,6 +338,7 @@ class frmFAKHA(Ui_frmFAKHA):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
+        runtime = time.time()
         msgBox = QMessageBox()
 
         # Batch
@@ -1072,6 +1073,8 @@ class frmFAKHA(Ui_frmFAKHA):
             HAParam["Share"] = G
             HAParam["Level"] = FoldStr
             OutData["FunctionalAlignment"] = HAParam
+            OutData["Runtime"] = time.time() - runtime
+
 
             print("Saving ...")
             io.savemat(OutFile, mdict=OutData)
@@ -1079,6 +1082,7 @@ class frmFAKHA(Ui_frmFAKHA):
 
         print("Training -> Alignment Error: mean " + str(np.mean(TrFoldErr)) + " std " + str(np.std(TrFoldErr)))
         print("Testing  -> Alignment Error: mean " + str(np.mean(TeFoldErr)) + " std " + str(np.std(TeFoldErr)))
+        print("Runtime: ", OutData["Runtime"])
         print("Kernel/SVD Hyperalignment is done.")
         msgBox.setText("Kernel/SVD Hyperalignment is done.")
         msgBox.setIcon(QMessageBox.Information)

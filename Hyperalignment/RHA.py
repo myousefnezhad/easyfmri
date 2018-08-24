@@ -49,7 +49,7 @@ class RHA:
         self.F = [np.int(np.shape(views)[2]) for i in range(self.V)]  # Assume eps is same for each view
 
         if self.Dim is None:
-            self.k = np.shape(views)[2]  # Dimensionality of embedding we want to learn
+            self.k = np.min((np.shape(views)[2],np.shape(views)[1]))  # Dimensionality of embedding we want to learn
         else:
             try:
                 self.k = np.int32(self.Dim)

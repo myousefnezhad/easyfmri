@@ -208,10 +208,11 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         # Functional Alignment
-        ui.cbFA.addItem("MatLab: Shared Response Model (SRM)", 10005)
         ui.cbFA.addItem("MatLab: Regularized Hyperalignment (direct solution, without trans. matrix)", 10001)
-        ui.cbFA.addItem("MatLab: Regularized Hyperalignment (direct solution, with trans. matrix)", 10000)
         ui.cbFA.addItem("MatLab: Kernel/SVD Hyperalignment (direct solution, without trans. matrix)", 10006)
+        ui.cbFA.addItem("MatLab: GPU Hyperalignment (GPUHA)", 10008)
+        ui.cbFA.addItem("MatLab: Shared Response Model (SRM)", 10005)
+        ui.cbFA.addItem("MatLab: Regularized Hyperalignment (direct solution, with trans. matrix)", 10000)
         ui.cbFA.addItem("MatLab: Kernel/SVD Hyperalignment (direct solution, with trans. matrix)", 10007)
         ui.cbFA.addItem("MatLab: Principal Component Analysis (PCA) Functional Alignment", 10002)
         ui.cbFA.addItem("MatLab: Independent Component Analysis (ICA) Functional Alignment", 10003)
@@ -1782,6 +1783,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         elif FAID == 10007:
             from GUI.frmFAKHA import frmFAKHA
             frmFAKHA.show(frmFAKHA)
+            return
+        elif FAID == 10008:
+            from GUI.frmFAHAGPU import frmFAHA
+            frmFAHA.show(frmFAHA)
             return
 # Auto Run
 if __name__ == "__main__":
