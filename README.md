@@ -19,9 +19,9 @@ Easy fMRI needs following software:
 
   -Platform: Linux (recommended), Mac, Windows (via Linux Virtual Machine, or Bash for Windows 10 or above)
 
-  -[Python3](https://anaconda.org/anaconda/python) (version=3.6.2 or above)
+  -[Python3](https://anaconda.org/anaconda/python) (version=3.6.x or 3.7.x)
 
-  -[FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki) (version=5.0.10 or above) for preprocessing steps
+  -[FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki) (version=5.0.1x) for preprocessing steps
 
   -[AFNI & SUMA](https://afni.nimh.nih.gov/) (version=17.3.06 or above) for 3D visualization
 
