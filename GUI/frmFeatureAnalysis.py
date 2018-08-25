@@ -213,7 +213,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.cbFA.addItem("MatLab: GPU Hyperalignment (GPUHA)", 10008)
         ui.cbFA.addItem("MatLab: Shared Response Model (SRM)", 10005)
         ui.cbFA.addItem("MatLab: Regularized Hyperalignment (direct solution, with trans. matrix)", 10000)
+        ui.cbFA.addItem("MatLab: Regularized Hyperalignment (classical solution)", 10009)
         ui.cbFA.addItem("MatLab: Kernel/SVD Hyperalignment (direct solution, with trans. matrix)", 10007)
+        ui.cbFA.addItem("MatLab: Kernel/SVD Hyperalignment (classical solution)", 10010)
         ui.cbFA.addItem("MatLab: Principal Component Analysis (PCA) Functional Alignment", 10002)
         ui.cbFA.addItem("MatLab: Independent Component Analysis (ICA) Functional Alignment", 10003)
         ui.cbFA.addItem("MatLab: Linear Discriminant Analysis (LDA) Functional Alignment", 10004)
@@ -1788,6 +1790,15 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             from GUI.frmFAHAGPU import frmFAHA
             frmFAHA.show(frmFAHA)
             return
+        elif FAID == 10009:
+            from GUI.frmFARHA import frmFAHA
+            frmFAHA.show(frmFAHA)
+            return
+        elif FAID == 10010:
+            from GUI.frmFAKRHA import frmFAKHA
+            frmFAKHA.show(frmFAKHA)
+            return
+
 # Auto Run
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
