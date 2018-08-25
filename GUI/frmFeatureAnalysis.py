@@ -967,6 +967,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             roiIMG = roiHDR.get_data()
             roiSize = np.shape(roiIMG)
             roiIND = np.where(roiIMG != 0)
+            if ui.rb4DShape2.isChecked():
+                vroiSize = np.max(roiIND,axis=1) - np.min(roiIND,axis=1) + 1
+                vroiIND  = (roiIND[0] - np.min(roiIND,axis=1)[0], roiIND[1] - np.min(roiIND,axis=1)[1], roiIND[2] - np.min(roiIND,axis=1)[2])
         except:
             msgBox.setText("Cannot load ROI File!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -1179,12 +1182,14 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         CondID      = Conditions()
         NumberOFExtract = 0
         NumberOFALL = 0
+        BatchFiles = list()
 
         # RUNNING ...
         try:
             os.stat(OutDIR)
         except:
             os.makedirs(OutDIR,exist_ok=True)
+
 
         print("Extraction ...")
         for si, s in enumerate(SubRange):
@@ -1305,7 +1310,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     else:
                         print("WARNING: some class labels are not found!", np.max(Y_Sess))
 
-
                     for instID, yID in enumerate(Y_Sess):
                         NumberOFALL = NumberOFALL + 1
                         if not ui.cbDIRemoveRest.isChecked() or yID != 0:
@@ -1337,24 +1341,54 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                             # Data
                             if ui.cbDIDataID.isChecked():
                                 Snapshot = InIMG[:, :, :, instID]
-                                X.append(Snapshot[roiIND])
+                                if ui.rb2DShape.isChecked():
+                                    X.append(Snapshot[roiIND])
+                                elif ui.rb4DShape.isChecked():
+                                    x3d = np.zeros(roiSize)
+                                    x3d[roiIND] = Snapshot[roiIND]
+                                    X.append(x3d)
+                                elif ui.rb4DShape2.isChecked():
+                                    x3d = np.zeros(vroiSize)
+                                    x3d[vroiIND] = Snapshot[roiIND]
+                                    X.append(x3d)
 
                             if ui.cbDIDM.isChecked():
                                 DesignID.append(DesginValues[instID])
 
+                    # Data Files
                     if ui.cbDIDataID.isChecked():
-                        OutDataFile = setParameters3(OutDAT, "",
-                                    fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                    fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                    fixstr(cnt, ConLen, ui.txtDIConPer.text()))
+                        if ui.rbMatFile.isChecked():
+                            OutDataFile = setParameters3(OutDAT, "", str(s), str(r), ui.txtDITask.text(), str(cnt)) + ".ezmat"
+                        else:
+                            OutDataFile = setParameters3(OutDAT, "", str(s), str(r), ui.txtDITask.text(), str(cnt)) + ".nii.gz"
+
+                        BatchFiles.append([s, r, cnt, ui.txtDITask.text(), OutDataFile])
                         print("Saving data " + OutDataFile + "... ")
                         DataFiles.append(OutDataFile)
-                        io.savemat(OutDIR + '/' + OutDataFile, mdict={ui.txtDIDataID.text(): X},appendmat=False, do_compression=True)
+
+                        if ui.rbMatFile.isChecked():
+                            io.savemat(OutDIR + '/' + OutDataFile, mdict={ui.txtDIDataID.text(): X},appendmat=False, do_compression=True)
+                        else:
+                            convertedXtoIMG = nb.Nifti1Image(np.asarray(X).T, np.eye(4))
+                            nb.save(convertedXtoIMG, OutDIR + '/' + OutDataFile)
                         print("Data " + OutDataFile + " is saved!")
 
         print("Saving Header " + OutHDR + "...")
         OutData = dict()
         OutData["imgShape"] = np.array(fMRISize)
+
+        if ui.rb2DShape.isChecked():
+            OutData["dataShape"] = 2
+        elif ui.rb4DShape.isChecked():
+            OutData["dataShape"] = 4
+
+
+        if ui.rbMatFile.isChecked():
+            OutData["DataFileType"] = 1
+        else:
+            OutData["DataFileType"] = 0
+
+        OutData["BatchFiles"] = BatchFiles
 
         Integration = dict()
         Integration["DataStructure"] = list()
@@ -1367,6 +1401,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             # Save Preprocessing Setting
             Preprocess  = dict()
             Preprocess["Version"]       = setting.Version
+            Preprocess["Mode"]          = setting.Mode
             Preprocess["mainDIR"]       = setting.mainDIR
             Preprocess["MNISpace"]      = setting.MNISpace
             Preprocess["Task"]          = setting.Task

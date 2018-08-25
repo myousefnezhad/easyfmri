@@ -1,0 +1,8 @@
+.idea/*
+__pycache__/*
+GUI/__pycache__/*
+Hyperalignment/__pycache__/*
+Base/__pycache__/*
+history
+backend/__pycache__/*
+Preprocess/__pycache__/*

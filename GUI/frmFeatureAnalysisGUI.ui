@@ -782,7 +782,7 @@ It's case sensitive.</string>
        <x>20</x>
        <y>180</y>
        <width>771</width>
-       <height>271</height>
+       <height>281</height>
       </rect>
      </property>
      <property name="currentIndex">
@@ -943,7 +943,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>data-$TASK$_sub-$SUB$_con-$COUNT$_run-$RUN$.ezmat</string>
+        <string>data-$TASK$_sub-$SUB$_con-$COUNT$_run-$RUN$</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_29">
@@ -970,6 +970,48 @@ It's case sensitive.</string>
        </property>
        <property name="text">
         <string>...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_31">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>220</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Ouput Data Type:</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="rbMatFile">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>220</y>
+         <width>200</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>EZMAT</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radioButton_2">
+       <property name="geometry">
+        <rect>
+         <x>340</x>
+         <y>220</y>
+         <width>200</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>NII.GZ</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>
@@ -1966,6 +2008,61 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
         <bool>true</bool>
        </property>
       </widget>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="geometry">
+        <rect>
+         <x>530</x>
+         <y>70</y>
+         <width>211</width>
+         <height>131</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>&lt;Data Shape&gt;</string>
+       </property>
+       <widget class="QRadioButton" name="rb2DShape">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>37</y>
+          <width>181</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>2D (Matrix)</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="rb4DShape">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>66</y>
+          <width>181</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>4D (Tensor)</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="rb4DShape2">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>95</y>
+          <width>181</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Boxed 4D (Tensor)</string>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </widget>
     <widget class="QComboBox" name="txtDISetting">
@@ -2076,7 +2173,7 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>520</y>
+       <y>530</y>
        <width>771</width>
        <height>41</height>
       </rect>
@@ -2101,7 +2198,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>470</y>
+       <y>480</y>
        <width>771</width>
        <height>32</height>
       </rect>

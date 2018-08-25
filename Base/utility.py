@@ -332,16 +332,27 @@ def LoadEzData(Header=None,data=None):
         if not len(DataKey):
             print("WARNING: No data key found!")
         else:
+            if Out['DataFileType'][0][0] == 0:
+                print("Data file type is NII.GZ")
+            else:
+                print("Data file type is EZMAT")
             for dkey in DataKey:
                 X = None
                 dfiles = np.array(Int[dkey[0] + "_files"])[0][0]
                 for fdata in dfiles:
                     try:
-                        del io
-                        import scipy.io as io
-                        dat = io.loadmat(os.path.dirname(Header) + "/" + fdata,appendmat=False)[dkey[0]]
-                        X = dat if X is None else np.concatenate((X,dat))
-                        del dat
+                        if Out['DataFileType'][0][0] == 0:
+                            import nibabel as nb
+                            niiimgdata = nb.load(os.path.dirname(Header) + "/" + fdata)
+                            dat = niiimgdata.get_data()
+                            X = dat if X is None else np.concatenate((X, dat))
+                            del dat, niiimgdata
+                        else:
+                            del io
+                            import scipy.io as io
+                            dat = io.loadmat(os.path.dirname(Header) + "/" + fdata,appendmat=False)[dkey[0]]
+                            X = dat if X is None else np.concatenate((X,dat))
+                            del dat
                         print("Data %s is load!" % (fdata))
                     except Exception as e:
                         print(str(e))
