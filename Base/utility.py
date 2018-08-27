@@ -314,7 +314,7 @@ def LoadEzData(Header=None,data=None):
         return None
 
     try:
-        Out = io.loadmat(Header,appendmat=False)
+        Out = io.loadmat(Header, appendmat=False)
         Int = Out["Integration"]
     except:
         print("Cannot load header file!")

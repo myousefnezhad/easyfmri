@@ -65,6 +65,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         # ui.cbMAU.addItem("MatLab, Tensorflow RSA: Group Level Single-Deep-Kernel Representational Similarity Analysis",20006)
 
         # Supervised
+        ui.cbMAS.addItem("MatLab, MVPA, PyTorch: GPU Support Vector Machine",10003)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: AdaBoost",80005)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Decision Tree",80001)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Gaussian Naive Bayes",80000)
@@ -172,6 +173,10 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         if MAID == 10002:
             from GUI.frmMANuSVM import frmMANuSVM
             frmMANuSVM.show(frmMANuSVM)
+            return
+        if MAID == 10003:
+            from GUI.frmMAGPUSVM import frmMASVM
+            frmMASVM.show(frmMASVM)
             return
         if MAID == 80000:
             from GUI.frmMAGNB import frmMAGNB

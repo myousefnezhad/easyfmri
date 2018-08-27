@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
-
+import time
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
@@ -194,6 +194,7 @@ class frmMASGDC(Ui_frmMASGDC):
 
 
     def btnConvert_click(self):
+        tme = time.time()
         msgBox = QMessageBox()
 
         try:
@@ -602,6 +603,8 @@ class frmMASGDC(Ui_frmMASGDC):
             print("F1:               Train {:5.2f} +/- {:4.2f} Test {:5.2f} +/- {:4.2f}".format(MeanF1Tr*100, STDF1Tr, MeanF1*100, STDF1))
 
         OutData["InputFiles"] = InFileList
+        OutData["Runtime"] = time.time() - tme
+        print("Runtime: ", OutData["Runtime"])
 
         print("Saving ...")
         io.savemat(OutFile, mdict=OutData)
