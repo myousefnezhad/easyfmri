@@ -1477,6 +1477,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         # Coordinate
         if ui.cbDICoID.isChecked():
             OutData[ui.txtDICoID.text()] = np.array(roiIND)
+            if ui.rb4DShape2.isChecked():
+                OutData[ui.txtDICoID.text() + "_box"] = np.array(vroiIND)
+
         # Condition
         if ui.cbDICondID.isChecked():
             OutData[ui.txtDICoundID.text()] = np.array(CondID.get_cond(),dtype=object)

@@ -344,7 +344,7 @@ def LoadEzData(Header=None,data=None):
                         if Out['DataFileType'][0][0] == 0:
                             import nibabel as nb
                             niiimgdata = nb.load(os.path.dirname(Header) + "/" + fdata)
-                            dat = niiimgdata.get_data()
+                            dat = np.transpose(niiimgdata.get_data())
                             X = dat if X is None else np.concatenate((X, dat))
                             del dat, niiimgdata
                         else:
