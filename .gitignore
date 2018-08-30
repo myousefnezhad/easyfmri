@@ -6,3 +6,5 @@ Base/__pycache__/*
 history
 backend/__pycache__/*
 Preprocess/__pycache__/*
+MVPA/__pycache__/GPUSVM.cpython-36.pyc
+Network/__pycache__/*
