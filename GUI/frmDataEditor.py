@@ -54,7 +54,7 @@ class frmDataEditor(Ui_frmDataEditor):
     def btnLoadFile_click(self):
         global data
         ifile = LoadFile("Open data files ...",\
-                         ['Data files (*.mat *.ezdata *.ezmat)', 'MatLab files (*.mat)','EasyData files (*.ezdata)', \
+                         ['Data files (*.mat *.ezdata *.ezmat, *.model)', 'MatLab files (*.mat)','EasyData files (*.ezdata)', \
                           'EasyMat (*.ezmat)', 'All files (*.*)'],'mat')
         if len(ifile):
             if os.path.isfile(ifile):

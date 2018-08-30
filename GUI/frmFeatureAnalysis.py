@@ -202,6 +202,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.cbFEU.addItem("MatLab: Multi Region Pattern Analysis (Snapshots)", 30000)
         ui.cbFEU.addItem("MatLab: Principal Component Analysis (PCA)",10000)
         ui.cbFEU.addItem("MatLab: Sparse Principal Component Analysis (SPCA)",10003)
+        ui.cbFEU.addItem("MatLab: Convolutional Neural Network (CNN)", 40000)
 
         # Supervised Feature Engineering
         ui.cbFES.addItem("MatLab: Linear Discriminant Analysis (LDA)",1)
@@ -1777,7 +1778,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             from GUI.frmFEMRPA import frmFEMRPA
             frmFEMRPA.show(frmFEMRPA)
             return
-
+        if FEID == 40000:
+            from GUI.frmFECNN import frmFECNN
+            frmFECNN.show(frmFECNN)
+            return
     def btnFECross_click(self):
         frmFECrossValidation.show(frmFECrossValidation)
 
