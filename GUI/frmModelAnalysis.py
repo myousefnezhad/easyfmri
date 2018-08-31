@@ -58,8 +58,8 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("MatLab, SK RSA: Group Level Representational Similarity Analysis",20008)
         ui.cbMAU.addItem("MatLab, NumPy RSA: Session Level Representational Similarity Analysis",20000)
         ui.cbMAU.addItem("MatLab, NumPy RSA: Group Level Representational Similarity Analysis",20001)
-        ui.cbMAU.addItem("MatLab, PyTorch RSA: Session Level Gradient Representational Similarity Analysis",20002)
-        ui.cbMAU.addItem("MatLab, PyTorch RSA: Group Level Gradient Representational Similarity Analysis",20003)
+        #ui.cbMAU.addItem("MatLab, PyTorch RSA: Session Level Gradient Representational Similarity Analysis",20002)
+        #ui.cbMAU.addItem("MatLab, PyTorch RSA: Group Level Gradient Representational Similarity Analysis",20003)
 
         # ui.cbMAU.addItem("MatLab, Tensorflow RSA: Session Level Deep-Kernel Representational Similarity Analysis",20004)
         # ui.cbMAU.addItem("MatLab, Tensorflow RSA: Group Level Multi-Deep-Kernel Representational Similarity Analysis",20005)
