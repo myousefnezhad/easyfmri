@@ -58,9 +58,10 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("MatLab, SK RSA: Group Level Representational Similarity Analysis",20008)
         ui.cbMAU.addItem("MatLab, NumPy RSA: Session Level Representational Similarity Analysis",20000)
         ui.cbMAU.addItem("MatLab, NumPy RSA: Group Level Representational Similarity Analysis",20001)
-        # ui.cbMAU.addItem("MatLab, Tensorflow RSA: Session Level Gradient Representational Similarity Analysis",20002)
+        ui.cbMAU.addItem("MatLab, PyTorch RSA: Session Level Gradient Representational Similarity Analysis",20002)
+        ui.cbMAU.addItem("MatLab, PyTorch RSA: Group Level Gradient Representational Similarity Analysis",20003)
+
         # ui.cbMAU.addItem("MatLab, Tensorflow RSA: Session Level Deep-Kernel Representational Similarity Analysis",20004)
-        # ui.cbMAU.addItem("MatLab, Tensorflow RSA: Group Level Gradient Representational Similarity Analysis",20003)
         # ui.cbMAU.addItem("MatLab, Tensorflow RSA: Group Level Multi-Deep-Kernel Representational Similarity Analysis",20005)
         # ui.cbMAU.addItem("MatLab, Tensorflow RSA: Group Level Single-Deep-Kernel Representational Similarity Analysis",20006)
 
@@ -131,14 +132,24 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMAGRSA import frmMAGRSA
             frmMAGRSA.show(frmMAGRSA)
             return
-        # if MAID == 20002:
-        #     from GUI.frmMAGrRSA import frmMAGrRSA
-        #     frmMAGrRSA.show(frmMAGrRSA)
-        #     return
-        # if MAID == 20003:
-        #     from GUI.frmMAGGrRSA import frmMAGGrRSA
-        #     frmMAGGrRSA.show(frmMAGGrRSA)
-        #     return
+        if MAID == 20007:
+            from GUI.frmMASKRSA import frmMASKRSA
+            frmMASKRSA.show(frmMASKRSA)
+            return
+        if MAID == 20008:
+            from GUI.frmMASKGRSA import frmMASKGRSA
+            frmMASKGRSA.show(frmMASKGRSA)
+            return
+        if MAID == 20002:
+            from GUI.frmMAGrRSA import frmMAGrRSA
+            frmMAGrRSA.show(frmMAGrRSA)
+            return
+        if MAID == 20003:
+            from GUI.frmMAGGrRSA import frmMAGGrRSA
+            frmMAGGrRSA.show(frmMAGGrRSA)
+            return
+
+
         # if MAID == 20004:
         #     from GUI.frmMADeepRSA import frmMADeepRSA
         #     frmMADeepRSA.show(frmMADeepRSA)
@@ -151,14 +162,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         #     from GUI.frmMADeepGroupRSA import frmMADeepGroupRSA
         #     frmMADeepGroupRSA.show(frmMADeepGroupRSA)
         #     return
-        # if MAID == 20007:
-        #     from GUI.frmMASKRSA import frmMASKRSA
-        #     frmMASKRSA.show(frmMASKRSA)
-        #     return
-        # if MAID == 20008:
-        #     from GUI.frmMASKGRSA import frmMASKGRSA
-        #     frmMASKGRSA.show(frmMASKGRSA)
-        #     return
+
 
     def btnMAS_click(self):
         MAID = ui.cbMAS.currentData()
