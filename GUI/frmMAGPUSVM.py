@@ -61,6 +61,10 @@ class frmMASVM(Ui_frmMAGPUSVM):
         ui.cbF1Avg.addItem("samples","samples")
         ui.cbF1Avg.addItem("None", None)
 
+        # Optimization
+        ui.cbOptim.addItem("SGD", 'sgd')
+        ui.cbOptim.addItem("Adam", "adam")
+
         dialog.setWindowTitle("easy fMRI GPU Support Vector Classification - V" + getVersion() + "B" + getBuild())
 
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -374,7 +378,8 @@ class frmMASVM(Ui_frmMAGPUSVM):
                 print("Cannot load Fold ID!")
                 return
             try:
-                clf = GPUSVM(epoch=epoch, batchsize=batch, learningrate=lr, C=C, normalization=False)
+                clf = GPUSVM(epoch=epoch, batchsize=batch, learningrate=lr, C=C, \
+                             normalization=False, optim=ui.cbOptim.currentData())
                 print("FoldID = " + str(currFID) + " is training ...")
                 clf.train(TrX, TrL)
                 PrL = clf.TrainPredict

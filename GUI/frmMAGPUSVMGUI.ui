@@ -342,7 +342,7 @@
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>240</y>
+       <y>280</y>
        <width>160</width>
        <height>21</height>
       </rect>
@@ -355,7 +355,7 @@
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>280</y>
+       <y>320</y>
        <width>160</width>
        <height>21</height>
       </rect>
@@ -368,7 +368,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>280</y>
+       <y>320</y>
        <width>221</width>
        <height>16</height>
       </rect>
@@ -381,7 +381,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>240</y>
+       <y>280</y>
        <width>221</width>
        <height>16</height>
       </rect>
@@ -394,7 +394,7 @@
      <property name="geometry">
       <rect>
        <x>440</x>
-       <y>280</y>
+       <y>320</y>
        <width>281</width>
        <height>16</height>
       </rect>
@@ -407,7 +407,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>200</y>
+       <y>240</y>
        <width>221</width>
        <height>16</height>
       </rect>
@@ -420,7 +420,7 @@
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>200</y>
+       <y>240</y>
        <width>160</width>
        <height>21</height>
       </rect>
@@ -433,7 +433,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>320</y>
+       <y>360</y>
        <width>641</width>
        <height>20</height>
       </rect>
@@ -449,7 +449,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>360</y>
+       <y>400</y>
        <width>661</width>
        <height>20</height>
       </rect>
@@ -465,7 +465,7 @@
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>120</y>
+       <y>160</y>
        <width>160</width>
        <height>21</height>
       </rect>
@@ -478,7 +478,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>120</y>
+       <y>160</y>
        <width>221</width>
        <height>16</height>
       </rect>
@@ -491,7 +491,7 @@
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>160</y>
+       <y>200</y>
        <width>160</width>
        <height>21</height>
       </rect>
@@ -504,13 +504,36 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>160</y>
+       <y>200</y>
        <width>221</width>
        <height>16</height>
       </rect>
      </property>
      <property name="text">
       <string>Batch Size</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbOptim">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>120</y>
+       <width>161</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_15">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>120</y>
+       <width>201</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Optimization</string>
      </property>
     </widget>
    </widget>

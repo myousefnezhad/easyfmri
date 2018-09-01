@@ -16,12 +16,13 @@ class LinearSVM(nn.Module):
         return self.fc(x)
 
 class GPUSVM:
-    def __init__(self, epoch=10, batchsize=10, learningrate=0.1, C=0.1, normalization=True):
+    def __init__(self, epoch=10, batchsize=10, learningrate=0.1, C=0.1, normalization=True, optim='adam'):
         self.C = C
         self.W = None
         self.b = None
         self.model = None
         self.epoch = epoch
+        self.optim = str.lower(optim)
         self.NumDim = None
         self.NumClass = None
         self.batchsize = batchsize
@@ -77,7 +78,12 @@ class GPUSVM:
         Y = torch.Tensor(label_binarize(Y, np.unique(Y)))
 
         # Optimization approach
-        optimizer = optim.SGD(self.model.parameters(), lr=self.learningrate)
+        if   self.optim == 'adam':
+            optimizer = optim.Adam(self.model.parameters(), lr=self.learningrate)
+        elif self.optim == 'sgd':
+            optimizer = optim.SGD(self.model.parameters(), lr=self.learningrate)
+        else:
+            raise Exception("Optimization algorithm is wrong!")
         criterion = torch.nn.MultiLabelSoftMarginLoss()
         self.model.train()
 
