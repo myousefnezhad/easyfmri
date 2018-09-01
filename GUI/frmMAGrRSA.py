@@ -731,7 +731,7 @@ class frmMAGrRSA(Ui_frmMAGrRSA):
         LUnique = np.unique(L)
         LNum    = np.shape(LUnique)[0]
         OutData["Label"] = LUnique
-        OutData["ModelAnalysis"] = "Tensorflow.Session.Gradient.RSA." + ui.cbMethod.currentText()
+        OutData["ModelAnalysis"] = "PyTorch.Session.Gradient.RSA." + ui.cbMethod.currentText()
 
 
         if np.shape(X)[0] == 0:

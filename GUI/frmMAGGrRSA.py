@@ -600,7 +600,7 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
         FoldInfo["Folds"]   = UnitFold
 
         OutData["FoldInfo"] = FoldInfo
-        OutData["ModelAnalysis"] = "Tensorflow.Group.Gradient.RSA." + ui.cbMethod.currentText()
+        OutData["ModelAnalysis"] = "PyTorch.Group.Gradient.RSA." + ui.cbMethod.currentText()
 
 
         print("Number of all levels is: " + str(len(UniqFold)))
