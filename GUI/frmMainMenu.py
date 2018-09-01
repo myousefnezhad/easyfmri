@@ -56,6 +56,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         msgBox = MyMessageBox()
         msgBox.setMinimumWidth(800)
         msgBox.setText(About())
+        msgBox.setWindowTitle("easy fMRI project")
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()

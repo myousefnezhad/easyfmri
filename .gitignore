@@ -1,10 +1,11 @@
 .idea/*
 __pycache__/*
+backend/__pycache__/*
+Base/__pycache__/*
 GUI/__pycache__/*
 Hyperalignment/__pycache__/*
-Base/__pycache__/*
-history
-backend/__pycache__/*
-Preprocess/__pycache__/*
-MVPA/__pycache__/GPUSVM.cpython-36.pyc
+MVPA/__pycache__/*
 Network/__pycache__/*
+Preprocess/__pycache__/*
+RSA/__pycache__/*
+history
