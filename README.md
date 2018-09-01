@@ -5,13 +5,19 @@ easy fMRI project (V1.8B5000 beta)
 
 Easy fMRI is an open source toolbox for the Human Brain Mapping and Decoding. This project is developing by [Muhammad Yousefnezhad](https://myousefnezhad.sourceforge.io), [iBRAIN Group](http://ibrain.nuaa.edu.cn), [Nanjing University of Aeronautics and Astronautics](http://iao.nuaa.edu.cn), China.
 
-The project websites are 
+The project websites: 
 
 [https://easyfmri.gitlab.io/](https://easyfmri.gitlab.io/) [preferred]
 
 [https://easyfmri.github.io/](https://easyfmri.github.io/) 
 
-[https://easyfmri.sourceforge.io/](https://easyfmri.sourceforge.io/)
+
+Data repositories:
+
+[https://easydata.gitlab.io](https://easydata.gitlab.io) [preferred]
+
+[https://easyfmridata.github.io](https://easyfmridata.github.io)
+
 
 ### Dependencies
 
