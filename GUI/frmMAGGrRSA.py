@@ -259,7 +259,7 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
         try:
             LearningRate = np.float32(ui.txtRate.text())
         except:
-            msgBox.setText("Number of Report Step is wrong!")
+            msgBox.setText("Learning rate is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()

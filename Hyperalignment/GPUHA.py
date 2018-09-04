@@ -72,6 +72,9 @@ class GPUHA:
 
         ProjectMats = list()
 
+        if N > self.k:
+            gpu = False
+
         # Take SVD of each view, to calculate A_i and T_i
         for i, (eps, view) in enumerate(zip(self.eps, views)):
             if self.verbose:
@@ -169,7 +172,7 @@ class GPUHA:
         self.ETest = list()
 
         # Take SVD of each view, to calculate A_i and T_i
-        for i, (eps, view) in enumerate(zip(self.eps, views)):
+        for i, (eps, view) in enumerate(zip(self.eps_test, views)):
             if self.verbose:
                 print('TEST DATA -> View %d -> Run SVD ...' % (i + 1))
             A, S_thin, B = scipy.linalg.svd(view, full_matrices=False)
@@ -249,8 +252,8 @@ class GPUHA:
 
 # Auto Run
 if __name__ == "__main__":
-    trsubs = np.random.rand(5, 100, 5000)
-    tesubs = np.random.rand(5, 100, 5000)
+    trsubs = np.random.rand(5, 100, 200)
+    tesubs = np.random.rand(5, 100, 200)
     model = GPUHA()
     nsubs, g, t, e, _ = model.train(trsubs,verbose=False, gpu=True)
     print("Aligned train shape: ", np.shape(nsubs), " err: ", e, " time: ", t, " Shared space shape: ", np.shape(g))

@@ -128,7 +128,7 @@ class RHA:
         self.Xtest = list()
 
         # Take SVD of each view, to calculate A_i and T_i
-        for i, (eps, view) in enumerate(zip(self.eps, views)):
+        for i, (eps, view) in enumerate(zip(self.eps_test, views)):
             if self.verbose:
                 print('TEST DATA -> View %d -> Run SVD ...' % (i + 1))
             A, S_thin, B = scipy.linalg.svd(view, full_matrices=False)
