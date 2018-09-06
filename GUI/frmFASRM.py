@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
-
+import time
 import numpy as np
 import scipy.io as io
 import scipy.linalg as lg
@@ -70,6 +70,8 @@ class frmFASRM(Ui_frmFASRM):
 
         ui.txtLic.setPlainText(Lic())
         ui.txtLic.setReadOnly(True)
+        ui.txtNumFea.setMinimum(0)
+        ui.txtNumFea.setValue(0)
 
         dialog.setWindowTitle("easy fMRI Shared Response Model (SRM) - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -344,10 +346,8 @@ class frmFASRM(Ui_frmFASRM):
                     # set number of features
                     data = io.loadmat(filename)
                     XShape = np.shape(data[ui.txtITrData.currentText()])
-                    ui.txtNumFea.setMaximum(1)
                     ui.txtNumFea.setMaximum(XShape[1])
-                    ui.txtNumFea.setValue(XShape[1])
-                    ui.lblFeaNum.setText("1 ... " + str(XShape[1]))
+                    ui.lblFeaNum.setText("1 ... " + str(XShape[1]) + ", 0 = auto")
                     if ui.cbFoldID.isChecked():
                         ui.lbFoldID.setText("ID=" + str(data[ui.txtFoldID.currentText()][0][0]))
 
@@ -367,12 +367,11 @@ class frmFASRM(Ui_frmFASRM):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
+        totalTime = 0
+
         msgBox = QMessageBox()
 
         Model = ui.cbMethod.currentText()
-
-        TrFoldErr = list()
-        TeFoldErr = list()
 
         try:
             FoldFrom = np.int32(ui.txtFoldFrom.text())
@@ -386,6 +385,7 @@ class frmFASRM(Ui_frmFASRM):
             return
 
         for fold_all in range(FoldFrom, FoldTo+1):
+            tic = time.time()
             # Regularization
             try:
                 NIter = np.int32(ui.txtIter.text())
@@ -482,7 +482,7 @@ class frmFASRM(Ui_frmFASRM):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            if NumFea < 1:
+            if NumFea < 0:
                 msgBox.setText("Number of features must be greater than zero!")
                 msgBox.setIcon(QMessageBox.Critical)
                 msgBox.setStandardButtons(QMessageBox.Ok)
@@ -960,41 +960,49 @@ class frmFASRM(Ui_frmFASRM):
 
             print("Testing Shape: " + str(np.shape(TeX)))
 
-            SharedR = None
-            if Model == "Probabilistic SRM":
-                model = SRM(n_iter=NIter,features=NumFea)
-            elif Model == "Deterministic SRM":
-                model = DetSRM(n_iter=NIter,features=NumFea)
-            else:
-                model = RSRM(n_iter=NIter, features=NumFea, gamma=Gamma)
-                SharedR = True
+            if NumFea == 0:
+                NumFea = np.min(np.shape(TrX)[1:3])
+                print("Number of features are automatically selected as ", NumFea)
+
+            try:
+
+                SharedR = None
+                if Model == "Probabilistic SRM":
+                    model = SRM(n_iter=NIter,features=NumFea)
+                elif Model == "Deterministic SRM":
+                    model = DetSRM(n_iter=NIter,features=NumFea)
+                else:
+                    model = RSRM(n_iter=NIter, features=NumFea, gamma=Gamma)
+                    SharedR = True
 
 
-            print("Running Hyperalignment on Training Data ...")
-            model.fit(TrX)
-            if SharedR == True:
-                S = model.r_
-            else:
-                S = model.s_
-            WTr = model.w_
-            # Train Dot Product
-            print("Producting Training Data ...")
-            TrHX = None
-            for mapping, viewi in zip(WTr, TrX):
-                TrHX = np.concatenate((TrHX, np.transpose(np.dot(np.transpose(mapping),viewi)))) if TrHX is not None else np.transpose(np.dot(np.transpose(mapping),viewi))
-            OutData[ui.txtOTrData.text()] = TrHX
+                print("Running Hyperalignment on Training Data ...")
+                model.fit(TrX)
+                if SharedR == True:
+                    S = model.r_
+                else:
+                    S = model.s_
+                WTr = model.w_
+                # Train Dot Product
+                print("Producting Training Data ...")
+                TrHX = None
+                for mapping, viewi in zip(WTr, TrX):
+                    TrHX = np.concatenate((TrHX, np.transpose(np.dot(np.transpose(mapping),viewi)))) if TrHX is not None else np.transpose(np.dot(np.transpose(mapping),viewi))
+                OutData[ui.txtOTrData.text()] = TrHX
 
 
-            print("Running Hyperalignment on Testing Data ...")
-            TeHX = None
-            WTe = list()
-            for vid, view in enumerate(TeX):
-                product = np.dot(view, np.transpose(S))
-                U, _, V = lg.svd(product, full_matrices=False, check_finite=False)
-                Wtest = np.dot(U,V)
-                WTe.append(Wtest)
-                TeHX = np.concatenate((TeHX, np.transpose(np.dot(np.transpose(Wtest),view)))) if TeHX is not None else np.transpose(np.dot(np.transpose(Wtest),view))
-            OutData[ui.txtOTeData.text()] = TeHX
+                print("Running Hyperalignment on Testing Data ...")
+                TeHX = None
+                WTe = list()
+                for vid, view in enumerate(TeX):
+                    product = np.dot(view, np.transpose(S))
+                    U, _, V = lg.svd(product, full_matrices=False, check_finite=False)
+                    Wtest = np.dot(U,V)
+                    WTe.append(Wtest)
+                    TeHX = np.concatenate((TeHX, np.transpose(np.dot(np.transpose(Wtest),view)))) if TeHX is not None else np.transpose(np.dot(np.transpose(Wtest),view))
+                OutData[ui.txtOTeData.text()] = TeHX
+            except Exception as e:
+                print(e)
 
             HAParam = dict()
             HAParam["Share"]    = S
@@ -1002,11 +1010,14 @@ class frmFASRM(Ui_frmFASRM):
             HAParam["WTest"]    = WTe
             HAParam["Model"]    = Model
             OutData["FunctionalAlignment"] = HAParam
+            OutData["Runtime"] = time.time() - tic
+            totalTime +=  OutData["Runtime"]
 
             print("Saving ...")
             io.savemat(OutFile, mdict=OutData)
             print("Fold " + str(fold_all) + " is DONE: " + OutFile)
 
+        print("Runtime: ", totalTime)
         print("Shared Response Model (SRM) is done.")
         msgBox.setText("Shared Response Model (SRM) is done.")
         msgBox.setIcon(QMessageBox.Information)

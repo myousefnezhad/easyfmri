@@ -366,7 +366,7 @@ class frmFARDHA(Ui_frmFARDHA):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
-        runtime = time.time()
+        totalTime = 0
         msgBox = QMessageBox()
 
         LossType    = ui.cbLossType.currentData()
@@ -455,6 +455,7 @@ class frmFARDHA(Ui_frmFARDHA):
             return
 
         for fold_all in range(FoldFrom, FoldTo+1):
+            tic = time.time()
             # Regularization
             try:
                 Regularization = np.float(ui.txtRegularization.text())
@@ -1110,14 +1111,15 @@ class frmFARDHA(Ui_frmFARDHA):
             # HAParam["BestResult"] = ui.cbBest.isChecked()
             # HAParam["DeviceMode"] = ui.cbDevice.currentData()
             OutData["FunctionalAlignment"] = HAParam
-            OutData["Runtime"] = time.time() - runtime
+            OutData["Runtime"] = time.time() - tic
+            totalTime += OutData["Runtime"]
             print("Saving ...")
             io.savemat(OutFile, mdict=OutData)
             print("Fold " + str(fold_all) + " is DONE: " + OutFile)
 
         print("Training -> Alignment Error: mean " + str(np.mean(TrFoldErr)) + " std " + str(np.std(TrFoldErr)))
         print("Testing  -> Alignment Error: mean " + str(np.mean(TeFoldErr)) + " std " + str(np.std(TeFoldErr)))
-        print("Runtime: ", OutData["Runtime"])
+        print("Runtime: ", totalTime)
         print("Robust Deep Hyperalignment is done.")
         msgBox.setText("Robust Deep Hyperalignment is done.")
         msgBox.setIcon(QMessageBox.Information)

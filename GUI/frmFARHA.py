@@ -317,7 +317,7 @@ class frmFAHA(Ui_frmFAHA):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
-        runtime = time.time()
+        totalTime = 0
         msgBox = QMessageBox()
 
         TrFoldErr = list()
@@ -335,6 +335,7 @@ class frmFAHA(Ui_frmFAHA):
             return
 
         for fold_all in range(FoldFrom, FoldTo+1):
+            tic = time.time()
             # Regularization
             try:
                 Alpha = np.float(ui.txtAlpha.text())
@@ -860,65 +861,67 @@ class frmFAHA(Ui_frmFAHA):
             TeListFold = np.int32(TeListFold)
             TeListFoldUniq = np.unique(TeListFold)
 
-            # Train Partition
-            print("Partitioning Training Data ...")
-            TrX = list()
-            TrShape = None
-            for foldindx, fold in enumerate(TrListFoldUniq):
-                dat = XTr[np.where(TrListFold == fold)]
-                if ui.cbScale.isChecked() and ui.rbScale.isChecked():
-                    dat = preprocessing.scale(dat)
-                    print("Data belong to View " + str(foldindx + 1) + " is scaled X~N(0,1).")
+            try:
+                # Train Partition
+                print("Partitioning Training Data ...")
+                TrX = list()
+                TrShape = None
+                for foldindx, fold in enumerate(TrListFoldUniq):
+                    dat = XTr[np.where(TrListFold == fold)]
+                    if ui.cbScale.isChecked() and ui.rbScale.isChecked():
+                        dat = preprocessing.scale(dat)
+                        print("Data belong to View " + str(foldindx + 1) + " is scaled X~N(0,1).")
 
-                TrX.append(dat)
-                if TrShape is None:
-                    TrShape = np.shape(dat)
-                else:
-                    if not(TrShape == np.shape(dat)):
-                        print("ERROR: Train, Reshape problem for Fold " + str(foldindx + 1) + ", Shape: " + str(np.shape(dat)))
-                        return
-                print("Train: View " + str(foldindx + 1) + " is extracted. Shape: " + str(np.shape(dat)))
+                    TrX.append(dat)
+                    if TrShape is None:
+                        TrShape = np.shape(dat)
+                    else:
+                        if not(TrShape == np.shape(dat)):
+                            print("ERROR: Train, Reshape problem for Fold " + str(foldindx + 1) + ", Shape: " + str(np.shape(dat)))
+                            return
+                    print("Train: View " + str(foldindx + 1) + " is extracted. Shape: " + str(np.shape(dat)))
 
-            print("Training Shape: " + str(np.shape(TrX)))
+                print("Training Shape: " + str(np.shape(TrX)))
 
-            # Test Partition
-            print("Partitioning Testing Data ...")
-            TeX = list()
-            TeShape = None
-            for foldindx, fold in enumerate(TeListFoldUniq):
-                dat = XTe[np.where(TeListFold == fold)]
-                if ui.cbScale.isChecked() and ui.rbScale.isChecked():
-                    dat = preprocessing.scale(dat)
-                    print("Data belong to View " + str(foldindx + 1) + " is scaled X~N(0,1).")
-                TeX.append(dat)
-                if TeShape is None:
-                    TeShape = np.shape(dat)
-                else:
-                    if not(TeShape == np.shape(dat)):
-                        print("Test: Reshape problem for Fold " + str(foldindx + 1))
-                        return
-                print("Test: View " + str(foldindx + 1) + " is extracted.")
+                # Test Partition
+                print("Partitioning Testing Data ...")
+                TeX = list()
+                TeShape = None
+                for foldindx, fold in enumerate(TeListFoldUniq):
+                    dat = XTe[np.where(TeListFold == fold)]
+                    if ui.cbScale.isChecked() and ui.rbScale.isChecked():
+                        dat = preprocessing.scale(dat)
+                        print("Data belong to View " + str(foldindx + 1) + " is scaled X~N(0,1).")
+                    TeX.append(dat)
+                    if TeShape is None:
+                        TeShape = np.shape(dat)
+                    else:
+                        if not(TeShape == np.shape(dat)):
+                            print("Test: Reshape problem for Fold " + str(foldindx + 1))
+                            return
+                    print("Test: View " + str(foldindx + 1) + " is extracted.")
 
-            print("Testing Shape: " + str(np.shape(TeX)))
+                print("Testing Shape: " + str(np.shape(TeX)))
 
-            model = rHA(alpha=Alpha)
+                model = rHA(alpha=Alpha)
 
-            print("Running Hyperalignment on Training Data ...")
-            model.train(TrX,iter=NumIter)
-            G = model.G
-            TrU = model.TrainQt
-            TrErr = model.TrainError
-            OutData[ui.txtOTrData.text()] = model.TrainXp
-            print("Train: alignment error ", TrErr)
+                print("Running Hyperalignment on Training Data ...")
+                model.train(TrX,iter=NumIter)
+                G = model.G
+                TrU = model.TrainQt
+                TrErr = model.TrainError
+                OutData[ui.txtOTrData.text()] = model.TrainXp
+                print("Train: alignment error ", TrErr)
 
 
-            print("Running Hyperalignment on Testing Data ...")
-            model.test(TeX)
-            TeU = model.TestQt
-            TeErr = model.TestError
-            OutData[ui.txtOTeData.text()] = model.TestXp
-            print("Test: alignment error ", TeErr)
-
+                print("Running Hyperalignment on Testing Data ...")
+                model.test(TeX)
+                TeU = model.TestQt
+                TeErr = model.TestError
+                OutData[ui.txtOTeData.text()] = model.TestXp
+                print("Test: alignment error ", TeErr)
+            except Exception as e:
+                print(str(e))
 
             HAParam = dict()
             HAParam["Share"] = G
@@ -928,8 +931,8 @@ class frmFAHA(Ui_frmFAHA):
             HAParam["TestError"] = TeErr
             HAParam["Level"] = FoldStr
             OutData["FunctionalAlignment"] = HAParam
-            OutData["Runtime"] = time.time() - runtime
-
+            OutData["Runtime"] = time.time() - tic
+            totalTime += OutData["Runtime"]
 
             print("Saving ...")
             io.savemat(OutFile, mdict=OutData)
@@ -937,7 +940,7 @@ class frmFAHA(Ui_frmFAHA):
 
         print("Training -> Alignment Error: mean " + str(np.mean(TrFoldErr)) + " std " + str(np.std(TrFoldErr)))
         print("Testing  -> Alignment Error: mean " + str(np.mean(TeFoldErr)) + " std " + str(np.std(TeFoldErr)))
-        print("Runtime: ", OutData["Runtime"])
+        print("Runtime: ", totalTime)
         print("Regularized Hyperalignment is done.")
         msgBox.setText("Regularized Hyperalignment is done.")
         msgBox.setIcon(QMessageBox.Information)

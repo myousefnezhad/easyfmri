@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
-
+import time
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
@@ -329,7 +329,7 @@ class frmFAICA(Ui_frmFAICA):
 
     def btnConvert_click(self):
         msgBox = QMessageBox()
-
+        totalTime = 0
         Alg = ui.cbAlg.currentText()
 
         # Tol
@@ -372,7 +372,7 @@ class frmFAICA(Ui_frmFAICA):
             return
 
         for fold_all in range(FoldFrom, FoldTo+1):
-
+            tic = time.time()
             # OutFile
             OutFile = ui.txtOutFile.text()
             OutFile = OutFile.replace("$FOLD$", str(fold_all))
@@ -827,25 +827,29 @@ class frmFAICA(Ui_frmFAICA):
                     print("Cannot load NScan!")
                     return
 
+            try:
+                model = FastICA(n_components=NumFea, algorithm=Alg, max_iter=MaxIter, tol=Tol)
 
-            model = FastICA(n_components=NumFea, algorithm=Alg, max_iter=MaxIter, tol=Tol)
-
-            print("Running ICA Functional Alignment on Training Data ...")
-            OutData[ui.txtOTrData.text()] = model.fit_transform(XTr)
-            print("Running ICA Functional Alignment on Testing Data ...")
-            OutData[ui.txtOTeData.text()] = model.fit_transform(XTe)
+                print("Running ICA Functional Alignment on Training Data ...")
+                OutData[ui.txtOTrData.text()] = model.fit_transform(XTr)
+                print("Running ICA Functional Alignment on Testing Data ...")
+                OutData[ui.txtOTeData.text()] = model.fit_transform(XTe)
+            except Exception as e:
+                print(str(e))
 
             HAParam = dict()
             HAParam["Method"]   = "FastICA"
             HAParam["NumFea"]   = NumFea
             HAParam["Algorithm"]= Alg
-
             OutData["FunctionalAlignment"] = HAParam
+            OutData["Runtime"] = time.time() - tic
+            totalTime += OutData["Runtime"]
 
             print("Saving ...")
             io.savemat(OutFile, mdict=OutData)
             print("Fold " + str(fold_all) + " is DONE: " + OutFile)
 
+        print("Runtime: ", totalTime)
         print("ICA Functional Alignment is done.")
         msgBox.setText("ICA Functional Alignment is done.")
         msgBox.setIcon(QMessageBox.Information)

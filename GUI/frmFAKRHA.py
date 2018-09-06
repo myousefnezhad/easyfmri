@@ -337,7 +337,7 @@ class frmFAKHA(Ui_frmFAKHA):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
-        runtime = time.time()
+        totalTime = 0
         msgBox = QMessageBox()
 
 
@@ -470,6 +470,8 @@ class frmFAKHA(Ui_frmFAKHA):
             return
 
         for fold_all in range(FoldFrom, FoldTo+1):
+            tic = time.time()
+
             # Regularization
             try:
                 Regularization = np.float(ui.txtRegularization.text())
@@ -1083,7 +1085,8 @@ class frmFAKHA(Ui_frmFAKHA):
             HAParam["TestError"]  = TeErr
             HAParam["Level"] = FoldStr
             OutData["FunctionalAlignment"] = HAParam
-            OutData["Runtime"] = time.time() - runtime
+            OutData["Runtime"] = time.time() - tic
+            totalTime += OutData["Runtime"]
 
 
             print("Saving ...")
@@ -1092,7 +1095,7 @@ class frmFAKHA(Ui_frmFAKHA):
 
         print("Training -> Alignment Error: mean " + str(np.mean(TrFoldErr)) + " std " + str(np.std(TrFoldErr)))
         print("Testing  -> Alignment Error: mean " + str(np.mean(TeFoldErr)) + " std " + str(np.std(TeFoldErr)))
-        print("Runtime: ", OutData["Runtime"])
+        print("Runtime: ", totalTime)
         print("Kernel/SVD Hyperalignment is done.")
         msgBox.setText("Kernel/SVD Hyperalignment is done.")
         msgBox.setIcon(QMessageBox.Information)

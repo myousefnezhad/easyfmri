@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
-
+import time
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
@@ -40,6 +40,8 @@ class frmFAPCA(Ui_frmFAPCA):
         ui.cbMethod.addItem("Kernel PCA")
         ui.cbMethod.addItem("Incremental PCA")
 
+        ui.txtNumFea.setMinimum(0)
+        ui.txtNumFea.setValue(0)
 
         dialog.setWindowTitle("easy fMRI PCA Functional Alignment - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -314,13 +316,10 @@ class frmFAPCA(Ui_frmFAPCA):
                     # set number of features
                     data = io.loadmat(filename)
                     XShape = np.shape(data[ui.txtITrData.currentText()])
-                    ui.txtNumFea.setMaximum(1)
                     ui.txtNumFea.setMaximum(XShape[1])
-                    ui.txtNumFea.setValue(XShape[1])
-                    ui.lblFeaNum.setText("1 ... " + str(XShape[1]))
+                    ui.lblFeaNum.setText("1 ... " + str(XShape[1]) + ", 0 = auto")
                     if ui.cbFoldID.isChecked():
                         ui.lbFoldID.setText("ID=" + str(data[ui.txtFoldID.currentText()][0][0]))
-
 
                     ui.txtInFile.setText(filename)
                 except Exception as e:
@@ -338,7 +337,7 @@ class frmFAPCA(Ui_frmFAPCA):
 
     def btnConvert_click(self):
         msgBox = QMessageBox()
-
+        totalTime = 0
         # Batch
         try:
             Batch = np.int32(ui.txtBatch.text())
@@ -437,10 +436,6 @@ class frmFAPCA(Ui_frmFAPCA):
             msgBox.exec_()
             return False
 
-
-        TrFoldErr = list()
-        TeFoldErr = list()
-
         try:
             FoldFrom = np.int32(ui.txtFoldFrom.text())
             FoldTo   = np.int32(ui.txtFoldTo.text())
@@ -453,7 +448,7 @@ class frmFAPCA(Ui_frmFAPCA):
             return
 
         for fold_all in range(FoldFrom, FoldTo+1):
-
+            tic = time.time()
             # OutFile
             OutFile = ui.txtOutFile.text()
             OutFile = OutFile.replace("$FOLD$", str(fold_all))
@@ -530,7 +525,7 @@ class frmFAPCA(Ui_frmFAPCA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            if NumFea < 1:
+            if NumFea < 0:
                 msgBox.setText("Number of features must be greater than zero!")
                 msgBox.setIcon(QMessageBox.Critical)
                 msgBox.setStandardButtons(QMessageBox.Ok)
@@ -908,30 +903,38 @@ class frmFAPCA(Ui_frmFAPCA):
                     print("Cannot load NScan!")
                     return
 
+            if NumFea == 0:
+                NumFea = np.min(np.shape(XTr))
+                print("Number of features are automatically selected as ", NumFea)
 
-            if Method == "PCA":
-                model = PCA(n_components=NumFea,copy=False,tol=Tol)
-            elif Method == "Kernel PCA":
-                model = KernelPCA(n_components=NumFea,kernel=Kernel,gamma=Gamma,degree=Degree,\
-                              coef0=Coef0, alpha=Alpha, tol=Tol, max_iter=MaxIter, n_jobs=NJob,copy_X=False)
-            else:
-                model = IncrementalPCA(n_components=NumFea,copy=False,batch_size=Batch)
+            try:
+                if Method == "PCA":
+                    model = PCA(n_components=NumFea,copy=False,tol=Tol)
+                elif Method == "Kernel PCA":
+                    model = KernelPCA(n_components=NumFea,kernel=Kernel,gamma=Gamma,degree=Degree,\
+                                  coef0=Coef0, alpha=Alpha, tol=Tol, max_iter=MaxIter, n_jobs=NJob,copy_X=False)
+                else:
+                    model = IncrementalPCA(n_components=NumFea,copy=False,batch_size=Batch)
 
-            print("Running PCA Functional Alignment on Training Data ...")
-            OutData[ui.txtOTrData.text()] = model.fit_transform(XTr)
-            print("Running PCA Functional Alignment on Testing Data ...")
-            OutData[ui.txtOTeData.text()] = model.fit_transform(XTe)
+                print("Running PCA Functional Alignment on Training Data ...")
+                OutData[ui.txtOTrData.text()] = model.fit_transform(XTr)
+                print("Running PCA Functional Alignment on Testing Data ...")
+                OutData[ui.txtOTeData.text()] = model.fit_transform(XTe)
+            except Exception as e:
+                print(str(e))
 
             HAParam = dict()
             HAParam["Method"]   = Method
             HAParam["NumFea"]   = NumFea
             HAParam["Kernel"]   = Kernel
             OutData["FunctionalAlignment"] = HAParam
+            OutData["Runtime"] = time.time() - tic
+            totalTime += OutData["Runtime"]
 
             print("Saving ...")
             io.savemat(OutFile, mdict=OutData)
             print("Fold " + str(fold_all) + " is DONE: " + OutFile)
-
+        print("Runtime: ", totalTime)
         print("PCA Functional Alignment is done.")
         msgBox.setText("PCA Functional Alignment is done.")
         msgBox.setIcon(QMessageBox.Information)

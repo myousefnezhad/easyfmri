@@ -323,7 +323,7 @@ class frmFAHA(Ui_frmFAHA):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
-        runtime = time.time()
+        totalTime = 0
         msgBox = QMessageBox()
 
         TrFoldErr = list()
@@ -341,6 +341,7 @@ class frmFAHA(Ui_frmFAHA):
             return
 
         for fold_all in range(FoldFrom, FoldTo+1):
+            tic = time.time()
             # Regularization
             try:
                 Regularization = np.float(ui.txtRegularization.text())
@@ -946,7 +947,8 @@ class frmFAHA(Ui_frmFAHA):
             HAParam["Share"] = G
             HAParam["Level"] = FoldStr
             OutData["FunctionalAlignment"] = HAParam
-            OutData["Runtime"] = time.time() - runtime
+            OutData["Runtime"] = time.time() - tic
+            totalTime += OutData["Runtime"]
 
             print("Saving ...")
             io.savemat(OutFile, mdict=OutData)
@@ -954,7 +956,7 @@ class frmFAHA(Ui_frmFAHA):
 
         print("Training -> Alignment Error: mean " + str(np.mean(TrFoldErr)) + " std " + str(np.std(TrFoldErr)))
         print("Testing  -> Alignment Error: mean " + str(np.mean(TeFoldErr)) + " std " + str(np.std(TeFoldErr)))
-        print("Runtime: ", OutData["Runtime"])
+        print("Runtime: ", totalTime)
         print("Regularized Hyperalignment is done.")
         msgBox.setText("Regularized Hyperalignment is done.")
         msgBox.setIcon(QMessageBox.Information)
