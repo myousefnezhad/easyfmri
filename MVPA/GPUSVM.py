@@ -68,6 +68,8 @@ class GPUSVM:
 
         # Generate Model
         NClass = np.shape(np.unique(Y))[0]
+        if NClass == 2:
+            NClass = 1
         self.model = LinearSVM(self.TrainDataShape[1], NClass)
         self.NumDim, self.NumClass = self.TrainDataShape[1], NClass
         if torch.cuda.is_available():
@@ -215,12 +217,12 @@ if __name__ == "__main__":
     model = GPUSVM()
     if i == 0:
         from sklearn.datasets.samples_generator import make_blobs
-        X, y = make_blobs(n_samples=1000000, centers=3, random_state=0, cluster_std=1)
+        X, y = make_blobs(n_samples=100, centers=2, random_state=0, cluster_std=1)
         y = y + 1
-        Xtr = X[:800000,:]
-        ytr = y[:800000]
-        Xte = X[800001:, :]
-        yte = y[800001:]
+        Xtr = X[:80,:]
+        ytr = y[:80]
+        Xte = X[81:, :]
+        yte = y[81:]
         io.savemat("/home/tony/data.mat", {"test_data": Xte, "test_label": yte, "train_data": Xtr, "train_label": ytr, "FoldID": 1})
         model.train(Xtr, ytr, verbose=False, per_iteration=1)
         print(model.parameters())
