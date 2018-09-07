@@ -194,6 +194,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         # Unsupervised Feature Engineering
         ui.cbFEU.addItem("MatLab: Data Normalization",1)
+
+        ui.cbFEU.addItem("MatLab: Convert 2D data to 4D",3)
+        ui.cbFEU.addItem("MatLab: Convert 4D data to 2D",4)
         ui.cbFEU.addItem("MatLab: Dictionary Learning",20002)
         ui.cbFEU.addItem("MatLab: Factor Analysis",20000)
         ui.cbFEU.addItem("MatLab: Fast Independent Component Analysis (FastICA)",20001)
@@ -1747,6 +1750,14 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         if FEID == 1:
             from GUI.frmFENormalization import frmFENormalization
             frmFENormalization.show(frmFENormalization)
+            return
+        if FEID == 3:
+            from GUI.frmFEConv2D4D import frmFEConv2D4D
+            frmFEConv2D4D.show(frmFEConv2D4D)
+            return
+        if FEID == 4:
+            from GUI.frmFEConv4D2D import frmFEConv4D2D
+            frmFEConv4D2D.show(frmFEConv4D2D)
             return
         if FEID == 10000:
             from GUI.frmFEPCA import frmFEPCA
