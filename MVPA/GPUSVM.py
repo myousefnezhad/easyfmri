@@ -3,6 +3,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 import torch.optim as optim
+from scipy.sparse.linalg.eigen.arpack import eigsh
 import scipy.io as io
 from sklearn.preprocessing import label_binarize
 from sklearn.metrics import accuracy_score
@@ -16,12 +17,16 @@ class LinearSVM(nn.Module):
         return self.fc(x)
 
 class GPUSVM:
-    def __init__(self, epoch=10, batchsize=10, learningrate=0.1, C=0.1, normalization=True, optim='adam'):
+    def __init__(self, epoch=10, batchsize=10, learningrate=0.1, C=0.1, normalization=True, optim='adam', kernel='linear', gamma=None, degree=3, n_component=None):
         self.C = C
         self.W = None
         self.b = None
         self.model = None
         self.epoch = epoch
+        self.kernel = str.lower(kernel)
+        self.n_component = n_component
+        self.gamma = gamma
+        self.degree = int(degree)
         self.optim = str.lower(optim)
         self.NumDim = None
         self.NumClass = None
@@ -37,6 +42,25 @@ class GPUSVM:
         self.TestPredict = None
         self.TestDataShape = None
         self.TestRuntime = None
+
+
+    def rbf(self, X):
+        Xk = None
+        nfeature    = X.shape[1]
+        Degree      = self.degree
+        Gamma       = self.gamma
+        NComp       = self.n_component
+        if Gamma is None:
+            Gamma = 1 / nfeature
+        if NComp is None:
+            NComp = nfeature
+        K = Gamma*(torch.mm(X, X.t()) + 1)**Degree
+        ninstance = K.shape[0]
+        eigvals, eigvecs = torch.eig(K, eigenvectors=True)
+        for i in range(1, NComp + 1):
+           Xk = torch.reshape(eigvecs[:, -i], (1, ninstance)) if Xk is None else torch.cat((Xk, torch.reshape(eigvecs[:, -i], (1, ninstance))))
+        return Xk.t()
+
 
     def train(self, X, Y, verbose=True, penalty=True, per_iteration=0.5):
         # tic
@@ -68,7 +92,7 @@ class GPUSVM:
 
         # Generate Model
         NClass = np.shape(np.unique(Y))[0]
-        if NClass == 2:
+        if NClass <= 2:
             NClass = 1
         self.model = LinearSVM(self.TrainDataShape[1], NClass)
         self.NumDim, self.NumClass = self.TrainDataShape[1], NClass
@@ -78,6 +102,16 @@ class GPUSVM:
         # Convert data to Tensor
         X = torch.Tensor(X)
         Y = torch.Tensor(label_binarize(Y, np.unique(Y)))
+
+        if torch.cuda.is_available():
+            X = X.cuda()
+            Y = Y.cuda()
+
+        # Apply Kernel
+        if self.kernel == 'rbf':
+            print("Applying RBF kernel ...")
+            X = self.rbf(X)
+            print("RBF kernel is applied.")
 
         # Optimization approach
         if   self.optim == 'adam':
@@ -97,10 +131,6 @@ class GPUSVM:
                 x = X[perm[i: i + self.batchsize]]
                 y = Y[perm[i: i + self.batchsize]]
 
-                # Send data to GPU
-                if torch.cuda.is_available():
-                    x = x.cuda()
-                    y = y.cuda()
                 optimizer.zero_grad()
                 output = self.model(x)
                 if penalty:
@@ -119,9 +149,7 @@ class GPUSVM:
             if verbose:
                 print("Epoch: {:6d}\tLoss: {}".format(epoch, sum_loss / SampleSize))
 
-        if torch.cuda.is_available():
-            X = X.cuda()
-            Y = Y.cuda()
+
         self.TrainPredict = self.model(X)
         self.TrainPredict = np.argmax(self.TrainPredict.data.cpu().numpy(),axis=1)+1
         Y = np.argmax(Y.data.cpu().numpy(),axis=1)+1
@@ -214,18 +242,18 @@ class GPUSVM:
 
 if __name__ == "__main__":
     i = 0 # 0: create, 1: load
-    model = GPUSVM()
+    model = GPUSVM(kernel='rbf')
     if i == 0:
         from sklearn.datasets.samples_generator import make_blobs
-        X, y = make_blobs(n_samples=100, centers=2, random_state=0, cluster_std=1)
+        X, y = make_blobs(n_samples=100, centers=20, random_state=0, cluster_std=1)
         y = y + 1
         Xtr = X[:80,:]
         ytr = y[:80]
         Xte = X[81:, :]
         yte = y[81:]
         io.savemat("/home/tony/data.mat", {"test_data": Xte, "test_label": yte, "train_data": Xtr, "train_label": ytr, "FoldID": 1})
-        model.train(Xtr, ytr, verbose=False, per_iteration=1)
-        print(model.parameters())
+        model.train(Xtr, ytr, verbose=True)
+        #print(model.parameters())
         model.test(Xte, yte, verbose=True)
         print("GSVM, train: {:6f}, runtime: {}".format(model.TrainError, model.TrainRuntime))
         print("GSVM,  test: {:6f}, runtime: {}".format(model.TestError, model.TestRuntime))

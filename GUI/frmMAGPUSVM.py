@@ -65,6 +65,10 @@ class frmMASVM(Ui_frmMAGPUSVM):
         ui.cbOptim.addItem("SGD", 'sgd')
         ui.cbOptim.addItem("Adam", "adam")
 
+        # Kernel
+        ui.cbKernel.addItem("Linear", "linear")
+        ui.cbKernel.addItem("RBF", "rbf")
+
         dialog.setWindowTitle("easy fMRI GPU Support Vector Classification - V" + getVersion() + "B" + getBuild())
 
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -194,6 +198,34 @@ class frmMASVM(Ui_frmMAGPUSVM):
 
         # Penalty
         penalty = ui.cbPenalty.isChecked()
+
+        # Kernel
+        kernel = ui.cbKernel.currentData()
+
+
+        # Gamma
+        try:
+            Gamma = float(ui.txtGamma.text())
+            assert Gamma >= 0
+        except:
+            msgBox.setText("Gamma is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if Gamma == 0:
+            Gamma = None
+
+        # Degree
+        try:
+            Degree = int(ui.txtDegree.text())
+            assert Degree > 0
+        except:
+            msgBox.setText("Degree is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
 
         # C
         try:
@@ -378,8 +410,8 @@ class frmMASVM(Ui_frmMAGPUSVM):
                 print("Cannot load Fold ID!")
                 return
             try:
-                clf = GPUSVM(epoch=epoch, batchsize=batch, learningrate=lr, C=C, \
-                             normalization=False, optim=ui.cbOptim.currentData())
+                clf = GPUSVM(epoch=epoch, batchsize=batch, learningrate=lr, C=C, normalization=False, \
+                             optim=ui.cbOptim.currentData(), kernel=kernel, gamma=Gamma, degree=Degree)
                 print("FoldID = " + str(currFID) + " is training ...")
                 clf.train(TrX, TrL)
                 PrL = clf.TrainPredict

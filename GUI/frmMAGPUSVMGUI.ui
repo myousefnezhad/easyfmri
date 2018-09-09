@@ -342,7 +342,7 @@
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>280</y>
+       <y>400</y>
        <width>160</width>
        <height>21</height>
       </rect>
@@ -355,7 +355,7 @@
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>320</y>
+       <y>440</y>
        <width>160</width>
        <height>21</height>
       </rect>
@@ -368,7 +368,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>320</y>
+       <y>440</y>
        <width>221</width>
        <height>16</height>
       </rect>
@@ -381,7 +381,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>280</y>
+       <y>400</y>
        <width>221</width>
        <height>16</height>
       </rect>
@@ -394,7 +394,7 @@
      <property name="geometry">
       <rect>
        <x>440</x>
-       <y>320</y>
+       <y>440</y>
        <width>281</width>
        <height>16</height>
       </rect>
@@ -407,7 +407,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>240</y>
+       <y>360</y>
        <width>221</width>
        <height>16</height>
       </rect>
@@ -420,7 +420,7 @@
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>240</y>
+       <y>360</y>
        <width>160</width>
        <height>21</height>
       </rect>
@@ -433,8 +433,8 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>360</y>
-       <width>641</width>
+       <y>480</y>
+       <width>131</width>
        <height>20</height>
       </rect>
      </property>
@@ -448,9 +448,9 @@
     <widget class="QCheckBox" name="cbPenalty">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>400</y>
-       <width>661</width>
+       <x>180</x>
+       <y>480</y>
+       <width>231</width>
        <height>20</height>
       </rect>
      </property>
@@ -465,7 +465,7 @@
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>160</y>
+       <y>280</y>
        <width>160</width>
        <height>21</height>
       </rect>
@@ -478,7 +478,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>160</y>
+       <y>280</y>
        <width>221</width>
        <height>16</height>
       </rect>
@@ -491,7 +491,7 @@
      <property name="geometry">
       <rect>
        <x>260</x>
-       <y>200</y>
+       <y>320</y>
        <width>160</width>
        <height>21</height>
       </rect>
@@ -504,7 +504,7 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>200</y>
+       <y>320</y>
        <width>221</width>
        <height>16</height>
       </rect>
@@ -534,6 +534,81 @@
      </property>
      <property name="text">
       <string>Optimization</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbKernel">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>160</y>
+       <width>161</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_16">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>160</y>
+       <width>201</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Kernel</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_23">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>200</y>
+       <width>221</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Gamma (for rbf kernel, 0 = auto)</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtGamma">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>200</y>
+       <width>160</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_24">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>240</y>
+       <width>221</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Degree</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtDegree">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>240</y>
+       <width>160</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>3</string>
      </property>
     </widget>
    </widget>
