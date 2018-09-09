@@ -33,7 +33,6 @@ class GPUSVM:
         self.batchsize = batchsize
         self.learningrate = learningrate
         self.normalization = normalization
-
         self.TrainError = None
         self.TrainPredict = None
         self.TrainDataShape = None
