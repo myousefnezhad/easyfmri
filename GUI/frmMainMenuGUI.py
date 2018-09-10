@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmMainMenuGUI.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -49,6 +49,34 @@ class Ui_frmMainMenuGUI(object):
         self.label_2.setGeometry(QtCore.QRect(10, 20, 471, 20))
         self.label_2.setObjectName("label_2")
         self.tabWidget.addTab(self.tab_2, "")
+        self.tab_3 = QtWidgets.QWidget()
+        self.tab_3.setObjectName("tab_3")
+        self.btnStable = QtWidgets.QPushButton(self.tab_3)
+        self.btnStable.setGeometry(QtCore.QRect(13, 110, 490, 51))
+        self.btnStable.setObjectName("btnStable")
+        self.btnDev = QtWidgets.QPushButton(self.tab_3)
+        self.btnDev.setGeometry(QtCore.QRect(13, 180, 490, 51))
+        self.btnDev.setObjectName("btnDev")
+        self.label_3 = QtWidgets.QLabel(self.tab_3)
+        self.label_3.setGeometry(QtCore.QRect(20, 20, 471, 20))
+        self.label_3.setObjectName("label_3")
+        self.txtEZDIR = QtWidgets.QLineEdit(self.tab_3)
+        self.txtEZDIR.setGeometry(QtCore.QRect(20, 47, 481, 23))
+        self.txtEZDIR.setReadOnly(True)
+        self.txtEZDIR.setObjectName("txtEZDIR")
+        self.tabWidget.addTab(self.tab_3, "")
+        self.tab_4 = QtWidgets.QWidget()
+        self.tab_4.setObjectName("tab_4")
+        self.btnUpdate = QtWidgets.QPushButton(self.tab_4)
+        self.btnUpdate.setGeometry(QtCore.QRect(10, 90, 490, 51))
+        self.btnUpdate.setObjectName("btnUpdate")
+        self.cbSource = QtWidgets.QComboBox(self.tab_4)
+        self.cbSource.setGeometry(QtCore.QRect(10, 40, 490, 26))
+        self.cbSource.setObjectName("cbSource")
+        self.label_4 = QtWidgets.QLabel(self.tab_4)
+        self.label_4.setGeometry(QtCore.QRect(10, 20, 471, 20))
+        self.label_4.setObjectName("label_4")
+        self.tabWidget.addTab(self.tab_4, "")
         self.btnExit = QtWidgets.QPushButton(frmMainMenuGUI)
         self.btnExit.setGeometry(QtCore.QRect(290, 410, 255, 51))
         self.btnExit.setObjectName("btnExit")
@@ -72,6 +100,13 @@ class Ui_frmMainMenuGUI(object):
         self.btnTools.setText(_translate("frmMainMenuGUI", "Run"))
         self.label_2.setText(_translate("frmMainMenuGUI", "Select a tool:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("frmMainMenuGUI", "Tools"))
+        self.btnStable.setText(_translate("frmMainMenuGUI", "Stable Mode"))
+        self.btnDev.setText(_translate("frmMainMenuGUI", "Developing Mode"))
+        self.label_3.setText(_translate("frmMainMenuGUI", "Easy fMRI DIR (set from $EASYFMRI):"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("frmMainMenuGUI", "Mode"))
+        self.btnUpdate.setText(_translate("frmMainMenuGUI", "Run"))
+        self.label_4.setText(_translate("frmMainMenuGUI", "Source:"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("frmMainMenuGUI", "Update"))
         self.btnExit.setText(_translate("frmMainMenuGUI", "Exit"))
         self.btnAbout.setText(_translate("frmMainMenuGUI", "About"))
 

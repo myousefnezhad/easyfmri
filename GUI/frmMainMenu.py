@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+import os
+import subprocess
 import PyQt5.QtWidgets as QtWidgets
 from GUI.frmMainMenuGUI import *
 from GUI.frmFeatureAnalysis import *
 from GUI.frmModelAnalysis import *
 from GUI.frmPreprocess import *
 from GUI.frmVisualization import *
-
 from Base.tools import Tools
 from Base.utility import About
 
@@ -27,6 +28,28 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         tools = Tools()
         tools.combo(ui.cbTools)
 
+        try:
+            ezdir = str(os.environ['EASYFMRI'])
+            if len(ezdir):
+                ui.txtEZDIR.setText(ezdir)
+                assert os.path.isfile(ezdir + "/main.py")
+                print("Easy fMRI directory is " + ezdir)
+
+            else:
+                print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+                msgBox = QMessageBox()
+                msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+        except:
+            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            msgBox = QMessageBox()
+            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+
         dialog.setWindowTitle("easy fMRI - V" + getVersion() + "B" + getBuild())
 
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -36,7 +59,6 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
 
 
     def set_events(self):
-        global ui
         ui.btnExit.clicked.connect(self.btnExit_click)
         ui.btnPreprocess.clicked.connect(self.btnPreprocess_click)
         ui.btnFeatureAnalysis.clicked.connect(self.btnFeatureAnalysis_click)
@@ -44,11 +66,36 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         ui.btnAbout.clicked.connect(self.btnAbout_click)
         ui.btnVisualization.clicked.connect(self.btnVisualization_click)
         ui.btnTools.clicked.connect(self.btnTools_click)
+        ui.btnStable.clicked.connect(self.btnStable_click)
+        ui.btnDev.clicked.connect(self.btnDev_click)
 
 
     def btnExit_click(self):
          import sys
          sys.exit()
+
+    def btnStable_click(self):
+        ezdir = ui.txtEZDIR.text()
+        ezcmd = os.popen('which ezfmri').read().replace('\n', '')
+        if not os.path.isfile(ezcmd):
+            print("WARNING: cannot find ezfmri path!")
+            ezcmd = "ezfmri"
+        cmd = "cd " + ezdir + "; git checkout master; " + ezcmd
+        os.popen(cmd)
+        sys.exit()
+
+
+
+    def btnDev_click(self):
+        ezdir = ui.txtEZDIR.text()
+        ezcmd = os.popen('which ezfmri').read().replace('\n', '')
+        if not os.path.isfile(ezcmd):
+            print("WARNING: cannot find ezfmri path!")
+            ezcmd = "ezfmri"
+        cmd = "cd " + ezdir + "; git checkout developing; " + ezcmd
+        os.popen(cmd)
+        sys.exit()
+
 
     def btnAbout_click(self):
         from Base.utility import MyMessageBox

@@ -144,6 +144,104 @@
      </property>
     </widget>
    </widget>
+   <widget class="QWidget" name="tab_3">
+    <attribute name="title">
+     <string>Mode</string>
+    </attribute>
+    <widget class="QPushButton" name="btnStable">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>110</y>
+       <width>490</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Stable Mode</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnDev">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>180</y>
+       <width>490</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Developing Mode</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>471</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Easy fMRI DIR (set from $EASYFMRI):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtEZDIR">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>47</y>
+       <width>481</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_4">
+    <attribute name="title">
+     <string>Update</string>
+    </attribute>
+    <widget class="QPushButton" name="btnUpdate">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>90</y>
+       <width>490</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Run</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbSource">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>490</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>471</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Source:</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QPushButton" name="btnExit">
    <property name="geometry">
