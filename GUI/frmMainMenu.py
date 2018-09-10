@@ -50,6 +50,12 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
 
+        ui.cbSource.addItem("GitLab", "git clone https://gitlab.com/easyfmri/easyfmri.git ~/.ezupdate")
+        ui.cbSource.addItem("GitHub", "git clone https://github.com/easyfmri/easyfmri.git ~/.ezupdate")
+        ui.cbSource.addItem("NUAA (Just for iBRAIN Lab.)", "git clone http://tony@192.168.2.2/git/ez.git ~/.ezupdate")
+        ui.cbSource.addItem("Local (Just for iBRAIN Lab.)", "git clone http://tony@192.168.2.20/git/ez.git ~/.ezupdate")
+
+
         dialog.setWindowTitle("easy fMRI - V" + getVersion() + "B" + getBuild())
 
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -68,6 +74,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         ui.btnTools.clicked.connect(self.btnTools_click)
         ui.btnStable.clicked.connect(self.btnStable_click)
         ui.btnDev.clicked.connect(self.btnDev_click)
+        ui.btnUpdate.clicked.connect(self.btnUpdate_click)
 
 
     def btnExit_click(self):
@@ -76,6 +83,15 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
 
     def btnStable_click(self):
         ezdir = ui.txtEZDIR.text()
+        if not len(ezdir):
+            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            msgBox = QMessageBox()
+            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+
         ezcmd = os.popen('which ezfmri').read().replace('\n', '')
         if not os.path.isfile(ezcmd):
             print("WARNING: cannot find ezfmri path!")
@@ -88,6 +104,15 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
 
     def btnDev_click(self):
         ezdir = ui.txtEZDIR.text()
+        if not len(ezdir):
+            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            msgBox = QMessageBox()
+            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+
         ezcmd = os.popen('which ezfmri').read().replace('\n', '')
         if not os.path.isfile(ezcmd):
             print("WARNING: cannot find ezfmri path!")
@@ -96,6 +121,22 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         os.popen(cmd)
         sys.exit()
 
+
+    def btnUpdate_click(self):
+        ezdir = ui.txtEZDIR.text()
+        if not len(ezdir):
+            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            msgBox = QMessageBox()
+            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+
+        print("Removing update directory...")
+        os.popen("rm -rf ~/.ezupdate")
+        cmd = ui.cbSource.currentData()
+        os.popen(cmd)
 
     def btnAbout_click(self):
         from Base.utility import MyMessageBox
