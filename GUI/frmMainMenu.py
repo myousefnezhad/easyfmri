@@ -154,28 +154,30 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         global dialog
         dialog.hide()
 
+        update_dir = os.popen('echo $HOME').read().replace('\n', '') + "/.ezupdate"
         print("Removing update directory...")
-        os.popen("rm -rf ~/.ezupdate")
 
-        print("Cloning repository to ~/.ezupdate...")
-        clone_git(url=item[0], protocol=item[1], user=user, passwd=passwd)
+        os.popen("rm -rf " + update_dir)
+
+        print("Cloning repository to " + update_dir + "...")
+        clone_git(url=item[0], protocol=item[1], user=user, passwd=passwd, dir=update_dir)
 
         print("Checking update directory...")
-        if not os.path.isdir("~/.ezupdate"):
-            print("Cannot find ~/.ezupdate! Update is canceled.")
-            msgBox.setText("Cannot find ~/.ezupdate! Update is canceled.")
+        if not os.path.isdir(update_dir):
+            print("Cannot find " + update_dir + "! Update is canceled.")
+            msgBox.setText("Cannot find " + update_dir + "! Update is canceled.")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             sys.exit()
         if not has_git_branch(ezdir):
-            print("Cannot find ~/.ezupdate! Update is canceled.")
-            msgBox.setText("Cannot find ~/.ezupdate! Update is canceled.")
+            print("Cannot find " + update_dir + "! Update is canceled.")
+            msgBox.setText("Cannot find " + update_dir + "! Update is canceled.")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             sys.exit()
-        os.popen("rm -rf " + ezdir + "; mv ~/.ezupdate " + ezdir + "; " + ezcmd)
+        os.popen("rm -rf " + ezdir + "; mv " + update_dir + " " + ezdir + "; " + ezcmd)
         sys.exit()
 
 
