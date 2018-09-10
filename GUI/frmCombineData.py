@@ -700,8 +700,6 @@ class frmCombineData(Ui_frmCombineData):
                 print("Cannot combine Design Matrices!")
                 return
 
-
-
         print("Saving ...")
         io.savemat(ui.txtOutFile.text(), mdict=OutData)
         print("DONE.")
@@ -709,20 +707,6 @@ class frmCombineData(Ui_frmCombineData):
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

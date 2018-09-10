@@ -54,8 +54,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
 
         ui.cbSource.addItem("GitLab", ["gitlab.com/easyfmri/easyfmri.git", "https", False])
         ui.cbSource.addItem("GitHub", ["github.com/easyfmri/easyfmri.git", "https", False])
-        ui.cbSource.addItem("NUAA (Just for iBRAIN Lab.)", ["192.168.2.2/git/ez.git", "http", True])
-        ui.cbSource.addItem("Local (Just for iBRAIN Lab.)", ["192.168.2.20/git/ez.git", "http", True])
+        ui.cbSource.addItem("NUAA  (only for iBRAIN Lab.)", ["192.168.2.2/git/ez.git", "http", True])
+        ui.cbSource.addItem("Local (only for iBRAIN Lab.)", ["192.168.2.20/git/ez.git", "http", True])
 
 
         dialog.setWindowTitle("easy fMRI - V" + getVersion() + "B" + getBuild())
@@ -147,6 +147,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         if item[2]:
             isOkay  = False
             frmuser = frmUserPass()
+            if not frmuser.isAdd:
+                return
             passwd  = frmuser.passwd
             user    = frmuser.user
             isOkay  = frmuser.isAdd
