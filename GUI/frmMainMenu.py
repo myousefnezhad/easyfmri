@@ -7,6 +7,7 @@ from GUI.frmFeatureAnalysis import *
 from GUI.frmModelAnalysis import *
 from GUI.frmPreprocess import *
 from GUI.frmVisualization import *
+from GUI.frmUserPass import frmUserPass
 from Base.tools import Tools
 from Base.utility import About
 from Base.git import clone_git, has_git_branch
@@ -51,10 +52,10 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
 
-        ui.cbSource.addItem("GitLab", "git clone https://gitlab.com/easyfmri/easyfmri.git ~/.ezupdate")
-        ui.cbSource.addItem("GitHub", "git clone https://github.com/easyfmri/easyfmri.git ~/.ezupdate")
-        ui.cbSource.addItem("NUAA (Just for iBRAIN Lab.)", "git clone http://tony@192.168.2.2/git/ez.git ~/.ezupdate")
-        ui.cbSource.addItem("Local (Just for iBRAIN Lab.)", "git clone http://tony@192.168.2.20/git/ez.git ~/.ezupdate")
+        ui.cbSource.addItem("GitLab", ["gitlab.com/easyfmri/easyfmri.git", "https", False])
+        ui.cbSource.addItem("GitHub", ["github.com/easyfmri/easyfmri.git", "https", False])
+        ui.cbSource.addItem("NUAA (Just for iBRAIN Lab.)", ["192.168.2.2/git/ez.git", "http", True])
+        ui.cbSource.addItem("Local (Just for iBRAIN Lab.)", ["192.168.2.20/git/ez.git", "http", True])
 
 
         dialog.setWindowTitle("easy fMRI - V" + getVersion() + "B" + getBuild())
@@ -139,33 +140,47 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             print("WARNING: cannot find ezfmri path!")
             ezcmd = "ezfmri"
 
-        print("Updating ...")
-        global dialog
-        dialog.hide()
+        item = ui.cbSource.currentData()
+        user   = None
+        passwd = None
+        isOkay = True
+        if item[2]:
+            isOkay  = False
+            frmuser = frmUserPass()
+            passwd  = frmuser.passwd
+            user    = frmuser.user
+            isOkay  = frmuser.isAdd
 
-        print("Removing update directory...")
-        os.popen("rm -rf ~/.ezupdate")
+        if isOkay:
+            print("Updating ...")
+            global dialog
+            dialog.hide()
 
-        print("Cloning repository to ~/.ezupdate...")
-        clone_git(ui.cbSource.currentData())
+            print("Removing update directory...")
+            os.popen("rm -rf ~/.ezupdate")
 
-        print("Checking update directory...")
-        if not os.path.isdir("~/.ezupdate"):
-            print("Cannot find ~/.ezupdate! Update is canceled.")
-            msgBox.setText("Cannot find ~/.ezupdate! Update is canceled.")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            print("Cloning repository to ~/.ezupdate...")
+            clone_git(url=item[0], protocol=item[1], user=user, passwd=passwd)
+
+            print("Checking update directory...")
+            if not os.path.isdir("~/.ezupdate"):
+                print("Cannot find ~/.ezupdate! Update is canceled.")
+                msgBox.setText("Cannot find ~/.ezupdate! Update is canceled.")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                sys.exit()
+            if not has_git_branch(ezdir):
+                print("Cannot find ~/.ezupdate! Update is canceled.")
+                msgBox.setText("Cannot find ~/.ezupdate! Update is canceled.")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                sys.exit()
+            os.popen("rm -rf " + ezdir + "; mv ~/.ezupdate " + ezdir + "; " + ezcmd)
             sys.exit()
-        if not has_git_branch(ezdir):
-            print("Cannot find ~/.ezupdate! Update is canceled.")
-            msgBox.setText("Cannot find ~/.ezupdate! Update is canceled.")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            sys.exit()
-        os.popen("rm -rf " + ezdir + "; mv ~/.ezupdate " + ezdir + "; " + ezcmd)
-        sys.exit()
+
+
 
     def btnAbout_click(self):
         from Base.utility import MyMessageBox

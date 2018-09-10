@@ -201,4 +201,3 @@ class frmConv(QDialog):
         self.Channel = self.txtChannel.value()
         self.isAdd = True
         self.close()
-

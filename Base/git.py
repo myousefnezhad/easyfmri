@@ -4,9 +4,13 @@ import os
 def has_git_branch(dir="$EASYFMRI"):
     return True if len(os.popen("cd " + dir + "\n git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'").read().replace('\n', '')) else False
 
-def clone_git(cmd):
+def clone_git(url, protocol, user=None, passwd=None):
     import subprocess
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+
+    if user is None:
+        process = subprocess.Popen(protocol + "://" + url, shell=True, stdout=subprocess.PIPE)
+    else:
+        process = subprocess.Popen(protocol + "://" + user + ":" + passwd + "@" + url, shell=True, stdout=subprocess.PIPE)
     process.wait()
 
 
