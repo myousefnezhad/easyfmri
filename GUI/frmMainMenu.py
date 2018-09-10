@@ -153,15 +153,11 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         print("Updating ...")
         global dialog
         dialog.hide()
-
         update_dir = os.popen('echo $HOME').read().replace('\n', '') + "/.ezupdate"
         print("Removing update directory...")
-
         os.popen("rm -rf " + update_dir)
-
         print("Cloning repository to " + update_dir + "...")
         clone_git(url=item[0], protocol=item[1], user=user, passwd=passwd, dir=update_dir)
-
         print("Checking update directory...")
         if not os.path.isdir(update_dir):
             print("Cannot find " + update_dir + "! Update is canceled.")
@@ -178,8 +174,11 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             msgBox.exec_()
             sys.exit()
         os.popen("rm -rf " + ezdir + "; mv " + update_dir + " " + ezdir + "; " + ezcmd)
+        msgBox.setText("Update is done!")
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.exec_()
         sys.exit()
-
 
 
     def btnAbout_click(self):
