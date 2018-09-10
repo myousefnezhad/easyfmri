@@ -1,11 +1,11 @@
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
-import sys
 
-class frmUserPass(QDialog):
-    def __init__(self):
-        super().__init__()
-        self.pool = None
-        self.kernel = None
+class Login(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super(Login, self).__init__(parent)
+        self.user   = None
+        self.passwd = None
         self.isAdd = False
         self.title = 'Enter Username & Password'
         self.left = 0
@@ -35,20 +35,37 @@ class frmUserPass(QDialog):
         self.layout.addWidget(self.btnAdd)
         self.layout.addWidget(self.btnExit)
         self.setLayout(self.layout)
-        self.exec_()
+
 
     def btnExit_onclick(self):
         self.close()
 
     def btnAdd_onclick(self):
+        if len(self.txtUser.text()) <= 0:
+            print("Please enter username!")
+            return
+
+        if len(self.txtPass.text()) <= 0:
+            print("Please enter password")
+            return
+
         self.user   = self.txtUser.text()
         self.passwd = self.txtPass.text()
         self.isAdd  = True
-        self.close()
+        self.accept()
 
 
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    frmUserPass()
+if __name__ == '__main__':
+
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    login = Login()
+
+    if login.exec_() == QtWidgets.QDialog.Accepted:
+        print(login.user, login.passwd)
+
+    login.close()
+
+
     sys.exit(app.exec_())

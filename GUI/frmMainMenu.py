@@ -7,7 +7,7 @@ from GUI.frmFeatureAnalysis import *
 from GUI.frmModelAnalysis import *
 from GUI.frmPreprocess import *
 from GUI.frmVisualization import *
-from GUI.frmUserPass import frmUserPass
+from GUI.Login import Login
 from Base.tools import Tools
 from Base.utility import About
 from Base.git import clone_git, has_git_branch
@@ -143,44 +143,40 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         item = ui.cbSource.currentData()
         user   = None
         passwd = None
-        isOkay = True
         if item[2]:
-            isOkay  = False
-            frmuser = frmUserPass()
-            if not frmuser.isAdd:
+            login = Login()
+            if not login.exec_() == QtWidgets.QDialog.Accepted:
                 return
-            passwd  = frmuser.passwd
-            user    = frmuser.user
-            isOkay  = frmuser.isAdd
+            passwd  = login.passwd
+            user    = login.user
 
-        if isOkay:
-            print("Updating ...")
-            global dialog
-            dialog.hide()
+        print("Updating ...")
+        global dialog
+        dialog.hide()
 
-            print("Removing update directory...")
-            os.popen("rm -rf ~/.ezupdate")
+        print("Removing update directory...")
+        os.popen("rm -rf ~/.ezupdate")
 
-            print("Cloning repository to ~/.ezupdate...")
-            clone_git(url=item[0], protocol=item[1], user=user, passwd=passwd)
+        print("Cloning repository to ~/.ezupdate...")
+        clone_git(url=item[0], protocol=item[1], user=user, passwd=passwd)
 
-            print("Checking update directory...")
-            if not os.path.isdir("~/.ezupdate"):
-                print("Cannot find ~/.ezupdate! Update is canceled.")
-                msgBox.setText("Cannot find ~/.ezupdate! Update is canceled.")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                sys.exit()
-            if not has_git_branch(ezdir):
-                print("Cannot find ~/.ezupdate! Update is canceled.")
-                msgBox.setText("Cannot find ~/.ezupdate! Update is canceled.")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                sys.exit()
-            os.popen("rm -rf " + ezdir + "; mv ~/.ezupdate " + ezdir + "; " + ezcmd)
+        print("Checking update directory...")
+        if not os.path.isdir("~/.ezupdate"):
+            print("Cannot find ~/.ezupdate! Update is canceled.")
+            msgBox.setText("Cannot find ~/.ezupdate! Update is canceled.")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
             sys.exit()
+        if not has_git_branch(ezdir):
+            print("Cannot find ~/.ezupdate! Update is canceled.")
+            msgBox.setText("Cannot find ~/.ezupdate! Update is canceled.")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            sys.exit()
+        os.popen("rm -rf " + ezdir + "; mv ~/.ezupdate " + ezdir + "; " + ezcmd)
+        sys.exit()
 
 
 
