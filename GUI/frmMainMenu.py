@@ -55,7 +55,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         ui.cbSource.addItem("GitLab", ["gitlab.com/easyfmri/easyfmri.git", "https", False])
         ui.cbSource.addItem("GitHub", ["github.com/easyfmri/easyfmri.git", "https", False])
         ui.cbSource.addItem("NUAA  (only for iBRAIN Lab.)", ["192.168.2.2/git/ez.git", "http", True])
-        ui.cbSource.addItem("Local (only for iBRAIN Lab.)", ["192.168.2.20/git/ez.git", "http", True])
+        ui.cbSource.addItem("Local (only for iBRAIN Lab.)", ["192.168.2.20/git/ez.git", "ssh", True])
 
 
         dialog.setWindowTitle("easy fMRI - V" + getVersion() + "B" + getBuild())
