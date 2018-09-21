@@ -33,7 +33,11 @@ from Base.utility import getVersion, getBuild
 from sklearn import preprocessing
 from GUI.frmMAGPUSVMGUI import *
 
-
+# Plot
+import matplotlib
+matplotlib.use('Qt5Agg')
+import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
 
 class frmMASVM(Ui_frmMAGPUSVM):
     ui = Ui_frmMAGPUSVM()
@@ -104,7 +108,10 @@ class frmMASVM(Ui_frmMAGPUSVM):
         ui.btnInFile.clicked.connect(self.btnInFile_click)
         ui.btnOutFile.clicked.connect(self.btnOutFile_click)
         ui.btnOutModel.clicked.connect(self.btnOutModel_click)
+        ui.btnOutSim.clicked.connect(self.btnOutSim_click)
         ui.btnConvert.clicked.connect(self.btnConvert_click)
+        ui.btnRedraw.clicked.connect(self.btnRedraw_click)
+
 
     def btnClose_click(self):
         global dialog
@@ -165,6 +172,16 @@ class frmMASVM(Ui_frmMAGPUSVM):
                         for lbl in Labels:
                             ui.txtClass.append(str(lbl))
 
+                    # Condition
+                    ui.txtCond.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtCond.addItem(key)
+                        if key == "condition":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtCond.setCurrentText("condition")
+
                     # FoldID
                     ui.txtFoldID.clear()
                     HasDefualt = False
@@ -198,6 +215,13 @@ class frmMASVM(Ui_frmMAGPUSVM):
         if len(ofile):
             ui.txtOutModel.setText(ofile)
 
+    def btnOutSim_click(self):
+        ofile = SaveFile("Save data file ...",['data files (*.mat)'],'mat',\
+                             os.path.dirname(ui.txtOutFile.text()))
+        if len(ofile):
+            ui.txtOutSim.setText(ofile)
+
+
     def btnConvert_click(self):
         tme = time.time()
         msgBox = QMessageBox()
@@ -213,11 +237,19 @@ class frmMASVM(Ui_frmMAGPUSVM):
             print("Please check fold parameters!")
             return
 
+        # Similarity Analysis
+        SimFile = ui.txtOutSim.text()
+        if not len(SimFile):
+            SimFile = None
+
         # Verbose
         verbose = ui.cbVerbose.isChecked()
 
-        # Penalty
-        penalty = ui.cbPenalty.isChecked()
+        # Norm 2
+        Norm2 = ui.cbNorm2.isChecked()
+
+        # Norm 1
+        Norm1 = ui.cbNorm1.isChecked()
 
         # Kernel
         kernel = ui.cbKernel.currentData()
@@ -336,6 +368,11 @@ class frmMASVM(Ui_frmMAGPUSVM):
         OutData = dict()
         OutData["ModelAnalysis"] = "GPUSVM"
 
+        SimData = dict()
+        SimW    = None
+
+
+
         for fold in range(FoldFrom, FoldTo + 1):
             # OutModel
             OutModel = ui.txtOutModel.text()
@@ -376,6 +413,30 @@ class frmMASVM(Ui_frmMAGPUSVM):
                 msgBox.exec_()
                 return False
 
+            # Condition
+            if not len(ui.txtCond.currentText()):
+                msgBox.setText("Please enter Condition variable name!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            try:
+                Cond = InData[ui.txtCond.currentText()]
+                OutData[ui.txtCond.currentText()] = Cond
+                labels = list()
+                for con in Cond:
+                    labels.append(con[1][0])
+                labels = np.array(labels)
+                SimData["labels"] = labels
+            except:
+                msgBox.setText("Condition value is wrong!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+
             # Label
             if not len(ui.txtITrLabel.currentText()):
                     msgBox.setText("Please enter Train Input Label variable name!")
@@ -389,6 +450,8 @@ class frmMASVM(Ui_frmMAGPUSVM):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
+
+            FontSize = ui.txtFontSize.value()
 
             TrX = InData[ui.txtITrData.currentText()]
             TeX = InData[ui.txtITeData.currentText()]
@@ -433,14 +496,21 @@ class frmMASVM(Ui_frmMAGPUSVM):
                 clf = GPUSVM(epoch=epoch, batchsize=batch, learningrate=lr, C=C, normalization=False, \
                              optim=ui.cbOptim.currentData(), kernel=kernel, gamma=Gamma, degree=Degree)
                 print("FoldID = " + str(currFID) + " is training ...")
-                clf.train(TrX, TrL)
+                clf.train(X=TrX, Y=TrL, verbose=verbose, enable_norm2=Norm2, enable_norm1=Norm1, per_iteration=perrate)
                 PrL = clf.TrainPredict
+
+                if SimFile is not None:
+                    simMat = np.dot(clf.parameters()["W"], np.transpose(clf.parameters()["W"]))
+                    SimData["Sim" + str(fold)] = simMat
+                    SimW = simMat if SimW is None else SimW + simMat
+
+
                 if OutModel is not None:
                     clf.save(OutModel)
                     print("FoldID = " + str(currFID) + " Model is saved: " + OutModel)
 
                 print("FoldID = " + str(currFID) + " is testing ...")
-                clf.test(TeX, TeL)
+                clf.test(X=TeX, Y=TeL, verbose=verbose)
                 PeL = clf.TestPredict
 
             except Exception as e:
@@ -559,11 +629,158 @@ class frmMASVM(Ui_frmMAGPUSVM):
         print("Runtime: ", OutData["Runtime"])
         print("Saving ...")
         io.savemat(OutFile, mdict=OutData)
+
+        if SimFile is not None:
+            Cov = SimW - np.min(SimW) / (np.max(SimW) - np.min(SimW))
+            SimData["SimMat"] = Cov
+            Z = linkage(SimData["SimMat"])
+            # Normalization Z
+            zMin = np.min(Z[:, 2])
+            zMax = np.max(Z[:, 2]) - zMin
+            for zZ, _ in enumerate(Z):
+                Z[zZ, 2] = (Z[zZ, 2] - zMin) / zMax
+                Z[zZ, 2] += 0.1
+            SimData["Linkage"] = Z
+            io.savemat(SimFile, mdict=SimData)
+
+            if ui.cbSimMatrix.isChecked():
+                NumData = np.shape(Cov)[0]
+                fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
+                ax = plt.gca()
+                ax.invert_yaxis()
+                ax.set_aspect(1)
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                if len(ui.txtTitleCorr.text()):
+                    plt.title(ui.txtTitleCorr.text())
+                else:
+                    plt.title('Similarity Analysis')
+                plt.show()
+
+            if ui.cbSimDend.isChecked():
+                fig3 = plt.figure(figsize=(25, 10), )
+                if len(ui.txtTitleDen.text()):
+                    plt.title(ui.txtTitleDen.text())
+                else:            #zMin -= 0.01
+
+                    plt.title('Similarity Analysis')
+                dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1, count_sort=True, distance_sort=True)
+                plt.show()
+
         print("DONE.")
         msgBox.setText("GPU Support Vector Classification is done.")
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
+
+
+
+    def btnRedraw_click(self):
+        msgBox = QMessageBox()
+
+        ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
+                             os.path.dirname(ui.txtOutFile.text()))
+
+        FontSize = ui.txtFontSize.value()
+
+        if len(ofile):
+            try:
+                Res     = io.loadmat(ofile)
+            except:
+                print("Cannot load result file!")
+                msgBox.setText("Cannot load result file!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            # Condition
+            if not len(ui.txtCond.currentText()):
+                try:
+                    labels = Res["labels"]
+                except:
+                    msgBox.setText("Cannot load labels!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+            # Z
+            if not len(ui.txtCond.currentText()):
+                try:
+                    Z = Res["Linkage"]
+                except:
+                    msgBox.setText("Cannot load labels!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+            # SimMat
+            if not len(ui.txtCond.currentText()):
+                try:
+                    Cov = Res["SimMat"]
+                except:
+                    msgBox.setText("Cannot load labels!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+            if ui.cbSimMatrix.isChecked():
+                NumData = np.shape(Cov)[0]
+                fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
+                ax = plt.gca()
+                ax.invert_yaxis()
+                ax.set_aspect(1)
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                if len(ui.txtTitleCorr.text()):
+                    plt.title(ui.txtTitleCorr.text())
+                else:
+                    plt.title('Similarity Analysis')
+                plt.show()
+
+            if ui.cbSimDend.isChecked():
+                fig3 = plt.figure(figsize=(25, 10), )
+                dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1)
+                if len(ui.txtTitleDen.text()):
+                    plt.title(ui.txtTitleDen.text())
+                else:
+                    plt.title('Similarity Analysis')
+                plt.show()
 
 
 if __name__ == '__main__':
