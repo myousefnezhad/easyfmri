@@ -1,3 +1,23 @@
+# Copyright (c) 2014--2018 Muhammad Yousefnezhad
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import time
 import torch
 import numpy as np
@@ -61,7 +81,7 @@ class GPUSVM:
         return Xk.t()
 
 
-    def train(self, X, Y, verbose=True, penalty=True, per_iteration=0.5):
+    def train(self, X, Y, verbose=True, enable_norm2=True, enable_norm1=True, per_iteration=0.5):
         # tic
         tme = time.time()
 
@@ -132,10 +152,15 @@ class GPUSVM:
 
                 optimizer.zero_grad()
                 output = self.model(x)
-                if penalty:
-                    loss = self.C *  criterion(output, y) + self.C * torch.mean(self.model.fc.weight ** 2)
-                else:
-                    loss = self.C * criterion(output, y)
+
+                loss = self.C * criterion(output, y)
+
+                if enable_norm2:
+                    loss += self.C * torch.mean(self.model.fc.weight ** 2)
+
+                if enable_norm1:
+                    loss += self.C * torch.mean(torch.abs(self.model.fc.weight))
+
                 loss.backward()
                 optimizer.step()
                 sum_loss += loss.data.cpu().numpy()
@@ -240,18 +265,18 @@ class GPUSVM:
 
 
 if __name__ == "__main__":
-    i = 0 # 0: create, 1: load
-    model = GPUSVM(kernel='rbf')
+    i = 1 # 0: create, 1: stability, Other: load
+    model = GPUSVM(kernel='linear')
     if i == 0:
         from sklearn.datasets.samples_generator import make_blobs
-        X, y = make_blobs(n_samples=100, centers=20, random_state=0, cluster_std=1)
+        X, y = make_blobs(n_samples=10000, centers=2, random_state=0, cluster_std=1)
         y = y + 1
-        Xtr = X[:80,:]
-        ytr = y[:80]
-        Xte = X[81:, :]
-        yte = y[81:]
+        Xtr = X[:8000,:]
+        ytr = y[:8000]
+        Xte = X[8001:, :]
+        yte = y[8001:]
         io.savemat("/home/tony/data.mat", {"test_data": Xte, "test_label": yte, "train_data": Xtr, "train_label": ytr, "FoldID": 1})
-        model.train(Xtr, ytr, verbose=True)
+        model.train(Xtr, ytr, verbose=True, enable_norm1=False, enable_norm2=False)
         #print(model.parameters())
         model.test(Xte, yte, verbose=True)
         print("GSVM, train: {:6f}, runtime: {}".format(model.TrainError, model.TrainRuntime))
@@ -267,6 +292,24 @@ if __name__ == "__main__":
         p = clf.predict(Xte)
         error = 1 - accuracy_score(yte, p)
         print("Normal SVM,  test: {:6f}, runtime: {}".format(error, time.time() - tme))
+
+    elif i == 1:
+        from sklearn.datasets.samples_generator import make_blobs
+        X, y = make_blobs(n_samples=10000, centers=4, random_state=0, cluster_std=1)
+        y = y + 1
+        Xtr = X[:8000,:]
+        ytr = y[:8000]
+        Xte = X[8001:, :]
+        yte = y[8001:]
+        model.train(Xtr, ytr, verbose=True, enable_norm1=False)
+        W1 = model.parameters()["W"]
+        model.train(Xtr, ytr, verbose=True, enable_norm1=False)
+        W2 = model.parameters()["W"]
+        model.train(Xtr, ytr, verbose=True, enable_norm1=False)
+        W3 = model.parameters()["W"]
+        print("W1\n", W1 @ W1.T)
+        print("W2\n", W2 @ W2.T)
+        print("W3\n", W3 @ W3.T)
 
     else:
         data = io.loadmat("/home/tony/data.mat")
