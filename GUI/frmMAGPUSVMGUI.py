@@ -268,7 +268,7 @@ class Ui_frmMAGPUSVM(object):
         self.cbSimDend.setObjectName("cbSimDend")
         self.cbSimMatrix = QtWidgets.QCheckBox(self.tab_6)
         self.cbSimMatrix.setGeometry(QtCore.QRect(20, 140, 321, 21))
-        self.cbSimMatrix.setChecked(True)
+        self.cbSimMatrix.setChecked(False)
         self.cbSimMatrix.setObjectName("cbSimMatrix")
         self.tabWidget.addTab(self.tab_6, "")
         self.tab_13 = QtWidgets.QWidget()
