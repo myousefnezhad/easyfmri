@@ -762,7 +762,7 @@
      <widget class="QRadioButton" name="radioButton_3">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>410</x>
         <y>40</y>
         <width>131</width>
         <height>20</height>
@@ -786,6 +786,77 @@
       </property>
       <property name="checked">
        <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbOutNormal">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>40</y>
+        <width>231</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Normalize 2D data</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>310</y>
+       <width>641</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>&lt;STD Thresholding&gt;</string>
+     </property>
+     <widget class="QCheckBox" name="cbThreshold">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>40</y>
+        <width>601</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>For 2D matrix, remove features with standard deviation thresholding</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>80</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Threshold</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtThreshold">
+      <property name="geometry">
+       <rect>
+        <x>110</x>
+        <y>80</y>
+        <width>231</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
       </property>
      </widget>
     </widget>

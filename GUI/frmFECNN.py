@@ -277,6 +277,17 @@ class frmFECNN(Ui_frmFECNN):
 
     def btnConvert_click(self):
         msgBox = QMessageBox()
+
+
+        try:
+            Threshold = np.float64(ui.txtThreshold.text())
+        except:
+            msgBox.setText("Standard deviation threshold value is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
         try:
             net_model = createModel(ui.tbModel)
         except Exception as e:
@@ -487,7 +498,25 @@ class frmFECNN(Ui_frmFECNN):
                 print("Integration: ", xsubindx + 1, " of ", lenPCA, " is done.")
             if not ui.rbMat.isChecked():
                 X_new = X_new[:,0,:,:,:]
-            OutData[ui.txtOData.text()] = X_new
+
+            # Apply Thresholding
+            print("Data shape before thresholding: ", np.shape(X_new))
+            X_new_th = X_new
+            if ui.rbMat.isChecked() and ui.cbThreshold.isChecked():
+                index = np.where(np.std(X_new, axis=0) >= Threshold)
+                X_new_index = X_new[:, index]
+                print("Standard deviation thresholding ...")
+                X_new_th = None
+                for xx_new in X_new_index:
+                    X_new_th = xx_new if X_new_th is None else np.concatenate((X_new_th, xx_new), axis=0)
+
+            # Apply Normalization
+            if ui.rbMat.isChecked() and ui.cbOutNormal.isChecked():
+                X_new_th = X_new_th - np.mean(X_new_th)
+                X_new_th = X_new_th / np.std(X_new_th)
+                print("Output data is normalized!")
+
+            OutData[ui.txtOData.text()] = X_new_th
         else:
             print("Running CNN ...")
             net = CNN(net_model)
@@ -495,10 +524,29 @@ class frmFECNN(Ui_frmFECNN):
                 X_new = net.tonumpy(net.vectorize(net(torch.Tensor(np.expand_dims(X, axis=1)))))
             else:
                 X_new = net.tonumpy(net(torch.Tensor(np.expand_dims(X, axis=1))))
-
             print("CNN is done. Shape: " + str(np.shape(X_new)))
-            OutData[ui.txtOData.text()] = X_new
+
+            # Apply Thresholding
+            print("Data shape before thresholding: ", np.shape(X_new))
+            X_new_th = X_new
+            if ui.rbMat.isChecked() and ui.cbThreshold.isChecked():
+                index = np.where(np.std(X_new, axis=0) >= Threshold)
+                X_new_index = X_new[:, index]
+                print("Standard deviation thresholding ...")
+                X_new_th = None
+                for xx_new in X_new_index:
+                    X_new_th = xx_new if X_new_th is None else np.concatenate((X_new_th, xx_new), axis=0)
+
+            # Apply Normalization
+            if ui.rbMat.isChecked() and ui.cbOutNormal.isChecked():
+                X_new_th = X_new_th - np.mean(X_new_th)
+                X_new_th = X_new_th / np.std(X_new_th)
+                print("Output data is normalized!")
+
+            OutData[ui.txtOData.text()] = X_new_th
+
         print("Saving ...")
+        print("Final data shape: ", np.shape(OutData[ui.txtOData.text()]))
         io.savemat(ui.txtOutFile.text(), mdict=OutData)
         print("DONE.")
         msgBox.setText("CNN is done.")
