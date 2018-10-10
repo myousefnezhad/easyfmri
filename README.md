@@ -1,4 +1,4 @@
-easy fMRI project (V1.8B5300 beta)
+easy fMRI project (V1.8B6000 beta)
 ==================================
 
 ### Introduction
