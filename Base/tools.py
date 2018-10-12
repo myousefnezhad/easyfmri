@@ -31,6 +31,9 @@ from GUI.frmEzMat import frmEzMat
 from GUI.frmCombineData import frmCombineData
 from GUI.frmRemoveRestScan import frmRemoveRestScan
 from GUI.frmRemoveRestScanCross import frmRemoveRestScanCross
+# Feature Engineering
+from GUI.frmFETempAlign import frmFETempAlign
+from GUI.frmFELabelAlign import frmFELabelAlign
 # Model Analysis
 from GUI.frmSKModelEditor import frmSKModelEditor
 from GUI.frmSKCModelEditor import frmSKCModelEditor
@@ -56,6 +59,9 @@ class Tools:
         combobox.addItem("Feature Analysis: MatLab: Combine Datasets",  30003)
         combobox.addItem("Feature Analysis: MatLab: Remove Rest Scans (before cross validation)",  30004)
         combobox.addItem("Feature Analysis: MatLab: Remove Rest Scans (after cross validation)",  30005)
+        # Feature Engineering
+        combobox.addItem("Feature Engineering: Temporal Alignment Report", 31001)
+        combobox.addItem("Feature Engineering: Label Alignment Report", 31002)
         # Model Analysis
         combobox.addItem("Model Analysis: SK Classification Model Viewer",  40001)
         combobox.addItem("Model Analysis: SK Clustring Model Viewer",  40002)
@@ -92,6 +98,11 @@ class Tools:
             frmRemoveRestScan.show(frmRemoveRestScan)
         elif ID == 30005:
             frmRemoveRestScanCross.show(frmRemoveRestScanCross)
+        # Feature Engineering
+        elif ID == 31001:
+            frmFETempAlign.show(frmFETempAlign)
+        elif ID == 31002:
+            frmFELabelAlign.show(frmFELabelAlign)
         # Model Analysis
         elif ID == 40001:
             frmSKModelEditor.show(frmSKModelEditor)
