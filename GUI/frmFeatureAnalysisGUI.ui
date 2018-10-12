@@ -2317,7 +2317,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>12</x>
-       <y>220</y>
+       <y>270</y>
        <width>781</width>
        <height>32</height>
       </rect>
@@ -2330,7 +2330,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>270</y>
+       <y>320</y>
        <width>181</width>
        <height>16</height>
       </rect>
@@ -2343,7 +2343,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>270</y>
+       <y>320</y>
        <width>581</width>
        <height>26</height>
       </rect>
@@ -2353,7 +2353,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>12</x>
-       <y>320</y>
+       <y>370</y>
        <width>781</width>
        <height>32</height>
       </rect>
@@ -2366,7 +2366,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>12</x>
-       <y>170</y>
+       <y>220</y>
        <width>781</width>
        <height>32</height>
       </rect>
@@ -2386,6 +2386,19 @@ It's case sensitive.</string>
      </property>
      <property name="text">
       <string>Temporal Alignment Report</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnFELabelAlign">
+     <property name="geometry">
+      <rect>
+       <x>12</x>
+       <y>170</y>
+       <width>781</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Label Alignment Report</string>
      </property>
     </widget>
    </widget>

@@ -1,0 +1,351 @@
+# Copyright (c) 2014--2018 Muhammad Yousefnezhad
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import os
+import sys
+import seaborn as sns
+import numpy as np
+import scipy.io as io
+from PyQt5.QtWidgets import *
+from Base.utility import getVersion, getBuild, fixstr
+from Base.dialogs import LoadFile
+from GUI.frmFELabelAlignGUI import *
+
+
+class frmFELabelAlign(Ui_frmFELabelAlign):
+    ui = Ui_frmFELabelAlign()
+    dialog = None
+    # This function is run when the main form start
+    # and initiate the default parameters.
+    def show(self):
+        global dialog
+        global ui
+        ui = Ui_frmFELabelAlign()
+        QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
+        dialog = QtWidgets.QMainWindow()
+        ui.setupUi(dialog)
+        self.set_events(self)
+
+        ui.txtColor.clear()
+        ui.txtColor.addItem("Basic", None)
+        ui.txtColor.addItem("HLS", "hls")
+        ui.txtColor.addItem("HUSL", "husl")
+
+
+
+        ui.tabWidget.setCurrentIndex(0)
+        dialog.setWindowTitle("easy fMRI Label Alignment Report - V" + getVersion() + "B" + getBuild())
+        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        dialog.setFixedSize(dialog.size())
+        dialog.show()
+
+
+    # This function initiate the events procedures
+    def set_events(self):
+        ui.btnClose.clicked.connect(self.btnClose_click)
+        ui.btnInFile.clicked.connect(self.btnInFile_click)
+        ui.btnReport.clicked.connect(self.btnReport_click)
+
+    def btnClose_click(self):
+        global dialog
+        dialog.close()
+
+
+    def btnInFile_click(self):
+        filename = LoadFile("Load MatLab data file ...",['Data files (*.mat *.ezdata)'],'mat',\
+                            os.path.dirname(ui.txtInFile.text()))
+        if len(filename):
+            if os.path.isfile(filename):
+                try:
+                    print("Loading ...")
+                    data = io.loadmat(filename)
+                    Keys = data.keys()
+
+                    # Label
+                    ui.txtLabel.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtLabel.addItem(key)
+                        if key == "label":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtLabel.setCurrentText("label")
+                        Labels = data[ui.txtLabel.currentText()]
+                        Labels = np.unique(Labels)
+                        print("Number of labels: ", np.shape(Labels)[0])
+                        print("Labels: ", Labels)
+
+
+                    # Subject
+                    ui.txtSubject.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtSubject.addItem(key)
+                        if key == "subject":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtSubject.setCurrentText("subject")
+                        print("Number of subjects: ", np.shape(np.unique(data["subject"]))[0])
+
+                    # Task
+                    ui.txtTask.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtTask.addItem(key)
+                        if key == "task":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtTask.setCurrentText("task")
+
+                    # Run
+                    ui.txtRun.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtRun.addItem(key)
+                        if key == "run":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtRun.setCurrentText("run")
+
+                    # Counter
+                    ui.txtCounter.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtCounter.addItem(key)
+                        if key == "counter":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtCounter.setCurrentText("counter")
+
+                    ui.txtInFile.setText(filename)
+
+                    ui.tbReport.clear()
+                    ui.tbReport.setRowCount(0)
+                    ui.tbReport.setColumnCount(0)
+                    ui.tabWidget.setCurrentIndex(2)
+
+                except Exception as e:
+                    print(e)
+                    print("Cannot load data file!")
+                    return
+            else:
+                print("File not found!")
+
+
+    def btnReport_click(self):
+        msgBox = QMessageBox()
+
+        # InFile
+        InFile = ui.txtInFile.text()
+        if not len(InFile):
+            msgBox.setText("Please enter input file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if not os.path.isfile(InFile):
+            msgBox.setText("Input file not found!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Label
+        if not len(ui.txtLabel.currentText()):
+            msgBox.setText("Please enter Label variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Subject
+        if not len(ui.txtSubject.currentText()):
+            msgBox.setText("Please enter Subject variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Run
+        if not len(ui.txtRun.currentText()):
+            msgBox.setText("Please enter Run variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Task
+        if not len(ui.txtTask.currentText()):
+            msgBox.setText("Please enter Task variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Counter
+        if not len(ui.txtCounter.currentText()):
+            msgBox.setText("Please enter Counter variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        print("Loading data ...")
+        InData = io.loadmat(InFile)
+
+        try:
+            Label = InData[ui.txtLabel.currentText()][0]
+        except:
+            print("Cannot load Labels!")
+            return
+
+        try:
+            Subject = InData[ui.txtSubject.currentText()]
+        except:
+            print("Cannot load Subject ID")
+            return
+
+        try:
+            Run = InData[ui.txtRun.currentText()]
+        except:
+            print("Cannot load Run ID")
+            return
+
+        try:
+            Counter = InData[ui.txtCounter.currentText()]
+        except:
+            print("Cannot load Counter ID")
+            return
+
+        try:
+            Task = InData[ui.txtTask.currentText()]
+
+            TaskIndex = Task.copy()
+            for tasindx, tas in enumerate(np.unique(Task)):
+                TaskIndex[Task == tas] = tasindx + 1
+
+        except:
+            print("Cannot load Subject ID")
+            return
+
+        Unit = 1
+
+        print("Calculating Alignment Level ...")
+        GroupFold = None
+        FoldStr = ""
+        if ui.cbFSubject.isChecked():
+            if not ui.rbFRun.isChecked():
+                GroupFold = Subject
+                FoldStr = "Subject"
+            else:
+                GroupFold = np.concatenate((Subject,Run))
+                FoldStr = "Subject+Run"
+
+        if ui.cbFTask.isChecked():
+            GroupFold = np.concatenate((GroupFold,TaskIndex)) if GroupFold is not None else TaskIndex
+            FoldStr = FoldStr + "+Task"
+
+        if ui.cbFCounter.isChecked():
+            GroupFold = np.concatenate((GroupFold,Counter)) if GroupFold is not None else Counter
+            FoldStr = FoldStr + "+Counter"
+
+        GroupFold = np.transpose(GroupFold)
+
+        UniqFold = np.array(list(set(tuple(i) for i in GroupFold.tolist())))
+
+        FoldIDs = np.arange(len(UniqFold)) + 1
+
+        if len(UniqFold) <= Unit:
+            msgBox.setText("Unit for the test set must be smaller than all possible folds! Number of all folds is: " + str(len(UniqFold)))
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if np.mod(len(UniqFold),Unit):
+            msgBox.setText("Unit for the test set must be divorceable to all possible folds! Number of all folds is: " + str(len(UniqFold)))
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        ListFold = list()
+        for gfold in GroupFold:
+            for ufoldindx, ufold in enumerate(UniqFold):
+                if (ufold == gfold).all():
+                    currentID = FoldIDs[ufoldindx]
+                    break
+            ListFold.append(currentID)
+
+        ListFold = np.int32(ListFold)
+        if Unit == 1:
+            UnitFold = np.int32(ListFold)
+        else:
+            UnitFold = np.int32((ListFold - 0.1) / Unit) + 1
+
+        FoldInfo = dict()
+        FoldInfo["Unit"]    = Unit
+        FoldInfo["Group"]   = GroupFold
+        FoldInfo["Order"]   = FoldStr
+        FoldInfo["List"]    = ListFold
+        FoldInfo["Unique"]  = UniqFold
+        FoldInfo["Folds"]   = UnitFold
+
+        GUFold = np.unique(UnitFold)
+        print("Number of data in this level is " + str(len(UniqFold)))
+        ReformLabel = list()
+        MaxSize = None
+        # Reconstruct Labels
+        for foldID, fold in enumerate(GUFold):
+            foldLevelLabel = Label[np.where(UnitFold == fold)]
+            MaxSize = np.shape(foldLevelLabel)[0] if MaxSize is None else np.max((np.shape(foldLevelLabel)[0], MaxSize))
+            ReformLabel.append(foldLevelLabel)
+
+        ui.tbReport.clear()
+        ui.tbReport.setRowCount(MaxSize)
+        ui.tbReport.setColumnCount(np.shape(GUFold)[0])
+
+        for col_width in range(np.shape(GUFold)[0]):
+            ui.tbReport.setColumnWidth(col_width, 50)
+
+        # Create Color Dictionary
+        colormap = sns.color_palette(ui.txtColor.currentData(), np.shape(np.unique(Label))[0])
+        colordict = dict()
+        for color, lbl in zip(colormap, np.unique(Label)):
+            colordict[str(lbl)] = QtGui.QColor(int(255 * color[0]), int(255 * color[1]), int(255 * color[2]))
+
+        # Draw Labels
+        for col_index, col in enumerate(ReformLabel):
+            for row_index, row in enumerate(col):
+                item = QTableWidgetItem(str(row))
+                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                item.setBackground(colordict[str(row)])
+                ui.tbReport.setItem(row_index, col_index, item)
+
+        ui.tbReport.move(0, 0)
+        ui.tabWidget.setCurrentIndex(2)
+
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    frmFELabelAlign.show(frmFELabelAlign)
+    sys.exit(app.exec_())

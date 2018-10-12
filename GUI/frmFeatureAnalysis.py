@@ -46,6 +46,7 @@ from GUI.frmFECrossValidation import frmFECrossValidation
 from GUI.frmSelectSession import frmSelectSession
 from GUI.frmFEEZCrossValidation import frmFEEZCrossValidation
 from GUI.frmFETempAlign import frmFETempAlign
+from GUI.frmFELabelAlign import frmFELabelAlign
 
 from Base.utility import fixstr, getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
 from Base.utility import strRange, strMultiRange, getSettingVersion
@@ -286,6 +287,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnDIDM.clicked.connect(self.btnDIDM_click)
         ui.btnDIEventDIR.clicked.connect(self.btnDIEventDIR_click)
         ui.btnFETempAlign.clicked.connect(self.btnFETempAlign_click)
+        ui.btnFELabelAlign.clicked.connect(self.btnFELabelAlign_click)
+
 
 
     # Exit function
@@ -296,6 +299,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
     def btnFETempAlign_click(self):
         frmFETempAlign.show(frmFETempAlign)
 
+    def btnFELabelAlign_click(self):
+        frmFELabelAlign.show(frmFELabelAlign)
 
     def btnDIEventDIR_click(self):
         directory = SelectDir("Select event directory", ui.txtDIEventDIR.text())
