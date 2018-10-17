@@ -212,8 +212,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             ui.txtFlirt.setText(fsl.flirt)
 
         # Cross Validation
-        ui.cbCV.addItem("EzData: Cross Validation", 2)
         ui.cbCV.addItem("Matlab: Cross Validation", 1)
+        # ui.cbCV.addItem("EzData: Cross Validation", 2)
 
         # Feature Engineering
         ui.cbFE.addItem("MatLab: Data Normalization",1)
