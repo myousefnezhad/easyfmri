@@ -230,6 +230,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         # Supervised Feature Engineering
         ui.cbFES.addItem("MatLab: Linear Discriminant Analysis (LDA)",1)
 
+        # Temporal Alignment
+        ui.cbTA.addItem("Report: Temporal Alignment", 10001)
+        ui.cbTA.addItem("Report: Label Alignment", 10002)
 
         # Functional Alignment
         ui.cbFA.addItem("MatLab: GPU Hyperalignment (GPUHA)", 10008)
@@ -286,9 +289,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnDIInFile.clicked.connect(self.btnDIInFile_click)
         ui.btnDIDM.clicked.connect(self.btnDIDM_click)
         ui.btnDIEventDIR.clicked.connect(self.btnDIEventDIR_click)
-        ui.btnFETempAlign.clicked.connect(self.btnFETempAlign_click)
-        ui.btnFELabelAlign.clicked.connect(self.btnFELabelAlign_click)
-
+        ui.btnTARun.clicked.connect(self.btnTA_click)
 
 
     # Exit function
@@ -296,11 +297,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         global dialog, parent
         dialog.close()
 
-    def btnFETempAlign_click(self):
-        frmFETempAlign.show(frmFETempAlign)
-
-    def btnFELabelAlign_click(self):
-        frmFELabelAlign.show(frmFELabelAlign)
 
     def btnDIEventDIR_click(self):
         directory = SelectDir("Select event directory", ui.txtDIEventDIR.text())
@@ -1885,6 +1881,17 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             from GUI.frmFARDHA import frmFARDHA
             frmFARDHA.show(frmFARDHA)
             return
+
+    def btnTA_click(self):
+        TAID = ui.cbTA.currentData()
+
+
+        if   TAID == 10001:
+            frmFETempAlign.show(frmFETempAlign)
+        elif TAID == 10002:
+            frmFELabelAlign.show(frmFELabelAlign)
+
+
 
 # Auto Run
 if __name__ == "__main__":

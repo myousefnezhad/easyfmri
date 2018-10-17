@@ -59,9 +59,9 @@ class Tools:
         combobox.addItem("Feature Analysis: MatLab: Combine Datasets",  30003)
         combobox.addItem("Feature Analysis: MatLab: Remove Rest Scans (before cross validation)",  30004)
         combobox.addItem("Feature Analysis: MatLab: Remove Rest Scans (after cross validation)",  30005)
-        # Feature Engineering
-        combobox.addItem("Feature Engineering: Temporal Alignment Report", 31001)
-        combobox.addItem("Feature Engineering: Label Alignment Report", 31002)
+        # Alignment
+        combobox.addItem("Alignment: Temporal Alignment Report", 31001)
+        combobox.addItem("Alignment: Label Alignment Report", 31002)
         # Model Analysis
         combobox.addItem("Model Analysis: SK Classification Model Viewer",  40001)
         combobox.addItem("Model Analysis: SK Clustring Model Viewer",  40002)
