@@ -71,11 +71,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
-
         ui.cbSource.addItem("GitLab", ["gitlab.com/easyfmri/easyfmri.git", "https", False])
         ui.cbSource.addItem("GitHub", ["github.com/easyfmri/easyfmri.git", "https", False])
-        ui.cbSource.addItem("NUAA  (only for iBRAIN Lab.)", ["192.168.2.2/git/ez.git", "http", True])
-        ui.cbSource.addItem("Local (only for iBRAIN Lab.)", ["192.168.2.20/git/ez.git", "ssh", True])
 
 
         dialog.setWindowTitle("easy fMRI - V" + getVersion() + "B" + getBuild())
@@ -105,43 +102,41 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
 
     def btnStable_click(self):
         ezdir = ui.txtEZDIR.text()
+        msgBox = QMessageBox()
+
         if not len(ezdir):
             print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
-            msgBox = QMessageBox()
             msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return
 
-        ezcmd = os.popen('which ezfmri').read().replace('\n', '')
-        if not os.path.isfile(ezcmd):
-            print("WARNING: cannot find ezfmri path!")
-            ezcmd = "ezfmri"
-        cmd = "cd " + ezdir + "; git checkout master; " + ezcmd
+        cmd = "cd " + ezdir + "; git checkout master"
         os.popen(cmd)
-        sys.exit()
-
+        msgBox.setText("You have to reopen easy fMRI in order to apply the new mode!")
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.exec_()
 
 
     def btnDev_click(self):
+        msgBox = QMessageBox()
         ezdir = ui.txtEZDIR.text()
         if not len(ezdir):
             print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
-            msgBox = QMessageBox()
             msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return
 
-        ezcmd = os.popen('which ezfmri').read().replace('\n', '')
-        if not os.path.isfile(ezcmd):
-            print("WARNING: cannot find ezfmri path!")
-            ezcmd = "ezfmri"
-        cmd = "cd " + ezdir + "; git checkout developing; " + ezcmd
+        cmd = "cd " + ezdir + "; git checkout developing"
         os.popen(cmd)
-        sys.exit()
+        msgBox.setText("You have to reopen easy fMRI in order to apply the new mode!")
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.exec_()
 
 
     def btnUpdate_click(self):
