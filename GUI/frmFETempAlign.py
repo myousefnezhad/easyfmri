@@ -34,50 +34,7 @@ from GUI.frmFETempAlignGUI import *
 
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
-from pyqode.core import api
-from pyqode.core import modes
-from pyqode.core import panels
-from pyqode.qt import QtWidgets as pyWidgets
 
-def EventCode():
-    return\
-"""# This procedure extracts information from the event files.
-# Note 1: You can write any Python 3 style codes in order to extract the information.
-# Note 2: Numpy can be called by using np, e.g. np.int32()
-#
-# Input:
-# \tEvent[] includes each line of the event files in each iteration.
-# Output:
-# \t1. RowStartID: denotes the first row of each files that is contained the information.
-# \t   It starts from 0, and the default value is 1 (the first row is considered as the header).
-# \t2. Onset: the time that each stimulus happens. Its type is float.
-# \t3. Duration:  the echo time (TE). Its type is float.
-# \t4. Condition: the condition title (category of stimuli). Its type is str.
-
-# Handling headers ->
-RowStartID = 1
-
-# Skip is not zero for any row that you don't want to use it!
-Skip = 0
-
-# Extracting onset ->
-# In order to handle the headers, you must use this style:
-try:
-    Onset = float(Event[0])
-except:
-    Onset = None
-    Skip = 1
-
-# Extracting echo time ->
-# In order to handle the headers, you must use this style:
-try:
-    Duration = float(Event[1])
-except:
-    Duration = None
-    Skip = 1
-
-Condition = Event[2]"""
 
 class frmFETempAlign(Ui_frmFETempAlign):
     ui = Ui_frmFETempAlign()
@@ -93,24 +50,8 @@ class frmFETempAlign(Ui_frmFETempAlign):
         ui.setupUi(dialog)
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
-        # ui.txtCon = api.CodeEdit(ui.tab_4)
-        # ui.txtCon.setGeometry(QtCore.QRect(11, 16, 671, 411))
-        # ui.txtCon.setObjectName("txtCon")
-        # ui.txtCon.backend.start('backend/server.py')
-        #
-        # ui.txtCon.modes.append(modes.CodeCompletionMode())
-        # ui.txtCon.modes.append(modes.CaretLineHighlighterMode())
-        # ui.txtCon.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtCon.document()))
-        # ui.txtCon.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
-        # ui.txtCon.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-        #
-        # font = QtGui.QFont()
-        # font.setBold(True)
-        # font.setWeight(75)
-        # ui.txtCon.setFont(font)
-        # ui.txtCon.setPlainText(EventCode(),"","")
 
-        dialog.setWindowTitle("easy fMRI Temporal Alignment Report - V" + getVersion() + "B" + getBuild())
+        dialog.setWindowTitle("easy fMRI Shape Alignment Report - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())

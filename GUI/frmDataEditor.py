@@ -52,9 +52,6 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.lwData.setColumnWidth(0,200)
 
         dialog.setWindowTitle("easy fMRI Data Viewer - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
-        dialog.setFixedSize(dialog.size())
         dialog.show()
 
 
@@ -125,6 +122,7 @@ class frmDataEditor(Ui_frmDataEditor):
                         item.setText(3, str(value).replace("\n", ""))
 
                         ui.lwData.addTopLevelItem(item)
+                ui.statusbar.showMessage("/")
                 ui.txtInFile.setText(ifile)
 
     def btnValue_click(self):

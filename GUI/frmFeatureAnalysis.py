@@ -231,7 +231,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.cbFE.addItem("MatLab: Linear Discriminant Analysis (LDA)",5)
 
         # Temporal Alignment
-        ui.cbTA.addItem("Report: Temporal Alignment", 10001)
+        ui.cbTA.addItem("Report: Shape Alignment", 10001)
         ui.cbTA.addItem("Report: Label Alignment", 10002)
 
         # Functional Alignment
