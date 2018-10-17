@@ -47,14 +47,9 @@ class frmFELabelAlign(Ui_frmFELabelAlign):
         ui.txtColor.addItem("Basic", None)
         ui.txtColor.addItem("HLS", "hls")
         ui.txtColor.addItem("HUSL", "husl")
-
-
-
         ui.tabWidget.setCurrentIndex(0)
+        ui.tabWidget2.setCurrentIndex(0)
         dialog.setWindowTitle("easy fMRI Label Alignment Report - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
-        dialog.setFixedSize(dialog.size())
         dialog.show()
 
 
@@ -140,7 +135,12 @@ class frmFELabelAlign(Ui_frmFELabelAlign):
                     ui.tbReport.clear()
                     ui.tbReport.setRowCount(0)
                     ui.tbReport.setColumnCount(0)
+                    ui.tbReport2.clear()
+                    ui.tbReport2.setRowCount(0)
+                    ui.tbReport2.setColumnCount(0)
+                    ui.tabWidget2.setCurrentIndex(0)
                     ui.tabWidget.setCurrentIndex(2)
+
 
                 except Exception as e:
                     print(e)
@@ -312,19 +312,31 @@ class frmFELabelAlign(Ui_frmFELabelAlign):
         GUFold = np.unique(UnitFold)
         print("Number of data in this level is " + str(len(UniqFold)))
         ReformLabel = list()
+        ReformLabelCounter = dict()
         MaxSize = None
         # Reconstruct Labels
         for foldID, fold in enumerate(GUFold):
             foldLevelLabel = Label[np.where(UnitFold == fold)]
             MaxSize = np.shape(foldLevelLabel)[0] if MaxSize is None else np.max((np.shape(foldLevelLabel)[0], MaxSize))
+            foldLevelUnique, foldLevelCounter = np.unique(foldLevelLabel, return_counts=True)
+            ReformLabelCounter[foldID] = dict(zip(foldLevelUnique, foldLevelCounter))
             ReformLabel.append(foldLevelLabel)
 
         ui.tbReport.clear()
+        ui.tbReport2.clear()
         ui.tbReport.setRowCount(MaxSize)
+        ui.tbReport2.setRowCount(np.shape(np.unique(Label))[0])
         ui.tbReport.setColumnCount(np.shape(GUFold)[0])
+        ui.tbReport2.setColumnCount(np.shape(GUFold)[0])
 
+        HorHdrLabel = list()
         for col_width in range(np.shape(GUFold)[0]):
             ui.tbReport.setColumnWidth(col_width, 50)
+            ui.tbReport2.setColumnWidth(col_width, 50)
+            HorHdrLabel.append('F' + str(col_width + 1))
+        ui.tbReport.setHorizontalHeaderLabels(HorHdrLabel)
+        ui.tbReport2.setHorizontalHeaderLabels(HorHdrLabel)
+
 
         # Create Color Dictionary
         colormap = sns.color_palette(ui.txtColor.currentData(), np.shape(np.unique(Label))[0])
@@ -332,16 +344,59 @@ class frmFELabelAlign(Ui_frmFELabelAlign):
         for color, lbl in zip(colormap, np.unique(Label)):
             colordict[str(lbl)] = QtGui.QColor(int(255 * color[0]), int(255 * color[1]), int(255 * color[2]))
 
-        # Draw Labels
+        # Draw Timepoint Lables
+        TimePointLabels = list()
+        for timepoint in range(MaxSize):
+            TimePointLabels.append('T' + str(timepoint + 1))
+        ui.tbReport.setVerticalHeaderLabels(TimePointLabels)
+        # Draw Timepoint
         for col_index, col in enumerate(ReformLabel):
             for row_index, row in enumerate(col):
                 item = QTableWidgetItem(str(row))
                 item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
                 item.setBackground(colordict[str(row)])
                 ui.tbReport.setItem(row_index, col_index, item)
-
         ui.tbReport.move(0, 0)
         ui.tabWidget.setCurrentIndex(2)
+
+        # Draw Class Labels
+        ClassLabels = list()
+        for clsID, cls in enumerate(np.unique(Label)):
+            ClassLabels.append('C' + str(cls))
+            CounterList = list()
+            for foldID, fold in enumerate(GUFold):
+                value = ReformLabelCounter[foldID][cls]
+                CounterList.append(value)
+                item = QTableWidgetItem(str(value))
+                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                ui.tbReport2.setItem(clsID, foldID, item)
+
+            UniqueValues = np.unique(CounterList)
+            colormap = sns.color_palette(ui.txtColor.currentData(), np.shape(np.unique(UniqueValues))[0])
+            colordict = dict()
+            for color, value in zip(colormap, np.unique(UniqueValues)):
+                colordict[str(value)] = QtGui.QColor(int(255 * color[0]), int(255 * color[1]), int(255 * color[2]))
+            for foldID, fold in enumerate(GUFold):
+                ui.tbReport2.item(clsID, foldID).setBackground(colordict[ui.tbReport2.item(clsID, foldID).text()])
+
+
+
+
+
+        ui.tbReport2.setVerticalHeaderLabels(ClassLabels)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
