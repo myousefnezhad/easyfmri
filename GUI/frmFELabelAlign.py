@@ -20,41 +20,36 @@
 
 import os
 import sys
-
+import seaborn as sns
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
-
-
 from Base.utility import getVersion, getBuild, fixstr
-from Base.dialogs import LoadFile, SaveFile
-
-from GUI.frmFETempAlignGUI import *
-
-
-import logging
+from Base.dialogs import LoadFile
+from GUI.frmFELabelAlignGUI import *
 
 
-
-class frmFETempAlign(Ui_frmFETempAlign):
-    ui = Ui_frmFETempAlign()
+class frmFELabelAlign(Ui_frmFELabelAlign):
+    ui = Ui_frmFELabelAlign()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmFETempAlign()
+        ui = Ui_frmFELabelAlign()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
-        ui.tabWidget.setCurrentIndex(0)
 
-        dialog.setWindowTitle("easy fMRI Shape Alignment Report - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
-        dialog.setFixedSize(dialog.size())
+        ui.txtColor.clear()
+        ui.txtColor.addItem("Basic", None)
+        ui.txtColor.addItem("HLS", "hls")
+        ui.txtColor.addItem("HUSL", "husl")
+        ui.tabWidget.setCurrentIndex(0)
+        ui.tabWidget2.setCurrentIndex(0)
+        dialog.setWindowTitle("easy fMRI Label Alignment Report - V" + getVersion() + "B" + getBuild())
         dialog.show()
 
 
@@ -63,8 +58,6 @@ class frmFETempAlign(Ui_frmFETempAlign):
         ui.btnClose.clicked.connect(self.btnClose_click)
         ui.btnInFile.clicked.connect(self.btnInFile_click)
         ui.btnReport.clicked.connect(self.btnReport_click)
-        # ui.btnOutFile.clicked.connect(self.btnOutFile_click)
-
 
     def btnClose_click(self):
         global dialog
@@ -72,28 +65,14 @@ class frmFETempAlign(Ui_frmFETempAlign):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load MatLab data file ...",['Data files (*.mat *.ezdata)'],'mat',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
                     print("Loading ...")
-                    ui.txtReport.clear()
                     data = io.loadmat(filename)
                     Keys = data.keys()
-
-                    # Data
-                    ui.txtData.clear()
-                    HasDefualt = False
-                    for key in Keys:
-                        ui.txtData.addItem(key)
-                        if key == "data":
-                            HasDefualt = True
-                    if HasDefualt:
-                        ui.txtData.setCurrentText("data")
-                        print("Data Shape: ", np.shape(data["data"]))
-                        ui.txtReport.append("Data Shape: " + str(np.shape(data["data"])))
-
 
                     # Label
                     ui.txtLabel.clear()
@@ -106,9 +85,7 @@ class frmFETempAlign(Ui_frmFETempAlign):
                         ui.txtLabel.setCurrentText("label")
                         Labels = data[ui.txtLabel.currentText()]
                         Labels = np.unique(Labels)
-                        ui.txtReport.append("Number of labels: " + str(np.shape(Labels)[0]))
                         print("Number of labels: ", np.shape(Labels)[0])
-                        ui.txtReport.append("Labels: " + str(Labels))
                         print("Labels: ", Labels)
 
 
@@ -122,8 +99,6 @@ class frmFETempAlign(Ui_frmFETempAlign):
                     if HasDefualt:
                         ui.txtSubject.setCurrentText("subject")
                         print("Number of subjects: ", np.shape(np.unique(data["subject"]))[0])
-                        ui.txtReport.append("Number of subjects: " + str(np.shape(np.unique(data["subject"]))[0]))
-
 
                     # Task
                     ui.txtTask.clear()
@@ -145,7 +120,6 @@ class frmFETempAlign(Ui_frmFETempAlign):
                     if HasDefualt:
                         ui.txtRun.setCurrentText("run")
 
-
                     # Counter
                     ui.txtCounter.clear()
                     HasDefualt = False
@@ -156,10 +130,17 @@ class frmFETempAlign(Ui_frmFETempAlign):
                     if HasDefualt:
                         ui.txtCounter.setCurrentText("counter")
 
-
                     ui.txtInFile.setText(filename)
 
+                    ui.tbReport.clear()
+                    ui.tbReport.setRowCount(0)
+                    ui.tbReport.setColumnCount(0)
+                    ui.tbReport2.clear()
+                    ui.tbReport2.setRowCount(0)
+                    ui.tbReport2.setColumnCount(0)
+                    ui.tabWidget2.setCurrentIndex(0)
                     ui.tabWidget.setCurrentIndex(2)
+
 
                 except Exception as e:
                     print(e)
@@ -168,11 +149,6 @@ class frmFETempAlign(Ui_frmFETempAlign):
             else:
                 print("File not found!")
 
-    # def btnOutFile_click(self):
-    #     ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
-    #                          os.path.dirname(ui.txtOutFile.text()))
-    #     if len(ofile):
-    #         ui.txtOutFile.setText(ofile)
 
     def btnReport_click(self):
         msgBox = QMessageBox()
@@ -193,8 +169,9 @@ class frmFETempAlign(Ui_frmFETempAlign):
             msgBox.exec_()
             return False
 
-        if not len(ui.txtData.currentText()):
-            msgBox.setText("Please enter Data variable name!")
+        # Label
+        if not len(ui.txtLabel.currentText()):
+            msgBox.setText("Please enter Label variable name!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
@@ -236,9 +213,9 @@ class frmFETempAlign(Ui_frmFETempAlign):
         InData = io.loadmat(InFile)
 
         try:
-            X = InData[ui.txtData.currentText()]
+            Label = InData[ui.txtLabel.currentText()][0]
         except:
-            print("Cannot load data")
+            print("Cannot load Labels!")
             return
 
         try:
@@ -333,32 +310,97 @@ class frmFETempAlign(Ui_frmFETempAlign):
         FoldInfo["Folds"]   = UnitFold
 
         GUFold = np.unique(UnitFold)
-
-        ui.txtReport.clear()
-
         print("Number of data in this level is " + str(len(UniqFold)))
-
-        ui.txtReport.append("Number of data in this level is " + str(len(UniqFold)))
-
-        FoldSizeStr = str(len(UniqFold))
-        FirstShape = None
-
-
+        ReformLabel = list()
+        ReformLabelCounter = dict()
+        MaxSize = None
+        # Reconstruct Labels
         for foldID, fold in enumerate(GUFold):
-            Shape = np.shape(X[np.where(UnitFold == fold)])
-            str2 = ""
-            if FirstShape is None:
-                FirstShape = Shape
-            elif Shape != FirstShape:
-                str2 = " - Problem"
-            print("Shape of " +  fixstr(foldID + 1,len(FoldSizeStr)) + "-th data of " + FoldSizeStr + " is " + str(Shape) + str2)
-            ui.txtReport.append("Shape of " + fixstr(foldID + 1,len(FoldSizeStr)) + "-th data of " + FoldSizeStr + " is " + str(Shape) + str2)
+            foldLevelLabel = Label[np.where(UnitFold == fold)]
+            MaxSize = np.shape(foldLevelLabel)[0] if MaxSize is None else np.max((np.shape(foldLevelLabel)[0], MaxSize))
+            foldLevelUnique, foldLevelCounter = np.unique(foldLevelLabel, return_counts=True)
+            ReformLabelCounter[foldID] = dict(zip(foldLevelUnique, foldLevelCounter))
+            ReformLabel.append(foldLevelLabel)
 
+        ui.tbReport.clear()
+        ui.tbReport2.clear()
+        ui.tbReport.setRowCount(MaxSize)
+        ui.tbReport2.setRowCount(np.shape(np.unique(Label))[0])
+        ui.tbReport.setColumnCount(np.shape(GUFold)[0])
+        ui.tbReport2.setColumnCount(np.shape(GUFold)[0])
+
+        HorHdrLabel = list()
+        for col_width in range(np.shape(GUFold)[0]):
+            ui.tbReport.setColumnWidth(col_width, 50)
+            ui.tbReport2.setColumnWidth(col_width, 50)
+            HorHdrLabel.append('F' + str(col_width + 1))
+        ui.tbReport.setHorizontalHeaderLabels(HorHdrLabel)
+        ui.tbReport2.setHorizontalHeaderLabels(HorHdrLabel)
+
+
+        # Create Color Dictionary
+        colormap = sns.color_palette(ui.txtColor.currentData(), np.shape(np.unique(Label))[0])
+        colordict = dict()
+        for color, lbl in zip(colormap, np.unique(Label)):
+            colordict[str(lbl)] = QtGui.QColor(int(255 * color[0]), int(255 * color[1]), int(255 * color[2]))
+
+        # Draw Timepoint Lables
+        TimePointLabels = list()
+        for timepoint in range(MaxSize):
+            TimePointLabels.append('T' + str(timepoint + 1))
+        ui.tbReport.setVerticalHeaderLabels(TimePointLabels)
+        # Draw Timepoint
+        for col_index, col in enumerate(ReformLabel):
+            for row_index, row in enumerate(col):
+                item = QTableWidgetItem(str(row))
+                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                item.setBackground(colordict[str(row)])
+                ui.tbReport.setItem(row_index, col_index, item)
+        ui.tbReport.move(0, 0)
         ui.tabWidget.setCurrentIndex(2)
+
+        # Draw Class Labels
+        ClassLabels = list()
+        for clsID, cls in enumerate(np.unique(Label)):
+            ClassLabels.append('C' + str(cls))
+            CounterList = list()
+            for foldID, fold in enumerate(GUFold):
+                value = ReformLabelCounter[foldID][cls]
+                CounterList.append(value)
+                item = QTableWidgetItem(str(value))
+                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                ui.tbReport2.setItem(clsID, foldID, item)
+
+            UniqueValues = np.unique(CounterList)
+            colormap = sns.color_palette(ui.txtColor.currentData(), np.shape(np.unique(UniqueValues))[0])
+            colordict = dict()
+            for color, value in zip(colormap, np.unique(UniqueValues)):
+                colordict[str(value)] = QtGui.QColor(int(255 * color[0]), int(255 * color[1]), int(255 * color[2]))
+            for foldID, fold in enumerate(GUFold):
+                ui.tbReport2.item(clsID, foldID).setBackground(colordict[ui.tbReport2.item(clsID, foldID).text()])
+
+
+
+
+
+        ui.tbReport2.setVerticalHeaderLabels(ClassLabels)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmFETempAlign.show(frmFETempAlign)
+    frmFELabelAlign.show(frmFELabelAlign)
     sys.exit(app.exec_())

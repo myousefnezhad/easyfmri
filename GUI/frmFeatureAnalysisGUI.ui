@@ -2275,32 +2275,58 @@ It's case sensitive.</string>
    </widget>
    <widget class="QWidget" name="tab_7">
     <attribute name="title">
-     <string>Feature Engineering</string>
+     <string>Feature Design</string>
     </attribute>
     <widget class="QLabel" name="label_40">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>20</y>
-       <width>181</width>
+       <y>120</y>
+       <width>191</width>
        <height>16</height>
       </rect>
      </property>
      <property name="text">
-      <string>Unsupervised Method</string>
+      <string>Feature Engineering</string>
      </property>
     </widget>
-    <widget class="QComboBox" name="cbFEU">
+    <widget class="QComboBox" name="cbFE">
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>20</y>
+       <y>120</y>
        <width>581</width>
        <height>26</height>
       </rect>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnFEURun">
+    <widget class="QPushButton" name="btnFERun">
+     <property name="geometry">
+      <rect>
+       <x>12</x>
+       <y>170</y>
+       <width>781</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Run</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_46">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>191</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Cross Validation</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnCVRun">
      <property name="geometry">
       <rect>
        <x>12</x>
@@ -2313,105 +2339,12 @@ It's case sensitive.</string>
       <string>Run</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnFECross">
-     <property name="geometry">
-      <rect>
-       <x>12</x>
-       <y>220</y>
-       <width>781</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>MatLab: Cross Validation</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_50">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>270</y>
-       <width>181</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Supervised Method</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="cbFES">
+    <widget class="QComboBox" name="cbCV">
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>270</y>
+       <y>20</y>
        <width>581</width>
-       <height>26</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnFESRun">
-     <property name="geometry">
-      <rect>
-       <x>12</x>
-       <y>320</y>
-       <width>781</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Run</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnFECrossEzData">
-     <property name="geometry">
-      <rect>
-       <x>12</x>
-       <y>170</y>
-       <width>781</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>EasyData: Cross Validation</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnFETempAlign">
-     <property name="geometry">
-      <rect>
-       <x>12</x>
-       <y>120</y>
-       <width>781</width>
-       <height>32</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Temporal Alignment Report</string>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="tab_4">
-    <attribute name="title">
-     <string>Functional Alignment</string>
-    </attribute>
-    <widget class="QLabel" name="label_49">
-     <property name="geometry">
-      <rect>
-       <x>18</x>
-       <y>20</y>
-       <width>91</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Method</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="cbFA">
-     <property name="geometry">
-      <rect>
-       <x>108</x>
-       <y>20</y>
-       <width>681</width>
        <height>26</height>
       </rect>
      </property>
@@ -2419,14 +2352,73 @@ It's case sensitive.</string>
     <widget class="QPushButton" name="btnFARun">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>80</y>
-       <width>781</width>
+       <x>12</x>
+       <y>370</y>
+       <width>780</width>
        <height>32</height>
       </rect>
      </property>
      <property name="text">
       <string>Run</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbTA">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>220</y>
+       <width>581</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_49">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>320</y>
+       <width>191</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Functional Alignment</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnTARun">
+     <property name="geometry">
+      <rect>
+       <x>12</x>
+       <y>270</y>
+       <width>780</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Run</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_51">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>220</y>
+       <width>191</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Temporal Alignment</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbFA">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>320</y>
+       <width>581</width>
+       <height>26</height>
+      </rect>
      </property>
     </widget>
    </widget>

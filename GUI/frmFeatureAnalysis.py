@@ -46,6 +46,7 @@ from GUI.frmFECrossValidation import frmFECrossValidation
 from GUI.frmSelectSession import frmSelectSession
 from GUI.frmFEEZCrossValidation import frmFEEZCrossValidation
 from GUI.frmFETempAlign import frmFETempAlign
+from GUI.frmFELabelAlign import frmFELabelAlign
 
 from Base.utility import fixstr, getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
 from Base.utility import strRange, strMultiRange, getSettingVersion
@@ -210,25 +211,28 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             ui.txtFSLDIR.setText(fsl.FSLDIR)
             ui.txtFlirt.setText(fsl.flirt)
 
+        # Cross Validation
+        ui.cbCV.addItem("Matlab: Cross Validation", 1)
+        # ui.cbCV.addItem("EzData: Cross Validation", 2)
 
-        # Unsupervised Feature Engineering
-        ui.cbFEU.addItem("MatLab: Data Normalization",1)
+        # Feature Engineering
+        ui.cbFE.addItem("MatLab: Data Normalization",1)
+        ui.cbFE.addItem("MatLab: Convert 2D data to 4D",3)
+        ui.cbFE.addItem("MatLab: Convert 4D data to 2D",4)
+        ui.cbFE.addItem("MatLab: Dictionary Learning",20002)
+        ui.cbFE.addItem("MatLab: Factor Analysis",20000)
+        ui.cbFE.addItem("MatLab: Fast Independent Component Analysis (FastICA)",20001)
+        ui.cbFE.addItem("MatLab: Incremental Principal Component Analysis (IPCA)",10001)
+        ui.cbFE.addItem("MatLab: Kernel Principal Component Analysis (KPCA)",10002)
+        ui.cbFE.addItem("MatLab: Multi Region Pattern Analysis (Snapshots)", 30000)
+        ui.cbFE.addItem("MatLab: Principal Component Analysis (PCA)",10000)
+        ui.cbFE.addItem("MatLab: Sparse Principal Component Analysis (SPCA)",10003)
+        ui.cbFE.addItem("MatLab: Convolutional Neural Network (CNN)", 40000)
+        ui.cbFE.addItem("MatLab: Linear Discriminant Analysis (LDA)",5)
 
-        ui.cbFEU.addItem("MatLab: Convert 2D data to 4D",3)
-        ui.cbFEU.addItem("MatLab: Convert 4D data to 2D",4)
-        ui.cbFEU.addItem("MatLab: Dictionary Learning",20002)
-        ui.cbFEU.addItem("MatLab: Factor Analysis",20000)
-        ui.cbFEU.addItem("MatLab: Fast Independent Component Analysis (FastICA)",20001)
-        ui.cbFEU.addItem("MatLab: Incremental Principal Component Analysis (IPCA)",10001)
-        ui.cbFEU.addItem("MatLab: Kernel Principal Component Analysis (KPCA)",10002)
-        ui.cbFEU.addItem("MatLab: Multi Region Pattern Analysis (Snapshots)", 30000)
-        ui.cbFEU.addItem("MatLab: Principal Component Analysis (PCA)",10000)
-        ui.cbFEU.addItem("MatLab: Sparse Principal Component Analysis (SPCA)",10003)
-        ui.cbFEU.addItem("MatLab: Convolutional Neural Network (CNN)", 40000)
-
-        # Supervised Feature Engineering
-        ui.cbFES.addItem("MatLab: Linear Discriminant Analysis (LDA)",1)
-
+        # Temporal Alignment
+        ui.cbTA.addItem("Report: Shape Alignment", 10001)
+        ui.cbTA.addItem("Report: Label Alignment", 10002)
 
         # Functional Alignment
         ui.cbFA.addItem("MatLab: GPU Hyperalignment (GPUHA)", 10008)
@@ -271,12 +275,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnDIOutFile.clicked.connect(self.btnDIOutFile_click)
         ui.btnDIROIFile.clicked.connect(self.btnDIROIFile_click)
         ui.btnDILabels.clicked.connect(self.btnDILabels_click)
-        ui.btnFEURun.clicked.connect(self.btnFEU_click)
-        ui.btnFESRun.clicked.connect(self.btnFES_click)
+        ui.btnFERun.clicked.connect(self.btnFE_click)
         ui.btnDIDraw.clicked.connect(self.btnDIDraw_click)
-        ui.btnFECross.clicked.connect(self.btnFECross_click)
         ui.btnFARun.clicked.connect(self.btnFA_click)
-        ui.btnFECrossEzData.clicked.connect(self.btnFECrossEzData_click)
         ui.btnTools.clicked.connect(self.btnTools_click)
         ui.btnSSDIR.clicked.connect(self.btnSSDIR_click)
         ui.btnDIDIR.clicked.connect(self.btnDIDIR_click)
@@ -285,16 +286,14 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnDIInFile.clicked.connect(self.btnDIInFile_click)
         ui.btnDIDM.clicked.connect(self.btnDIDM_click)
         ui.btnDIEventDIR.clicked.connect(self.btnDIEventDIR_click)
-        ui.btnFETempAlign.clicked.connect(self.btnFETempAlign_click)
+        ui.btnTARun.clicked.connect(self.btnTA_click)
+        ui.btnCVRun.clicked.connect(self.btnCV_click)
 
 
     # Exit function
     def btnClose_click(self):
         global dialog, parent
         dialog.close()
-
-    def btnFETempAlign_click(self):
-        frmFETempAlign.show(frmFETempAlign)
 
 
     def btnDIEventDIR_click(self):
@@ -1764,8 +1763,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         plt.show()
 
 
-    def btnFEU_click(self):
-        FEID = ui.cbFEU.currentData()
+    def btnFE_click(self):
+        FEID = ui.cbFE.currentData()
         if FEID == 1:
             from GUI.frmFENormalization import frmFENormalization
             frmFENormalization.show(frmFENormalization)
@@ -1777,6 +1776,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         if FEID == 4:
             from GUI.frmFEConv4D2D import frmFEConv4D2D
             frmFEConv4D2D.show(frmFEConv4D2D)
+            return
+        if FEID == 5:
+            from GUI.frmFELDA import frmFELDA
+            frmFELDA.show(frmFELDA)
             return
         if FEID == 10000:
             from GUI.frmFEPCA import frmFEPCA
@@ -1814,16 +1817,15 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             from GUI.frmFECNN import frmFECNN
             frmFECNN.show(frmFECNN)
             return
-    def btnFECross_click(self):
-        frmFECrossValidation.show(frmFECrossValidation)
 
 
-    def btnFES_click(self):
-        FEID = ui.cbFES.currentData()
-        if FEID == 1:
-            from GUI.frmFELDA import frmFELDA
-            frmFELDA.show(frmFELDA)
-            return
+    def btnCV_click(self):
+        CVID = ui.cbCV.currentData()
+        if   CVID == 1:
+            frmFECrossValidation.show(frmFECrossValidation)
+        elif CVID == 2:
+            frmFEEZCrossValidation.show(frmFEEZCrossValidation)
+
 
     def btnFA_click(self):
         FAID = ui.cbFA.currentData()
@@ -1880,6 +1882,16 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             from GUI.frmFARDHA import frmFARDHA
             frmFARDHA.show(frmFARDHA)
             return
+
+    def btnTA_click(self):
+        TAID = ui.cbTA.currentData()
+
+        if   TAID == 10001:
+            frmFETempAlign.show(frmFETempAlign)
+        elif TAID == 10002:
+            frmFELabelAlign.show(frmFELabelAlign)
+
+
 
 # Auto Run
 if __name__ == "__main__":

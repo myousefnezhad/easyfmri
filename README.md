@@ -1,4 +1,4 @@
-easy fMRI project (V1.8B5300 beta)
+easy fMRI project (V1.8B6000 beta)
 ==================================
 
 ### Introduction
@@ -25,7 +25,7 @@ Easy fMRI needs following software:
 
   -Platform: Linux (recommended), Mac, Windows (via Linux Virtual Machine, or Bash for Windows 10 or above)
 
-  -[Python3](https://anaconda.org/anaconda/python) (version=3.6.x or 3.7.x)
+  -[Python3](https://anaconda.org/anaconda/python) (version=3.7.x)
 
   -[FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki) (version=5.0.1x) for preprocessing steps
 
@@ -38,7 +38,7 @@ Easy fMRI needs following software:
   -[PyTorch](https://pytorch.org/) for Gradient-based Optimization and Learning
 
 
-### How to install easy fMRI
+## How to install easy fMRI
 
 ### Pre-install for Windows 10 users:
 
@@ -98,65 +98,149 @@ cd ~/.easyfmri/Script
 -- Set environment variables (see example at the end)
 
 
-#### STEP B) Install FSL 5.0.10 or above
+#### STEP B) Installing FSL 5.0.1x
+
+##### B.1) Installing FSL via [NeuroDebian](http://neuro.debian.net/) (For Debian or Ubuntu)
+
+In `Get NeuroDebian` section, you must select Linux version and the closest resource location and then run the generated script. In `Select desired components`, you also must select `all software`.
+
+For instance, this script for `Ubuntu 16.0.4` and `The University of Science and Technology of China (USTC)` is:
+```
+wget -O- http://neuro.debian.net/lists/xenial.cn-bj2.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
+sudo apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
+sudo apt-get update
+sudo apt install fsl-complete
+```
+and for `Ubuntu 18.0.4` and `The University of Science and Technology of China (USTC)` is:
+```
+wget -O- http://neuro.debian.net/lists/bionic.cn-bj2.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
+sudo apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
+sudo apt-get update
+sudo apt install fsl-complete
+```
+
+##### B.2) Installing FSL based on the [main source](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki)
 
 -- Register on [FSL website](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki)
 
 -- Download `fslinstaller.py`
 
--- Run following for downloading installation file (e.g. In version 5.0.10, the file name is `fsl-5.0.10-macOS_64.tar.gz` for Mac or `fsl-5.0.10-centos7_64.tar.gz` for all Linux distribution)
+-- Run following for downloading installation file (e.g. In version 5.0.10, the file name is `fsl-5.0.11-macOS_64.tar.gz` for Mac or `fsl-5.0.11-centos7_64.tar.gz` for all Linux distribution)
 
 For Linux:
-
 ```
 python2 fslinstaller.py -o
-md5sum fsl-5.0.10-centos7_64.tar.gz
+md5sum fsl-5.0.11-centos7_64.tar.gz
 ```
 
 For Mac:
-
-
 ```
 python2 fslinstaller.py -o
-md5sum fsl-5.0.10-macOS_64.tar.gz
+md5sum fsl-5.0.11-macOS_64.tar.gz
 ```
 
 -- Install the downloaded file:
 
 For Linux:
-
 ```
-python2 fslinstaller.py -f fsl-5.0.10-centos7_64.tar.gz -M
+python2 fslinstaller.py -f fsl-5.0.11-centos7_64.tar.gz -M
 ```
 
 For Mac:
-
 ```
-python2 fslinstaller.py -f fsl-5.0.10-macOS_64.tar.gz -M
+python2 fslinstaller.py -f fsl-5.0.11-macOS_64.tar.gz -M
 ```
 
--- Set environment variables (see example at the end)
+-- Set environment variables (see example at the end).
 
 
-#### STEP D) Install AFNI 17.3.06 or above
+#### STEP D) Install AFNI 17.3.x or above
 
--- Download [AFNI](https://afni.nimh.nih.gov/)
+-- Download [AFNI](https://afni.nimh.nih.gov/):
+* [Ubuntu 16+](https://afni.nimh.nih.gov/pub/dist/tgz/linux_ubuntu_16_64.tgz)
+* [Ubuntu (<16), Fedora (< 21), Red Hat, etc.](https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz)
+* [Fedora 21+](https://afni.nimh.nih.gov/pub/dist/tgz/linux_fedora_21_64.tgz)
+* [Mac 10.7 (Lion) and higher](https://afni.nimh.nih.gov/pub/dist/tgz/macosx_10.7_Intel_64.tgz)
+
 
 -- Extract AFNI to `~/abin`
 
 -- Set environment variables (see example at the end)
 
-NOTE: For Ubuntu-based Linux, you have to install following packages:
+##### Install linux packages for [AFNI](https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/index.html)
+
+-- Linux, Ubuntu 15.10 and earlier: The essential system setup
 ```
-sudo apt-get install -y tcsh xfonts-base python-qt4 gsl-bin netpbm gnome-tweak-tool libjpeg62 xvfb xterm vim curl
+sudo apt-get install -y tcsh libxp6 xfonts-base python-qt4             \
+                        libmotif4 libmotif-dev motif-clients           \
+                        gsl-bin netpbm xvfb gnome-tweak-tool           \
+                        libjpeg62 xterm gedit evince git
+                        
+                        
+sudo apt-get install -y tcsh xfonts-base python-qt4 gedit evince       \
+                        libmotif4 libmotif-dev motif-clients           \
+                        gsl-bin netpbm xvfb gnome-tweak-tool libjpeg62
+```
 
-sudo apt-get install -y libglu1-mesa-dev libglw1-mesa libxm4 build-essential
+-- Linux, Ubuntu 16.04 - 17.10: The essential system setup
+```
+sudo apt-get install -y tcsh xfonts-base python-qt4       \
+                        gsl-bin netpbm gnome-tweak-tool   \
+                        libjpeg62 xvfb xterm vim curl     \
+                        gedit evince                      \
+                        libglu1-mesa-dev libglw1-mesa     \
+                        libxm4 build-essential git
+
+
+sudo apt-get install -y gnome-terminal nautilus          \
+                        gnome-icon-theme-symbolic
+```
+
+--  Linux, Ubuntu 18.04: The essential system setup
+```
+sudo apt-get install -y tcsh xfonts-base python-qt4       \
+                        gsl-bin netpbm gnome-tweak-tool   \
+                        libjpeg62 xvfb xterm vim curl     \
+                        gedit evince                      \
+                        libglu1-mesa-dev libglw1-mesa     \
+                        libxm4 build-essential            \
+                        libcurl4-openssl-dev libxml2-dev  \
+                        libssl-dev libgfortran3 git
+  
+                        
+sudo apt-get install -y gnome-terminal nautilus          \
+                        gnome-icon-theme-symbolic
 ```
 
 
-#### STEP D) Install Python 3.6.x
+-- Fedora 21 (and higher): The essential system setup
+```
+sudo yum install -y tcsh libXp openmotif gsl xorg-x11-fonts-misc       \
+                    PyQt4 R-devel netpbm-progs gnome-tweak-tool ed     \
+                    xorg-x11-server-Xvfb git
+sudo yum update -y
+```
 
--- Download [Anaconda3](https://anaconda.org/anaconda/python) and Install Python3 by using Anaconda3
+
+-- CentOS/RHEL 7: The essential system setup
+```
+sudo yum install -y epel-release
+sudo yum install -y tcsh libXp openmotif gsl xorg-x11-fonts-misc       \
+                    PyQt4 R-devel netpbm-progs gnome-tweak-tool ed     \
+                    libpng12 xorg-x11-server-Xvfb git
+sudo yum update -y
+```
+
+#### STEP D) Install Python 3.7.x
+
+-- Download [Anaconda3](https://anaconda.org/anaconda/python) for Python 3.7
+
+* [Linux](https://www.anaconda.com/download/#linux)
+* [Mac](https://www.anaconda.com/download/#macos)
+
+Note: In Windows 10, you must install the linux version of Anaconda 3
+
+-- Install Python 3.7
 
 For Linux:
 
@@ -166,22 +250,71 @@ sh Anaconda3-<version>-Linux<platform>.sh
 
 For Mac: click PKG file and continue installation.
 
+Note 1: If you need to change the main repository of `pip`, then:
+* Creating the `~/.pip` directory by using `mkdir ~/.pip`
+* Then generate the setting file `~/.pip/pip.conf`. For instance, following setting can change the main repository to `The University of Science and Technology of China`:
+```
+[global]
+timeout = 60
+index-url  = https://mirrors.ustc.edu.cn/pypi/web/simple/
+
+[install]
+index-url = https://mirrors.ustc.edu.cn/pypi/web/simple/
+```
+
+Note 2: If you need to change the main repository of `conda`, then create setting file `~/.condarc`. For instance, following setting can change the main repository to `The University of Science and Technology of China`:
+```
+channels:
+  - https://mirrors.ustc.edu.cn/anaconda/pkgs/main/
+  - https://mirrors.ustc.edu.cn/anaconda/pkgs/free/
+  - defaults
+ssl_verify: true
+show_channel_urls: true
+```
+
 -- Set environment variables (see example at the end)
 
--- Install all packages in `~/.easyfmri/PyPackage` directory
+-- Load environment variables: `source ~/.startupscript`
 
+-- Update Conda: `conda update --all`
+
+-- Update `pip`: `pip install -U pip`
+
+
+-- Install `MPICH`, `OpenMPI`, and then `MPI4PY`:
+
+For Ubuntu:
 ```
-cd ~/.easyfmri/PyPackage
-pip install *
+sudo apt install libmpich-dev libopenmpi-dev
+env MPICC=/usr/bin pip install mpi4py
 ```
 
--- Install MPI packages:
+For Fedora: 
+```
+sudo dnf install openmpi openmpi-devel mpich mpich-devel
+echo 'export PATH="/usr/lib64/openmpi/bin:/usr/lib64/mpich/bin:$PATH"' >> ~/.bashrc 
+export PATH="/usr/lib64/openmpi/bin:/usr/lib64/mpich/bin:$PATH"
+source ~/.bashrc 
+env MPICC=/usr/lib64/openmpi/bin pip install mpi4py
+```
 
+For RedHat or CentOS: 
+```
+sudo yum install openmpi openmpi-devel mpich mpich-devel
+echo 'export PATH="/usr/lib64/openmpi/bin:/usr/lib64/mpich/bin:$PATH"' >> ~/.bashrc 
+export PATH="/usr/lib64/openmpi/bin:/usr/lib64/mpich/bin:$PATH"
+source ~/.bashrc 
+env MPICC=/usr/lib64/openmpi/bin pip install mpi4py
+```
+
+For Mac:
 ```
 conda install mpi4py
 ```
 
--- Install PyTorch package:
+-- Install Easy fMRI python packages by using `pip install -U future nibabel pyqode.core pyqode.qt`
+
+-- Install [PyTorch](https://pytorch.org/) package:
 
 For CPU version:
 
@@ -197,7 +330,7 @@ conda install pytorch-cpu torchvision-cpu -c pytorch
 
 For GPU Vesion: You must install [CUDA](https://developer.nvidia.com/cuda-toolkit) and [cuDNN](https://developer.nvidia.com/cudnn). Then, you can install [PyTorch](https://pytorch.org/)
 
-Note: By employing `CUDA 9.2`, `CUDNN 7.2.1` and `Ubuntu 18.04.x`, you can use following command to install PyTorch:
+Note: By employing `CUDA 9.2`, `CUDNN 7.2.1`, you can use following command to install PyTorch:
 
 ```
 conda install pytorch torchvision cuda92 -c pytorch
@@ -212,7 +345,7 @@ After restarting your computer, open a terminal and run easyfmri:
 ezfmri
 ```
 
-### How to upgrade easy fMRI
+### How to manually upgrade easy fMRI
 
 For updating a new version, just replace the old files with the new files.
 
@@ -220,7 +353,7 @@ Note: default directory for easy fMRI is a hidden folder in `~/.easyfmri`
 
 ```
 rm -R ~/.easyfmri
-git clone https://github.com/easyfmri/easyfmri.git ~/.easyfmri
+git clone https://gitlab.com/easyfmri/easyfmri.git ~/.easyfmri
 ```
 
 
