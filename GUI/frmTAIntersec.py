@@ -511,7 +511,7 @@ class frmTAIntersec(Ui_frmTAInterSec):
         # Coordinate
         try:
             if ui.cbCol.isChecked():
-                OutData[ui.txtOCond.text()] = InData[ui.txtCol.currentText()]
+                OutData[ui.txtOCol.text()] = InData[ui.txtCol.currentText()]
         except:
             print("Cannot load Coordinate ID")
             return
