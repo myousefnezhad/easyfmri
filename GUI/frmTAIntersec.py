@@ -710,19 +710,6 @@ class frmTAIntersec(Ui_frmTAInterSec):
         msgBox.exec_()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmTAIntersec.show(frmTAIntersec)
