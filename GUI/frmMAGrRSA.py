@@ -544,7 +544,6 @@ class frmMAGrRSA(Ui_frmMAGrRSA):
             for con in Cond:
                 labels.append(con[1][0])
             labels = np.array(labels)
-
         except:
             msgBox.setText("Condition value is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -1015,7 +1014,7 @@ class frmMAGrRSA(Ui_frmMAGrRSA):
                 if len(ui.txtTitleCov.text()):
                     plt.title(ui.txtTitleCov.text())
                 else:
-                    plt.title('DeepRSA: Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+                    plt.title('Gradient RSA: Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
 
@@ -1058,16 +1057,16 @@ class frmMAGrRSA(Ui_frmMAGrRSA):
                 if len(ui.txtTitleCorr.text()):
                     plt.title(ui.txtTitleCorr.text())
                 else:
-                    plt.title('DeepRSA: Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+                    plt.title('Gradient RSA: Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
-                fig3 = plt.figure(figsize=(25, 10), )
-                dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1)
-                if len(ui.txtTitleDen.text()):
-                    plt.title(ui.txtTitleDen.text())
-                else:
-                    plt.title('Group MP DeepRSA: Similarity Analysis\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
-                plt.show()
+            fig3 = plt.figure(figsize=(25, 10), )
+            dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1)
+            if len(ui.txtTitleDen.text()):
+                plt.title(ui.txtTitleDen.text())
+            else:
+                plt.title('Gradient RSA: Similarity Analysis\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+            plt.show()
 
     def btnRedraw_clickq(self):
         msgBox = QMessageBox()
@@ -1133,9 +1132,6 @@ class frmMAGrRSA(Ui_frmMAGrRSA):
                 plt.title('Covariance (' + MethodTitle(str(Res['Method']['Type'][0][0][0])) + \
                           ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
-
-
-
 
 
 if __name__ == '__main__':

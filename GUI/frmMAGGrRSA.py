@@ -784,7 +784,7 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
                 if len(ui.txtTitleCorr.text()):
                     plt.title(ui.txtTitleCorr.text())
                 else:
-                    plt.title('Group MP DeepRSA: Correlation\nLevel: ' + FoldStr)
+                    plt.title('Group MP Gradient RSA: Correlation\nLevel: ' + FoldStr)
                 plt.show()
 
 
@@ -816,14 +816,14 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
                 if len(ui.txtTitleCov.text()):
                     plt.title(ui.txtTitleCov.text())
                 else:
-                    plt.title('Group MP DeepRSA: Covariance\nLevel: ' + FoldStr)
+                    plt.title('Group MP Gradient RSA: Covariance\nLevel: ' + FoldStr)
                 plt.show()
 
             fig3 = plt.figure(figsize=(25, 10), )
             if len(ui.txtTitleDen.text()):
                 plt.title(ui.txtTitleDen.text())
             else:
-                plt.title('Group MP DeepRSA: Similarity Analysis\nLevel: ' + FoldStr)
+                plt.title('Group MP Gradient RSA: Similarity Analysis\nLevel: ' + FoldStr)
 
             dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1)
             plt.show()
@@ -924,7 +924,7 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
                 if len(ui.txtTitleCov.text()):
                     plt.title(ui.txtTitleCov.text())
                 else:
-                    plt.title('Group MP DeepRSA: Correlation\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+                    plt.title('Group MP Gradient RSA: Correlation\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
                 plt.show()
 
 
@@ -966,7 +966,7 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
                 if len(ui.txtTitleCorr.text()):
                     plt.title(ui.txtTitleCorr.text())
                 else:
-                    plt.title('Group MP DeepRSA: Covariance\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+                    plt.title('Group MP Gradient RSA: Covariance\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
                 plt.show()
 
             fig3 = plt.figure(figsize=(25, 10), )
@@ -974,7 +974,7 @@ class frmMAGGrRSA(Ui_frmMAGGrRSA):
             if len(ui.txtTitleDen.text()):
                 plt.title(ui.txtTitleDen.text())
             else:
-                plt.title('Group MP DeepRSA: Similarity Analysis\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+                plt.title('Group MP Gradient RSA: Similarity Analysis\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
             plt.show()
 
 
