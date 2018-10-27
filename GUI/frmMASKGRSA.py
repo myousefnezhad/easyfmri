@@ -36,6 +36,7 @@ from GUI.frmMASKGRSAGUI import *
 import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
 
 
 
@@ -145,6 +146,16 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                             HasDefualt = True
                     if HasDefualt:
                         ui.txtDesign.setCurrentText("design")
+
+                    # Condition
+                    ui.txtCond.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtCond.addItem(key)
+                        if key == "condition":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtCond.setCurrentText("condition")
 
                     # Subject
                     ui.txtSubject.clear()
@@ -348,6 +359,32 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             msgBox.exec_()
             return False
 
+
+        # Condition
+        if not len(ui.txtCond.currentText()):
+            msgBox.setText("Please enter Condition variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            Cond = InData[ui.txtCond.currentText()]
+            OutData[ui.txtCond.currentText()] = Cond
+            labels = list()
+            for con in Cond:
+                labels.append(con[1][0])
+            labels = np.array(labels)
+
+        except:
+            msgBox.setText("Condition value is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        FontSize = ui.txtFontSize.value()
+
         try:
             X = InData[ui.txtData.currentText()]
             L = InData[ui.txtLabel.currentText()][0]
@@ -543,6 +580,7 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
         Cov = None
         Corr = None
         AMSE = list()
+        Beta = None
 
         for foldID, fold in enumerate(GUFold):
             print("Analyzing level " + str(foldID + 1)," of ", str(len(UniqFold)) , " ...")
@@ -569,6 +607,7 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                                           max_iter=iter, tol=tol, selection=selection)
             model.fit(RegLi, XLi)
             BetaLi = np.transpose(model.coef_)[1:, :]
+            Beta = BetaLi if Beta is None else Beta + BetaLi
 
             print("Calculating MSE for level %d ..." % (foldID + 1))
             MSE = mean_squared_error(XLi, np.matmul(Design[Index], BetaLi))
@@ -625,6 +664,18 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             OutData["Correlation_std"]  = corClass.std()
             OutData["Correlation_mean"] = corClass.mean()
 
+
+        # Calculating Distance Matrix
+        dis = np.zeros((np.shape(Beta)[0], np.shape(Beta)[0]))
+
+        for i in range(np.shape(Beta)[0]):
+            for j in range(i + 1, np.shape(Beta)[0]):
+                dis[i, j] = 1 - np.dot(Beta[i, :], Beta[j, :].T)
+                dis[j, i] = dis[i, j]
+        OutData["DistanceMatrix"] = dis
+        Z = linkage(dis)
+        OutData["Linkage"] = Z
+
         OutData["MSE"] = np.mean(AMSE)
         print("Average MSE: %f" % (OutData["MSE"]))
         OutData["RunTime"] = time.time() - tStart
@@ -636,26 +687,79 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
         if ui.cbDiagram.isChecked():
             if ui.cbCorr.isChecked():
-                fig1 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Corr, vmin=-0.1, vmax=1)
-                plt.xlim([0, np.shape(Corr)[0]])
-                plt.ylim([0, np.shape(Corr)[0]])
-                plt.colorbar()
+                NumData = np.shape(Corr)[0]
+                fig1 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Corr, vmin=np.min(Corr), vmax=np.max(Corr))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('Correlation of Categories\nLevel: ' + FoldStr)
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+
+                if len(ui.txtTitleCorr.text()):
+                    plt.title(ui.txtTitleCorr.text())
+                else:
+                    plt.title('Group RSA: Correlation\nLevel: ' + FoldStr)
                 plt.show()
 
+
             if ui.cbCov.isChecked():
-                fig2 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Cov)
-                plt.xlim([0, np.shape(Cov)[0]])
-                plt.ylim([0, np.shape(Cov)[0]])
-                plt.colorbar()
+                NumData = np.shape(Cov)[0]
+                fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('Covariance of Categories\nLevel: ' + FoldStr)
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                if len(ui.txtTitleCov.text()):
+                    plt.title(ui.txtTitleCov.text())
+                else:
+                    plt.title('Group RSA: Covariance\nLevel: ' + FoldStr)
                 plt.show()
+
+            fig3 = plt.figure(figsize=(25, 10), )
+            if len(ui.txtTitleDen.text()):
+                plt.title(ui.txtTitleDen.text())
+            else:
+                plt.title('Group MP Gradient RSA: Similarity Analysis\nLevel: ' + FoldStr)
+
+            dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1)
+            plt.show()
+
+
         print("DONE.")
         msgBox.setText("Group Representational Similarity Analysis (RSA) is done.")
         msgBox.setIcon(QMessageBox.Information)
@@ -668,6 +772,9 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
         ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
                              os.path.dirname(ui.txtOutFile.text()))
+
+        FontSize = ui.txtFontSize.value()
+
         if len(ofile):
             try:
                 Res     = io.loadmat(ofile)
@@ -679,6 +786,38 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                 msgBox.exec_()
                 return False
 
+
+            HasDefaultCond = False
+            # Condition
+            if not len(ui.txtCond.currentText()):
+                try:
+                    Cond = Res["condition"]
+                    HasDefaultCond = True
+                except:
+                    msgBox.setText("Please enter Condition variable name!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+            if not HasDefaultCond:
+                try:
+                    Cond = Res[ui.txtCond.currentText()]
+                except:
+                    msgBox.setText("Condition value is wrong!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+
+            labels = list()
+            for con in Cond:
+                labels.append(con[1][0])
+            labels = np.array(labels)
+
+
+
             if ui.cbCorr.isChecked():
                 try:
                     Corr = Res["Correlation"]
@@ -689,14 +828,35 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
-                fig1 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Corr, vmin=-0.1, vmax=1)
-                plt.xlim([0, np.shape(Corr)[0]])
-                plt.ylim([0, np.shape(Corr)[0]])
-                plt.colorbar()
+                NumData = np.shape(Corr)[0]
+                fig1 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Corr, vmin=np.min(Corr), vmax=np.max(Corr))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('Correlation of Categories\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+
+                if len(ui.txtTitleCov.text()):
+                    plt.title(ui.txtTitleCov.text())
+                else:
+                    plt.title('Group RSA: Correlation\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
                 plt.show()
 
 
@@ -710,15 +870,47 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
-                fig2 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Cov)
-                plt.xlim([0, np.shape(Cov)[0]])
-                plt.ylim([0, np.shape(Cov)[0]])
-                plt.colorbar()
+                NumData = np.shape(Cov)[0]
+                fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('Covariance of Categories\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                if len(ui.txtTitleCorr.text()):
+                    plt.title(ui.txtTitleCorr.text())
+                else:
+                    plt.title('Group RSA: Covariance\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
                 plt.show()
+
+            fig3 = plt.figure(figsize=(25, 10), )
+            dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1)
+            if len(ui.txtTitleDen.text()):
+                plt.title(ui.txtTitleDen.text())
+            else:
+                plt.title('Group MP Gradient RSA: Similarity Analysis\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+            plt.show()
+
+
+
+
 
 
 if __name__ == '__main__':
