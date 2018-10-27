@@ -28,6 +28,7 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.metrics import mean_squared_error
 import sklearn.linear_model as linmdl
+from scipy.cluster.hierarchy import dendrogram, linkage
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
 from GUI.frmMASKRSAGUI import *
@@ -202,6 +203,17 @@ class frmMASKRSA(Ui_frmMASKRSA):
                         values = np.unique(data["task"])
                         for val in values:
                             ui.txtTaskVal.addItem(str(val[0]))
+
+
+                    # Condition
+                    ui.txtCond.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtCond.addItem(key)
+                        if key == "condition":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtCond.setCurrentText("condition")
 
                     ui.txtInFile.setText(filename)
                     print("DONE.")
@@ -471,6 +483,29 @@ class frmMASKRSA(Ui_frmMASKRSA):
             msgBox.exec_()
             return False
 
+        # Condition
+        if not len(ui.txtCond.currentText()):
+            msgBox.setText("Please enter Condition variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            Cond = InData[ui.txtCond.currentText()]
+            OutData[ui.txtCond.currentText()] = Cond
+            labels = list()
+            for con in Cond:
+                labels.append(con[1][0])
+            labels = np.array(labels)
+        except:
+            msgBox.setText("Condition value is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
         try:
             X = InData[ui.txtData.currentText()]
             L = InData[ui.txtLabel.currentText()][0]
@@ -700,6 +735,19 @@ class frmMASKRSA(Ui_frmMASKRSA):
         print("MSE: %f" % (MSE))
         OutData["MSE"] = MSE
 
+
+        # Calculating Distance Matrix
+        dis = np.zeros((np.shape(Betas)[0], np.shape(Betas)[0]))
+
+        for i in range(np.shape(Betas)[0]):
+            for j in range(i + 1, np.shape(Betas)[0]):
+                dis[i, j] = 1 - np.dot(Betas[i, :], Betas[j, :].T)
+                dis[j, i] = dis[i, j]
+        OutData["DistanceMatrix"] = dis
+        Z = linkage(dis)
+        OutData["Linkage"] = Z
+
+
         if ui.cbBeta.isChecked():
             OutData["Betas"]        = Betas
         # Calculate Results
@@ -727,29 +775,76 @@ class frmMASKRSA(Ui_frmMASKRSA):
         print("Saving results ...")
         io.savemat(OutFile,mdict=OutData,do_compression=True)
         print("Output is saved.")
+        FontSize = 14
 
         if ui.cbDiagram.isChecked():
             if ui.cbCorr.isChecked():
-                fig1 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Corr, vmin=-0.1, vmax=1)
-                plt.xlim([0, LNum])
-                plt.ylim([0, LNum])
-                plt.colorbar()
+                NumData = np.shape(Corr)[0]
+                fig1 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Corr, vmin=np.min(Corr), vmax=np.max(Corr))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('Correlation of Categories\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+
+
+                plt.title('Correlation (' + ui.cbMethod.currentText() + \
+                               ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
             if ui.cbCov.isChecked():
-                fig2 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Cov)
-                plt.xlim([0, LNum])
-                plt.ylim([0, LNum])
-                plt.colorbar()
+                NumData = np.shape(Cov)[0]
+                fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('Covariance of Categories\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+
+                plt.title('Covariance (' + ui.cbMethod.currentText() + \
+                               ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
+
+        fig3 = plt.figure(figsize=(25, 10), )
+        plt.title('Similarity Analysis (' + ui.cbMethod.currentText() + \
+                      ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+        dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1)
+        plt.show()
+
         print("DONE.")
         msgBox.setText("Representational Similarity Analysis (RSA) is done.")
         msgBox.setIcon(QMessageBox.Information)
@@ -762,6 +857,8 @@ class frmMASKRSA(Ui_frmMASKRSA):
 
         ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
                              os.path.dirname(ui.txtOutFile.text()))
+
+        FontSize = 14
         if len(ofile):
             try:
                 Res     = io.loadmat(ofile)
@@ -779,6 +876,37 @@ class frmMASKRSA(Ui_frmMASKRSA):
                 msgBox.exec_()
                 return False
 
+
+            HasDefaultCond = False
+            # Condition
+            if not len(ui.txtCond.currentText()):
+                try:
+                    Cond = Res["condition"]
+                    HasDefaultCond = True
+                except:
+                    msgBox.setText("Please enter Condition variable name!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+            if not HasDefaultCond:
+                try:
+                    Cond = Res[ui.txtCond.currentText()]
+                except:
+                    msgBox.setText("Condition value is wrong!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+
+            labels = list()
+            for con in Cond:
+                labels.append(con[1][0])
+            labels = np.array(labels)
+
+
             if ui.cbCorr.isChecked():
                 try:
                     Corr = Res["Correlation"]
@@ -789,15 +917,37 @@ class frmMASKRSA(Ui_frmMASKRSA):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
-                fig1 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Corr, vmin=-0.1, vmax=1)
-                plt.xlim([0, LNum])
-                plt.ylim([0, LNum])
-                plt.colorbar()
+                NumData = np.shape(Corr)[0]
+                fig1 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Corr, vmin=np.min(Corr), vmax=np.max(Corr))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+
+
+                plt.title('RSA: Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
+
+
+
 
 
             if ui.cbCov.isChecked():
@@ -810,15 +960,38 @@ class frmMASKRSA(Ui_frmMASKRSA):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
-                fig2 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Cov)
-                plt.xlim([0, LNum])
-                plt.ylim([0, LNum])
-                plt.colorbar()
+                NumData = np.shape(Cov)[0]
+                fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
+                plt.xlim([0, NumData])
+                plt.ylim([0, NumData])
+                cbar = plt.colorbar()
+                cbar.ax.tick_params(labelsize=FontSize)
                 ax = plt.gca()
+                ax.invert_yaxis()
                 ax.set_aspect(1)
-                plt.title('Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+
+                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.grid(False)
+                ax.set_aspect(1)
+                ax.set_frame_on(False)
+                for t in ax.xaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+                for t in ax.yaxis.get_major_ticks():
+                    t.tick1On = False
+                    t.tick2On = False
+
+                plt.title('RSA: Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
+
+            fig3 = plt.figure(figsize=(25, 10), )
+            dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1)
+            plt.title('RSA: Similarity Analysis\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+            plt.show()
 
 
 if __name__ == '__main__':
