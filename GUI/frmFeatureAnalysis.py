@@ -47,6 +47,7 @@ from GUI.frmSelectSession import frmSelectSession
 from GUI.frmFEEZCrossValidation import frmFEEZCrossValidation
 from GUI.frmFETempAlign import frmFETempAlign
 from GUI.frmFELabelAlign import frmFELabelAlign
+from GUI.frmTAIntersec import frmTAIntersec
 
 from Base.utility import fixstr, getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
 from Base.utility import strRange, strMultiRange, getSettingVersion
@@ -233,6 +234,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         # Temporal Alignment
         ui.cbTA.addItem("Report: Shape Alignment", 10001)
         ui.cbTA.addItem("Report: Label Alignment", 10002)
+        ui.cbTA.addItem("Matlab: Temporal Alignment with intersection strategy", 20001)
 
         # Functional Alignment
         ui.cbFA.addItem("MatLab: GPU Hyperalignment (GPUHA)", 10008)
@@ -1829,7 +1831,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
     def btnFA_click(self):
         FAID = ui.cbFA.currentData()
-
         if FAID == 10000:
             from GUI.frmFAHA import frmFAHA
             frmFAHA.show(frmFAHA)
@@ -1885,12 +1886,12 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
     def btnTA_click(self):
         TAID = ui.cbTA.currentData()
-
         if   TAID == 10001:
             frmFETempAlign.show(frmFETempAlign)
         elif TAID == 10002:
             frmFELabelAlign.show(frmFELabelAlign)
-
+        elif   TAID == 20001:
+            frmTAIntersec.show(frmTAIntersec)
 
 
 # Auto Run

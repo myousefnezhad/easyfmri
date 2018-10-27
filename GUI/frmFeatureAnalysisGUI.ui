@@ -2281,7 +2281,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>120</y>
+       <y>220</y>
        <width>191</width>
        <height>16</height>
       </rect>
@@ -2294,7 +2294,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>120</y>
+       <y>220</y>
        <width>581</width>
        <height>26</height>
       </rect>
@@ -2304,7 +2304,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>12</x>
-       <y>170</y>
+       <y>270</y>
        <width>781</width>
        <height>32</height>
       </rect>
@@ -2317,7 +2317,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>20</y>
+       <y>120</y>
        <width>191</width>
        <height>16</height>
       </rect>
@@ -2330,7 +2330,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>12</x>
-       <y>70</y>
+       <y>170</y>
        <width>781</width>
        <height>32</height>
       </rect>
@@ -2343,7 +2343,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>20</y>
+       <y>120</y>
        <width>581</width>
        <height>26</height>
       </rect>
@@ -2366,7 +2366,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>220</y>
+       <y>20</y>
        <width>581</width>
        <height>26</height>
       </rect>
@@ -2389,7 +2389,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>12</x>
-       <y>270</y>
+       <y>70</y>
        <width>780</width>
        <height>32</height>
       </rect>
@@ -2402,7 +2402,7 @@ It's case sensitive.</string>
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>220</y>
+       <y>20</y>
        <width>191</width>
        <height>16</height>
       </rect>

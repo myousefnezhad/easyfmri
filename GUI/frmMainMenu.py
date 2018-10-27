@@ -31,6 +31,7 @@ from GUI.Login import Login
 from Base.tools import Tools
 from Base.utility import About
 from Base.git import clone_git, has_git_branch
+from Base.utility import MyMessageBox
 
 
 class frmMainMenuGUI(QtWidgets.QMainWindow):
@@ -197,8 +198,6 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
 
 
     def btnAbout_click(self):
-        from Base.utility import MyMessageBox
-
         msgBox = MyMessageBox()
         msgBox.setMinimumWidth(800)
         msgBox.setText(About())
@@ -209,26 +208,19 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         pass
 
     def btnPreprocess_click(self):
-        global dialog
-        dialog.hide()
         frmPreprocess.show(frmPreprocess,dialog)
 
 
     def btnFeatureAnalysis_click(self):
-        global dialog
-        dialog.hide()
         frmFeatureAnalysis.show(frmFeatureAnalysis,dialog)
 
     def btnModelAnalysis_click(self):
-        global dialog
-        dialog.hide()
         frmModelAnalysis.show(frmModelAnalysis,dialog)
 
     def btnVisualization_click(self):
-        global dialog
-        dialog.hide()
         frmVisalization.show(frmVisalization,dialog)
-
+        # global dialog
+        # dialog.hide()
 
     def btnTools_click(self):
         tools = Tools()
