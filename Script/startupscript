@@ -20,6 +20,7 @@ export EN_BASH="1"
 export EN_MC="0"
 export EN_COLOR="1"
 export EN_SCALE="0"  # Turn it on for OLED display, default is 200x
+export EN_SCALE_WISH="1" # Run FSL with Scale Factor
 export EN_GIT="1"
 export EN_AENV="1"
 export RUN_AENV="0"
@@ -48,13 +49,6 @@ if (( $EN_EZFMRI != "0" )); then
   export EASYFMRI="$INSTALL_DIR/.easyfmri"
 fi
 
-######## QT Scale Factor
-if (( $EN_SCALE != "0" )); then
-    export QT_SCALE_FACTOR=1
-    export QT_AUTO_SCREEN_SCALE_FACTOR=0
-    export QT_SCREEN_SCALE_FACTORS=$SCREEN_SCALE
-fi
-
 ######## Python
 if (( $EN_PYTHON != "0" )); then
   export PATH="$ANACON_PATH:$PATH"
@@ -74,6 +68,19 @@ if (( $EN_FSL != "0" )); then
   . $FSLDIR/etc/fslconf/fsl.sh
   export PATH="$FSLDIR/bin:$PATH"
 fi
+
+######## QT Scale Factor
+if (( $EN_SCALE != "0" )); then
+    export QT_SCALE_FACTOR=1
+    export QT_AUTO_SCREEN_SCALE_FACTOR=0
+    export QT_SCREEN_SCALE_FACTORS=$SCREEN_SCALE
+    export GDK_DPI_SCALE=$SCREEN_SCALE
+    export GDK_SCALE=$SCREEN_SCALE
+    if (( $EN_SCALE_WISH != "0" )); then
+        export FSLWISH="/usr/bin/wish"
+    fi
+fi
+
 ####### CUDA
 if (( $EN_CUDA != "0" )); then
   export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:$CUDA_HOME/lib"
