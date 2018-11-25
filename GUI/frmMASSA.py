@@ -608,11 +608,14 @@ class frmMASSA(Ui_frmMASSA):
             return False
 
 
-
         OutData[ui.txtSharedSpace.text()]      = Beta
         OutData[ui.txtSharedVoxelSpace.text()] = ssa.getSharedVoxelSpace()
         OutData[ui.txtTransformMats.text()]    = ssa.getTransformMats()
-        OutData[ui.txtViewSpaces.text()]       = ssa.getSubjectSpace()
+        if ui.cbViewSpace.isChecked():
+            for viewID, view in enumerate(ssa.getSubjectSpace()):
+                OutData[ui.txtViewSpaces.text() + "_View" + str(viewID + 1)]  = np.transpose(view)
+        else:
+            OutData[ui.txtViewSpaces.text()] = ssa.getSubjectSpace()
 
         print("Calculating Distance Matrix ...")
         dis = np.zeros((np.shape(Beta)[0], np.shape(Beta)[0]))
