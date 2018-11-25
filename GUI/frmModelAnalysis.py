@@ -69,6 +69,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
 
         ui.tabWidget.setCurrentIndex(0)
         # Unsupervised
+        ui.cbMAU.addItem("MatLab, PyTorch: Shared Similarity Analysis", 30000)
         ui.cbMAU.addItem("MatLab, SK Clustering: Agglomerative",10002)
         ui.cbMAU.addItem("MatLab, SK Clustering: Birch",10003)
         ui.cbMAU.addItem("MatLab, SK Clustering: Gaussian Mixture",10004)
@@ -80,10 +81,6 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("MatLab, NumPy RSA: Group Level Representational Similarity Analysis",20001)
         ui.cbMAU.addItem("MatLab, PyTorch RSA: Session Level Gradient Representational Similarity Analysis",20002)
         ui.cbMAU.addItem("MatLab, PyTorch RSA: Group Level Gradient Representational Similarity Analysis",20003)
-
-        # ui.cbMAU.addItem("MatLab, Tensorflow RSA: Session Level Deep-Kernel Representational Similarity Analysis",20004)
-        # ui.cbMAU.addItem("MatLab, Tensorflow RSA: Group Level Multi-Deep-Kernel Representational Similarity Analysis",20005)
-        # ui.cbMAU.addItem("MatLab, Tensorflow RSA: Group Level Single-Deep-Kernel Representational Similarity Analysis",20006)
 
         # Supervised
         ui.cbMAS.addItem("MatLab, MVPA, PyTorch: GPU Support Vector Machine",10003)
@@ -168,20 +165,10 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMAGGrRSA import frmMAGGrRSA
             frmMAGGrRSA.show(frmMAGGrRSA)
             return
-
-
-        # if MAID == 20004:
-        #     from GUI.frmMADeepRSA import frmMADeepRSA
-        #     frmMADeepRSA.show(frmMADeepRSA)
-        #     return
-        # if MAID == 20005:
-        #     from GUI.frmMAGMDeepRSA import frmMAGMDeepRSA
-        #     frmMAGMDeepRSA.show(frmMAGMDeepRSA)
-        #     return
-        # if MAID == 20006:
-        #     from GUI.frmMADeepGroupRSA import frmMADeepGroupRSA
-        #     frmMADeepGroupRSA.show(frmMADeepGroupRSA)
-        #     return
+        if MAID == 30000:
+            from GUI.frmMASSA import frmMASSA
+            frmMASSA.show(frmMASSA)
+            return
 
 
     def btnMAS_click(self):

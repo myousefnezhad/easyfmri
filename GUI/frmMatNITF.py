@@ -156,18 +156,10 @@ class frmMatNITF(Ui_frmMatNITF):
                     HasDefualt = None
                     for key in Keys:
                         ui.txtMatrix.addItem(key)
-                        if key == "train_data":
+                        if key == "train_data" or key == "data" or key == "Beta" or key == "sharedvoxelspace":
                             HasDefualt = key
                             dataShape = np.shape(data[key])
-                            ui.txtTime.setText("[0-" + str(dataShape[0]) + "]")
-                        if key == "data":
-                            HasDefualt = key
-                            dataShape = np.shape(data[key])
-                            ui.txtTime.setText("[0-" + str(dataShape[0]) + "]")
-                        if key == "Beta":
-                            HasDefualt = key
-                            dataShape = np.shape(data[key])
-                            ui.txtTime.setText("[0-" + str(dataShape[0]) + "]")
+                            ui.txtTime.setText("[0-" + str(dataShape[0] - 1) + "]")
 
                     if HasDefualt is not None:
                         ui.txtMatrix.setCurrentText(HasDefualt)

@@ -702,7 +702,8 @@ class frmTAIntersec(Ui_frmTAInterSec):
         if ui.cbNScan.isChecked():
             OutData[ui.txtOScan.text()]     = ScanOut
 
-        io.savemat(OutFile, mdict=OutData)
+        print("Saving ...")
+        io.savemat(OutFile, mdict=OutData, do_compression=True)
         print("Temporal Alignment is done.")
         msgBox.setText("Temporal Alignment is done.")
         msgBox.setIcon(QMessageBox.Information)
