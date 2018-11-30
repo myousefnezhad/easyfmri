@@ -60,11 +60,7 @@ class SSA:
                 print("SSA::Iteration %4d of %4d ->  Calculating Shared Space ..." % (it + 1, self.Iteration))
             SharedSpace = self._calculateSharedSpace(X, Y, SubjectSpace, TransformMat)
             if verbose:
-                error = 0
-                for vvi in SubjectSpace:
-                    error += self.gamma * np.linalg.norm(vvi, ord=1)
-                error /= self.NumView
-                print("SSA::Iteration %4d of %4d is done. Subject Space Size: %35.2f" % (it + 1, self.Iteration, error))
+                print("SSA::Iteration %4d of %4d is done. Shared Space Size: %35.2f" % (it + 1, self.Iteration, np.linalg.norm(SharedSpace)))
 
         self.SubjectSpace   = SubjectSpace
         self.TransformMats   = TransformMat

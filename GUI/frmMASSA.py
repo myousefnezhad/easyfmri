@@ -60,7 +60,7 @@ class frmMASSA(Ui_frmMASSA):
 
         # Method
         ui.cbGPU.addItem("Auto", torch.cuda.is_available())
-        ui.cbGPU.addItem("CPU", False)
+        ui.cbGPU.addItem("Only CPU", False)
 
         # Linkage Method
         ui.cbLMethod.addItem("Single", "single")
@@ -607,7 +607,7 @@ class frmMASSA(Ui_frmMASSA):
             msgBox.exec_()
             return False
 
-
+        OutData["AlgorithmRuntime"]            = ssa.Runtime
         OutData[ui.txtSharedSpace.text()]      = Beta
         OutData[ui.txtSharedVoxelSpace.text()] = ssa.getSharedVoxelSpace()
         OutData[ui.txtTransformMats.text()]    = ssa.getTransformMats()
@@ -654,7 +654,8 @@ class frmMASSA(Ui_frmMASSA):
             OutData["Correlation_mean"] = np.mean(Corr)
 
         OutData["Runtime"] = time.time() - tStart
-        print("Runtime:", OutData["Runtime"])
+        print("Runtime: ", OutData["Runtime"])
+        print("Algorithm Runtime: ", OutData["AlgorithmRuntime"])
 
         print("Saving results ...")
         io.savemat(OutFile, mdict=OutData, do_compression=True)
