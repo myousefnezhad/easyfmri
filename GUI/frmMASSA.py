@@ -599,7 +599,7 @@ class frmMASSA(Ui_frmMASSA):
 
         try:
             ssa  = SSA(gamma=gamma, gpu=gpu)
-            Beta = ssa.run(X=Xi, Y=Yi, Dim=NumFea, verbose=Verbose, Iteration=Iter)
+            Beta = ssa.run(X=Xi, Y=Yi, Dim=NumFea, verbose=Verbose, Iteration=Iter, ShowError=ui.cbError.isChecked())
         except Exception as e:
             msgBox.setText(str(e))
             msgBox.setIcon(QMessageBox.Critical)

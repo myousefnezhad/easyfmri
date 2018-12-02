@@ -16,9 +16,10 @@ class SSA:
         self.Signatures     = None
         self.TransformMats  = None
         self.SubjectSpace   = None
+        self.LostVec        = None
 
 
-    def run(self, X, Y, Dim=None, verbose=True, Iteration=5):
+    def run(self, X, Y, Dim=None, verbose=True, Iteration=5, ShowError=False):
         tic = time.time()
         assert np.shape(X).__len__() == 3, "Data must have 3D shape, i.e. Views (Subjects) x Time Points x Voxels"
         assert np.shape(Y).__len__() == 3, "Design Matrix must have 3D shape, i.e. Views (Subjects) x Time Points x Categories"
@@ -60,7 +61,12 @@ class SSA:
                 print("SSA::Iteration %4d of %4d ->  Calculating Shared Space ..." % (it + 1, self.Iteration))
             SharedSpace = self._calculateSharedSpace(X, Y, SubjectSpace, TransformMat)
             if verbose:
-                print("SSA::Iteration %4d of %4d is done. Shared Space Size: %35.2f" % (it + 1, self.Iteration, np.linalg.norm(SharedSpace)))
+                if ShowError:
+                    print("SSA::Iteration %4d of %4d is done. Objective error: %f" % (it + 1, self.Iteration, \
+                                        self._calculateObjective(X, Y, SubjectSpace, SharedSpace, TransformMat)))
+
+                else:
+                    print("SSA::Iteration %4d of %4d is done." % (it + 1, self.Iteration))
 
         self.SubjectSpace   = SubjectSpace
         self.TransformMats   = TransformMat
@@ -87,7 +93,7 @@ class SSA:
                 Hi = Hi.cuda()
             Ki = torch.mm(TenYi.t(), Hi)
             ShareSpace = torch.mm(TenRi.t(), torch.mm(TenXi, Ki.t()) - TenSi) if ShareSpace is None else ShareSpace + torch.mm(TenRi.t(), torch.mm(TenXi, Ki.t()) - TenSi)
-        return ShareSpace.cpu().numpy()
+        return ShareSpace.cpu().numpy() / self.NumView
 
 
     def _calculateTransformMatrix(self, Data, Labels, SubjectSpace, SharedSpace):
@@ -108,7 +114,8 @@ class SSA:
             if self.gpu:
                 Hi = Hi.cuda()
             Ki = torch.mm(TenYi.t(), Hi)
-            Ai = torch.mm(torch.mm(TenXi, Ki.t()) - TenSi, G)
+            Ai =  torch.mm(torch.mm(TenXi, Ki.t()), G)
+            Ai -= torch.mm(TenSi, G)
             Ui, _, Vi = torch.svd(Ai, some=True)
             TranformMatrix.append(torch.mm(Ui, Vi).cpu().numpy())
         return TranformMatrix
@@ -148,6 +155,29 @@ class SSA:
             SubjectSpace.append(Ci)
         return SubjectSpace
 
+    def _calculateObjective(self, X, Y, S, cpuG, R):
+        error = 0
+        G = torch.Tensor(cpuG)
+        if self.gpu:
+            G = G.cuda()
+        for Xi, Yi, Ri, Si in zip(X, Y, R, S):
+            TenXi = torch.Tensor(np.transpose(Xi))
+            TenYi = torch.Tensor(Yi)
+            TenRi = torch.Tensor(Ri)
+            TenSi = torch.Tensor(Si)
+            if self.gpu:
+                TenXi = TenXi.cuda()
+                TenYi = TenYi.cuda()
+                TenRi = TenRi.cuda()
+                TenSi = TenSi.cuda()
+            Ti = TenYi.shape[0]
+            Hi = torch.eye(Ti) - torch.ones(Ti, Ti) / Ti
+            if self.gpu:
+                Hi = Hi.cuda()
+            Ki = torch.mm(TenYi.t(), Hi)
+            e = torch.norm(torch.mm(TenXi, Ki.t()) - torch.mm(TenRi, G) - TenSi) ** 2 + torch.norm(TenSi, p=1)
+            error += e.cpu().numpy()
+        return error / self.NumView
 
     def getSubjectSpace(self):
         return self.SubjectSpace
