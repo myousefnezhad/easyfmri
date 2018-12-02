@@ -600,6 +600,11 @@ class frmMASSA(Ui_frmMASSA):
         try:
             ssa  = SSA(gamma=gamma, gpu=gpu)
             Beta = ssa.run(X=Xi, Y=Yi, Dim=NumFea, verbose=Verbose, Iteration=Iter, ShowError=ui.cbError.isChecked())
+            if ui.cbError.isChecked():
+                if ssa.LostVec is not None:
+                    OutData["LossVec"] = ssa.LostVec
+                    OutData["Error"]   = ssa.Loss
+
         except Exception as e:
             msgBox.setText(str(e))
             msgBox.setIcon(QMessageBox.Critical)
@@ -628,15 +633,6 @@ class frmMASSA(Ui_frmMASSA):
         Z = linkage(dis, method=ui.cbLMethod.currentData(), metric=ui.cbLMetric.currentData(), optimal_ordering=ui.cbLOrder.isChecked())
         OutData["linkage"]              = Z
 
-        if ui.cbError.isChecked():
-            print("Calculating error of objective function ...")
-            error = 0
-            for xxi, yyi, rri, vvi in zip(Xi, Yi, ssa.getTransformMats(), ssa.getSubjectSpace()):
-                tti = np.shape(yyi)[0]
-                hhi = np.eye(tti) - np.ones((tti, tti)) / tti
-                error += 0.5 * np.linalg.norm(np.dot(np.transpose(xxi), np.transpose(np.dot(np.transpose(yyi), hhi))) - np.dot(rri, np.transpose(Beta)) - vvi) ** 2 + \
-                    gamma * np.linalg.norm(vvi, ord=1)
-            OutData["error"] = error / ssa.NumView
 
         if ui.cbCov.isChecked():
             Cov = np.cov(Beta)

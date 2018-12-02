@@ -17,6 +17,7 @@ class SSA:
         self.TransformMats  = None
         self.SubjectSpace   = None
         self.LostVec        = None
+        self.Loss           = None
 
 
     def run(self, X, Y, Dim=None, verbose=True, Iteration=5, ShowError=False):
@@ -49,6 +50,8 @@ class SSA:
         SubjectSpace    = np.zeros((self.NumView, self.NumVoxel, self.NumCat))
         TransformMat    = np.random.rand(self.NumView, self.NumVoxel, self.Dim)
         SharedSpace     = self._calculateSharedSpace(X, Y, SubjectSpace, TransformMat)
+        if ShowError:
+            self.LostVec = list()
         # Update Parameters
         for it in range(self.Iteration):
             if verbose:
@@ -62,12 +65,13 @@ class SSA:
             SharedSpace = self._calculateSharedSpace(X, Y, SubjectSpace, TransformMat)
             if verbose:
                 if ShowError:
-                    print("SSA::Iteration %4d of %4d is done. Objective error: %20.2f" % (it + 1, self.Iteration, \
-                                        self._calculateObjective(X, Y, SubjectSpace, SharedSpace, TransformMat)))
-
+                    loss = self._calculateObjective(X, Y, SubjectSpace, SharedSpace, TransformMat)
+                    print("SSA::Iteration %4d of %4d is done. Objective error: %20.2f" % (it + 1, self.Iteration, loss))
+                    self.LostVec.append([it, loss])
                 else:
                     print("SSA::Iteration %4d of %4d is done." % (it + 1, self.Iteration))
-
+        if ShowError:
+            self.Loss = loss
         self.SubjectSpace   = SubjectSpace
         self.TransformMats   = TransformMat
         self.Signatures     = np.transpose(SharedSpace)
