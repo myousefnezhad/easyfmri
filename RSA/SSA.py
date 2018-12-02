@@ -62,7 +62,7 @@ class SSA:
             SharedSpace = self._calculateSharedSpace(X, Y, SubjectSpace, TransformMat)
             if verbose:
                 if ShowError:
-                    print("SSA::Iteration %4d of %4d is done. Objective error: %f" % (it + 1, self.Iteration, \
+                    print("SSA::Iteration %4d of %4d is done. Objective error: %20.2f" % (it + 1, self.Iteration, \
                                         self._calculateObjective(X, Y, SubjectSpace, SharedSpace, TransformMat)))
 
                 else:
