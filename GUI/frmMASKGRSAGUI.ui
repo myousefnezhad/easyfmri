@@ -1019,6 +1019,70 @@
       <number>14</number>
      </property>
     </widget>
+    <widget class="QSpinBox" name="txtYRotation">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>283</y>
+       <width>171</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>359</number>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="txtXRotation">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>235</y>
+       <width>171</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>359</number>
+     </property>
+     <property name="value">
+      <number>45</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_34">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>242</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>X Rotation</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_36">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>290</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Y Rotation</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QLabel" name="label_35">

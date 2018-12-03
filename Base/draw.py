@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use('Qt5Agg')
 
 class DrawRSA():
-    def ShowFigure(self, var, labels, title, FontSize=14):
+    def ShowFigure(self, var, labels, title, FontSize=14, XRot=45, YRot=0):
         NumData = np.shape(var)[0]
         plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
         plt.pcolor(var, vmin=np.min(var), vmax=np.max(var))
@@ -18,8 +18,8 @@ class DrawRSA():
         ax.set_aspect(1)
         ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
         ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-        ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
-        ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+        ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=XRot)
+        ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=YRot)
         ax.grid(False)
         ax.set_aspect(1)
         ax.set_frame_on(False)
@@ -55,8 +55,8 @@ class DrawRSA():
         plt.show(block=False)
 
 
-    def ShowDend(self, Z, labels, title, FontSize=14):
+    def ShowDend(self, Z, labels, title, FontSize=14, Rot=45):
         plt.figure(figsize=(25, 10), )
         plt.title(title)
-        dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1)
+        dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1, leaf_rotation=Rot)
         plt.show(block=False)

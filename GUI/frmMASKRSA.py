@@ -775,7 +775,7 @@ class frmMASKRSA(Ui_frmMASKRSA):
         print("Saving results ...")
         io.savemat(OutFile,mdict=OutData,do_compression=True)
         print("Output is saved.")
-        FontSize = 14
+        FontSize = ui.txtFontSize.value()
 
         if ui.cbDiagram.isChecked():
             if ui.cbCorr.isChecked():
@@ -792,8 +792,8 @@ class frmMASKRSA(Ui_frmMASKRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -804,8 +804,10 @@ class frmMASKRSA(Ui_frmMASKRSA):
                     t.tick1On = False
                     t.tick2On = False
 
-
-                plt.title('Correlation (' + ui.cbMethod.currentText() + \
+                if len(ui.txtTitleCorr.text()):
+                    plt.title(ui.txtTitleCorr.text())
+                else:
+                    plt.title('Correlation (' + ui.cbMethod.currentText() + \
                                ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
@@ -823,8 +825,8 @@ class frmMASKRSA(Ui_frmMASKRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -835,14 +837,21 @@ class frmMASKRSA(Ui_frmMASKRSA):
                     t.tick1On = False
                     t.tick2On = False
 
-                plt.title('Covariance (' + ui.cbMethod.currentText() + \
+                if len(ui.txtTitleCov.text()):
+                    plt.title(ui.txtTitleCov.text())
+                else:
+                    plt.title('Covariance (' + ui.cbMethod.currentText() + \
                                ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
         fig3 = plt.figure(figsize=(25, 10), )
-        plt.title('Similarity Analysis (' + ui.cbMethod.currentText() + \
+
+        if len(ui.txtTitleDen.text()):
+            plt.title(ui.txtTitleDen.text())
+        else:
+            plt.title('Similarity Analysis (' + ui.cbMethod.currentText() + \
                       ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
-        dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1)
+        dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1, leaf_rotation=ui.txtXRotation.value())
         plt.show()
 
         print("DONE.")
@@ -858,7 +867,7 @@ class frmMASKRSA(Ui_frmMASKRSA):
         ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
                              os.path.dirname(ui.txtOutFile.text()))
 
-        FontSize = 14
+        FontSize = ui.txtFontSize.value()
         if len(ofile):
             try:
                 Res     = io.loadmat(ofile)
@@ -930,8 +939,8 @@ class frmMASKRSA(Ui_frmMASKRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -942,8 +951,10 @@ class frmMASKRSA(Ui_frmMASKRSA):
                     t.tick1On = False
                     t.tick2On = False
 
-
-                plt.title('RSA: Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+                if len(ui.txtTitleCorr.text()):
+                    plt.title(ui.txtTitleCorr.text())
+                else:
+                    plt.title('RSA: Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
 
@@ -973,8 +984,8 @@ class frmMASKRSA(Ui_frmMASKRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -984,13 +995,18 @@ class frmMASKRSA(Ui_frmMASKRSA):
                 for t in ax.yaxis.get_major_ticks():
                     t.tick1On = False
                     t.tick2On = False
-
-                plt.title('RSA: Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+                if len(ui.txtTitleCov.text()):
+                    plt.title(ui.txtTitleCov.text())
+                else:
+                    plt.title('RSA: Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
             fig3 = plt.figure(figsize=(25, 10), )
-            dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1)
-            plt.title('RSA: Similarity Analysis\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+            dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1, leaf_rotation=ui.txtXRotation.value())
+            if len(ui.txtTitleDen.text()):
+                plt.title(ui.txtTitleDen.text())
+            else:
+                plt.title('RSA: Similarity Analysis\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
             plt.show()
 
 

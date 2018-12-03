@@ -700,8 +700,8 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -733,8 +733,8 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -756,7 +756,7 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             else:
                 plt.title('Group MP Gradient RSA: Similarity Analysis\nLevel: ' + FoldStr)
 
-            dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1)
+            dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1, leaf_rotation=ui.txtXRotation.value())
             plt.show()
 
 
@@ -841,8 +841,8 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -883,8 +883,8 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -901,7 +901,7 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                 plt.show()
 
             fig3 = plt.figure(figsize=(25, 10), )
-            dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1)
+            dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1, leaf_rotation=ui.txtXRotation.value())
             if len(ui.txtTitleDen.text()):
                 plt.title(ui.txtTitleDen.text())
             else:

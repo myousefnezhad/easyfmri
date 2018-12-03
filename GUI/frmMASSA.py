@@ -661,12 +661,12 @@ class frmMASSA(Ui_frmMASSA):
             drawrsa = DrawRSA()
 
             if ui.cbCorr.isChecked():
-                drawrsa.ShowFigure(Corr, labels, ui.txtTitleCorr.text(), FontSize)
+                drawrsa.ShowFigure(Corr, labels, ui.txtTitleCorr.text(), FontSize, ui.txtXRotation.value(), ui.txtYRotation.value())
 
             if ui.cbCov.isChecked():
-                drawrsa.ShowFigure(Cov, labels,ui.txtTitleCov.text(), FontSize)
+                drawrsa.ShowFigure(Cov, labels,ui.txtTitleCov.text(), FontSize, ui.txtXRotation.value(), ui.txtYRotation.value())
 
-            drawrsa.ShowDend(Z, labels, ui.txtTitleDen.text(), FontSize)
+            drawrsa.ShowDend(Z, labels, ui.txtTitleDen.text(), FontSize, ui.txtXRotation.value())
 
         print("DONE.")
         msgBox.setText("Shared Similarity Analysis (SSA) is done.")
@@ -713,12 +713,12 @@ class frmMASSA(Ui_frmMASSA):
             drawrsa = DrawRSA()
 
             if ui.cbCorr.isChecked():
-                drawrsa.ShowFigure(Corr, labels, ui.txtTitleCorr.text(), FontSize)
+                drawrsa.ShowFigure(Corr, labels, ui.txtTitleCorr.text(), FontSize, ui.txtXRotation.value(), ui.txtYRotation.value())
 
             if ui.cbCov.isChecked():
-                drawrsa.ShowFigure(Cov, labels,ui.txtTitleCov.text(), FontSize)
+                drawrsa.ShowFigure(Cov, labels,ui.txtTitleCov.text(), FontSize, ui.txtXRotation.value(), ui.txtYRotation.value())
 
-            drawrsa.ShowDend(Z, labels, ui.txtTitleDen.text(), FontSize)
+            drawrsa.ShowDend(Z, labels, ui.txtTitleDen.text(), FontSize, ui.txtXRotation.value())
 
 
 if __name__ == '__main__':
