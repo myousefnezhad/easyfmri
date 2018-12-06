@@ -372,14 +372,14 @@ def LoadEzData(Header=None,data=None):
                     try:
                         if Out['DataFileType'][0][0] == 0:
                             import nibabel as nb
-                            niiimgdata = nb.load(os.path.dirname(Header) + "/" + fdata)
+                            niiimgdata = nb.load(str.strip(os.path.dirname(Header) + "/" + fdata))
                             dat = np.transpose(niiimgdata.get_data())
                             X = dat if X is None else np.concatenate((X, dat))
                             del dat, niiimgdata
                         else:
                             del io
                             import scipy.io as io
-                            dat = io.loadmat(os.path.dirname(Header) + "/" + fdata,appendmat=False)[dkey[0]]
+                            dat = io.loadmat(str.strip(os.path.dirname(Header) + "/" + fdata), appendmat=False)[dkey[0]]
                             X = dat if X is None else np.concatenate((X,dat))
                             del dat
                         print("Data %s is load!" % (fdata))
