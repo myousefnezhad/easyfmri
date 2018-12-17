@@ -59,16 +59,16 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
                 print("Easy fMRI directory is " + ezdir)
 
             else:
-                print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+                print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript.sh")
                 msgBox = QMessageBox()
-                msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+                msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript.sh")
                 msgBox.setIcon(QMessageBox.Critical)
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
         except:
-            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript.sh")
             msgBox = QMessageBox()
-            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript.sh")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
@@ -106,8 +106,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         msgBox = QMessageBox()
 
         if not len(ezdir):
-            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
-            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript.sh")
+            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript.sh")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
@@ -125,8 +125,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         msgBox = QMessageBox()
         ezdir = ui.txtEZDIR.text()
         if not len(ezdir):
-            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
-            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript.sh")
+            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript.sh")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
@@ -144,8 +144,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         msgBox = QMessageBox()
         ezdir = ui.txtEZDIR.text()
         if not len(ezdir):
-            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
-            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript")
+            print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript.sh")
+            msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript.sh")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()

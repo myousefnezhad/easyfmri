@@ -10,35 +10,60 @@
 ######################################
 # Enable ("1") or Disable ("0") features #
 ######################################
+# This enables easy fMRI environment variable ($EASYFMRI)
 export EN_EZFMRI="1"
+# This sets python base direcotry based on $ANACON_PATH
 export EN_PYTHON="1"
+# This enables iPython by default when you run python in terminal
 export EN_PYTHON_ALIAS="1"
+# This sets AFNI base directory based on $AFNI_PATH
 export EN_AFNI="1"
+# This sets FSL base directory based on $FSLDIR and then run fsl.sh script
 export EN_FSL="1"
+# This enables CUDA environment variables
 export EN_CUDA="1"
+# This enables bash complete for using TAB in terminal
 export EN_BASH="1"
+# This sets environment variables for old version of midnight commander
 export EN_MC="0"
+# This enables colorful command prompt in terminal
 export EN_COLOR="1"
-export EN_SCALE="0"  # Turn it on for OLED display, default is 200x
+# Turn it on for OLED/HiDPI display, default is 200x. It is related to easy fMRI setting.
+export EN_SCALE="0"
+# Turn it on for OLED/HiDPI display, default is 200x. It is related to FSL setting.
 export EN_SCALE_WISH="1" # Run FSL with Scale Factor
+# Enabling this item for illustrating GIT current status in terminal
 export EN_GIT="1"
+# Enabling this item for illustrating current Anaconda env in terminal
+# Further you can change the Anaconda environment via aenv/denv commands for switching between different versions of Python
 export EN_AENV="1"
 export RUN_AENV="0"
 ######################################
 # Proxy for terminal                 #
 ######################################
+# Setup these parameters if you are using VPN to connect internet
 alias proxyon='export http_proxy=http://127.0.0.1:3213 && export https_proxy=http://127.0.0.1:3213'
 alias proxyoff='export http_proxy= && export https_proxy='
 ######################################
 # Directories & Parameters           #
 ######################################
-export INSTALL_DIR="$HOME"      # Base dir for Anaconda, easy fMRI, and AFNI
+# This is base dir for Anaconda, easy fMRI, and AFNI
+# For root user, you must set it to the normal user home directory such as export INSTALL_DIR="/home/tony", where
+# we have install easy fMRI in the normal user home directory
+export INSTALL_DIR="$HOME"
+# Base directory of FSL
 export FSLDIR="/usr/local/fsl"  # for FSL 5.0.1x
+# Base direcory of Anaconda (Python 3.7.x)
 export ANACON_PATH="$INSTALL_DIR/anaconda3/bin"
+# Base direcory of AFNI
 export AFNI_PATH="$INSTALL_DIR/abin"
+# Base directory of CUDA
 export CUDA_HOME="/usr/local/cuda"
+# Scale parameter for OLED/HiDPI display
 export SCREEN_SCALE=2     # Set it for OLED display, 2 means 200x
+# Uncomment this item if you installed FSL via http://neuro.debian.net/
 # export FSLDIR="/usr/share/fsl/5.0" # for FSL 5.0.9
+# Uncomment this item if you are using an embedded linux in Windows 10 via WSL
 # export DISPLAY=:0.0 # Enable for Windows 10
 ######################################
 # Scripts                            #
@@ -74,8 +99,9 @@ if (( $EN_SCALE != "0" )); then
     export QT_SCALE_FACTOR=1
     export QT_AUTO_SCREEN_SCALE_FACTOR=0
     export QT_SCREEN_SCALE_FACTORS=$SCREEN_SCALE
-    export GDK_DPI_SCALE=$SCREEN_SCALE
-    export GDK_SCALE=$SCREEN_SCALE
+    # Uncomment these parameters if you are using HiDPI with 100x scale in your Linux (GDK/Gnome) setting
+    #export GDK_DPI_SCALE=$SCREEN_SCALE
+    #export GDK_SCALE=$SCREEN_SCALE
     if (( $EN_SCALE_WISH != "0" )); then
         export FSLWISH="/usr/bin/wish"
     fi
