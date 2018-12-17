@@ -19,6 +19,13 @@
 # SOFTWARE.
 
 import os
+from os.path import expanduser
 
 def getDIR():
     return os.path.dirname(os.path.abspath(__file__))
+
+def getHome():
+    home = expanduser("~")
+    if not len(home):
+        return None
+    return home

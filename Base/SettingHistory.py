@@ -21,26 +21,31 @@
 
 import os
 
-from dir import getDIR
+from dir import getDIR, getHome
 
 class History:
+    def HistoryPath(self):
+        if getHome() is None:
+            return getDIR()
+        elif not os.path.isdir(getHome() + "/.config"):
+            return getDIR()
+        else:
+            return getHome() + "/.config"
+
     def exist(self):
-        ProgramPath = getDIR()
-        if not os.path.isfile(ProgramPath + "/history"):
-            HFile = open(ProgramPath + "/history", "w")
+        if not os.path.isfile(self.HistoryPath() + "/easyfmri_history"):
+            HFile = open(self.HistoryPath() + "/easyfmri_history", "w")
             HFile.close()
 
     def clear_history(self):
-        ProgramPath = getDIR()
         try:
-            os.remove(ProgramPath + "/history")
+            os.remove(self.HistoryPath() + "/easyfmri_history")
         except:
             return
 
     def check_history(self,filename):
         self.exist()
-        ProgramPath = getDIR()
-        HFile = open(ProgramPath + "/history","r")
+        HFile = open(self.HistoryPath() + "/easyfmri_history","r")
         Lines = HFile.read().split("\n")
         for line in Lines:
             if line.replace("\n","") == filename:
@@ -51,8 +56,7 @@ class History:
 
     def del_history(self,filename):
         self.exist()
-        ProgramPath = getDIR()
-        HFile = open(ProgramPath + "/history","r")
+        HFile = open(self.HistoryPath() + "/easyfmri_history","r")
         Lines = HFile.read().split("\n")
         HFile.close()
         self.clear_history()
@@ -62,17 +66,15 @@ class History:
 
     def add_history(self,filename):
         self.exist()
-        ProgramPath = getDIR()
         if not self.check_history(filename):
-            HFile = open(ProgramPath + "/history", "a")
+            HFile = open(self.HistoryPath() + "/easyfmri_history", "a")
             HFile.write(filename+"\n")
             HFile.close()
 
     def load_history(self):
         self.exist()
-        ProgramPath = getDIR()
         history = []
-        HFile = open(ProgramPath + "/history", "r")
+        HFile = open(self.HistoryPath() + "/easyfmri_history", "r")
         Lines = HFile.read().split("\n")
         for line in Lines:
             if len(line):
