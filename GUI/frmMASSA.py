@@ -628,10 +628,10 @@ class frmMASSA(Ui_frmMASSA):
             for j in range(i + 1, np.shape(Beta)[0]):
                 dis[i, j] = 1 - np.dot(Beta[i, :], Beta[j, :].T)
                 dis[j, i] = dis[i, j]
-        OutData["distance"]             = dis
+        OutData["DistanceMatrix"]       = dis
         print("Applying linkage ...")
         Z = linkage(dis, method=ui.cbLMethod.currentData(), metric=ui.cbLMetric.currentData(), optimal_ordering=ui.cbLOrder.isChecked())
-        OutData["linkage"]              = Z
+        OutData["Linkage"]              = Z
 
 
         if ui.cbCov.isChecked():
@@ -697,7 +697,7 @@ class frmMASSA(Ui_frmMASSA):
             # Load Variables
             try:
                 labels  = Res["labels"]
-                Z       = Res["linkage"]
+                Z       = Res["Linkage"]
                 if ui.cbCorr.isChecked():
                     Corr    = Res["Correlation"]
                 if ui.cbCov.isChecked():
