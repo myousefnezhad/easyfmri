@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.naive_bayes import GaussianNB
 from sklearn.externals import joblib
-from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score
+from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmMAGNBGUI import *
@@ -347,6 +347,7 @@ class frmMAGNB(Ui_frmMAGNB):
                 print("FoldID = " + str(currFID) + " is testing ...")
                 PeL = clf.predict(TeX)
                 PrL = clf.predict(TrX)
+                OutData["confusion_matrix"] = confusion_matrix(TeL, PeL, np.unique(TeL))
             except Exception as e:
                 print(e)
                 msgBox = QMessageBox()

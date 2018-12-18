@@ -27,7 +27,7 @@ import scipy.io as io
 from PyQt5.QtWidgets import *
 
 from MVPA.GPUSVM import GPUSVM
-from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score
+from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from sklearn import preprocessing
@@ -512,6 +512,8 @@ class frmMASVM(Ui_frmMAGPUSVM):
                 print("FoldID = " + str(currFID) + " is testing ...")
                 clf.test(X=TeX, Y=TeL, verbose=verbose)
                 PeL = clf.TestPredict
+
+                OutData["confusion_matrix"] = confusion_matrix(TeL, PeL, np.unique(TeL))
 
             except Exception as e:
                 print(e)
