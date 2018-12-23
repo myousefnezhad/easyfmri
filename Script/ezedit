@@ -1,0 +1,5 @@
+#!/bin/bash
+FILE1=$1
+source $HOME/.startupscript
+cd $EASYFMRI/GUI
+python frmDataEditor.py $FILE1 &
