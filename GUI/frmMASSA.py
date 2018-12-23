@@ -628,6 +628,8 @@ class frmMASSA(Ui_frmMASSA):
             for j in range(i + 1, np.shape(Beta)[0]):
                 dis[i, j] = 1 - np.dot(Beta[i, :], Beta[j, :].T)
                 dis[j, i] = dis[i, j]
+        # dis = dis - np.min(dis)
+        # dis = dis / np.max(dis)
         OutData["DistanceMatrix"]       = dis
         print("Applying linkage ...")
         Z = linkage(dis, method=ui.cbLMethod.currentData(), metric=ui.cbLMetric.currentData(), optimal_ordering=ui.cbLOrder.isChecked())
