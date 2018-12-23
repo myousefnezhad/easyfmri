@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from GUI.frmDataEditor import frmDataEditor
+#from GUI.frmDataEditor import frmDataEditor
 from GUI.frmResultReport import frmResultReport
 from GUI.frmImageInfo import frmImageInfo
 # Preprocessing
@@ -41,6 +41,10 @@ from GUI.frmSKCModelEditor import frmSKCModelEditor
 from GUI.frmMatNITF import frmMatNITF
 from GUI.frmNITFAFNI import frmNITFAFNI
 from GUI.frmTransformationMatrix import frmTansformationMatrix
+
+import subprocess
+import sys
+from dir import getDIR
 
 class Tools:
     def combo(self, combobox):
@@ -73,7 +77,9 @@ class Tools:
     def run(self, ID):
         # General
         if   ID == 10001:
-            frmDataEditor.show(frmDataEditor)
+            print(sys.executable, getDIR() + "/GUI/frmDataEditor.py")
+            subprocess.Popen([sys.executable, getDIR() + "/GUI/frmDataEditor.py"])
+
         elif ID == 10002:
             frmResultReport.show(frmResultReport)
         elif ID == 10003:
