@@ -53,29 +53,15 @@ class frmDataEditor(Ui_frmDataEditor):
 
         dialog.setWindowTitle("easy fMRI Data Viewer - V" + getVersion() + "B" + getBuild())
 
-        print(filename)
-
+        if filename is not None:
+           if os.path.isfile(filename):
+               self.OpenFile(self, filename)
 
         dialog.show()
 
 
-    # This function initiate the events procedures
-    def set_events(self):
-        global ui
-        ui.btnClose.clicked.connect(self.btnClose_click)
-        ui.btnInFile.clicked.connect(self.btnLoadFile_click)
-        ui.btnValue.clicked.connect(self.btnValue_click)
-        ui.lwData.doubleClicked.connect(self.btnValue_click)
-
-    def btnClose_click(self):
-        global dialog
-        dialog.close()
-
-    def btnLoadFile_click(self):
+    def OpenFile(self, ifile):
         global data
-        ifile = LoadFile("Open data files ...",\
-                         ['Data files (*.mat *.ezdata *.ezmat, *.model)', 'MatLab files (*.mat)','EasyData files (*.ezdata)', \
-                          'EasyMat (*.ezmat)', 'All files (*.*)'],'mat')
         if len(ifile):
             if os.path.isfile(ifile):
                 try:
@@ -128,6 +114,29 @@ class frmDataEditor(Ui_frmDataEditor):
                         ui.lwData.addTopLevelItem(item)
                 ui.statusbar.showMessage("/")
                 ui.txtInFile.setText(ifile)
+                print(ifile + " is loaded!")
+
+
+    # This function initiate the events procedures
+    def set_events(self):
+        global ui
+        ui.btnClose.clicked.connect(self.btnClose_click)
+        ui.btnInFile.clicked.connect(self.btnLoadFile_click)
+        ui.btnValue.clicked.connect(self.btnValue_click)
+        ui.lwData.doubleClicked.connect(self.btnValue_click)
+
+    def btnClose_click(self):
+        global dialog
+        dialog.close()
+
+    def btnLoadFile_click(self):
+        global data
+        ifile = LoadFile("Open data files ...",\
+                         ['Data files (*.mat *.ezdata *.ezmat, *.model)', 'MatLab files (*.mat)','EasyData files (*.ezdata)', \
+                          'EasyMat (*.ezmat)', 'All files (*.*)'],'mat')
+        if len(ifile):
+            if os.path.isfile(ifile):
+                frmDataEditor.OpenFile(self, ifile)
 
     def btnValue_click(self):
         global data
@@ -202,5 +211,8 @@ class frmDataEditor(Ui_frmDataEditor):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmDataEditor.show(frmDataEditor)
+    if len(sys.argv) > 1:
+        frmDataEditor.show(frmDataEditor, sys.argv[1])
+    else:
+        frmDataEditor.show(frmDataEditor)
     sys.exit(app.exec_())

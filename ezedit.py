@@ -24,5 +24,8 @@ from GUI.frmDataEditor import frmDataEditor
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmDataEditor.show(frmDataEditor)
+    if len(sys.argv) > 1:
+        frmDataEditor.show(frmDataEditor, sys.argv[1])
+    else:
+        frmDataEditor.show(frmDataEditor)
     sys.exit(app.exec_())
