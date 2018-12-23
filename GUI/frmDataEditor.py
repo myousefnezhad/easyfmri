@@ -38,7 +38,7 @@ class frmDataEditor(Ui_frmDataEditor):
     data = None
     # This function is run when the main form start
     # and initiate the default parameters.
-    def show(self):
+    def show(self, filename=None):
         global dialog
         global ui
         ui = Ui_frmDataEditor()
@@ -52,6 +52,10 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.lwData.setColumnWidth(0,200)
 
         dialog.setWindowTitle("easy fMRI Data Viewer - V" + getVersion() + "B" + getBuild())
+
+        print(filename)
+
+
         dialog.show()
 
 
