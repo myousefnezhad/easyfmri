@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.preprocessing import label_binarize
 from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild
+from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
 from Base.draw import DrawRSA
 from GUI.frmMASSAGUI import *
 from RSA.SSA import SSA
@@ -636,18 +636,30 @@ class frmMASSA(Ui_frmMASSA):
 
         if ui.cbCov.isChecked():
             Cov = np.cov(Beta)
+            # OutData["Covariance"]       = Cov
+            # OutData["Covariance_min"]   = np.min(Cov)
+            # OutData["Covariance_max"]   = np.max(Cov)
+            # OutData["Covariance_std"]   = np.std(Cov)
+            # OutData["Covariance_mean"]  = np.mean(Cov)
+            covClass = SimilarityMatrixBetweenClass(Cov)
             OutData["Covariance"]       = Cov
-            OutData["Covariance_min"]   = np.min(Cov)
-            OutData["Covariance_max"]   = np.max(Cov)
-            OutData["Covariance_std"]   = np.std(Cov)
-            OutData["Covariance_mean"]  = np.mean(Cov)
+            OutData["Covariance_min"]   = covClass.min()
+            OutData["Covariance_max"]   = covClass.max()
+            OutData["Covariance_std"]   = covClass.std()
+            OutData["Covariance_mean"]  = covClass.mean()
         if ui.cbCorr.isChecked():
             Corr = np.corrcoef(Beta)
+            # OutData["Correlation"]      = Corr
+            # OutData["Correlation_min"]  = np.min(Corr)
+            # OutData["Correlation_max"]  = np.max(Corr)
+            # OutData["Correlation_std"]  = np.std(Corr)
+            # OutData["Correlation_mean"] = np.mean(Corr)
+            corClass = SimilarityMatrixBetweenClass(Corr)
             OutData["Correlation"]      = Corr
-            OutData["Correlation_min"]  = np.min(Corr)
-            OutData["Correlation_max"]  = np.max(Corr)
-            OutData["Correlation_std"]  = np.std(Corr)
-            OutData["Correlation_mean"] = np.mean(Corr)
+            OutData["Correlation_min"]  = corClass.min()
+            OutData["Correlation_max"]  = corClass.max()
+            OutData["Correlation_std"]  = corClass.std()
+            OutData["Correlation_mean"] = corClass.mean()
 
         OutData["Runtime"] = time.time() - tStart
         print("Runtime: ", OutData["Runtime"])
