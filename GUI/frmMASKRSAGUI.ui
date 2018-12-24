@@ -499,7 +499,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>1.0</string>
+      <string>0.01</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="txtL1">

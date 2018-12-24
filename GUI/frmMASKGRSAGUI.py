@@ -365,7 +365,7 @@ class Ui_frmMASKGRSA(object):
         self.label_18.setText(_translate("frmMASKGRSA", "Method"))
         self.cbFit.setText(_translate("frmMASKGRSA", "Fit Intercept"))
         self.label_14.setText(_translate("frmMASKGRSA", "Max Iteration (Ridge, LASSO, ElasticNet)"))
-        self.txtAlpha.setText(_translate("frmMASKGRSA", "1.0"))
+        self.txtAlpha.setText(_translate("frmMASKGRSA", "0.01"))
         self.txtMaxIter.setText(_translate("frmMASKGRSA", "1000"))
         self.label_15.setText(_translate("frmMASKGRSA", "Number of parallel jobs (OLS)"))
         self.label_13.setText(_translate("frmMASKGRSA", "L1 (ElasticNet)"))

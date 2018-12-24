@@ -326,7 +326,7 @@ class Ui_frmMASKRSA(object):
         self.cbScale.setText(_translate("frmMASKRSA", "Scale Data~N(0,1)"))
         self.label_13.setText(_translate("frmMASKRSA", "L1 (ElasticNet)"))
         self.label_14.setText(_translate("frmMASKRSA", "Max Iteration (Ridge, LASSO, ElasticNet)"))
-        self.txtAlpha.setText(_translate("frmMASKRSA", "1.0"))
+        self.txtAlpha.setText(_translate("frmMASKRSA", "0.01"))
         self.txtL1.setText(_translate("frmMASKRSA", "0.5"))
         self.txtTole.setText(_translate("frmMASKRSA", "0.0001"))
         self.label_15.setText(_translate("frmMASKRSA", "Number of parallel jobs (OLS)"))
