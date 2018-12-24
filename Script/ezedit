@@ -1,5 +1,6 @@
 #!/bin/bash
-FILE1=$1
+InputDataFile=$1
+CurrPath=$(pwd)
 source $HOME/.startupscript
 cd $EASYFMRI
-python ezedit.py $FILE1 &
+python ezedit.py $InputDataFile $CurrPath &

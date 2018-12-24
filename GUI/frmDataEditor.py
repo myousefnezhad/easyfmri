@@ -38,7 +38,7 @@ class frmDataEditor(Ui_frmDataEditor):
     data = None
     # This function is run when the main form start
     # and initiate the default parameters.
-    def show(self, filename=None):
+    def show(self, filename=None, pwd=None):
         global dialog
         global ui
         ui = Ui_frmDataEditor()
@@ -56,7 +56,11 @@ class frmDataEditor(Ui_frmDataEditor):
         if filename is not None:
            if os.path.isfile(filename):
                self.OpenFile(self, filename)
-
+           elif pwd is not None:
+               if os.path.isfile(pwd + filename):
+                     self.OpenFile(self, pwd + filename)
+               else:
+                   print("Data file cannot find!")
         dialog.show()
 
 
@@ -211,7 +215,9 @@ class frmDataEditor(Ui_frmDataEditor):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    if len(sys.argv) > 1:
+    if len(sys.argv) > 2:
+        frmDataEditor.show(frmDataEditor, sys.argv[1], sys.argv[2])
+    elif len(sys.argv) > 1:
         frmDataEditor.show(frmDataEditor, sys.argv[1])
     else:
         frmDataEditor.show(frmDataEditor)
