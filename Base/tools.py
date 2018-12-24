@@ -77,8 +77,8 @@ class Tools:
     def run(self, ID):
         # General
         if   ID == 10001:
-            print(sys.executable, getDIR() + "/GUI/frmDataEditor.py")
-            subprocess.Popen([sys.executable, getDIR() + "/GUI/frmDataEditor.py"])
+            print(sys.executable, getDIR() + "/ezedit.py")
+            subprocess.Popen([sys.executable, getDIR() + "/ezedit.py"])
 
         elif ID == 10002:
             frmResultReport.show(frmResultReport)

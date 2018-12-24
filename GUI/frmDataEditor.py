@@ -57,8 +57,8 @@ class frmDataEditor(Ui_frmDataEditor):
            if os.path.isfile(filename):
                self.OpenFile(self, filename)
            elif pwd is not None:
-               if os.path.isfile(pwd + filename):
-                     self.OpenFile(self, pwd + filename)
+               if os.path.isfile(pwd + "/" + filename):
+                     self.OpenFile(self, pwd + "/" + filename)
                else:
                    print("Data file cannot find!")
         dialog.show()
