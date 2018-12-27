@@ -48,6 +48,7 @@ from GUI.frmFEEZCrossValidation import frmFEEZCrossValidation
 from GUI.frmFETempAlign import frmFETempAlign
 from GUI.frmFELabelAlign import frmFELabelAlign
 from GUI.frmTAIntersec import frmTAIntersec
+from GUI.frmFASHA import frmFASHA
 
 from Base.utility import fixstr, getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
 from Base.utility import strRange, strMultiRange, getSettingVersion
@@ -238,6 +239,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         # Functional Alignment
         ui.cbFA.addItem("MatLab: GPU Hyperalignment (GPUHA)", 10008)
+        ui.cbFA.addItem("MatLab: Supervised Hyperalignment (SHA)", 10011)
         ui.cbFA.addItem("MatLab: Deep Hyperalignment (DHA)", 10100)
         ui.cbFA.addItem("MatLab: Robust Deep Hyperalignment (RDHA)", 10101)
         ui.cbFA.addItem("MatLab: Regularized Hyperalignment (direct solution, without trans. matrix)", 10001)
@@ -1874,6 +1876,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         elif FAID == 10010:
             from GUI.frmFAKRHA import frmFAKHA
             frmFAKHA.show(frmFAKHA)
+            return
+        elif FAID == 10011:
+            from GUI.frmFASHA import frmFASHA
+            frmFASHA.show(frmFASHA)
             return
         elif FAID == 10100:
             from GUI.frmFADHA import frmFADHA
