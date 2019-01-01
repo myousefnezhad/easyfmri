@@ -105,6 +105,8 @@ class frmDataViewer(QDialog):
         self.layout.addWidget(self.txtData)
         self.layout.addWidget(self.btnExit)
         self.setLayout(self.layout)
+        self.setWindowFlags(self.windowFlags() & QtCore.Qt.WindowMaximizeButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowMinimizeButtonHint)
         self.exec_()
         pass
 

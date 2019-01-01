@@ -340,9 +340,6 @@ class frmDataEditor(Ui_frmDataEditor):
         root.put([varName, ui.txtInside.value()])
         frmDataEditor.DrawData(self)
 
-
-
-
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     if len(sys.argv) > 2:
