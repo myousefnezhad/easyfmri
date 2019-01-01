@@ -26,8 +26,8 @@ import numpy as np
 class frmDataViewer(QDialog):
     def __init__(self, Data = None, VarName = "", VarType = None, D1From=0, D1To =0, D2From=0, D2To=0):
         super().__init__()
-        if not len(VarName):
-            return
+        # if not len(VarName):
+        #     return
         self.title = 'Data Viewer (Variable: ' + VarName + ')'
         self.left = 0
         self.top = 0

@@ -82,6 +82,30 @@
          </spacer>
         </item>
         <item>
+         <widget class="QPushButton" name="btnBack">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Back</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnIn">
+          <property name="text">
+           <string>Inside to:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="txtInside">
+          <property name="maximum">
+           <number>999999999</number>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="btnValue">
           <property name="text">
            <string>View Value</string>

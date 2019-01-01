@@ -20,11 +20,10 @@
 
 import os
 import sys
-
+import queue
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
-
 from Base.utility import getVersion, getBuild
 from Base.dialogs import LoadFile
 from GUI.frmDataEditorGUI import *
@@ -36,25 +35,26 @@ class frmDataEditor(Ui_frmDataEditor):
     ui = Ui_frmDataEditor()
     dialog = None
     data = None
-    root = None
+    root = queue.Queue()
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self, filename=None, pwd=None):
         global dialog
-        global root
         global ui
+        global data
+        global root
         ui = Ui_frmDataEditor()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
-
         ui.lwData.setColumnCount(4)
         ui.lwData.setHeaderLabels(['Name','Class','Shape','Value'])
         ui.lwData.setColumnWidth(0,200)
-
         dialog.setWindowTitle("easy fMRI Data Viewer - V" + getVersion() + "B" + getBuild())
 
+        root = queue.Queue()
+        data = None
         if filename is not None:
            if os.path.isfile(filename):
                self.OpenFile(self, filename)
@@ -63,7 +63,6 @@ class frmDataEditor(Ui_frmDataEditor):
                      self.OpenFile(self, pwd + "/" + filename)
                else:
                    print("Data file cannot find!")
-        root = None
         dialog.show()
 
 
@@ -77,32 +76,62 @@ class frmDataEditor(Ui_frmDataEditor):
                 except:
                     print("Cannot load file!")
                     return
-                root = None
+                root = queue.Queue()
                 frmDataEditor.DrawData(self)
                 ui.txtInFile.setText(ifile)
                 print(ifile + " is loaded!")
 
 
+
+    def getCurrentVar(self):
+        global data
+        global root
+        try:
+            dat = data
+            if root.empty():
+                ui.btnBack.setEnabled(False)
+                status = "/"
+            else:
+                ui.btnBack.setEnabled(True)
+                for r in list(root.queue):
+                    if str(type(dat[r[0]])) == "<class 'numpy.ndarray'>":
+                        dat2 = dict()
+                        for key in dat[r[0]].dtype.descr:
+                            if key[0] == "":
+                                dat2[""] = dat[r[0]][r[1]]
+                            else:
+                                dat2[key[0]] = dat[r[0]][key[0]]
+                        dat = dat2
+                    else:
+                        dat = data[r[0]]
+                status = ""
+                for st in list(root.queue):
+
+                    if len(status):
+                        status += " / "
+                    status += "<" + str(st[0]).replace("[","").replace("]","").replace(","," / ") + ">"
+
+        except:
+            print("Cannot load complex variable!")
+            status = "/"
+            dat = data
+            root = queue.Queue()
+
+        return dat, status
+
+
     def DrawData(self):
         global data
         global root
-        ui.lwData.clear()
-        try:
-            if root is None:
-                dat = data
-                ui.statusbar.showMessage("/")
-            elif str(type(data[root])) == "<class 'numpy.ndarray'>":
-                    dat = dict()
-                    for key in data[root].dtype.descr:
-                        dat[key[0]] = data[root][key[0]]
-            else:
-                dat = data[root]
-            ui.statusbar.showMessage(str(root))
-        except:
-            print("Cannot load complex variable!")
-            ui.statusbar.showMessage("/")
-            dat = data
 
+        if root.empty():
+            ui.btnBack.setEnabled(False)
+        else:
+            ui.btnBack.setEnabled(True)
+
+        dat, status = frmDataEditor.getCurrentVar(self)
+        ui.statusbar.showMessage(status)
+        ui.lwData.clear()
         for key in dat:
             if key == "__header__":
                 pass
@@ -113,7 +142,13 @@ class frmDataEditor(Ui_frmDataEditor):
             else:
                 item = QtWidgets.QTreeWidgetItem()
                 value = dat[key]
-                valueType = str(type(value[0][0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
+                try:
+                    valueType = str(type(value[0][0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
+                except:
+                    try:
+                        valueType = str(type(value[0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
+                    except:
+                        valueType = str(type(value)).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
                 valueShape = np.shape(value)
                 if valueType.replace("32", "").replace("64", "").lower() == "int" or \
                         valueType.replace("32", "").replace("64", "").lower() == "float" or \
@@ -121,9 +156,17 @@ class frmDataEditor(Ui_frmDataEditor):
                     if valueShape == (1, 1):
                         value = value[0, 0]
                         valueShape = 1
+                    elif valueShape == ():
+                        valueShape = 1
                     elif valueShape[0] == 1:
                         value = value[0]
-                        valueShape = valueShape[1]
+                        try:
+                            valueShape = valueShape[1]
+                        except:
+                            try:
+                                valueShape = valueShape[0]
+                            except:
+                                pass
                 if valueType.lower() == "str":
                     if valueShape == (1,):
                         value = value[0]
@@ -144,9 +187,6 @@ class frmDataEditor(Ui_frmDataEditor):
                 ui.lwData.addTopLevelItem(item)
 
 
-
-
-
     # This function initiate the events procedures
     def set_events(self):
         global ui
@@ -154,10 +194,23 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.btnInFile.clicked.connect(self.btnLoadFile_click)
         ui.btnValue.clicked.connect(self.btnValue_click)
         ui.lwData.doubleClicked.connect(self.btnValue_click)
+        ui.btnBack.clicked.connect(self.btnBack_click)
+        ui.btnIn.clicked.connect(self.btnIn_click)
 
     def btnClose_click(self):
         global dialog
         dialog.close()
+
+    def btnBack_click(self):
+        global root
+        if not root.empty():
+            newroot = queue.Queue()
+            for _ in range(root.qsize() - 1):
+                val = root.get()
+                if len(val):
+                    newroot.put(val)
+            root = newroot
+            frmDataEditor.DrawData(self)
 
     def btnLoadFile_click(self):
         global data
@@ -183,11 +236,19 @@ class frmDataEditor(Ui_frmDataEditor):
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
 
-        if root is None:
-            value = data[varName]
-        else:
-            value = data[root][varName]
-        valueType = str(type(value[0][0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
+        dat, _ = frmDataEditor.getCurrentVar(self)
+        value = dat[varName]
+
+        try:
+            valueType = str(type(value[0][0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
+        except:
+            try:
+                valueType = str(type(value[0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.",
+                                                                                                            "")
+            except:
+                valueType = str(type(value)).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
+
+        # valueType = str(type(value[0][0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
         valueShape = np.shape(value)
 
         if valueType.replace("32", "").replace("64", "").lower() == "int" or \
@@ -225,7 +286,7 @@ class frmDataEditor(Ui_frmDataEditor):
                     frmDataV = frmDataViewer(value, VarName=varName, VarType="str_arr")
 
             elif valueType == "complex":
-                root = varName
+                root.put(varName)
                 frmDataEditor.DrawData(self)
             else:
                 if len(np.shape(value)) == 1:
@@ -248,6 +309,39 @@ class frmDataEditor(Ui_frmDataEditor):
                     print("Object data is not supported!")
                     return
         frmDataV.show()
+
+
+    def btnIn_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+
+        dat, _ = frmDataEditor.getCurrentVar(self)
+
+        try:
+            val = dat[varName][ui.txtInside.value()]
+            if str(type(val)) == "<class 'str'>":
+                raise Exception
+        except:
+            msgBox.setText("Cannot find variable with current index!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        root.put([varName, ui.txtInside.value()])
+        frmDataEditor.DrawData(self)
+
+
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
