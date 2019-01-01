@@ -1,4 +1,4 @@
-# Copyright (c) 2014--2018 Muhammad Yousefnezhad
+# Copyright (c) 2014--2019 Muhammad Yousefnezhad
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -36,10 +36,12 @@ class frmDataEditor(Ui_frmDataEditor):
     ui = Ui_frmDataEditor()
     dialog = None
     data = None
+    root = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self, filename=None, pwd=None):
         global dialog
+        global root
         global ui
         ui = Ui_frmDataEditor()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
@@ -61,11 +63,13 @@ class frmDataEditor(Ui_frmDataEditor):
                      self.OpenFile(self, pwd + "/" + filename)
                else:
                    print("Data file cannot find!")
+        root = None
         dialog.show()
 
 
     def OpenFile(self, ifile):
         global data
+        global root
         if len(ifile):
             if os.path.isfile(ifile):
                 try:
@@ -73,52 +77,74 @@ class frmDataEditor(Ui_frmDataEditor):
                 except:
                     print("Cannot load file!")
                     return
-                ui.lwData.clear()
-                for key in data:
-                    if key == "__header__":
-                        pass
-                    elif key == "__version__":
-                        pass
-                    elif key == "__globals__":
-                        pass
-                    else:
-                        item = QtWidgets.QTreeWidgetItem()
-                        value = data[key]
-                        valueType = str(type(value[0][0])).strip().replace("<class \'","").replace("\'>","").replace("numpy.","")
-                        valueShape = np.shape(value)
-
-                        if valueType.replace("32", "").replace("64", "").lower() == "int" or \
-                                valueType.replace("32", "").replace("64", "").lower() == "float" or \
-                                valueType.replace("32", "").replace("64", "").lower() == "double":
-                            if valueShape == (1,1):
-                                value = value[0,0]
-                                valueShape = 1
-                            elif valueShape[0] == 1:
-                                value = value[0]
-                                valueShape = valueShape[1]
-                        if valueType.lower() == "str":
-                            if valueShape == (1,):
-                                value = value[0]
-                                valueShape = len(value)
-                        if valueType.lower() == "void":
-                            if valueShape == (1,1):
-                                value = value[0,0]
-                                valueType = "complex"
-                                valueShape = np.shape(value)
-                        if valueType.lower() == "ndarray":
-                            if valueShape[0] == 1:
-                                value = value[0]
-                                valueShape = np.shape(value)
-
-                        item.setText(0,str(key).strip())
-                        item.setText(1,valueType)
-                        item.setText(2,str(valueShape).replace("(","").replace(")",""))
-                        item.setText(3, str(value).replace("\n", ""))
-
-                        ui.lwData.addTopLevelItem(item)
-                ui.statusbar.showMessage("/")
+                root = None
+                frmDataEditor.DrawData(self)
                 ui.txtInFile.setText(ifile)
                 print(ifile + " is loaded!")
+
+
+    def DrawData(self):
+        global data
+        global root
+        ui.lwData.clear()
+        try:
+            if root is None:
+                dat = data
+                ui.statusbar.showMessage("/")
+            elif str(type(data[root])) == "<class 'numpy.ndarray'>":
+                    dat = dict()
+                    for key in data[root].dtype.descr:
+                        dat[key[0]] = data[root][key[0]]
+            else:
+                dat = data[root]
+            ui.statusbar.showMessage(str(root))
+        except:
+            print("Cannot load complex variable!")
+            ui.statusbar.showMessage("/")
+            dat = data
+
+        for key in dat:
+            if key == "__header__":
+                pass
+            elif key == "__version__":
+                pass
+            elif key == "__globals__":
+                pass
+            else:
+                item = QtWidgets.QTreeWidgetItem()
+                value = dat[key]
+                valueType = str(type(value[0][0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
+                valueShape = np.shape(value)
+                if valueType.replace("32", "").replace("64", "").lower() == "int" or \
+                        valueType.replace("32", "").replace("64", "").lower() == "float" or \
+                        valueType.replace("32", "").replace("64", "").lower() == "double":
+                    if valueShape == (1, 1):
+                        value = value[0, 0]
+                        valueShape = 1
+                    elif valueShape[0] == 1:
+                        value = value[0]
+                        valueShape = valueShape[1]
+                if valueType.lower() == "str":
+                    if valueShape == (1,):
+                        value = value[0]
+                        valueShape = len(value)
+                if valueType.lower() == "void":
+                    if valueShape == (1, 1):
+                        value = value[0, 0]
+                        valueType = "complex"
+                        valueShape = np.shape(value)
+                if valueType.lower() == "ndarray":
+                    if valueShape[0] == 1:
+                        value = value[0]
+                        valueShape = np.shape(value)
+                item.setText(0, str(key).strip())
+                item.setText(1, valueType)
+                item.setText(2, str(valueShape).replace("(", "").replace(")", ""))
+                item.setText(3, str(value).replace("\n", ""))
+                ui.lwData.addTopLevelItem(item)
+
+
+
 
 
     # This function initiate the events procedures
@@ -135,15 +161,18 @@ class frmDataEditor(Ui_frmDataEditor):
 
     def btnLoadFile_click(self):
         global data
+        global root
         ifile = LoadFile("Open data files ...",\
                          ['Data files (*.mat *.ezdata *.ezmat, *.model)', 'MatLab files (*.mat)','EasyData files (*.ezdata)', \
                           'EasyMat (*.ezmat)', 'All files (*.*)'],'mat')
         if len(ifile):
             if os.path.isfile(ifile):
+                root = None
                 frmDataEditor.OpenFile(self, ifile)
 
     def btnValue_click(self):
         global data
+        global root
         msgBox = QMessageBox()
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
@@ -154,7 +183,10 @@ class frmDataEditor(Ui_frmDataEditor):
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
 
-        value = data[varName]
+        if root is None:
+            value = data[varName]
+        else:
+            value = data[root][varName]
         valueType = str(type(value[0][0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
         valueShape = np.shape(value)
 
@@ -191,6 +223,10 @@ class frmDataEditor(Ui_frmDataEditor):
                     frmDataV = frmDataViewer(value, VarName=varName, VarType="str")
                 else:
                     frmDataV = frmDataViewer(value, VarName=varName, VarType="str_arr")
+
+            elif valueType == "complex":
+                root = varName
+                frmDataEditor.DrawData(self)
             else:
                 if len(np.shape(value)) == 1:
                     frmSelectR = frmSelectRange(None,Mode="d1",D1From=0,D1To=np.shape(value)[0])
