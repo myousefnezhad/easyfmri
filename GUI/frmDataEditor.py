@@ -30,6 +30,7 @@ from Base.dialogs import LoadFile, SaveFile
 from GUI.frmDataEditorGUI import *
 from GUI.frmDataViewer import frmDataViewer
 from GUI.frmSelectRange import frmSelectRange
+from GUI.frmSelectXRange import frmSelectXRange
 
 
 class frmDataEditor(Ui_frmDataEditor):
@@ -81,8 +82,10 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.btnRemove.clicked.connect(self.btnRemove_click)
         ui.btnScale.clicked.connect(self.btnScale_click)
         ui.btnSave.clicked.connect(self.btnSave_click)
+        ui.btnSaveAs.clicked.connect(self.btnSaveAs_click)
         ui.btnClone.clicked.connect(self.btnClone_click)
         ui.btnReshape.clicked.connect(self.btnReshape_click)
+        ui.btnSelectPart.clicked.connect(self.btnSelectPart_click)
 
 
 
@@ -237,6 +240,27 @@ class frmDataEditor(Ui_frmDataEditor):
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
+
+
+    def btnSaveAs_click(self):
+        global data
+        msgBox = QMessageBox()
+        if not len(ui.txtInFile.text()):
+            return False
+        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                             os.path.dirname(ui.txtInFile.text()))
+        if len(ofile):
+            if len(ui.txtInFile.text()):
+                reply = QMessageBox.question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.Yes, QMessageBox.No)
+                do_compress = True if reply == QMessageBox.Yes else False
+                io.savemat(ofile, data, do_compression=do_compress,appendmat=False)
+                ui.btnSave.setEnabled(False)
+                ui.txtInFile.setText(ofile)
+                print("Data is saved in: ", ui.txtInFile.text())
+                msgBox.setText("Data is saved")
+                msgBox.setIcon(QMessageBox.Information)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
 
 
     def btnBack_click(self):
@@ -580,8 +604,42 @@ class frmDataEditor(Ui_frmDataEditor):
                 return False
 
 
-
-
+    def btnSelectPart_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not root.empty():
+            msgBox.setText("This item only works on variables located in root!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+        if len(varName):
+            dat, _ = frmDataEditor.getCurrentVar(self)
+            try:
+                frm = frmSelectXRange(np.shape(dat[varName]))
+                if frm.PASS:
+                    selectDat = dat[varName]
+                    for axis, (rf, rt) in enumerate(zip(frm.From, frm.To)):
+                        selectDat = np.take(selectDat, range(rf, rt), axis=axis)
+                    dat[varName] = selectDat
+                    frmDataEditor.DrawData(self)
+                    ui.btnSave.setEnabled(True)
+            except Exception as e:
+                print(str(e))
+                msgBox.setText(str(e))
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
 
 
 

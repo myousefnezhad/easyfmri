@@ -26,7 +26,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -397,7 +397,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="btnSelectSection">
+             <widget class="QPushButton" name="btnSelectPart">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -527,7 +527,7 @@
       <x>309</x>
       <y>169</y>
       <width>184</width>
-      <height>100</height>
+      <height>69</height>
      </rect>
     </property>
     <property name="title">
