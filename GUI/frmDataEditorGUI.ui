@@ -30,7 +30,7 @@
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
-          <string>File</string>
+          <string>General</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
@@ -254,32 +254,6 @@
                </size>
               </property>
              </spacer>
-            </item>
-            <item>
-             <widget class="QPushButton" name="btnClose">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>Exit</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-shutdown-96.png</normaloff>../Icons/icons8-shutdown-96.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>48</width>
-                <height>48</height>
-               </size>
-              </property>
-             </widget>
             </item>
            </layout>
           </item>
@@ -544,17 +518,39 @@
      <x>0</x>
      <y>0</y>
      <width>1014</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuExit">
-    <property name="title">
-     <string>Exit</string>
+   <widget class="QMenu" name="menuFile">
+    <property name="geometry">
+     <rect>
+      <x>309</x>
+      <y>169</y>
+      <width>184</width>
+      <height>100</height>
+     </rect>
     </property>
+    <property name="title">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>../Icons/icons8-menu.svg</normaloff>../Icons/icons8-menu.svg</iconset>
+    </property>
+    <addaction name="actionExit"/>
    </widget>
-   <addaction name="menuExit"/>
+   <addaction name="menuFile"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset>
+     <normaloff>../Icons/icons8-shutdown-96.png</normaloff>../Icons/icons8-shutdown-96.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

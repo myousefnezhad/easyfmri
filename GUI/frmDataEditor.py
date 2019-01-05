@@ -69,7 +69,7 @@ class frmDataEditor(Ui_frmDataEditor):
     # This function initiate the events procedures
     def set_events(self):
         global ui
-        ui.btnClose.clicked.connect(self.btnClose_click)
+        ui.actionExit.triggered.connect(self.btnClose_click)
         ui.btnInFile.clicked.connect(self.btnLoadFile_click)
         ui.btnValue.clicked.connect(self.btnValue_click)
         ui.lwData.doubleClicked.connect(self.btnValue_click)
@@ -82,6 +82,7 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.btnScale.clicked.connect(self.btnScale_click)
         ui.btnSave.clicked.connect(self.btnSave_click)
         ui.btnClone.clicked.connect(self.btnClone_click)
+        ui.btnReshape.clicked.connect(self.btnReshape_click)
 
 
 
@@ -533,6 +534,50 @@ class frmDataEditor(Ui_frmDataEditor):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
+
+
+
+    def btnReshape_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not root.empty():
+            msgBox.setText("This item only works on variables located in root!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+
+        if len(varName):
+            dat, _ = frmDataEditor.getCurrentVar(self)
+            try:
+                shape, ok = QInputDialog.getText(None, "Reshape Variable", "Please enter variable new shape:",text=str(np.shape(dat[varName])))
+                shape = [int(i) for i in str(shape).replace("(", "").replace(")", "").replace("]","").replace("[","").rsplit(",")]
+                if ok:
+                    if np.prod(shape) != np.prod(np.shape(dat[varName])):
+                        msgBox.setText("Shape is wrong!")
+                        msgBox.setIcon(QMessageBox.Critical)
+                        msgBox.setStandardButtons(QMessageBox.Ok)
+                        msgBox.exec_()
+                        return False
+                    dat[varName] = np.reshape(dat[varName], shape)
+                    frmDataEditor.DrawData(self)
+                    ui.btnSave.setEnabled(True)
+            except Exception as e:
+                print(str(e))
+                msgBox.setText(str(e))
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
 
 
 
