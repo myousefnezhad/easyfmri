@@ -26,7 +26,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -50,8 +50,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-opened-folder-96.png</normaloff>../Icons/icons8-opened-folder-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-opened-folder-96.png</normaloff>:/icons/Icons/icons8-opened-folder-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -76,8 +76,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-add-folder-96.png</normaloff>../Icons/icons8-add-folder-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-add-folder-96.png</normaloff>:/icons/Icons/icons8-add-folder-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -105,8 +105,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-save-close-96.png</normaloff>../Icons/icons8-save-close-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-save-close-96.png</normaloff>:/icons/Icons/icons8-save-close-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -131,8 +131,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-save-all-96.png</normaloff>../Icons/icons8-save-all-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-save-all-96.png</normaloff>:/icons/Icons/icons8-save-all-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -151,8 +151,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-refresh.svg</normaloff>../Icons/icons8-refresh.svg</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-refresh.svg</normaloff>:/icons/Icons/icons8-refresh.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -177,8 +177,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-eye-96.png</normaloff>../Icons/icons8-eye-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-eye-96.png</normaloff>:/icons/Icons/icons8-eye-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -203,8 +203,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-forward-96.png</normaloff>../Icons/icons8-forward-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-forward-96.png</normaloff>:/icons/Icons/icons8-forward-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -257,8 +257,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-back-96.png</normaloff>../Icons/icons8-back-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-back-96.png</normaloff>:/icons/Icons/icons8-back-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -307,8 +307,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-rename-96.png</normaloff>../Icons/icons8-rename-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-rename-96.png</normaloff>:/icons/Icons/icons8-rename-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -333,8 +333,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-delete.svg</normaloff>../Icons/icons8-delete.svg</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-delete.svg</normaloff>:/icons/Icons/icons8-delete.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -359,8 +359,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-rotate-left-96.png</normaloff>../Icons/icons8-rotate-left-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-rotate-left-96.png</normaloff>:/icons/Icons/icons8-rotate-left-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -385,8 +385,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-normal-distribution-histogram-96.png</normaloff>../Icons/icons8-normal-distribution-histogram-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-normal-distribution-histogram-96.png</normaloff>:/icons/Icons/icons8-normal-distribution-histogram-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -411,8 +411,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-clone-96.png</normaloff>../Icons/icons8-clone-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-clone-96.png</normaloff>:/icons/Icons/icons8-clone-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -453,8 +453,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-3d-object-96.png</normaloff>../Icons/icons8-3d-object-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-3d-object-96.png</normaloff>:/icons/Icons/icons8-3d-object-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -479,8 +479,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-3d-model-96.png</normaloff>../Icons/icons8-3d-model-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-3d-model-96.png</normaloff>:/icons/Icons/icons8-3d-model-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -521,8 +521,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-select-row-96.png</normaloff>../Icons/icons8-select-row-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-select-row-96.png</normaloff>:/icons/Icons/icons8-select-row-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -547,8 +547,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-select-column-96.png</normaloff>../Icons/icons8-select-column-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-select-column-96.png</normaloff>:/icons/Icons/icons8-select-column-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -573,8 +573,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-select-cell-96.png</normaloff>../Icons/icons8-select-cell-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-select-cell-96.png</normaloff>:/icons/Icons/icons8-select-cell-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -599,8 +599,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>../Icons/icons8-table-96.png</normaloff>../Icons/icons8-table-96.png</iconset>
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-table-96.png</normaloff>:/icons/Icons/icons8-table-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -714,6 +714,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../icon.qrc"/>
+ </resources>
  <connections/>
 </ui>

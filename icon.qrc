@@ -1,0 +1,25 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>Icons/icons8-3d-model-96.png</file>
+    <file>Icons/icons8-3d-object-96.png</file>
+    <file>Icons/icons8-add-folder-96.png</file>
+    <file>Icons/icons8-back-96.png</file>
+    <file>Icons/icons8-clone-96.png</file>
+    <file>Icons/icons8-delete.svg</file>
+    <file>Icons/icons8-eye-96.png</file>
+    <file>Icons/icons8-forward-96.png</file>
+    <file>Icons/icons8-menu.svg</file>
+    <file>Icons/icons8-normal-distribution-histogram-96.png</file>
+    <file>Icons/icons8-opened-folder-96.png</file>
+    <file>Icons/icons8-refresh.svg</file>
+    <file>Icons/icons8-rename-96.png</file>
+    <file>Icons/icons8-rotate-left-96.png</file>
+    <file>Icons/icons8-save-all-96.png</file>
+    <file>Icons/icons8-save-close-96.png</file>
+    <file>Icons/icons8-select-cell-96.png</file>
+    <file>Icons/icons8-select-column-96.png</file>
+    <file>Icons/icons8-select-row-96.png</file>
+    <file>Icons/icons8-shutdown-96.png</file>
+    <file>Icons/icons8-table-96.png</file>
+  </qresource>
+</RCC>
