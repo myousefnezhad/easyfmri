@@ -23,9 +23,10 @@ import sys
 import queue
 import numpy as np
 import scipy.io as io
+from sklearn import preprocessing
 from PyQt5.QtWidgets import *
 from Base.utility import getVersion, getBuild
-from Base.dialogs import LoadFile
+from Base.dialogs import LoadFile, SaveFile
 from GUI.frmDataEditorGUI import *
 from GUI.frmDataViewer import frmDataViewer
 from GUI.frmSelectRange import frmSelectRange
@@ -52,7 +53,7 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.lwData.setHeaderLabels(['Name','Class','Shape','Value'])
         ui.lwData.setColumnWidth(0,200)
         dialog.setWindowTitle("easy fMRI Data Viewer - V" + getVersion() + "B" + getBuild())
-
+        ui.tabWidget.setCurrentIndex(0)
         root = queue.Queue()
         data = None
         if filename is not None:
@@ -64,6 +65,24 @@ class frmDataEditor(Ui_frmDataEditor):
                else:
                    print("Data file cannot find!")
         dialog.show()
+
+    # This function initiate the events procedures
+    def set_events(self):
+        global ui
+        ui.btnClose.clicked.connect(self.btnClose_click)
+        ui.btnInFile.clicked.connect(self.btnLoadFile_click)
+        ui.btnValue.clicked.connect(self.btnValue_click)
+        ui.lwData.doubleClicked.connect(self.btnValue_click)
+        ui.btnBack.clicked.connect(self.btnBack_click)
+        ui.btnIn.clicked.connect(self.btnIn_click)
+        ui.btnRefresh.clicked.connect(self.btnRefresh_click)
+        ui.btnTranspose.clicked.connect(self.btnTranspose_click)
+        ui.btnRename.clicked.connect(self.btnRename_click)
+        ui.btnRemove.clicked.connect(self.btnRemove_click)
+        ui.btnScale.clicked.connect(self.btnScale_click)
+        ui.btnSave.clicked.connect(self.btnSave_click)
+        ui.btnClone.clicked.connect(self.btnClone_click)
+
 
 
     def OpenFile(self, ifile):
@@ -80,8 +99,6 @@ class frmDataEditor(Ui_frmDataEditor):
                 frmDataEditor.DrawData(self)
                 ui.txtInFile.setText(ifile)
                 print(ifile + " is loaded!")
-
-
 
     def getCurrentVar(self):
         global data
@@ -110,14 +127,28 @@ class frmDataEditor(Ui_frmDataEditor):
                     if len(status):
                         status += " / "
                     status += "<" + str(st[0]).replace("[","").replace("]","").replace(","," / ") + ">"
-
         except:
             print("Cannot load complex variable!")
             status = "/"
             dat = data
             root = queue.Queue()
-
         return dat, status
+
+    def getCurrentPointer(self):
+        global data
+        global root
+        try:
+            dat = data
+            if not root.empty():
+                for r in list(root.queue):
+                    if not len(r[0]):
+                        dat = dat[r[1]]
+                    else:
+                        dat = dat[r[0]]
+        except:
+            print("Cannot find pointer!")
+            return None
+        return dat
 
 
     def DrawData(self):
@@ -187,19 +218,25 @@ class frmDataEditor(Ui_frmDataEditor):
                 ui.lwData.addTopLevelItem(item)
 
 
-    # This function initiate the events procedures
-    def set_events(self):
-        global ui
-        ui.btnClose.clicked.connect(self.btnClose_click)
-        ui.btnInFile.clicked.connect(self.btnLoadFile_click)
-        ui.btnValue.clicked.connect(self.btnValue_click)
-        ui.lwData.doubleClicked.connect(self.btnValue_click)
-        ui.btnBack.clicked.connect(self.btnBack_click)
-        ui.btnIn.clicked.connect(self.btnIn_click)
 
     def btnClose_click(self):
         global dialog
         dialog.close()
+
+    def btnSave_click(self):
+        global data
+        msgBox = QMessageBox()
+        if len(ui.txtInFile.text()):
+            reply = QMessageBox.question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.Yes, QMessageBox.No)
+            do_compress = True if reply == QMessageBox.Yes else False
+            io.savemat(ui.txtInFile.text(), data, do_compression=do_compress,appendmat=False)
+            ui.btnSave.setEnabled(False)
+            print("Data is saved in: ", ui.txtInFile.text())
+            msgBox.setText("Data is saved")
+            msgBox.setIcon(QMessageBox.Information)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+
 
     def btnBack_click(self):
         global root
@@ -311,6 +348,198 @@ class frmDataEditor(Ui_frmDataEditor):
         frmDataV.show()
 
 
+    def btnRefresh_click(self):
+        filename = ui.txtInFile.text()
+        msgBox = QMessageBox()
+        if not len(filename):
+            msgBox.setText("There is no opened file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if not os.path.isfile(filename):
+            msgBox.setText("Cannot find data file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        frmDataEditor.OpenFile(self, filename)
+
+    def btnTranspose_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not root.empty():
+            msgBox.setText("This item only works on variables located in root!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+        try:
+            dat = frmDataEditor.getCurrentPointer(self)
+            if not len(varName):
+                dat = np.transpose(dat)
+            else:
+                dat[varName] = np.transpose(dat[varName])
+            frmDataEditor.DrawData(self)
+            ui.btnSave.setEnabled(True)
+        except Exception as e:
+            print(str(e))
+            msgBox.setText(str(e))
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+    def btnRemove_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not root.empty():
+            msgBox.setText("This item only works on variables located in root!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+        try:
+            dat = frmDataEditor.getCurrentPointer(self)
+            if str(type(dat)) == "<class 'numpy.ndarray'>":
+                if len(varName):
+                    dat.delete(varName)
+            else:
+                dat = dat.pop(varName, None)
+            frmDataEditor.DrawData(self)
+            ui.btnSave.setEnabled(True)
+        except Exception as e:
+            print(str(e))
+            msgBox.setText(str(e))
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+    def btnRename_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not root.empty():
+            msgBox.setText("This item only works on variables located in root!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+        if len(varName):
+            dat, _ = frmDataEditor.getCurrentVar(self)
+            try:
+                name, ok = QInputDialog.getText(None, "Variable Editor", "Please enter variable new name:",text=varName)
+
+                if ok and name != varName:
+                    dat[name] = dat.pop(varName)
+                    frmDataEditor.DrawData(self)
+                    ui.btnSave.setEnabled(True)
+            except Exception as e:
+                print(str(e))
+                msgBox.setText(str(e))
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+    def btnScale_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not root.empty():
+            msgBox.setText("This item only works on variables located in root!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+        if len(varName):
+            dat, _ = frmDataEditor.getCurrentVar(self)
+            try:
+
+                axis, ok = QInputDialog.getItem(None,"Select Axis", "Select Axis", [str(i) for i in tuple(range(len(np.shape(dat[varName]))))])
+                if ok:
+                    dat[varName] = preprocessing.scale(dat[varName], axis=int(axis))
+                    frmDataEditor.DrawData(self)
+                    ui.btnSave.setEnabled(True)
+            except Exception as e:
+                print(str(e))
+                msgBox.setText(str(e))
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+    def btnClone_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+        dat, _ = frmDataEditor.getCurrentVar(self)
+        try:
+            name, ok = QInputDialog.getText(None, "New Variable", "Please enter variable name:", text=varName)
+            if ok:
+                data[name] = dat[varName]
+                root = queue.Queue()
+                frmDataEditor.DrawData(self)
+                ui.btnSave.setEnabled(True)
+        except Exception as e:
+            print(str(e))
+            msgBox.setText(str(e))
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
+
+
+
+
+
     def btnIn_click(self):
         global data
         global root
@@ -339,6 +568,13 @@ class frmDataEditor(Ui_frmDataEditor):
 
         root.put([varName, ui.txtInside.value()])
         frmDataEditor.DrawData(self)
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
