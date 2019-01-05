@@ -72,6 +72,7 @@ class frmDataEditor(Ui_frmDataEditor):
         global ui
         ui.actionExit.triggered.connect(self.btnClose_click)
         ui.btnInFile.clicked.connect(self.btnLoadFile_click)
+        ui.btnMerge.clicked.connect(self.btnMerge_click)
         ui.btnValue.clicked.connect(self.btnValue_click)
         ui.lwData.doubleClicked.connect(self.btnValue_click)
         ui.btnBack.clicked.connect(self.btnBack_click)
@@ -86,7 +87,10 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.btnClone.clicked.connect(self.btnClone_click)
         ui.btnReshape.clicked.connect(self.btnReshape_click)
         ui.btnSelectPart.clicked.connect(self.btnSelectPart_click)
-
+        ui.btnVConcat.clicked.connect(self.btnVConcat_click)
+        ui.btnHConcat.clicked.connect(self.btnHConcat_click)
+        ui.btnCConcat.clicked.connect(self.btnCConcat_click)
+        ui.btnConcat.clicked.connect(self.btnConcat_click)
 
 
     def OpenFile(self, ifile):
@@ -103,6 +107,9 @@ class frmDataEditor(Ui_frmDataEditor):
                 frmDataEditor.DrawData(self)
                 ui.txtInFile.setText(ifile)
                 print(ifile + " is loaded!")
+                ui.btnSave.setEnabled(False)
+
+
 
     def getCurrentVar(self):
         global data
@@ -284,6 +291,31 @@ class frmDataEditor(Ui_frmDataEditor):
             if os.path.isfile(ifile):
                 root = None
                 frmDataEditor.OpenFile(self, ifile)
+
+    def btnMerge_click(self):
+        global data
+        global root
+
+        if len(ui.txtInFile.text()):
+
+            ifile = LoadFile("Open data files ...",\
+                             ['Data files (*.mat *.ezdata *.ezmat, *.model)', 'MatLab files (*.mat)','EasyData files (*.ezdata)', \
+                              'EasyMat (*.ezmat)', 'All files (*.*)'],'mat')
+            if len(ifile):
+                if os.path.isfile(ifile):
+                    try:
+                        data2 = io.loadmat(ifile)
+                    except:
+                        print("Cannot load file!")
+                        return
+                    for key in data2.keys():
+                        if key != "__header__" and key != "__version__" and key != "__globals__":
+                            data[key] = data2[key]
+
+                    root = queue.Queue()
+                    frmDataEditor.DrawData(self)
+                    ui.btnSave.setEnabled(True)
+
 
     def btnValue_click(self):
         global data
@@ -641,7 +673,161 @@ class frmDataEditor(Ui_frmDataEditor):
                 msgBox.exec_()
                 return False
 
+    def btnVConcat_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not root.empty():
+            msgBox.setText("This item only works on variables located in root!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+        if len(varName):
+            dat, _ = frmDataEditor.getCurrentVar(self)
+            try:
+                item = list()
+                for key in dat.keys():
+                    if key != "__header__" and key != "__version__" and key != "__globals__":
+                        item.append(key)
+                varName2, ok = QInputDialog.getItem(None,"Select Variable", "Select Variable", item)
+                if ok:
+                    dat[varName] = np.concatenate((dat[varName], dat[varName2]), axis=1)
+                    frmDataEditor.DrawData(self)
+                    ui.btnSave.setEnabled(True)
+            except Exception as e:
+                print(str(e))
+                msgBox.setText(str(e))
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
 
+    def btnHConcat_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not root.empty():
+            msgBox.setText("This item only works on variables located in root!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+        if len(varName):
+            dat, _ = frmDataEditor.getCurrentVar(self)
+            try:
+                item = list()
+                for key in dat.keys():
+                    if key != "__header__" and key != "__version__" and key != "__globals__":
+                        item.append(key)
+                varName2, ok = QInputDialog.getItem(None,"Select Variable", "Select Variable", item)
+                if ok:
+                    dat[varName] = np.concatenate((dat[varName], dat[varName2]), axis=0)
+                    frmDataEditor.DrawData(self)
+                    ui.btnSave.setEnabled(True)
+            except Exception as e:
+                print(str(e))
+                msgBox.setText(str(e))
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+    def btnCConcat_click(self):
+        print("Helllo")
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not root.empty():
+            msgBox.setText("This item only works on variables located in root!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+        if len(varName):
+            dat, _ = frmDataEditor.getCurrentVar(self)
+            try:
+                item = list()
+                for key in dat.keys():
+                    if key != "__header__" and key != "__version__" and key != "__globals__":
+                        item.append(key)
+                varName2, ok = QInputDialog.getItem(None,"Select Variable", "Select Variable", item)
+                if ok:
+                    dat[varName] = np.concatenate((np.concatenate((dat[varName], np.zeros((np.shape(dat[varName])[0],np.shape(dat[varName2])[1]))), axis=1),\
+                                          np.concatenate((np.zeros((np.shape(dat[varName2])[0],np.shape(dat[varName])[1])), dat[varName2]), axis=1)), axis=0)
+                    frmDataEditor.DrawData(self)
+                    ui.btnSave.setEnabled(True)
+            except Exception as e:
+                print(str(e))
+                msgBox.setText(str(e))
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+    def btnConcat_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+        if not root.empty():
+            msgBox.setText("This item only works on variables located in root!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not len(ui.lwData.selectedItems()):
+            msgBox.setText("Please select an item first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
+        varName = ui.lwData.topLevelItem(Index).text(0)
+        if len(varName):
+            dat, _ = frmDataEditor.getCurrentVar(self)
+            try:
+                item = list()
+                for key in dat.keys():
+                    if key != "__header__" and key != "__version__" and key != "__globals__":
+                        item.append(key)
+                varName2, ok = QInputDialog.getItem(None,"Select Variable", "Select Variable", item)
+                if ok:
+                    axis, ok = QInputDialog.getItem(None, "Select Axis", "Select Axis", [str(i) for i in tuple(range(len(np.shape(dat[varName]))))])
+                    if ok:
+                        dat[varName] = np.concatenate((dat[varName], dat[varName2]), axis=int(axis))
+                        frmDataEditor.DrawData(self)
+                        ui.btnSave.setEnabled(True)
+            except Exception as e:
+                print(str(e))
+                msgBox.setText(str(e))
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
 
     def btnIn_click(self):
         global data
@@ -668,9 +854,10 @@ class frmDataEditor(Ui_frmDataEditor):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         root.put([varName, ui.txtInside.value()])
         frmDataEditor.DrawData(self)
+
+
 
 
 
