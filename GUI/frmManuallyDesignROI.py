@@ -35,7 +35,7 @@ from pyqode.core import panels
 
 
 def DefaultCode():
-    return """# This is a template for writting any code in Python 3 style!
+    return """# This is a template for writing any code in Python 3 style!
 import os
 import sys
 import numpy as np

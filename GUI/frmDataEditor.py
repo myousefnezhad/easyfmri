@@ -24,6 +24,7 @@ import queue
 import numpy as np
 import scipy.io as io
 from sklearn import preprocessing
+from dir import getDIR
 from PyQt5.QtWidgets import *
 from Base.utility import getVersion, getBuild
 from Base.dialogs import LoadFile, SaveFile
@@ -32,11 +33,39 @@ from GUI.frmDataViewer import frmDataViewer
 from GUI.frmSelectRange import frmSelectRange
 from GUI.frmSelectXRange import frmSelectXRange
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+from pyqode.core import api
+from pyqode.core import modes
+from pyqode.core import panels
+
+
+
+def DefaultCode():
+    return """# This is a template for writing any code in Python 3 style
+# You can access to the data information as follows 
+# "data" as the variable in a dictionary format
+# "root" as the current location in a queue format
+import os
+import sys
+import numpy as np
+import nibabel as nb
+import scipy as sp
+
+# Example 1: Print Variable Names
+#print([key for key in data.keys()])
+# Example 2: Print Current Location
+#print(list(root.queue)) 
+"""
+
+
+
 
 class frmDataEditor(Ui_frmDataEditor):
     ui = Ui_frmDataEditor()
     dialog = None
     data = None
+    currentFile = None
     root = queue.Queue()
     # This function is run when the main form start
     # and initiate the default parameters.
@@ -45,6 +74,7 @@ class frmDataEditor(Ui_frmDataEditor):
         global ui
         global data
         global root
+        global currentFile
         ui = Ui_frmDataEditor()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
@@ -55,6 +85,28 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.lwData.setColumnWidth(0,200)
         dialog.setWindowTitle("easy fMRI Data Viewer - V" + getVersion() + "B" + getBuild())
         ui.tabWidget.setCurrentIndex(0)
+        ui.tabWidget2.setCurrentIndex(0)
+        layout = QHBoxLayout(ui.Code)
+        ui.txtCode = api.CodeEdit(ui.Code)
+        layout.addWidget(ui.txtCode)
+        ui.txtCode.setObjectName("txtCode")
+        ui.txtCode.backend.start(getDIR() + '/backend/server.py')
+
+        ui.txtCode.modes.append(modes.CodeCompletionMode())
+        ui.txtCode.modes.append(modes.CaretLineHighlighterMode())
+        ui.txtCode.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtCode.document()))
+        ui.txtCode.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
+        ui.txtCode.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
+
+        ui.lblCodeFile.setText("")
+        currentFile = None
+
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        ui.txtCode.setFont(font)
+        ui.txtCode.setPlainText(DefaultCode(),"","")
+
         root = queue.Queue()
         data = None
         if filename is not None:
@@ -91,7 +143,10 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.btnHConcat.clicked.connect(self.btnHConcat_click)
         ui.btnCConcat.clicked.connect(self.btnCConcat_click)
         ui.btnConcat.clicked.connect(self.btnConcat_click)
-
+        # Code Section
+        ui.btnRun.clicked.connect(self.btnRun_click)
+        ui.btnSaveCode.clicked.connect(self.btnSaveCode_click)
+        ui.btnOpenCode.clicked.connect(self.btnOpenCode_click)
 
     def OpenFile(self, ifile):
         global data
@@ -341,10 +396,7 @@ class frmDataEditor(Ui_frmDataEditor):
                                                                                                             "")
             except:
                 valueType = str(type(value)).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
-
-        # valueType = str(type(value[0][0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
         valueShape = np.shape(value)
-
         if valueType.replace("32", "").replace("64", "").lower() == "int" or \
                         valueType.replace("32", "").replace("64", "").lower() == "float" or \
                         valueType.replace("32", "").replace("64", "").lower() == "double":
@@ -857,12 +909,74 @@ class frmDataEditor(Ui_frmDataEditor):
         root.put([varName, ui.txtInside.value()])
         frmDataEditor.DrawData(self)
 
+    def btnRun_click(self):
+        global data
+        global root
+        msgBox = QMessageBox()
+
+        Codes = ui.txtCode.toPlainText()
+        try:
+            allvars = dict(locals(), **globals())
+            exec(Codes, allvars, allvars)
+            ui.btnSave.setEnabled(True)
+            frmDataEditor.DrawData(self)
+            msgBox.setText("Run without error")
+            msgBox.setIcon(QMessageBox.Information)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
 
 
+        except Exception as e:
+            print(e)
+            msgBox.setText(str(e))
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+
+    def btnSaveCode_click(self):
+        global currentFile
+        if currentFile is None:
+            filename = SaveFile('Save code file ...',['Code files (*.py)', 'All files (*.*)'], 'py',\
+                                        os.path.dirname(str(currentFile)))
+            if not len(filename):
+                return
+            currentFile = filename
+            ui.lblCodeFile.setText(filename)
+        file = open(currentFile, "w")
+        file.write(ui.txtCode.toPlainText())
+        file.close()
 
 
-
-
+    def btnOpenCode_click(self):
+        global currentFile
+        MustSave = False
+        if (currentFile == None) and (ui.txtCode.toPlainText() != DefaultCode()):
+            MustSave = True
+        if (currentFile != None):
+            currCode = open(currentFile).read()
+            if ui.txtCode.toPlainText() != currCode:
+                MustSave = True
+        if MustSave:
+            msgBox = QMessageBox()
+            msgBox.setText("Do you want to save current code?")
+            msgBox.setIcon(QMessageBox.Question)
+            msgBox.setStandardButtons(QMessageBox.No | QMessageBox.Yes)
+            if (msgBox.exec_() == QMessageBox.Yes):
+                if (currentFile != None):
+                    filename = currentFile
+                else:
+                    filename = SaveFile('Save code file ...',['Code files (*.py)', 'All files (*.*)'], 'py', \
+                                        os.path.dirname(str(currentFile)))
+                    if not len(filename):
+                        return
+                file = open(filename, "w")
+                file.write(ui.txtCode.toPlainText())
+                file.close()
+        filename = LoadFile('Open code file ...',['Code files (*.py)', 'All files (*.*)'], 'py')
+        if len(filename):
+            ui.txtCode.setPlainText(open(filename).read(),"","")
+            currentFile = filename
+            ui.lblCodeFile.setText(filename)
 
 
 
