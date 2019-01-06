@@ -83,7 +83,7 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.lwData.setColumnCount(4)
         ui.lwData.setHeaderLabels(['Name','Class','Shape','Value'])
         ui.lwData.setColumnWidth(0,200)
-        dialog.setWindowTitle("easy fMRI Data Viewer - V" + getVersion() + "B" + getBuild())
+        dialog.setWindowTitle("easy fMRI Data Editor - V" + getVersion() + "B" + getBuild())
         ui.tabWidget.setCurrentIndex(0)
         ui.tabWidget2.setCurrentIndex(0)
         layout = QHBoxLayout(ui.Code)

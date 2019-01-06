@@ -49,7 +49,7 @@ from dir import getDIR
 class Tools:
     def combo(self, combobox):
         # General
-        combobox.addItem("General: Data/Result Viewer",  10001)
+        combobox.addItem("General: Data/Result Editor",  10001)
         combobox.addItem("General: Report from multi-file results",  10002)
         combobox.addItem("General: Image Information",  10003)
         # Preprocessing
