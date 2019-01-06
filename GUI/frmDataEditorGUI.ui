@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget2">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -34,7 +34,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -730,6 +730,29 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btnNewCode">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../icon.qrc">
+                <normaloff>:/icons/Icons/icons8-file.svg</normaloff>:/icons/Icons/icons8-file.svg</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>48</width>
+                <height>48</height>
+               </size>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QPushButton" name="btnOpenCode">

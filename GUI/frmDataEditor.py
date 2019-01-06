@@ -98,7 +98,7 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.txtCode.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
         ui.txtCode.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
 
-        ui.lblCodeFile.setText("")
+        ui.lblCodeFile.setText("New File")
         currentFile = None
 
         font = QtGui.QFont()
@@ -145,6 +145,7 @@ class frmDataEditor(Ui_frmDataEditor):
         ui.btnConcat.clicked.connect(self.btnConcat_click)
         # Code Section
         ui.btnRun.clicked.connect(self.btnRun_click)
+        ui.btnNewCode.clicked.connect(self.btnNewCode_click)
         ui.btnSaveCode.clicked.connect(self.btnSaveCode_click)
         ui.btnOpenCode.clicked.connect(self.btnOpenCode_click)
 
@@ -977,6 +978,36 @@ class frmDataEditor(Ui_frmDataEditor):
             ui.txtCode.setPlainText(open(filename).read(),"","")
             currentFile = filename
             ui.lblCodeFile.setText(filename)
+
+    def btnNewCode_click(self):
+        global currentFile
+        MustSave = False
+        if (currentFile == None) and (ui.txtCode.toPlainText() != DefaultCode()):
+            MustSave = True
+        if (currentFile != None):
+            currCode = open(currentFile).read()
+            if ui.txtCode.toPlainText() != currCode:
+                MustSave = True
+
+        if MustSave:
+            msgBox = QMessageBox()
+            msgBox.setText("Do you want to save current code?")
+            msgBox.setIcon(QMessageBox.Question)
+            msgBox.setStandardButtons(QMessageBox.No| QMessageBox.Yes)
+            if (msgBox.exec_() == QMessageBox.Yes):
+                if (currentFile != None):
+                    filename = currentFile
+                else:
+                    filename = SaveFile('Save code file ...',['Code files (*.py)', 'All files (*.*)'], 'py',\
+                                        os.path.dirname(str(currentFile)))
+                    if not len(filename):
+                        return
+                file = open(filename,"w")
+                file.write(ui.txtCode.toPlainText())
+                file.close()
+        ui.txtCode.setPlainText(DefaultCode(), "", "")
+        ui.lblCodeFile.setText("New File")
+        currentFile = None
 
 
 

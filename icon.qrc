@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>Icons/icons8-file.svg</file>
     <file>Icons/icons8-save-96.png</file>
     <file>Icons/icons8-play-96.png</file>
     <file>Icons/icons8-3d-model-96.png</file>
