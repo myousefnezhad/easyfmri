@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 
 from sklearn.externals import joblib
-from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score
+from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix
 
 
 from Base.utility import getVersion, getBuild
@@ -108,6 +108,9 @@ class frmSKModelEditor(Ui_frmSKModelEditor):
         ui.btnValue.clicked.connect(self.btnValue_click)
         ui.lwData.doubleClicked.connect(self.btnValue_click)
         ui.btnTest.clicked.connect(self.btnTest_click)
+        ui.btnTestConfusion.clicked.connect(self.btnTestConfusion_click)
+        ui.btnTestLabels.clicked.connect(self.btnTestLabels_click)
+
 
     def btnClose_click(self):
         global dialog
@@ -120,6 +123,7 @@ class frmSKModelEditor(Ui_frmSKModelEditor):
         if len(filename):
             if os.path.isfile(filename):
                 try:
+                    print("Data is loading ...")
                     data = io.loadmat(filename)
                     Keys = data.keys()
 
@@ -148,11 +152,12 @@ class frmSKModelEditor(Ui_frmSKModelEditor):
                         Labels = data[ui.txtITeLabel.currentText()]
                         Labels = np.unique(Labels)
 
-                        lblString = ""
+                        lblString = None
                         for lbl in Labels:
-                            lblString = lblString + "  " + str(lbl)
+                            lblString = str(lbl) if lblString is None else lblString + ", " + str(lbl)
                         ui.txtClass.setText(lblString.strip())
                     ui.txtInData.setText(filename)
+                    print("Data is ready.")
 
                 except:
                     print("Cannot load data file!")
@@ -260,6 +265,7 @@ class frmSKModelEditor(Ui_frmSKModelEditor):
         frmDataV.show()
 
     def btnTest_click(self):
+        print("Test is running ...")
         msgBox = QMessageBox()
 
         # Filter
@@ -383,7 +389,219 @@ class frmSKModelEditor(Ui_frmSKModelEditor):
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
 
-        pass
+    def btnTestConfusion_click(self):
+        print("Test is running ...")
+        msgBox = QMessageBox()
+
+        # Filter
+        try:
+            Filter = ui.txtFilter.text()
+            if not len(Filter):
+                Filter = None
+            else:
+                Filter = Filter.replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()
+                Filter = np.int32(Filter)
+        except:
+            print("Filter is wrong!")
+            return
+
+        # InModel
+        InModelFile = ui.txtInFile.text()
+        if not len(InModelFile):
+            msgBox.setText("Please enter model file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not os.path.isfile(InModelFile):
+            msgBox.setText("Model file not found!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # InData
+        InDataFile = ui.txtInData.text()
+        if not len(InDataFile):
+            msgBox.setText("Please enter data file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not os.path.isfile(InDataFile):
+            msgBox.setText("data file not found!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Data
+        if not len(ui.txtITeData.currentText()):
+            msgBox.setText("Please enter Input Test Data variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Label
+        if not len(ui.txtITeLabel.currentText()):
+                msgBox.setText("Please enter Test Input Label variable name!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+        try:
+            clf = joblib.load(InModelFile)
+        except:
+            msgBox.setText("Cannot load classification model!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            InData = io.loadmat(InDataFile)
+        except:
+            print("cannot load data file!")
+            msgBox.setText("cannot load data file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        TeX = InData[ui.txtITeData.currentText()]
+        TeL = InData[ui.txtITeLabel.currentText()][0]
+
+        try:
+            if Filter is not None:
+                for fil in Filter:
+                    # Remove Testing Set
+                    labelIndx = np.where(TeL == fil)[0]
+                    TeL = np.delete(TeL, labelIndx, axis=0)
+                    TeX = np.delete(TeX, labelIndx, axis=0)
+                    print("Class ID = " + str(fil) + " is removed from data.")
+
+            if ui.cbScale.isChecked():
+                TeX = preprocessing.scale(TeX)
+                print("Whole of data is scaled Train~N(0,1) and Test~N(0,1).")
+        except:
+            print("Cannot load data or label")
+            return
+
+        print("Run testing ...")
+        PeL = clf.predict(TeX)
+        confusion = confusion_matrix(TeL, PeL)
+        print("Confusion Matrix:\n", confusion)
+        frmDataViewer(confusion, VarName="Confusion Matrix", VarType="d2", D1From=0, D1To=np.shape(confusion)[0], D2From=0, D2To=np.shape(confusion)[1])
+
+
+    def btnTestLabels_click(self):
+        print("Test is running ...")
+        msgBox = QMessageBox()
+
+        # Filter
+        try:
+            Filter = ui.txtFilter.text()
+            if not len(Filter):
+                Filter = None
+            else:
+                Filter = Filter.replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()
+                Filter = np.int32(Filter)
+        except:
+            print("Filter is wrong!")
+            return
+
+        # InModel
+        InModelFile = ui.txtInFile.text()
+        if not len(InModelFile):
+            msgBox.setText("Please enter model file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not os.path.isfile(InModelFile):
+            msgBox.setText("Model file not found!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # InData
+        InDataFile = ui.txtInData.text()
+        if not len(InDataFile):
+            msgBox.setText("Please enter data file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not os.path.isfile(InDataFile):
+            msgBox.setText("data file not found!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Data
+        if not len(ui.txtITeData.currentText()):
+            msgBox.setText("Please enter Input Test Data variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        # Label
+        if not len(ui.txtITeLabel.currentText()):
+                msgBox.setText("Please enter Test Input Label variable name!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+        try:
+            clf = joblib.load(InModelFile)
+        except:
+            msgBox.setText("Cannot load classification model!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            InData = io.loadmat(InDataFile)
+        except:
+            print("cannot load data file!")
+            msgBox.setText("cannot load data file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        TeX = InData[ui.txtITeData.currentText()]
+        TeL = InData[ui.txtITeLabel.currentText()][0]
+
+        try:
+            if Filter is not None:
+                for fil in Filter:
+                    # Remove Testing Set
+                    labelIndx = np.where(TeL == fil)[0]
+                    TeL = np.delete(TeL, labelIndx, axis=0)
+                    TeX = np.delete(TeX, labelIndx, axis=0)
+                    print("Class ID = " + str(fil) + " is removed from data.")
+
+            if ui.cbScale.isChecked():
+                TeX = preprocessing.scale(TeX)
+                print("Whole of data is scaled Train~N(0,1) and Test~N(0,1).")
+        except:
+            print("Cannot load data or label")
+            return
+
+        print("Run testing ...")
+        PeL = clf.predict(TeX)
+        Labels = np.transpose(np.concatenate(([TeL], [PeL])))
+        print("Labels vs Predicts:\n", Labels)
+        frmDataViewer(Labels, VarName="Labels vs Predicts", VarType="d2", D1From=0, D1To=np.shape(Labels)[0], D2From=0, D2To=np.shape(Labels)[1])
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

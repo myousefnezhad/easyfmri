@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmSKModelEditorGUI.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -41,7 +41,7 @@ class Ui_frmSKModelEditor(object):
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
         self.btnTest = QtWidgets.QPushButton(self.tab_2)
-        self.btnTest.setGeometry(QtCore.QRect(10, 490, 801, 32))
+        self.btnTest.setGeometry(QtCore.QRect(640, 490, 171, 32))
         self.btnTest.setObjectName("btnTest")
         self.btnInData = QtWidgets.QPushButton(self.tab_2)
         self.btnInData.setGeometry(QtCore.QRect(760, 20, 51, 32))
@@ -124,6 +124,12 @@ class Ui_frmSKModelEditor(object):
         self.cbScale.setGeometry(QtCore.QRect(633, 60, 360, 21))
         self.cbScale.setChecked(True)
         self.cbScale.setObjectName("cbScale")
+        self.btnTestConfusion = QtWidgets.QPushButton(self.tab_2)
+        self.btnTestConfusion.setGeometry(QtCore.QRect(460, 490, 171, 32))
+        self.btnTestConfusion.setObjectName("btnTestConfusion")
+        self.btnTestLabels = QtWidgets.QPushButton(self.tab_2)
+        self.btnTestLabels.setGeometry(QtCore.QRect(280, 490, 171, 32))
+        self.btnTestLabels.setObjectName("btnTestLabels")
         self.tabWidget.addTab(self.tab_2, "")
 
         self.retranslateUi(frmSKModelEditor)
@@ -157,5 +163,7 @@ class Ui_frmSKModelEditor(object):
         self.label_4.setText(_translate("frmSKModelEditor", "Remove Class IDs"))
         self.label_10.setText(_translate("frmSKModelEditor", "Existed Classes"))
         self.cbScale.setText(_translate("frmSKModelEditor", "Scale Data N(0,1)"))
+        self.btnTestConfusion.setText(_translate("frmSKModelEditor", "Show Confusion Matrix"))
+        self.btnTestLabels.setText(_translate("frmSKModelEditor", "Show Predicted Labels"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("frmSKModelEditor", "Run Model"))
 
