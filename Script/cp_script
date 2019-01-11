@@ -19,4 +19,6 @@ sudo mkdir -p /usr/share/applications
 sudo cp ezfmridesktop  /usr/share/applications/ezfmri.desktop
 sudo cp ezfmrisdesktop /usr/share/applications/ezfmris.desktop
 sudo cp ezeditdesktop  /usr/share/applications/ezedit.desktop
+sudo chmod +x /usr/share/applications/ezedit.desktop
+
 

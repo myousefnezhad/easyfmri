@@ -83,7 +83,7 @@
     <widget class="QToolButton" name="btnFeatureAnalysis">
      <property name="geometry">
       <rect>
-       <x>350</x>
+       <x>180</x>
        <y>10</y>
        <width>160</width>
        <height>150</height>
@@ -109,7 +109,7 @@
     <widget class="QToolButton" name="btnModelAnalysis">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>350</x>
        <y>10</y>
        <width>160</width>
        <height>150</height>

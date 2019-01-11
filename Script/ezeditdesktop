@@ -8,3 +8,4 @@ StartupNotify=true
 Terminal=true
 Type=Application
 Keywords=fmri;matlab;machine;learning;ez;ezfmri;ezedit;neuroscince;brain;deep;rsa;hyperalignment;ha;classification;clustering;preprocessing;afni;suma;fsl;visualization;ha;pca;feature;ezdata;
+MimeType=mat;ez;ezdata;ezheader;text/plain;inode/directory;
