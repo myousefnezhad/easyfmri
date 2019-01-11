@@ -20,6 +20,7 @@
 
 
 import os
+import icon_rc
 import subprocess
 import PyQt5.QtWidgets as QtWidgets
 from GUI.frmMainMenuGUI import *

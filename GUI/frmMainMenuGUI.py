@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'frmMainMenuGUI.ui'
+# Form implementation generated from reading ui file 'GUI/frmMainMenuGUI.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -12,6 +12,9 @@ class Ui_frmMainMenuGUI(object):
     def setupUi(self, frmMainMenuGUI):
         frmMainMenuGUI.setObjectName("frmMainMenuGUI")
         frmMainMenuGUI.resize(555, 480)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/icons/Icons/icons8-brain-128.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        frmMainMenuGUI.setWindowIcon(icon)
         self.label = QtWidgets.QLabel(frmMainMenuGUI)
         self.label.setGeometry(QtCore.QRect(0, 0, 551, 80))
         font = QtGui.QFont()
@@ -110,3 +113,4 @@ class Ui_frmMainMenuGUI(object):
         self.btnExit.setText(_translate("frmMainMenuGUI", "Exit"))
         self.btnAbout.setText(_translate("frmMainMenuGUI", "About"))
 
+import icon_rc

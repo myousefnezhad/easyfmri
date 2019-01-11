@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="icons">
+    <file>Icons/icons8-database-64.png</file>
+    <file>Icons/icons8-brain-128.png</file>
+    <file>Icons/icons8-data-sheet-filled-64.png</file>
     <file>Icons/icons8-file.svg</file>
     <file>Icons/icons8-save-96.png</file>
     <file>Icons/icons8-play-96.png</file>

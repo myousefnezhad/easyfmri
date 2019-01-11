@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=easy fMRI (HiDPI)
+Categories=Machine Learning;Neuroscience;fMRI Analysis
+Exec=/usr/local/bin/ezfmri_scaled2
+Comment=fMRI Analysis
+Icon=/usr/share/icons/ezfmri.png
+StartupNotify=true
+Terminal=true
+Type=Application
+Keywords=fmri;matlab;machine;learning;ez;ezfmri;ezedit;neuroscince;brain;deep;rsa;hyperalignment;ha;classification;clustering;preprocessing;afni;suma;fsl;visualization;ha;pca;feature;

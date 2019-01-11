@@ -1,3 +1,22 @@
+#!/bin/bash
+
+# General Executable Files
 sudo cp ezfmri /usr/local/bin/.
-sudo cp ezfmri_scaled /usr/local/bin/.
+sudo cp ezfmri2 /usr/local/bin/.
 sudo cp ezedit /usr/local/bin/.
+sudo cp ezedit2 /usr/local/bin/.
+sudo cp ezfmri_scaled /usr/local/bin/.
+sudo cp ezfmri_scaled2 /usr/local/bin/.
+
+
+# Local Desktop Icons for Linux
+sudo mkdir -p /usr/share/icons
+sudo cp ezfmri.png /usr/share/icons/.
+sudo cp ezedit.png /usr/share/icons/.
+
+# Local Desktop Shortcuts for Linux
+sudo mkdir -p /usr/share/applications
+sudo cp ezfmridesktop  /usr/share/applications/ezfmri.desktop
+sudo cp ezfmrisdesktop /usr/share/applications/ezfmris.desktop
+sudo cp ezeditdesktop  /usr/share/applications/ezedit.desktop
+

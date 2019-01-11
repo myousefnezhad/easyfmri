@@ -1,3 +1,4 @@
+#!/bin/bash
 cp startupscript.sh ~/.startupscript
 echo "# This script is for easy fMRI" >> ~/.bash_profile
 echo "source ~/.startupscript" >> ~/.bash_profile

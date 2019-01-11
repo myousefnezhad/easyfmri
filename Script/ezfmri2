@@ -1,4 +1,4 @@
 #!/bin/bash
 source $HOME/.startupscript
 cd $EASYFMRI
-python main.py &
+python main.py

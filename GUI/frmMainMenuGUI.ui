@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>easy fMRI (2.0)</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../icon.qrc">
+    <normaloff>:/icons/Icons/icons8-brain-128.png</normaloff>:/icons/Icons/icons8-brain-128.png</iconset>
+  </property>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
@@ -270,6 +274,8 @@
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../icon.qrc"/>
+ </resources>
  <connections/>
 </ui>
