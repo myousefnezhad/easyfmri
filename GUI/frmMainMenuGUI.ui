@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>555</width>
-    <height>480</height>
+    <width>723</width>
+    <height>494</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,9 +20,9 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>551</width>
+     <x>100</x>
+     <y>14</y>
+     <width>611</width>
      <height>80</height>
     </rect>
    </property>
@@ -41,10 +41,10 @@
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>90</y>
-     <width>521</width>
-     <height>301</height>
+     <x>10</x>
+     <y>120</y>
+     <width>701</width>
+     <height>201</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -54,56 +54,108 @@
     <attribute name="title">
      <string>Main</string>
     </attribute>
-    <widget class="QPushButton" name="btnFeatureAnalysis">
+    <widget class="QToolButton" name="btnPreprocess">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>80</y>
-       <width>490</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Feature Analysis</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnModelAnalysis">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>140</y>
-       <width>490</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Model Analysis</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnPreprocess">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>20</y>
-       <width>490</width>
-       <height>51</height>
+       <y>10</y>
+       <width>160</width>
+       <height>150</height>
       </rect>
      </property>
      <property name="text">
       <string>Preprocessing (FSL)</string>
      </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icons/Icons/402612-200.png</normaloff>:/icons/Icons/402612-200.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextUnderIcon</enum>
+     </property>
     </widget>
-    <widget class="QPushButton" name="btnVisualization">
+    <widget class="QToolButton" name="btnFeatureAnalysis">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>200</y>
-       <width>490</width>
-       <height>51</height>
+       <x>350</x>
+       <y>10</y>
+       <width>160</width>
+       <height>150</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Feature Analysis</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icons/Icons/icons8-scatter-plot-filled-64.png</normaloff>:/icons/Icons/icons8-scatter-plot-filled-64.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextUnderIcon</enum>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="btnModelAnalysis">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>10</y>
+       <width>160</width>
+       <height>150</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Model Analysis</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icons/Icons/noun_mind_1705433.png</normaloff>:/icons/Icons/noun_mind_1705433.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextUnderIcon</enum>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="btnVisualization">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>10</y>
+       <width>160</width>
+       <height>150</height>
       </rect>
      </property>
      <property name="text">
       <string>Visualization (AFNI)</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icons/Icons/noun_Brain_7784.png</normaloff>:/icons/Icons/noun_Brain_7784.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextUnderIcon</enum>
      </property>
     </widget>
    </widget>
@@ -116,22 +168,9 @@
       <rect>
        <x>10</x>
        <y>40</y>
-       <width>490</width>
-       <height>26</height>
+       <width>491</width>
+       <height>121</height>
       </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnTools">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>90</y>
-       <width>490</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Run</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_2">
@@ -147,41 +186,41 @@
       <string>Select a tool:</string>
      </property>
     </widget>
+    <widget class="QToolButton" name="btnTools">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>10</y>
+       <width>160</width>
+       <height>150</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Run</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icons/Icons/icons8-play-100.png</normaloff>:/icons/Icons/icons8-play-100.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_3">
     <attribute name="title">
      <string>Mode</string>
     </attribute>
-    <widget class="QPushButton" name="btnStable">
-     <property name="geometry">
-      <rect>
-       <x>13</x>
-       <y>110</y>
-       <width>490</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Stable Mode</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="btnDev">
-     <property name="geometry">
-      <rect>
-       <x>13</x>
-       <y>180</y>
-       <width>490</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Developing Mode</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_3">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>20</y>
        <width>471</width>
        <height>20</height>
@@ -194,14 +233,66 @@
     <widget class="QLineEdit" name="txtEZDIR">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>47</y>
-       <width>481</width>
-       <height>23</height>
+       <width>321</width>
+       <height>111</height>
       </rect>
      </property>
      <property name="readOnly">
       <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="btnStable">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>10</y>
+       <width>160</width>
+       <height>150</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Stable</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icons/Icons/icons8-administrative-tools-100.png</normaloff>:/icons/Icons/icons8-administrative-tools-100.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextUnderIcon</enum>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="btnDev">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>10</y>
+       <width>160</width>
+       <height>150</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Developing</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icons/Icons/icons8-settings-100.png</normaloff>:/icons/Icons/icons8-settings-100.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextUnderIcon</enum>
      </property>
     </widget>
    </widget>
@@ -209,26 +300,13 @@
     <attribute name="title">
      <string>Update</string>
     </attribute>
-    <widget class="QPushButton" name="btnUpdate">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>90</y>
-       <width>490</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Run</string>
-     </property>
-    </widget>
     <widget class="QComboBox" name="cbSource">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>40</y>
-       <width>490</width>
-       <height>26</height>
+       <width>491</width>
+       <height>121</height>
       </rect>
      </property>
     </widget>
@@ -245,32 +323,106 @@
       <string>Source:</string>
      </property>
     </widget>
+    <widget class="QToolButton" name="btnUpdate">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>10</y>
+       <width>160</width>
+       <height>150</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Update</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../icon.qrc">
+       <normaloff>:/icons/Icons/icons8-installing-updates-100.png</normaloff>:/icons/Icons/icons8-installing-updates-100.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="popupMode">
+      <enum>QToolButton::DelayedPopup</enum>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonIconOnly</enum>
+     </property>
+    </widget>
    </widget>
   </widget>
-  <widget class="QPushButton" name="btnExit">
+  <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>410</y>
-     <width>255</width>
-     <height>51</height>
+     <x>10</x>
+     <y>10</y>
+     <width>91</width>
+     <height>91</height>
     </rect>
    </property>
    <property name="text">
-    <string>Exit</string>
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="../icon.qrc">:/icons/Icons/icons8-brain-128.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="btnAbout">
+  <widget class="QToolButton" name="btnExit">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>410</y>
-     <width>255</width>
-     <height>51</height>
+     <x>550</x>
+     <y>330</y>
+     <width>160</width>
+     <height>150</height>
     </rect>
    </property>
    <property name="text">
-    <string>About</string>
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="../icon.qrc">
+     <normaloff>:/icons/Icons/icons8-shutdown-100.png</normaloff>:/icons/Icons/icons8-shutdown-100.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
+   </property>
+   <property name="popupMode">
+    <enum>QToolButton::DelayedPopup</enum>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="btnAbout">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>330</y>
+     <width>160</width>
+     <height>150</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Contact Us</string>
+   </property>
+   <property name="icon">
+    <iconset resource="../icon.qrc">
+     <normaloff>:/icons/Icons/icons8-whatsapp-100.png</normaloff>:/icons/Icons/icons8-whatsapp-100.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>100</width>
+     <height>100</height>
+    </size>
    </property>
   </widget>
  </widget>
