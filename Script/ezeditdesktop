@@ -1,11 +1,17 @@
 [Desktop Entry]
 Name=easy Edit
-Categories=Machine Learning;Neuroscience;fMRI Analysis; Matlab; easy Data
-Exec=/usr/local/bin/ezedit2
+GenericName=easy Edit
+Exec=/usr/local/bin/ezedit2 %F
 Comment=fMRI Analysis
 Icon=/usr/share/icons/ezedit.png
-StartupNotify=true
 Terminal=true
 Type=Application
 Keywords=fmri;matlab;machine;learning;ez;ezfmri;ezedit;neuroscince;brain;deep;rsa;hyperalignment;ha;classification;clustering;preprocessing;afni;suma;fsl;visualization;ha;pca;feature;ezdata;
-MimeType=mat;ez;ezdata;ezheader;text/plain;inode/directory;
+NoDisplay=false
+StartupNotify=true
+StartupWMClass=Code
+Categories=Utility;TextEditor;Development;IDE;
+MimeType=text/plain;inode/directory;
+Actions=new-empty-window;
+
+
