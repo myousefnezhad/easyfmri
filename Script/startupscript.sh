@@ -20,6 +20,8 @@ export EN_PYTHON_ALIAS="1"
 export EN_AFNI="1"
 # This sets FSL base directory based on $FSLDIR and then run fsl.sh script
 export EN_FSL="1"
+# This set FreeSurface base directory and run the setup scrip
+export EN_FREESURFACE="1"
 # This enables CUDA environment variables
 export EN_CUDA="1"
 # This enables bash complete for using TAB in terminal
@@ -57,6 +59,8 @@ export FSLDIR="/usr/local/fsl"  # for FSL 5.0.1x
 export ANACON_PATH="$INSTALL_DIR/anaconda3/bin"
 # Base direcory of AFNI
 export AFNI_PATH="$INSTALL_DIR/abin"
+# Base directory for FreeSurface
+export FREESURFER_HOME="$INSTALL_DIR/freesurfer"
 # Base directory of CUDA
 export CUDA_HOME="/usr/local/cuda"
 # Scale parameter for OLED/HiDPI display
@@ -93,7 +97,10 @@ if (( $EN_FSL != "0" )); then
   . $FSLDIR/etc/fslconf/fsl.sh
   export PATH="$FSLDIR/bin:$PATH"
 fi
-
+####### FreeSurface
+if (( $EN_FREESURFACE != "0" )); then
+    source $FREESURFER_HOME/SetUpFreeSurfer.sh
+fi
 ######## QT Scale Factor
 if (( $EN_SCALE != "0" )); then
     export QT_SCALE_FACTOR=1
@@ -202,7 +209,7 @@ if (( $EN_COLOR != "0" )); then
   export PS1=""
 # Set Terminal Colors
   export CLICOLOR=1
-  alias ls='ls -GFh'
+  alias ls='ls -GFh --color=auto'
   export LSCOLORS=GxacCxDxBxegedabagaced
 # Root User
   if (( $EUID != 0 )); then
