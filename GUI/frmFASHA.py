@@ -27,20 +27,20 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from GUI.frmFAHAGUI import *
+from GUI.frmFASHAGUI import *
 from Hyperalignment.SHA import SHA
 from sklearn.preprocessing import label_binarize
 
 
-class frmFASHA(Ui_frmFAHA):
-    ui = Ui_frmFAHA()
+class frmFASHA(Ui_frmFASHA):
+    ui = Ui_frmFASHA()
     dialog = None
     # This function is run when the main form startRHA2
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmFAHA()
+        ui = Ui_frmFASHA()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
@@ -367,6 +367,24 @@ class frmFASHA(Ui_frmFAHA):
                 Regularization = np.float(ui.txtRegularization.text())
             except:
                 msgBox.setText("Regularization value is wrong!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+
+            # Lambda
+            try:
+                Lamd = np.float(ui.txtLambda.text())
+            except:
+                msgBox.setText("Lambda value is wrong!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            if Lamd < 0 and Lamd != -1:
+                msgBox.setText("Lambda value is wrong!")
                 msgBox.setIcon(QMessageBox.Critical)
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
@@ -937,7 +955,7 @@ class frmFASHA(Ui_frmFAHA):
 
             print("Testing Shape: " + str(np.shape(TeX)))
 
-            model = SHA(reg=Regularization)
+            model = SHA(reg=Regularization, lamb=Lamd)
 
             print("Running Hyperalignment on Training Data ...")
             MappedXtr, G, Sig, _, _, _ = model.train(TrX,TrY,Dim=NumFea)

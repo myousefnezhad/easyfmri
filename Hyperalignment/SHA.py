@@ -5,13 +5,14 @@ import time
 
 
 class SHA:
-    def __init__(self, reg = 10**-4):
+    def __init__(self, reg = 10**-4, lamb=-1):
         self.NumView        = None
         self.NumCat         = None
         self.NumVoxel       = None
         self.Dim            = None
         self.Runtime        = None
         self.reg            = reg
+        self.lamb           = lamb
 
         self.Sig            = None
         self.G              = None # Shared Space
@@ -46,31 +47,47 @@ class SHA:
             if verbose:
                 print('DATA -> View %d -> Run SVD ...' % (i + 1))
             Ti = np.shape(Xi)[0]
-            Hi = np.eye(Ti) - (1 / Ti) * np.ones((Ti, Ti))
+            if self.lamb == -1:
+                self.lamb = 1 / (2 * Ti)
+
+            if self.lamb > 1 / Ti:
+                print("WARNING: Lambda must be smaller than 1 / Ti")
+
+            Hi = np.eye(Ti) - self.lamb * np.ones((Ti, Ti))
+
             Ki = np.dot(Yi.T, Hi)
             Ks.append(Ki)
-            Ui, Si, Vi = scipy.linalg.svd(np.dot(Ki, Xi), full_matrices=False)
+            # Decompose KiXi for calculating W
+            Ui, Si, Vi          = scipy.linalg.svd(np.dot(Ki, Xi), full_matrices=False)
+            # Decompose Xi for calculating Ri based on G (and W)
             Un_Ui, Un_Si, Un_Vi = scipy.linalg.svd(Xi, full_matrices=False)
+
+
 
 
             if verbose:
                 print('DATA -> View %d -> Calculate Sigma inverse ...' % (i + 1))
 
+            # For KiXi => Pi = Sigma * (Sigma * Sigma + \epsilon  * I) * Sigma
             SIi = 1. / (np.multiply(Si, Si) + self.reg)
             Phi = np.diag(np.sqrt(np.multiply(np.multiply(Si, SIi), Si)))
 
+            # For Xi => Pi = Sigma * (Sigma * Sigma + \epsilon  * I) * Sigma
             Un_SIi = 1. / (np.multiply(Un_Si, Un_Si) + self.reg)
             Un_Phi = np.diag(np.sqrt(np.multiply(np.multiply(Un_Si, Un_SIi), Un_Si)))
 
+
+            # For KiXi => I - Ai*Di
             if verbose:
                 print('DATA -> Calculate dot product AT for View %d' % (i + 1))
-            UPhi = np.dot(Ui, Phi)
+            UPhi = np.eye(np.shape(Ui)[0]) - np.dot(Ui, Phi)
             Un_UPhi = np.dot(Un_Ui, Un_Phi)
 
 
             UTs.append(Un_UPhi)
             if verbose:
                 print('DATA -> View %d -> Calculate Incremental PCA ...' % (i + 1))
+
             SharedTilde, SigmaTilde = self._batch_incremental_pca(UPhi, SharedTilde, SigmaTilde, i, verbose)
 
             if verbose:
