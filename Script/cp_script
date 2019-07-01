@@ -2,23 +2,30 @@
 
 # General Executable Files
 sudo cp ezfmri /usr/local/bin/.
+sudo chmod -c 7777 /usr/local/bin/ezfmri
 sudo cp ezfmri2 /usr/local/bin/.
+sudo chmod -c 7777 /usr/local/bin/ezfmri2
 sudo cp ezedit /usr/local/bin/.
+sudo chmod -c 7777 /usr/local/bin/ezedit
 sudo cp ezedit2 /usr/local/bin/.
+sudo chmod -c 7777 /usr/local/bin/ezedit2
 sudo cp ezfmri_scaled /usr/local/bin/.
+sudo chmod -c 7777 /usr/local/bin/ezfmri_scaled
 sudo cp ezfmri_scaled2 /usr/local/bin/.
-
+sudo chmod -c 7777 /usr/local/bin/ezfmri_scaled2
 
 # Local Desktop Icons for Linux
 sudo mkdir -p /usr/share/icons
 sudo cp ezfmri.png /usr/share/icons/.
+sudo chmod -c 7777 /usr/share/icons/ezfmri.png
 sudo cp ezedit.png /usr/share/icons/.
+sudo chmod -c 7777 /usr/share/icons/ezedit.png
 
 # Local Desktop Shortcuts for Linux
 sudo mkdir -p /usr/share/applications
 sudo cp ezfmridesktop  /usr/share/applications/ezfmri.desktop
+sudo chmod -c 7777 /usr/share/applications/ezfmri.desktop
 sudo cp ezfmrisdesktop /usr/share/applications/ezfmris.desktop
+sudo chmod -c 7777 /usr/share/applications/ezfmris.desktop
 sudo cp ezeditdesktop  /usr/share/applications/ezedit.desktop
-sudo chmod +x /usr/share/applications/ezedit.desktop
-
-
+sudo chmod -c 7777 /usr/share/applications/ezedit.desktop
