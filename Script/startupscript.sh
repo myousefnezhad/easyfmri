@@ -21,7 +21,7 @@ export EN_AFNI="1"
 # This sets FSL base directory based on $FSLDIR and then run fsl.sh script
 export EN_FSL="1"
 # This set FreeSurface base directory and run the setup scrip
-export EN_FREESURFACE="1"
+export EN_FREESURFACE="0"
 # This enables CUDA environment variables
 export EN_CUDA="1"
 # This enables bash complete for using TAB in terminal
@@ -36,6 +36,10 @@ export EN_SCALE="0"
 export EN_SCALE_WISH="1" # Run FSL with Scale Factor
 # Enabling this item for illustrating GIT current status in terminal
 export EN_GIT="1"
+# Latex (set LaTex Path as well)
+export EN_LATEX="0"
+# Long/Short path address in prompt
+export EN_LONGADDRESS="1"
 # Enabling this item for illustrating current Anaconda env in terminal
 # Further you can change the Anaconda environment via aenv/denv commands for switching between different versions of Python
 export EN_AENV="1"
@@ -63,6 +67,8 @@ export AFNI_PATH="$INSTALL_DIR/abin"
 export FREESURFER_HOME="$INSTALL_DIR/freesurfer"
 # Base directory of CUDA
 export CUDA_HOME="/usr/local/cuda"
+# Latex directory
+export LATEX_DIR="/usr/local/texlive/2018/bin/x86_64-linux"
 # Scale parameter for OLED/HiDPI display
 export SCREEN_SCALE=2     # Set it for OLED display, 2 means 200x
 # Uncomment this item if you installed FSL via http://neuro.debian.net/
@@ -73,9 +79,15 @@ export SCREEN_SCALE=2     # Set it for OLED display, 2 means 200x
 # Scripts                            #
 ######################################
 
+## LaTex
+if (( $EN_LATEX != "0" )); then
+  export PATH="$LATEX_DIR:$PATH"
+fi
+
 ######## Easy fMRI
 if (( $EN_EZFMRI != "0" )); then
   export EASYFMRI="$INSTALL_DIR/.easyfmri"
+  export PATH="$INSTALL_DIR/easyfmri/bin:$PATH"
 fi
 
 ######## Python
@@ -156,6 +168,13 @@ fi
   C_BG_PURPLE="\[\033[45m\]"
   C_BG_CYAN="\[\033[46m\]"
   C_BG_LIGHTGRAY="\[\033[47m\]"
+  C2_LightBlue="\[\033[38;5;081m\]"
+  C2_LightGray="\[\033[38;5;245m\]"
+  C2_LightPurple="\[\033[38;5;206m\]"
+  C2_Red="\[\033[01;31m\]"
+  C2_Orange="\[\033[38;5;214m\]"
+  C2_Blue="\[\033[38;5;039m\]"
+
 
 ###### Anaconda envs
 if (( $EN_AENV != "0" )); then
@@ -209,24 +228,36 @@ if (( $EN_COLOR != "0" )); then
   export PS1=""
 # Set Terminal Colors
   export CLICOLOR=1
-  alias ls='ls -GFh --color=auto'
+  alias ls='ls --color=auto -GFh'
   export LSCOLORS=GxacCxDxBxegedabagaced
-# Root User
+# Normal/Root User
   if (( $EUID != 0 )); then
-    export LSCOLORS=GxacCxDxBxegedabagaced
-    export PS1+="$C_LIGHTGREEN\u$C_DEFAULT@$C_LIGHTCYAN\h$C_DEFAULT:$C_LIGHTBLUE\W"
+    export PS1+="$C2_Blue\u"
   else
-    export PS1+="$C_LIGHTPURPLE\u$C_DEFAULT@$C_LIGHTCYAN\h$C_DEFAULT:$C_LIGHTBLUE\W"
+    export PS1+="$C2_Red\u"
   fi
-  if (( $EN_GIT != "0" )); then
+# Add @ <Computer Name> :
+  export PS1+="$C2_LightGray@$C_LIGHTGREEN\H$C2_LightGray:$C2_Orange"
+# Long/Short path in prompt
+  if (( $EN_LONGADDRESS != "0" )); then
+    export PS1+="\w "
+  else
+    export PS1+="\W "
+  fi
 # Git Information
-    PS1+='\[\033[01;31m\]$(parse_git_branch)'
+  if (( $EN_GIT != "0" )); then
+    export PS1+='\[\033[38;5;177m\]$(parse_git_branch)'
   fi
-# Prompot Symbol
-  PS1+="$C_DEFAULT\$$C_LIGHTYELLOW "
+# Prompt Symbol
+  if (( $EUID != 0 )); then
+    export PS1+="$C2_LightGray\$$C2_LightBlue "
+  else
+    export PS1+="$C2_LightGray#$C2_LightBlue "
+  fi
 fi
 
 ####### Run Anaconda env in startup
 if (( $RUN_AENV != "0" )); then
   aenv
 fi
+clear
