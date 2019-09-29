@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # For installing this script:
 # 1. copy this file to home directory
 # 2. Enable/Disable the features
@@ -16,6 +17,8 @@ export EN_EZFMRI="1"
 export EN_PYTHON="1"
 # This enables iPython by default when you run python in terminal
 export EN_PYTHON_ALIAS="1"
+# This sets julia base direcotry
+export EN_JULIA="1"
 # This sets AFNI base directory based on $AFNI_PATH
 export EN_AFNI="1"
 # This sets FSL base directory based on $FSLDIR and then run fsl.sh script
@@ -32,14 +35,16 @@ export EN_MC="0"
 export EN_PTOMPT="1"
 # This enables modern colorful command prompt in terminal, e.g., user>computer>
 export EN_PTOMPT_MODERN="1"
+# Turn it on for OLED/HiDPI display, if EN_SCALE_AUTO = 0 then default is 200x. It is related to easy fMRI setting.
+export EN_SCALE="1"
 # Turn it on for OLED/HiDPI display, default is 200x. It is related to easy fMRI setting.
-export EN_SCALE="0"
+export EN_SCALE_AUTO="1"
 # Turn it on for OLED/HiDPI display, default is 200x. It is related to FSL setting.
 export EN_SCALE_WISH="1" # Run FSL with Scale Factor
 # Enabling this item for illustrating GIT current status in terminal
 export EN_GIT="1"
 # Latex (set LaTex Path as well)
-export EN_LATEX="0"
+export EN_LATEX="1"
 # Long/Short path address in prompt
 export EN_LONGADDRESS="1"
 # Enabling this item for illustrating current Anaconda env in terminal
@@ -61,8 +66,10 @@ alias proxyoff='export http_proxy= && export https_proxy='
 export INSTALL_DIR="$HOME"
 # Base directory of FSL
 export FSLDIR="/usr/local/fsl"  # for FSL 5.0.1x
-# Base direcory of Anaconda (Python 3.7.x)
+# Base directory of Anaconda (Python 3.7.x)
 export ANACON_PATH="$INSTALL_DIR/anaconda3/bin"
+# Base directory of Julia
+export JULIA_PATH="$INSTALL_DIR/julia/bin"
 # Base direcory of AFNI
 export AFNI_PATH="$INSTALL_DIR/abin"
 # Base directory for FreeSurface
@@ -70,7 +77,7 @@ export FREESURFER_HOME="$INSTALL_DIR/freesurfer"
 # Base directory of CUDA
 export CUDA_HOME="/usr/local/cuda"
 # Latex directory
-export LATEX_DIR="/usr/local/texlive/2018/bin/x86_64-linux"
+export LATEX_DIR="/usr/local/texlive/2019/bin/x86_64-linux"
 # Scale parameter for OLED/HiDPI display
 export SCREEN_SCALE="2"     # Set it for OLED display, "2" means 200x for the first screen, "2;1.5" means 200x for 1st monitor and 150x for 2nd monitor
 # Uncomment this item if you installed FSL via http://neuro.debian.net/
@@ -81,6 +88,11 @@ export SCREEN_SCALE="2"     # Set it for OLED display, "2" means 200x for the fi
 # Scripts                            #
 ######################################
 
+## Julia
+if (( $EN_JULIA != "0" )); then
+  export PATH="$JULIA_PATH:$PATH"
+fi
+
 ## LaTex
 if (( $EN_LATEX != "0" )); then
   export PATH="$LATEX_DIR:$PATH"
@@ -88,7 +100,7 @@ fi
 
 ######## Easy fMRI
 if (( $EN_EZFMRI != "0" )); then
-  export EASYFMRI="$INSTALL_DIR/.easyfmri"
+  export EASYFMRI="$INSTALL_DIR/easyfmri"
   export PATH="$INSTALL_DIR/easyfmri/bin:$PATH"
 fi
 
@@ -117,15 +129,19 @@ if (( $EN_FREESURFACE != "0" )); then
 fi
 ######## QT Scale Factor
 if (( $EN_SCALE != "0" )); then
-    export QT_SCALE_FACTOR=1
-    export QT_AUTO_SCREEN_SCALE_FACTOR=0
-    export QT_SCREEN_SCALE_FACTORS=$SCREEN_SCALE
-    # Uncomment these parameters if you are using HiDPI with 100x scale in your Linux (GDK/Gnome) setting
-    #export GDK_DPI_SCALE=$SCREEN_SCALE
-    #export GDK_SCALE=$SCREEN_SCALE
-    if (( $EN_SCALE_WISH != "0" )); then
+   if (( $EN_SCALE_AUTO != "0" )); then
+     export QT_AUTO_SCREEN_SCALE_FACTOR=1
+   else
+     export QT_SCALE_FACTOR=1
+     export QT_AUTO_SCREEN_SCALE_FACTOR=0
+     export QT_SCREEN_SCALE_FACTORS=$SCREEN_SCALE
+   fi
+   # Uncomment these parameters if you are using HiDPI with 100x scale in your Linux (GDK/Gnome) setting
+   #export GDK_DPI_SCALE=$SCREEN_SCALE
+   #export GDK_SCALE=$SCREEN_SCALE
+   if (( $EN_SCALE_WISH != "0" )); then
         export FSLWISH="/usr/bin/wish"
-    fi
+   fi
 fi
 
 ####### CUDA
@@ -190,6 +206,8 @@ MC1_BLACK_LBLUE="\[\033[48;5;0m\033[38;5;33m\]"
 MC1_BLACK_ORANGE="\[\033[48;5;0m\033[38;5;214m\]"
 MC1_BLACK_RED="\[\033[48;5;0m\033[38;5;196m\]"
 MC1_TRIANGLE=$'\uE0B0'
+MC1_ORIGINAL_LBLUE="\[\033[0m\033[38;5;33;1m\]"
+MC1_ORIGINAL_ORANGE="\[\033[0m\033[38;5;214m\]"
 
 ###### Anaconda envs
 if (( $EN_AENV != "0" )); then
@@ -268,7 +286,7 @@ if (( $EN_PTOMPT != "0" )); then
       export PS1+='\[\033[38;5;57;1m\]$(parse_git_branch)'
     fi
 
-  export PS1+="$MC1_BLACK_ORANGE$MC1_TRIANGLE$MC1_BLACK_LBLUE "
+  export PS1+="$MC1_ORIGINAL_ORANGE$MC1_TRIANGLE$MC1_ORIGINAL_LBLUE "
   # Classical Prompt
   else
   # Normal/Root User
