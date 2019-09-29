@@ -1,4 +1,4 @@
-easy fMRI project (V1.8B8000 beta)
+easy fMRI project (V1.8B8100 beta)
 ==================================
 
 ### Introduction
@@ -337,7 +337,7 @@ conda install pytorch-cpu torchvision-cpu -c pytorch
 For GPU Vesion: You must install [CUDA 10](https://developer.nvidia.com/cuda-toolkit) and [cuDNN 7.4.1](https://developer.nvidia.com/cudnn). Then, you can install [PyTorch](https://pytorch.org/)
 
 ```
-conda install pytorch torchvision cuda100 -c pytorch
+conda install pytorch torchvision cudatoolkit=10.0
 ```
 
 #### STEP E) Run easy fMRI
