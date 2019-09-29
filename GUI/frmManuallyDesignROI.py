@@ -77,7 +77,7 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
         ui.txtCode.modes.append(modes.CodeCompletionMode())
         ui.txtCode.modes.append(modes.CaretLineHighlighterMode())
         ui.txtCode.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtCode.document()))
-        ui.txtCode.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
+        #ui.txtCode.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
         ui.txtCode.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
 
         font = QtGui.QFont()
