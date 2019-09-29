@@ -28,8 +28,10 @@ export EN_CUDA="1"
 export EN_BASH="1"
 # This sets environment variables for old version of midnight commander
 export EN_MC="0"
-# This enables colorful command prompt in terminal
-export EN_COLOR="1"
+# This enables colorful command prompt in terminal, e.g., user@computer
+export EN_PTOMPT="1"
+# This enables modern colorful command prompt in terminal, e.g., user>computer>
+export EN_PTOMPT_MODERN="1"
 # Turn it on for OLED/HiDPI display, default is 200x. It is related to easy fMRI setting.
 export EN_SCALE="0"
 # Turn it on for OLED/HiDPI display, default is 200x. It is related to FSL setting.
@@ -70,7 +72,7 @@ export CUDA_HOME="/usr/local/cuda"
 # Latex directory
 export LATEX_DIR="/usr/local/texlive/2018/bin/x86_64-linux"
 # Scale parameter for OLED/HiDPI display
-export SCREEN_SCALE=2     # Set it for OLED display, 2 means 200x
+export SCREEN_SCALE="2"     # Set it for OLED display, "2" means 200x for the first screen, "2;1.5" means 200x for 1st monitor and 150x for 2nd monitor
 # Uncomment this item if you installed FSL via http://neuro.debian.net/
 # export FSLDIR="/usr/share/fsl/5.0" # for FSL 5.0.9
 # Uncomment this item if you are using an embedded linux in Windows 10 via WSL
@@ -142,39 +144,52 @@ fi
 if (( $EN_MC != "0" )); then
   alias mc=". /usr/local/opt/midnight-commander/libexec/mc/mc-wrapper.sh"
 fi
-####### Define Colors
-  C_DEFAULT="\[\033[m\]"
-  C_WHITE="\[\033[1m\]"
-  C_BLACK="\[\033[30m\]"
-  C_RED="\[\033[31m\]"
-  C_GREEN="\[\033[32m\]"
-  C_YELLOW="\[\033[33m\]"
-  C_BLUE="\[\033[34m\]"
-  C_PURPLE="\[\033[35m\]"
-  C_CYAN="\[\033[36m\]"
-  C_LIGHTGRAY="\[\033[37m\]"
-  C_DARKGRAY="\[\033[1;30m\]"
-  C_LIGHTRED="\[\033[1;31m\]"
-  C_LIGHTGREEN="\[\033[1;32m\]"
-  C_LIGHTYELLOW="\[\033[1;33m\]"
-  C_LIGHTBLUE="\[\033[1;34m\]"
-  C_LIGHTPURPLE="\[\033[1;35m\]"
-  C_LIGHTCYAN="\[\033[1;36m\]"
-  C_BG_BLACK="\[\033[40m\]"
-  C_BG_RED="\[\033[41m\]"
-  C_BG_GREEN="\[\033[42m\]"
-  C_BG_YELLOW="\[\033[43m\]"
-  C_BG_BLUE="\[\033[44m\]"
-  C_BG_PURPLE="\[\033[45m\]"
-  C_BG_CYAN="\[\033[46m\]"
-  C_BG_LIGHTGRAY="\[\033[47m\]"
-  C2_LightBlue="\[\033[38;5;081m\]"
-  C2_LightGray="\[\033[38;5;245m\]"
-  C2_LightPurple="\[\033[38;5;206m\]"
-  C2_Red="\[\033[01;31m\]"
-  C2_Orange="\[\033[38;5;214m\]"
-  C2_Blue="\[\033[38;5;039m\]"
 
+####### Define Colors
+C_DEFAULT="\[\033[m\]"
+C_WHITE="\[\033[1m\]"
+C_BLACK="\[\033[30m\]"
+C_RED="\[\033[31m\]"
+C_GREEN="\[\033[32m\]"
+C_YELLOW="\[\033[33m\]"
+C_BLUE="\[\033[34m\]"
+C_PURPLE="\[\033[35m\]"
+C_CYAN="\[\033[36m\]"
+C_LIGHTGRAY="\[\033[37m\]"
+C_DARKGRAY="\[\033[1;30m\]"
+C_LIGHTRED="\[\033[1;31m\]"
+C_LIGHTGREEN="\[\033[1;32m\]"
+C_LIGHTYELLOW="\[\033[1;33m\]"
+C_LIGHTBLUE="\[\033[1;34m\]"
+C_LIGHTPURPLE="\[\033[1;35m\]"
+C_LIGHTCYAN="\[\033[1;36m\]"
+C_BG_BLACK="\[\033[40m\]"
+C_BG_RED="\[\033[41m\]"
+C_BG_GREEN="\[\033[42m\]"
+C_BG_YELLOW="\[\033[43m\]"
+C_BG_BLUE="\[\033[44m\]"
+C_BG_PURPLE="\[\033[45m\]"
+C_BG_CYAN="\[\033[46m\]"
+C_BG_LIGHTGRAY="\[\033[47m\]"
+C2_LightBlue="\[\033[38;5;081m\]"
+C2_LightGray="\[\033[38;5;245m\]"
+C2_LightPurple="\[\033[38;5;206m\]"
+C2_Red="\[\033[01;31m\]"
+C2_Orange="\[\033[38;5;214m\]"
+C2_Blue="\[\033[38;5;039m\]"
+MC1_GREEN_WHITE_BOLD="\[\033[48;5;28;97;1m\]" # m\033[38;5;256;1m
+MC1_LBLUE_WHITE_BOLD="\[\033[48;5;33;1;97m\]"
+MC1_LBLUE_GREEN="\[\033[48;5;33m\033[38;5;28m\]"
+MC1_PURPLE_WHITE_BOLD="\[\033[48;5;90;97;1m\]"
+MC1_LBLUE_PURPLE="\[\033[48;5;33m\033[38;5;90m\]"
+MC1_ORANGE_BLACK_BOLD="\[\033[48;5;214m\033[38;5;8;1m\]"
+MC1_ORANGE_LBLUE="\[\033[48;5;214m\033[38;5;33m\]"
+MC1_RED_ORANGE="\[\033[48;5;196m\033[38;5;214m\]"
+MC1_RED_WHITE_BOLD="\[\033[48;5;196;97;1m\]"
+MC1_BLACK_LBLUE="\[\033[48;5;0m\033[38;5;33m\]"
+MC1_BLACK_ORANGE="\[\033[48;5;0m\033[38;5;214m\]"
+MC1_BLACK_RED="\[\033[48;5;0m\033[38;5;196m\]"
+MC1_TRIANGLE=$'\uE0B0'
 
 ###### Anaconda envs
 if (( $EN_AENV != "0" )); then
@@ -214,7 +229,7 @@ fi
 ####### Git Prompt
 if (( $EN_GIT != "0" )); then
 parse_git_branch() {
- git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 
 git_info() {
@@ -222,40 +237,66 @@ git_info() {
 }
 fi
 
-
 ####### BASH SETUP
-if (( $EN_COLOR != "0" )); then
+if (( $EN_PTOMPT != "0" )); then
+######################################### COMMON
   export PS1=""
-# Set Terminal Colors
+  # Set Terminal Colors
   export CLICOLOR=1
   alias ls='ls --color=auto -GFh'
   export LSCOLORS=GxacCxDxBxegedabagaced
-# Normal/Root User
-  if (( $EUID != 0 )); then
-    export PS1+="$C2_Blue\u"
+#########################################
+  # Modern Prompt
+  if (( $EN_PTOMPT_MODERN != "0" )); then
+  # Normal/Root User
+    if (( $EUID != 0 )); then
+      export PS1+="$MC1_GREEN_WHITE_BOLD\u $MC1_LBLUE_GREEN$MC1_TRIANGLE "
+    else
+      export PS1+="$MC1_PURPLE_WHITE_BOLD\u $MC1_LBLUE_PURPLE$MC1_TRIANGLE "
+    fi
+  # Add @ <Computer Name> :
+    export PS1+="$MC1_LBLUE_WHITE_BOLD\H $MC1_ORANGE_LBLUE$MC1_TRIANGLE "
+  # Long/Short path in prompt
+    if (( $EN_LONGADDRESS != "0" )); then
+      export PS1+="$MC1_ORANGE_BLACK_BOLD\w "
+    else
+      export PS1+="$MC1_ORANGE_BLACK_BOLD\W "
+    fi
+  #
+  # Git Information
+    if (( $EN_GIT != "0" )); then
+      export PS1+='\[\033[38;5;57;1m\]$(parse_git_branch)'
+    fi
+
+  export PS1+="$MC1_BLACK_ORANGE$MC1_TRIANGLE$MC1_BLACK_LBLUE "
+  # Classical Prompt
   else
-    export PS1+="$C2_Red\u"
-  fi
-# Add @ <Computer Name> :
-  export PS1+="$C2_LightGray@$C_LIGHTGREEN\H$C2_LightGray:$C2_Orange"
-# Long/Short path in prompt
-  if (( $EN_LONGADDRESS != "0" )); then
-    export PS1+="\w "
-  else
-    export PS1+="\W "
-  fi
-# Git Information
-  if (( $EN_GIT != "0" )); then
-    export PS1+='\[\033[38;5;177m\]$(parse_git_branch)'
-  fi
-# Prompt Symbol
-  if (( $EUID != 0 )); then
-    export PS1+="$C2_LightGray\$$C2_LightBlue "
-  else
-    export PS1+="$C2_LightGray#$C2_LightBlue "
+  # Normal/Root User
+    if (( $EUID != 0 )); then
+      export PS1+="$C2_Blue\u"
+    else
+      export PS1+="$C2_Red\u"
+    fi
+  # Add @ <Computer Name> :
+    export PS1+="$C2_LightGray@$C_LIGHTGREEN\H$C2_LightGray:$C2_Orange"
+  # Long/Short path in prompt
+    if (( $EN_LONGADDRESS != "0" )); then
+      export PS1+="\w "
+    else
+      export PS1+="\W "
+    fi
+  # Git Information
+    if (( $EN_GIT != "0" )); then
+      export PS1+='\[\033[38;5;177m\]$(parse_git_branch)'
+    fi
+  # Prompt Symbol
+    if (( $EUID != 0 )); then
+      export PS1+="$C2_LightGray\$$C2_LightBlue "
+    else
+      export PS1+="$C2_LightGray#$C2_LightBlue "
+    fi
   fi
 fi
-
 ####### Run Anaconda env in startup
 if (( $RUN_AENV != "0" )); then
   aenv
