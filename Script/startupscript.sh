@@ -35,6 +35,8 @@ export EN_MC="0"
 export EN_PTOMPT="1"
 # This enables modern colorful command prompt in terminal, e.g., user>computer>
 export EN_PTOMPT_MODERN="1"
+# This enables a swithachable mode for prompt between emulator and text-mode
+export EN_PROMPT_AUTO="1"
 # Turn it on for OLED/HiDPI display, if EN_SCALE_AUTO = 0 then default is 200x. It is related to easy fMRI setting.
 export EN_SCALE="1"
 # Turn it on for OLED/HiDPI display, default is 200x. It is related to easy fMRI setting.
@@ -264,8 +266,16 @@ if (( $EN_PTOMPT != "0" )); then
   alias ls='ls --color=auto -GFh'
   export LSCOLORS=GxacCxDxBxegedabagaced
 #########################################
+  export EN_PROMPT_AUTO_MODERN="1"
+  if (( $EN_PROMPT_AUTO != "0" )); then
+    if (( $TERM == "linux" )); then
+      # Classic Mode
+      export EN_PROMPT_AUTO_MODERN="0"
+    fi
+  fi
+
   # Modern Prompt
-  if (( $EN_PTOMPT_MODERN != "0" )); then
+  if (( $EN_PTOMPT_MODERN != "0" && $EN_PROMPT_AUTO_MODERN != "0")); then
   # Normal/Root User
     if (( $EUID != 0 )); then
       export PS1+="$MC1_GREEN_WHITE_BOLD\u $MC1_LBLUE_GREEN$MC1_TRIANGLE "
