@@ -43,6 +43,8 @@ export EN_SCALE="1"
 export EN_SCALE_AUTO="1"
 # Turn it on for OLED/HiDPI display, default is 200x. It is related to FSL setting.
 export EN_SCALE_WISH="1" # Run FSL with Scale Factor
+# Clean Screen
+export EN_CLEAN_SCREEN="0"
 # Enabling this item for illustrating GIT current status in terminal
 export EN_GIT="1"
 # Latex (set LaTex Path as well)
@@ -268,7 +270,7 @@ if (( $EN_PTOMPT != "0" )); then
 #########################################
   export EN_PROMPT_AUTO_MODERN="1"
   if (( $EN_PROMPT_AUTO != "0" )); then
-    if (( $TERM == "linux" )); then
+    if [ $TERM == "linux" ]; then
       # Classic Mode
       export EN_PROMPT_AUTO_MODERN="0"
     fi
@@ -329,4 +331,7 @@ fi
 if (( $RUN_AENV != "0" )); then
   aenv
 fi
-clear
+###### Clean Screen
+if (( $EN_CLEAN_SCREEN != "0" )); then
+  clear
+fi
