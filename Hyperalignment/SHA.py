@@ -1,9 +1,29 @@
+# Copyright (c) 2014--2019 Muhammad Yousefnezhad
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import numpy as np
 import scipy.sparse
 import scipy.linalg
 import time
 
-
+# Supervised Hyperalignment
 class SHA:
     def __init__(self, reg = 10**-4, lamb=-1):
         self.NumView        = None
@@ -62,9 +82,6 @@ class SHA:
             # Decompose Xi for calculating Ri based on G (and W)
             Un_Ui, Un_Si, Un_Vi = scipy.linalg.svd(Xi, full_matrices=False)
 
-
-
-
             if verbose:
                 print('DATA -> View %d -> Calculate Sigma inverse ...' % (i + 1))
 
@@ -106,10 +123,7 @@ class SHA:
             print('TRAIN DATA -> Mapping to shared space ...')
               # Get mapping to shared space
         for pid, UTi in enumerate(UTs):
-
             xtrprokject = np.dot(np.dot(UTi, np.transpose(UTi)), self.G)
-
-            # xtrprokject = np.dot(np.dot(UTi, np.transpose(UTi)),self.G)
             # Save features
             self.Xtrain.append(xtrprokject)
             # Save errors
@@ -119,13 +133,7 @@ class SHA:
 
         self.Runtime = time.time() - tic
 
-
         return self.Xtrain, self.G, self.Sig, self.Runtime, np.mean(self.Etrain), self.Etrain
-
-
-
-
-
 
     def test(self, views, G=None, verbose=True):
         tme = time.time()
@@ -174,12 +182,6 @@ class SHA:
             print('TEST DATA -> View %d is projected ...' % (i + 1))
 
         return self.Xtest, time.time() - tme, np.mean(self.ETest), self.ETest
-
-
-
-
-
-
 
     @staticmethod
     def _batch_incremental_pca(x, G, S, i, verbose):
