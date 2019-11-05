@@ -983,16 +983,20 @@ class frmFASRM(Ui_frmFASRM):
                 NumFea = np.min(np.shape(TrX)[1:3])
                 print("Number of features are automatically selected as ", NumFea)
 
+            MessageString = ""
             SharedR = None
             try:
 
                 if Model == "Probabilistic SRM":
                     model = SRM(n_iter=NIter,features=NumFea)
+                    MessageString = "Probabilistic "
                 elif Model == "Deterministic SRM":
                     model = DetSRM(n_iter=NIter,features=NumFea)
+                    MessageString = "Deterministic "
                 else:
                     model = RSRM(n_iter=NIter, features=NumFea, gamma=Gamma)
                     SharedR = True
+                    MessageString = "Robust "
 
 
                 print("Running Hyperalignment on Training Data ...")
@@ -1072,8 +1076,8 @@ class frmFASRM(Ui_frmFASRM):
             print("Fold " + str(fold_all) + " is DONE: " + OutFile)
 
         print("Runtime: ", totalTime)
-        print("Shared Response Model (SRM) is done.")
-        msgBox.setText("Shared Response Model (SRM) is done.")
+        print(MessageString + "Shared Response Model is done.")
+        msgBox.setText(MessageString + "Shared Response Model is done.")
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
