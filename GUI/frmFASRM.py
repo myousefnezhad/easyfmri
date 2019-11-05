@@ -983,9 +983,9 @@ class frmFASRM(Ui_frmFASRM):
                 NumFea = np.min(np.shape(TrX)[1:3])
                 print("Number of features are automatically selected as ", NumFea)
 
+            SharedR = None
             try:
 
-                SharedR = None
                 if Model == "Probabilistic SRM":
                     model = SRM(n_iter=NIter,features=NumFea)
                 elif Model == "Deterministic SRM":
@@ -999,6 +999,7 @@ class frmFASRM(Ui_frmFASRM):
                 model.fit(TrX)
                 if SharedR == True:
                     S = model.r_
+                    Specific_train = model.s_
                 else:
                     S = model.s_
                 WTr = model.w_
@@ -1013,18 +1014,45 @@ class frmFASRM(Ui_frmFASRM):
                 print("Running Hyperalignment on Testing Data ...")
                 TeHX = None
                 WTe = list()
-                for vid, view in enumerate(TeX):
-                    product = np.dot(view, np.transpose(S))
-                    U, _, V = lg.svd(product, full_matrices=False, check_finite=False)
-                    Wtest = np.dot(U,V)
-                    WTe.append(Wtest)
-                    TeHX = np.concatenate((TeHX, np.transpose(np.dot(np.transpose(Wtest),view)))) if TeHX is not None else np.transpose(np.dot(np.transpose(Wtest),view))
+                if SharedR:
+                    Specific_test = np.zeros(np.shape(TeX))
+                    for ijk in range(NIter):
+                        # Considering Specific_Test is fixed and Updating Wi
+                        WTe = list()
+                        for vid, view in enumerate(TeX):
+                            product = np.dot(view - Specific_test[vid], np.transpose(S))
+                            U, _, V = lg.svd(product, full_matrices=False, check_finite=False)
+                            WTe.append(np.dot(U, V))
+                        # Considering Wi is fixed and Updating Specific_test
+                        Specific_test = list()
+                        for vid, (view, Wtest) in enumerate(zip(TeX, WTe)):
+                            NewSpec = view - np.dot(Wtest, S)
+                            posIndex = NewSpec > Gamma
+                            negIndex = NewSpec < -Gamma
+                            NewSpec[posIndex] -= Gamma
+                            NewSpec[negIndex] += Gamma
+                            NewSpec[np.logical_and(~posIndex, ~negIndex)] = .0
+                            Specific_test.append(NewSpec)
+
+                    # Generating the concatenate results
+                    for Wtest in WTe:
+                            TeHX = Wtest if TeHX is None else np.concatenate((TeHX, np.transpose(Wtest)))
+                else:
+                    for vid, view in enumerate(TeX):
+                            product = np.dot(view, np.transpose(S))
+                            U, _, V = lg.svd(product, full_matrices=False, check_finite=False)
+                            Wtest = np.dot(U,V)
+                            WTe.append(Wtest)
+                            TeHX = np.concatenate((TeHX, np.transpose(np.dot(np.transpose(Wtest),view)))) if TeHX is not None else np.transpose(np.dot(np.transpose(Wtest),view))
                 OutData[ui.txtOTeData.text()] = TeHX
             except Exception as e:
                 print(e)
 
             HAParam = dict()
             HAParam["Share"]    = S
+            if SharedR:
+                HAParam["Specific_train"] = Specific_train
+                HAParam["Specific_test"]  = Specific_test
             HAParam["WTrain"]   = WTr
             HAParam["WTest"]    = WTe
             HAParam["Model"]    = Model
