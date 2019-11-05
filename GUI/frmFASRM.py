@@ -999,10 +999,15 @@ class frmFASRM(Ui_frmFASRM):
                 model.fit(TrX)
                 if SharedR == True:
                     S = model.r_
-                    Specific_train = model.s_
+                    Spec_train = list()
+                    for spec in model.s_:
+                        Spec_train.append(np.transpose(spec))
                 else:
                     S = model.s_
-                WTr = model.w_
+
+                WTr = list()
+                for wtri in model.w_ :
+                    WTr.append(wtri)
                 # Train Dot Product
                 print("Producting Training Data ...")
                 TrHX = None
@@ -1035,8 +1040,10 @@ class frmFASRM(Ui_frmFASRM):
                             Specific_test.append(NewSpec)
 
                     # Generating the concatenate results
-                    for Wtest in WTe:
-                            TeHX = Wtest if TeHX is None else np.concatenate((TeHX, np.transpose(Wtest)))
+                    Spec_test = list()
+                    for (Wtest, spec) in zip(WTe, Specific_test):
+                        TeHX = np.concatenate((TeHX, np.transpose(np.dot(np.transpose(Wtest), view - spec)))) if TeHX is not None else np.transpose(np.dot(np.transpose(Wtest),view - spec))
+                        Spec_test.append(np.transpose(spec))
                 else:
                     for vid, view in enumerate(TeX):
                             product = np.dot(view, np.transpose(S))
@@ -1051,8 +1058,8 @@ class frmFASRM(Ui_frmFASRM):
             HAParam = dict()
             HAParam["Share"]    = S
             if SharedR:
-                HAParam["Specific_train"] = Specific_train
-                HAParam["Specific_test"]  = Specific_test
+                HAParam["Specific_train"] = Spec_train
+                HAParam["Specific_test"]  = Spec_test
             HAParam["WTrain"]   = WTr
             HAParam["WTest"]    = WTe
             HAParam["Model"]    = Model
