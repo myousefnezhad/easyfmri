@@ -29,7 +29,7 @@ from sklearn import preprocessing
 from sklearn.ensemble import AdaBoostClassifier
 
 from sklearn.externals import joblib
-from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmMAAdaBoostGUI import *
@@ -85,7 +85,7 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
         ui.txtBase.modes.append(modes.CodeCompletionMode())
         ui.txtBase.modes.append(modes.CaretLineHighlighterMode())
         ui.txtBase.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtBase.document()))
-        ui.txtBase.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
+        #ui.txtBase.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
         ui.txtBase.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
 
         font = QtGui.QFont()
@@ -443,7 +443,10 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                 PeL = clf.predict(TeX)
                 PrL = clf.predict(TrX)
 
-                OutData["confusion_matrix"] = confusion_matrix(TeL, PeL, np.unique(TeL))
+                OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, np.unique(TeL))
+                OutData["fold" + str(currFID) + "_classification_report"] = classification_report(TeL, PeL)
+                print(OutData["fold" + str(currFID) + "_classification_report"])
+
 
             except Exception as e:
                 print(e)

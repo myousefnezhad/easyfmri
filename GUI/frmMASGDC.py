@@ -27,7 +27,7 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.linear_model import SGDClassifier
 from sklearn.externals import joblib
-from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmMASGDCGUI import *
@@ -303,9 +303,7 @@ class frmMASGDC(Ui_frmMASGDC):
         # MaxIte
         try:
             MaxIter = np.int32(ui.txtMaxIter.text())
-            if MaxIter == 0:
-                MaxIter = None
-            elif MaxIter < 0:
+            if MaxIter <= 0:
                     msgBox.setText("Maximum number of iterations is wrong!")
                     msgBox.setIcon(QMessageBox.Critical)
                     msgBox.setStandardButtons(QMessageBox.Ok)
@@ -332,11 +330,15 @@ class frmMASGDC(Ui_frmMASGDC):
 
         # Epoach
         try:
-            Epochs = np.int32(ui.txtEpochs.text())
-            if Epochs == 0:
-                Epochs = None
+            NIterNoChange = np.int32(ui.txtEpochs.text())
+            if NIterNoChange <= 0:
+                msgBox.setText("N Iteration No Change must be positive!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
         except:
-            msgBox.setText("Epochs is wrong!")
+            msgBox.setText("N Iteration No Change is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
@@ -501,7 +503,7 @@ class frmMASGDC(Ui_frmMASGDC):
                 clf = SGDClassifier(loss=Loss,penalty=Penalty,alpha=Alpha,l1_ratio=L1Rate,fit_intercept=FitIntercept,\
                                     max_iter=MaxIter,tol=Tol,shuffle=Shuffle,verbose=Verbose,epsilon=Epsilon,\
                                     n_jobs=NJobs,learning_rate=LearningRate,eta0=Eta0,power_t=Powert,\
-                                    warm_start=WarmStart,average=AverageParm,n_iter=Epochs)
+                                    warm_start=WarmStart,average=AverageParm,n_iter_no_change=NIterNoChange)
                 print("FoldID = " + str(currFID) + " is training ...")
                 clf.fit(TrX,TrL)
                 if OutModel is not None:
@@ -512,7 +514,10 @@ class frmMASGDC(Ui_frmMASGDC):
                 print("FoldID = " + str(currFID) + " is testing ...")
                 PeL = clf.predict(TeX)
                 PrL = clf.predict(TrX)
-                OutData["confusion_matrix"] = confusion_matrix(TeL, PeL, np.unique(TeL))
+                OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, np.unique(TeL))
+                OutData["fold" + str(currFID) + "_classification_report"] = classification_report(TeL, PeL)
+                print(OutData["fold" + str(currFID) + "_classification_report"])
+
             except Exception as e:
                 msgBox.setText(str(e))
                 msgBox.setIcon(QMessageBox.Critical)

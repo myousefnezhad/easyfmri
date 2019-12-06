@@ -416,7 +416,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Max Iteration (None=0)</string>
+      <string>Max Iteration</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="txtL1Rate">
@@ -484,7 +484,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Epochs (None=0)</string>
+      <string>Num Iter No Change</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_25">
@@ -549,7 +549,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>0</string>
+      <string>1000</string>
      </property>
     </widget>
     <widget class="QComboBox" name="cbLoss">
@@ -663,7 +663,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>0</string>
+      <string>5</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_15">

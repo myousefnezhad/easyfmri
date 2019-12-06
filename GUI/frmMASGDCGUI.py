@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmMASGDCGUI.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -317,23 +317,23 @@ class Ui_frmMASGDC(object):
         self.label_22.setText(_translate("frmMASGDC", "Alpha"))
         self.txtNJobs.setText(_translate("frmMASGDC", "1"))
         self.label_20.setText(_translate("frmMASGDC", "L1 Ratio"))
-        self.label_24.setText(_translate("frmMASGDC", "Max Iteration (None=0)"))
+        self.label_24.setText(_translate("frmMASGDC", "Max Iteration"))
         self.txtL1Rate.setText(_translate("frmMASGDC", "0.15"))
         self.cbAverageParm.setText(_translate("frmMASGDC", "Average"))
         self.cbFitIntercept.setText(_translate("frmMASGDC", "Fit Intercept"))
-        self.label_28.setText(_translate("frmMASGDC", "Epochs (None=0)"))
+        self.label_28.setText(_translate("frmMASGDC", "Num Iter No Change"))
         self.label_25.setText(_translate("frmMASGDC", "Tolerance (None=0)"))
         self.txtAlpha.setText(_translate("frmMASGDC", "0.0001"))
         self.label_23.setText(_translate("frmMASGDC", "power_t"))
         self.label_19.setText(_translate("frmMASGDC", "Loss"))
-        self.txtMaxIter.setText(_translate("frmMASGDC", "0"))
+        self.txtMaxIter.setText(_translate("frmMASGDC", "1000"))
         self.label_30.setText(_translate("frmMASGDC", "Epsilon"))
         self.txtEta0.setText(_translate("frmMASGDC", "0"))
         self.txtVerbose.setText(_translate("frmMASGDC", "0"))
         self.txtTol.setText(_translate("frmMASGDC", "0.0001"))
         self.label_13.setText(_translate("frmMASGDC", "Penalty"))
         self.cbShuffle.setText(_translate("frmMASGDC", "Shuffle"))
-        self.txtEpochs.setText(_translate("frmMASGDC", "0"))
+        self.txtEpochs.setText(_translate("frmMASGDC", "5"))
         self.label_15.setText(_translate("frmMASGDC", "eta0"))
         self.label_21.setText(_translate("frmMASGDC", "Learning Rate"))
         self.label_27.setText(_translate("frmMASGDC", "Verbose"))

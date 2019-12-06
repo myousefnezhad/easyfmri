@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.svm import NuSVC
 from sklearn.externals import joblib
-from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmMANuSVMGUI import *
@@ -433,7 +433,10 @@ class frmMANuSVM(Ui_frmMANuSVM):
                 PeL = clf.predict(TeX)
                 PrL = clf.predict(TrX)
 
-                OutData["confusion_matrix"] = confusion_matrix(TeL, PeL, np.unique(TeL))
+                OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, np.unique(TeL))
+                OutData["fold" + str(currFID) + "_classification_report"] = classification_report(TeL, PeL)
+                print(OutData["fold" + str(currFID) + "_classification_report"])
+
 
             except Exception as e:
                 print(e)
