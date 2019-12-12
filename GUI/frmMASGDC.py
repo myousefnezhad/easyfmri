@@ -116,6 +116,71 @@ class frmMASGDC(Ui_frmMASGDC):
         ui.btnOutFile.clicked.connect(self.btnOutFile_click)
         ui.btnOutModel.clicked.connect(self.btnOutModel_click)
         ui.btnConvert.clicked.connect(self.btnConvert_click)
+        ui.btnShowFilterContent.clicked.connect(self.btnShowFilterContent_click)
+
+    def btnShowFilterContent_click(self):
+        msgBox = QMessageBox()
+        filename = ui.txtInFile.text()
+        if len(filename):
+            if os.path.isfile(filename):
+                try:
+                    InData = io.loadmat(filename)
+                    if ui.cbFilterTrID.isChecked():
+                        try:
+                            # Check Filter ID for training
+                            if not len(ui.txtFilterTrID.currentText()):
+                                msgBox.setText("Please enter variable name for training filter!")
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
+                                return False
+                            TrF = InData[ui.txtFilterTrID.currentText()][0]
+                            fstr = ""
+                            fconnect = ""
+                            for filter in np.unique(TrF):
+                                fstr += fconnect
+                                fstr += str(filter)
+                                fconnect = ", "
+                            print("Training Reference Content:", fstr)
+                        except:
+                            print("Reference filter for training is wrong!")
+                            msgBox.setText("Reference filter for training is wrong!")
+                            msgBox.setIcon(QMessageBox.Critical)
+                            msgBox.setStandardButtons(QMessageBox.Ok)
+                            msgBox.exec_()
+                            return
+
+                    # Ref Filter Test
+                    if ui.cbFilterTeID.isChecked():
+                        try:
+                            # Check Filter ID for testing
+                            if not len(ui.txtFilterTeID.currentText()):
+                                msgBox.setText("Please enter variable name for testing filter!")
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
+                                return False
+                            TeF = InData[ui.txtFilterTeID.currentText()][0]
+                            fstr = ""
+                            fconnect = ""
+                            for filter in np.unique(TeF):
+                                fstr += fconnect
+                                fstr += str(filter)
+                                fconnect = ", "
+                            print("Testing  Reference Content:", fstr)
+                        except:
+                            print("Reference filter for testing is wrong!")
+                            msgBox.setText("Reference filter for testing is wrong!")
+                            msgBox.setIcon(QMessageBox.Critical)
+                            msgBox.setStandardButtons(QMessageBox.Ok)
+                            msgBox.exec_()
+                            return
+                except Exception as e:
+                    print(e)
+                    print("Cannot load data file!")
+                    return
+            else:
+                print("File not found!")
 
     def btnClose_click(self):
         global dialog
@@ -129,6 +194,15 @@ class frmMASGDC(Ui_frmMASGDC):
                 try:
                     data = io.loadmat(filename)
                     Keys = data.keys()
+
+                    # Train Filter
+                    ui.txtFilterTrID.clear()
+                    for key in Keys:
+                        ui.txtFilterTrID.addItem(key)
+                    # Test Filter
+                    ui.txtFilterTeID.clear()
+                    for key in Keys:
+                        ui.txtFilterTeID.addItem(key)
 
                     # Train Data
                     ui.txtITrData.clear()
@@ -375,7 +449,11 @@ class frmMASGDC(Ui_frmMASGDC):
                 Filter = Filter.replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()
                 Filter = np.int32(Filter)
         except:
-            print("Filter is wrong!")
+            print("Class filter is wrong!")
+            msgBox.setText("Class filter is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
             return
 
         # OutFile
@@ -463,6 +541,124 @@ class frmMASGDC(Ui_frmMASGDC):
             TeX = InData[ui.txtITeData.currentText()]
             TrL = InData[ui.txtITrLabel.currentText()][0]
             TeL = InData[ui.txtITeLabel.currentText()][0]
+
+            # Ref Filter Train
+            if ui.cbFilterTrID.isChecked():
+                try:
+                    # Create content structure for training
+                    TrFilterContent = ui.txtFilterTrContent.text()
+                    TrFilterContent = TrFilterContent.replace(" ", "")
+                    if not len(TrFilterContent):
+                        print("Reference filter for training is wrong!")
+                        msgBox.setText("Reference filter for training is wrong!")
+                        msgBox.setIcon(QMessageBox.Critical)
+                        msgBox.setStandardButtons(QMessageBox.Ok)
+                        msgBox.exec_()
+                        return
+                    else:
+                        TrFilterContent = TrFilterContent.replace("\'", " ").replace(",", " ").replace("[", "").replace(
+                            "]", "").split()
+                        TrFilterContent = np.int32(TrFilterContent)
+                    # Check Filter ID for training
+                    if not len(ui.txtFilterTrID.currentText()):
+                        msgBox.setText("Please enter variable name for training filter!")
+                        msgBox.setIcon(QMessageBox.Critical)
+                        msgBox.setStandardButtons(QMessageBox.Ok)
+                        msgBox.exec_()
+                        return False
+                    TrF = InData[ui.txtFilterTrID.currentText()][0]
+
+                    if np.shape(TrX)[0] != np.shape(TrF)[0] or np.shape(TrL)[0] != np.shape(TrF)[0]:
+                        print("Shape of reference for training must be the same as data and label")
+                        msgBox.setText("Shape of reference for training must be the same as data and label")
+                        msgBox.setIcon(QMessageBox.Critical)
+                        msgBox.setStandardButtons(QMessageBox.Ok)
+                        msgBox.exec_()
+                        return
+
+                except:
+                    print("Reference filter for training is wrong!")
+                    msgBox.setText("Reference filter for training is wrong!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return
+                # Remove training set
+                try:
+                    print("Removing training set based on reference. Data shape: ", np.shape(TrX), "Label shape: ", np.shape(TrL))
+                    for content in TrFilterContent:
+                        contIndex = np.where(TrF == content)[0]
+                        TrL = np.delete(TrL, contIndex, axis=0)
+                        TrX = np.delete(TrX, contIndex, axis=0)
+                        TrF = np.delete(TrF, contIndex, axis=0)
+                        print("  Content", content, "is removed from training set. Data shape: ", np.shape(TrX), "Label shape: ", np.shape(TrL))
+                except Exception as e:
+                    print("Cannot filter the training set based on Reference")
+                    print(str(e))
+                    msgBox.setText("Cannot filter the training set based on Reference")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return
+
+            # Ref Filter Test
+            if ui.cbFilterTeID.isChecked():
+                try:
+                    # Create content structure for testing
+                    TeFilterContent = ui.txtFilterTeContent.text()
+                    TeFilterContent = TeFilterContent.replace(" ", "")
+                    if not len(TeFilterContent):
+                        print("Reference filter for testing is wrong!")
+                        msgBox.setText("Reference filter for testing is wrong!")
+                        msgBox.setIcon(QMessageBox.Critical)
+                        msgBox.setStandardButtons(QMessageBox.Ok)
+                        msgBox.exec_()
+                        return
+                    else:
+                        TeFilterContent = TeFilterContent.replace("\'", " ").replace(",", " ").replace("[", "").replace("]", "").split()
+                        TeFilterContent = np.int32(TeFilterContent)
+                    # Check Filter ID for testing
+                    if not len(ui.txtFilterTeID.currentText()):
+                        msgBox.setText("Please enter variable name for testing filter!")
+                        msgBox.setIcon(QMessageBox.Critical)
+                        msgBox.setStandardButtons(QMessageBox.Ok)
+                        msgBox.exec_()
+                        return False
+                    TeF = InData[ui.txtFilterTeID.currentText()][0]
+
+                    if np.shape(TeX)[0] != np.shape(TeF)[0] or np.shape(TeL)[0] != np.shape(TeF)[0]:
+                        print("Shape of reference for testing must be the same as data and label")
+                        msgBox.setText("Shape of reference for testing must be the same as data and label")
+                        msgBox.setIcon(QMessageBox.Critical)
+                        msgBox.setStandardButtons(QMessageBox.Ok)
+                        msgBox.exec_()
+                        return
+
+                except:
+                    print("Reference filter for testing is wrong!")
+                    msgBox.setText("Reference filter for testing is wrong!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return
+                # Remove testing set
+                try:
+                    print("Removing testing set based on reference. Data shape: ", np.shape(TeX), "Label shape: ", np.shape(TeL))
+                    for content in TeFilterContent:
+                        contIndex = np.where(TeF == content)[0]
+                        TeL = np.delete(TeL, contIndex, axis=0)
+                        TeX = np.delete(TeX, contIndex, axis=0)
+                        TeF = np.delete(TeF, contIndex, axis=0)
+                        print("  Content", content, "is removed from testing set. Data shape: ", np.shape(TeX), "Label shape: ", np.shape(TeL))
+                except Exception as e:
+                    print("Cannot filter the testing set based on Reference")
+                    print(str(e))
+                    msgBox.setText("Cannot filter the testing set based on Reference")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return
+
 
             try:
                 if Filter is not None:

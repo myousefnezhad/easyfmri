@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>782</width>
+    <width>846</width>
     <height>764</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
   <widget class="QPushButton" name="btnInFile">
    <property name="geometry">
     <rect>
-     <x>710</x>
+     <x>780</x>
      <y>20</y>
      <width>51</width>
      <height>32</height>
@@ -42,7 +42,7 @@
   <widget class="QPushButton" name="btnOutFile">
    <property name="geometry">
     <rect>
-     <x>710</x>
+     <x>780</x>
      <y>60</y>
      <width>51</width>
      <height>32</height>
@@ -57,7 +57,7 @@
     <rect>
      <x>210</x>
      <y>20</y>
-     <width>491</width>
+     <width>551</width>
      <height>21</height>
     </rect>
    </property>
@@ -68,7 +68,7 @@
   <widget class="QPushButton" name="btnConvert">
    <property name="geometry">
     <rect>
-     <x>620</x>
+     <x>690</x>
      <y>715</y>
      <width>141</width>
      <height>32</height>
@@ -96,7 +96,7 @@
     <rect>
      <x>210</x>
      <y>60</y>
-     <width>491</width>
+     <width>551</width>
      <height>21</height>
     </rect>
    </property>
@@ -122,12 +122,12 @@
     <rect>
      <x>30</x>
      <y>150</y>
-     <width>731</width>
+     <width>801</width>
      <height>551</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>4</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -314,7 +314,7 @@
       <rect>
        <x>30</x>
        <y>20</y>
-       <width>671</width>
+       <width>751</width>
        <height>80</height>
       </rect>
      </property>
@@ -484,72 +484,247 @@
    </widget>
    <widget class="QWidget" name="tab_4">
     <attribute name="title">
-     <string>Filter Class ID</string>
+     <string>Filter</string>
     </attribute>
-    <widget class="QLabel" name="label_4">
+    <widget class="QGroupBox" name="groupBox_2">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>201</width>
-       <height>16</height>
+       <x>10</x>
+       <y>20</y>
+       <width>771</width>
+       <height>201</height>
       </rect>
      </property>
-     <property name="text">
-      <string>Remove Class IDs</string>
+     <property name="title">
+      <string>&lt;Filter based on Class ID&gt;</string>
      </property>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>70</y>
+        <width>201</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Existed Classes</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>40</y>
+        <width>201</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Remove Class IDs</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtFilter">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>40</y>
+        <width>441</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>40</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>e.g. 0 or [1,2]</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="txtClass">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>70</y>
+        <width>231</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </widget>
-    <widget class="QLineEdit" name="txtFilter">
+    <widget class="QGroupBox" name="groupBox_3">
      <property name="geometry">
       <rect>
-       <x>190</x>
-       <y>30</y>
-       <width>291</width>
-       <height>21</height>
+       <x>10</x>
+       <y>230</y>
+       <width>771</width>
+       <height>201</height>
       </rect>
      </property>
-     <property name="text">
-      <string>0</string>
+     <property name="title">
+      <string>&lt;Based on a reference&gt;</string>
      </property>
-    </widget>
-    <widget class="QLabel" name="label_5">
-     <property name="geometry">
-      <rect>
-       <x>490</x>
-       <y>30</y>
-       <width>211</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>e.g. 0 or [1,2]</string>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="txtClass">
-     <property name="geometry">
-      <rect>
-       <x>190</x>
-       <y>70</y>
-       <width>91</width>
-       <height>431</height>
-      </rect>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_10">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>70</y>
-       <width>201</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Existed Classes</string>
-     </property>
+     <widget class="QCheckBox" name="cbFilterTrID">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>40</y>
+        <width>191</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Filter training based on</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="txtFilterTrID">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>40</y>
+        <width>231</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>80</y>
+        <width>201</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Remove training contents</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_13">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>80</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>e.g. 0 or [1,2]</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtFilterTrContent">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>80</y>
+        <width>441</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>160</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>e.g. 0 or [1,2]</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbFilterTeID">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>120</y>
+        <width>191</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Filter testing based on</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtFilterTeContent">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>160</y>
+        <width>441</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="txtFilterTeID">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>120</y>
+        <width>231</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_16">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>160</y>
+        <width>201</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Remove testing contents</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnShowFilterContent">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>40</y>
+        <width>141</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Show Content</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_5">
@@ -694,7 +869,7 @@
   <widget class="QPushButton" name="btnOutModel">
    <property name="geometry">
     <rect>
-     <x>710</x>
+     <x>780</x>
      <y>100</y>
      <width>51</width>
      <height>32</height>
@@ -722,7 +897,7 @@
     <rect>
      <x>210</x>
      <y>100</y>
-     <width>491</width>
+     <width>551</width>
      <height>21</height>
     </rect>
    </property>
