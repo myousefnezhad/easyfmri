@@ -73,8 +73,10 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
-        ui.cbSource.addItem("GitLab", ["gitlab.com/easyfmri/easyfmri.git", "https", False])
-        ui.cbSource.addItem("GitHub", ["github.com/easyfmri/easyfmri.git", "https", False])
+
+        ui.cbSource.addItem("Fast via pull request", ["", "", False, True ])
+        ui.cbSource.addItem("GitLab (Clone/Full)", ["gitlab.com/easyfmri/easyfmri.git", "https", False, False])
+        ui.cbSource.addItem("GitHub (Clone/Full)", ["github.com/easyfmri/easyfmri.git", "https", False, False])
 
 
         dialog.setWindowTitle("easy fMRI - V" + getVersion() + "B" + getBuild())
@@ -156,46 +158,56 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         if not os.path.isfile(ezcmd):
             print("WARNING: cannot find ezfmri path!")
             ezcmd = "ezfmri"
-
         item = ui.cbSource.currentData()
-        user   = None
-        passwd = None
-        if item[2]:
-            login = Login()
-            if not login.exec_() == QtWidgets.QDialog.Accepted:
-                return
-            passwd  = login.passwd
-            user    = login.user
+        if item[3]:
+            cmd = ezdir + "/bin/ezupdate_pull_request.sh"
+            print("Running:", cmd)
+            process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+            process.wait()
+            msgBox.setText("Update is done!")
+            msgBox.setIcon(QMessageBox.Information)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            sys.exit()
+        else:
+            user   = None
+            passwd = None
+            if item[2]:
+                login = Login()
+                if not login.exec_() == QtWidgets.QDialog.Accepted:
+                    return
+                passwd  = login.passwd
+                user    = login.user
 
-        print("Updating ...")
-        global dialog
-        dialog.hide()
-        update_dir = os.popen('echo $HOME').read().replace('\n', '') + "/.ezupdate"
-        print("Removing update directory...")
-        os.popen("rm -rf " + update_dir)
-        print("Cloning repository to " + update_dir + "...")
-        clone_git(url=item[0], protocol=item[1], user=user, passwd=passwd, dir=update_dir)
-        print("Checking update directory...")
-        if not os.path.isdir(update_dir):
-            print("Cannot find " + update_dir + "! Update is canceled.")
-            msgBox.setText("Cannot find " + update_dir + "! Update is canceled.")
-            msgBox.setIcon(QMessageBox.Critical)
+            print("Updating ...")
+            global dialog
+            dialog.hide()
+            update_dir = os.popen('echo $HOME').read().replace('\n', '') + "/.ezupdate"
+            print("Removing update directory...")
+            os.popen("rm -rf " + update_dir)
+            print("Cloning repository to " + update_dir + "...")
+            clone_git(url=item[0], protocol=item[1], user=user, passwd=passwd, dir=update_dir)
+            print("Checking update directory...")
+            if not os.path.isdir(update_dir):
+                print("Cannot find " + update_dir + "! Update is canceled.")
+                msgBox.setText("Cannot find " + update_dir + "! Update is canceled.")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                sys.exit()
+            if not has_git_branch(ezdir):
+                print("Cannot find " + update_dir + "! Update is canceled.")
+                msgBox.setText("Cannot find " + update_dir + "! Update is canceled.")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                sys.exit()
+            os.popen("rm -rf " + ezdir + "; mv " + update_dir + " " + ezdir + "; " + ezcmd)
+            msgBox.setText("Update is done!")
+            msgBox.setIcon(QMessageBox.Information)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             sys.exit()
-        if not has_git_branch(ezdir):
-            print("Cannot find " + update_dir + "! Update is canceled.")
-            msgBox.setText("Cannot find " + update_dir + "! Update is canceled.")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            sys.exit()
-        os.popen("rm -rf " + ezdir + "; mv " + update_dir + " " + ezdir + "; " + ezcmd)
-        msgBox.setText("Update is done!")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
-        sys.exit()
 
 
     def btnAbout_click(self):
