@@ -27,8 +27,11 @@ from dir import getDIR
 import threading
 
 def About():
-    return """<center><h1>easy fMRI project</h1></center>
+    return """
+<center>
+<h1>easy fMRI project</h1>
 <h3>A toolbox for Human Brain Mapping and Decoding</h3>
+</center>
 <h4>Websites:</h4> 
 <center>
 <h4><a href=\"https://easyfmri.gitlab.io\">https://easyfmri.gitlab.io</a></h4>
@@ -41,9 +44,11 @@ def About():
 <h4><a href=\"https://easyfmridata.github.io\">https://easyfmridata.github.io</a></h4>
 </center>
 
-<p>Created by:</p>
-<p><a href=\"https://myousefnezhad.gitlab.io\">Muhammad Yousefnezhad</a>, <a href=\"http://ibrain.nuaa.edu.cn\">iBRAIN Group</a>,</p>
-<p><a href=\"http://iao.nuaa.edu.cn\">Nanjing University of Aeronautics and Astronautics</a>, China.<p></h6>
+<h4>Created by:</h4>
+<center>
+<h4><a href=\"https://myousefnezhad.gitlab.io\">Tony Muhammad Yousefnezhad</a>,</h4>
+<h4><a href=\"https://www.ualberta.ca/\">University of Alberta</a>, Canada.<h4>
+</center>
 """
 
 
