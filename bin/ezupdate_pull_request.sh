@@ -1,5 +1,5 @@
 #!/bin/bash
-echo 'Easy fMRI directory: $EASYFMRI'
+echo "Easy fMRI directory: " $EASYFMRI
 cd $EASYFMRI
 git checkout master
 git pull origin master
