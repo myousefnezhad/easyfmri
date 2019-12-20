@@ -1060,12 +1060,14 @@ class frmFASRM(Ui_frmFASRM):
                 print(e)
 
             HAParam = dict()
-            HAParam["Share"]    = S
+            if ui.cbSaveShare.isChecked():
+                HAParam["Share"]    = S
             if SharedR:
                 HAParam["Specific_train"] = Spec_train
                 HAParam["Specific_test"]  = Spec_test
-            HAParam["WTrain"]   = WTr
-            HAParam["WTest"]    = WTe
+            if ui.cbSaveMap.isChecked():
+                HAParam["WTrain"]   = WTr
+                HAParam["WTest"]    = WTe
             HAParam["Model"]    = Model
             OutData["FunctionalAlignment"] = HAParam
             OutData["Runtime"] = time.time() - tic

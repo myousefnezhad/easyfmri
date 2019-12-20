@@ -1345,6 +1345,32 @@
       <string>1.0</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="cbSaveShare">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>450</y>
+       <width>671</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Save shared space</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="cbSaveMap">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>480</y>
+       <width>671</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Save mapping matrices</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_3">
     <attribute name="title">

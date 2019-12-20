@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmFASRMGUI.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -359,6 +359,12 @@ class Ui_frmFASRM(object):
         self.txtGamma = QtWidgets.QLineEdit(self.tab_2)
         self.txtGamma.setGeometry(QtCore.QRect(260, 410, 160, 21))
         self.txtGamma.setObjectName("txtGamma")
+        self.cbSaveShare = QtWidgets.QCheckBox(self.tab_2)
+        self.cbSaveShare.setGeometry(QtCore.QRect(30, 450, 671, 21))
+        self.cbSaveShare.setObjectName("cbSaveShare")
+        self.cbSaveMap = QtWidgets.QCheckBox(self.tab_2)
+        self.cbSaveMap.setGeometry(QtCore.QRect(30, 480, 671, 21))
+        self.cbSaveMap.setObjectName("cbSaveMap")
         self.tabWidget.addTab(self.tab_2, "")
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
@@ -500,6 +506,8 @@ class Ui_frmFASRM(object):
         self.label_14.setText(_translate("frmFASRM", "Gamma "))
         self.label_21.setText(_translate("frmFASRM", "Method"))
         self.txtGamma.setText(_translate("frmFASRM", "1.0"))
+        self.cbSaveShare.setText(_translate("frmFASRM", "Save shared space"))
+        self.cbSaveMap.setText(_translate("frmFASRM", "Save mapping matrices"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("frmFASRM", "Parameters"))
         self.label_17.setText(_translate("frmFASRM", "From:"))
         self.label_44.setText(_translate("frmFASRM", "To:"))
