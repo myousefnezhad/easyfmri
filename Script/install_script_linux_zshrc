@@ -1,0 +1,4 @@
+#!/bin/bash
+cp zstartupscript.sh ~/.zstartupscript
+echo "# This script is for easy fMRI" >> ~/.zshrc
+echo "source ~/.zstartupscript" >> ~/.zshrc
