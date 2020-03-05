@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmFeatureAnalysisGUI.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -636,6 +636,18 @@ class Ui_frmFeatureAnalysis(object):
         self.cbFA.setGeometry(QtCore.QRect(210, 320, 581, 26))
         self.cbFA.setObjectName("cbFA")
         self.tabWidget.addTab(self.tab_7, "")
+        self.tab_4 = QtWidgets.QWidget()
+        self.tab_4.setObjectName("tab_4")
+        self.btnWARun = QtWidgets.QPushButton(self.tab_4)
+        self.btnWARun.setGeometry(QtCore.QRect(12, 80, 780, 32))
+        self.btnWARun.setObjectName("btnWARun")
+        self.cbWA = QtWidgets.QComboBox(self.tab_4)
+        self.cbWA.setGeometry(QtCore.QRect(210, 30, 581, 26))
+        self.cbWA.setObjectName("cbWA")
+        self.label_52 = QtWidgets.QLabel(self.tab_4)
+        self.label_52.setGeometry(QtCore.QRect(20, 30, 191, 16))
+        self.label_52.setObjectName("label_52")
+        self.tabWidget.addTab(self.tab_4, "")
         self.tab_5 = QtWidgets.QWidget()
         self.tab_5.setObjectName("tab_5")
         self.label_19 = QtWidgets.QLabel(self.tab_5)
@@ -883,6 +895,9 @@ class Ui_frmFeatureAnalysis(object):
         self.btnTARun.setText(_translate("frmFeatureAnalysis", "Run"))
         self.label_51.setText(_translate("frmFeatureAnalysis", "Temporal Alignment"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), _translate("frmFeatureAnalysis", "Feature Design"))
+        self.btnWARun.setText(_translate("frmFeatureAnalysis", "Run"))
+        self.label_52.setText(_translate("frmFeatureAnalysis", "Wise area analysis"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("frmFeatureAnalysis", "Advanced Feature Analysis"))
         self.label_19.setText(_translate("frmFeatureAnalysis", "$FSLDIR:"))
         self.label_24.setText(_translate("frmFeatureAnalysis", "flirt cmd:"))
         self.txtFlirt.setText(_translate("frmFeatureAnalysis", "/bin/flirt"))

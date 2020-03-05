@@ -1,0 +1,491 @@
+# Copyright (c) 2014--2020 Tony (Muhammad) Yousefnezhad
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import os
+import sys
+
+import numpy as np
+import nibabel as nb
+import scipy.io as io
+from PyQt5.QtWidgets import *
+from sklearn import preprocessing
+from sklearn.svm import LinearSVC
+from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression
+from Base.dialogs import LoadFile, SaveFile
+from Base.utility import getVersion, getBuild
+from GUI.frmWAAtlasGUI import *
+
+import logging
+
+
+logging.basicConfig(level=logging.DEBUG)
+from pyqode.core import api
+from pyqode.core import modes
+from pyqode.core import panels
+from pyqode.qt import QtWidgets as pyWidgets
+
+
+
+def EventCode():
+    return\
+"""from sklearn.linear_model import LogisticRegression as CLS
+# Uncomment this line to use Linear SVC
+#from sklearn.svm import LinearSVC as CLS
+model = CLS()
+"""
+
+
+
+class frmWAAtlas(Ui_frmWAAtlas):
+    ui = Ui_frmWAAtlas()
+    dialog = None
+    # This function is run when the main form start
+    # and initiate the default parameters.
+    def show(self):
+        global dialog
+        global ui
+        ui = Ui_frmWAAtlas()
+        QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
+        dialog = QtWidgets.QMainWindow()
+        ui.setupUi(dialog)
+        self.set_events(self)
+        ui.tabWidget.setCurrentIndex(0)
+
+
+        ui.txtEvents = api.CodeEdit(ui.tab_2)
+        ui.txtEvents.setGeometry(QtCore.QRect(10, 10, 641, 200))
+        ui.txtEvents.setObjectName("txtEvents")
+
+        ui.txtEvents.backend.start('backend/server.py')
+
+        ui.txtEvents.modes.append(modes.CodeCompletionMode())
+        ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())
+        ui.txtEvents.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
+        #ui.txtEvents.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
+        ui.txtEvents.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
+
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        ui.txtEvents.setFont(font)
+        ui.txtEvents.setPlainText(EventCode(),"","")
+
+
+
+        dialog.setWindowTitle("easy fMRI Area based analysis: Atlas - V" + getVersion() + "B" + getBuild())
+        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        dialog.setFixedSize(dialog.size())
+        dialog.show()
+
+
+    # This function initiate the events procedures
+    def set_events(self):
+        global ui
+        ui.btnClose.clicked.connect(self.btnClose_click)
+        ui.btnInFile.clicked.connect(self.btnInFile_click)
+        ui.btnOutFile.clicked.connect(self.btnOutFile_click)
+        ui.btnConvert.clicked.connect(self.btnConvert_click)
+        ui.btnAtlas.clicked.connect(self.btnAtlas_click)
+
+
+    def btnClose_click(self):
+        global dialog
+        dialog.close()
+
+
+    def btnInFile_click(self):
+        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                            os.path.dirname(ui.txtInFile.text()))
+
+        if len(filename):
+            if os.path.isfile(filename):
+                try:
+                    data = io.loadmat(filename)
+                    Keys = data.keys()
+
+                    # Data
+                    ui.txtData.clear()
+                    HasDefualt = 0
+                    for key in Keys:
+                        ui.txtData.addItem(key)
+                        if key == "data":
+                            HasDefualt = 1
+                        if key == "train_data":
+                            HasDefualt = 2
+                    if HasDefualt == 1:
+                        ui.txtData.setCurrentText("data")
+                    if HasDefualt == 2:
+                        ui.txtData.setCurrentText("train_data")
+
+                    # Test Data
+                    ui.txtTeData.clear()
+                    HasDefualt = 0
+                    for key in Keys:
+                        ui.txtTeData.addItem(key)
+                        if key == "data":
+                            HasDefualt = 1
+                        if key == "test_data":
+                            HasDefualt = 2
+                    if HasDefualt == 1:
+                        ui.txtTeData.setCurrentText("data")
+                    if HasDefualt == 2:
+                        ui.txtTeData.setCurrentText("test_data")
+
+
+
+                    # Label
+                    ui.txtLabel.clear()
+                    HasDefualt = 0
+                    for key in Keys:
+                        ui.txtLabel.addItem(key)
+                        if key == "label":
+                            HasDefualt = 1
+                        if key == "train_label":
+                            HasDefualt = 2
+                    if HasDefualt == 1:
+                        ui.txtLabel.setCurrentText("label")
+                    if HasDefualt == 2:
+                        ui.txtLabel.setCurrentText("train_label")
+
+                    # Test Label
+                    ui.txtTeLabel.clear()
+                    HasDefualt = 0
+                    for key in Keys:
+                        ui.txtTeLabel.addItem(key)
+                        if key == "label":
+                            HasDefualt = 1
+                        if key == "test_label":
+                            HasDefualt = 2
+                    if HasDefualt == 1:
+                        ui.txtTeLabel.setCurrentText("label")
+                    if HasDefualt == 2:
+                        ui.txtTeLabel.setCurrentText("test_label")
+
+                    # Coordinate
+                    ui.txtCol.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtCol.addItem(key)
+                        if key == "coordinate":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtCol.setCurrentText("coordinate")
+
+                    # ImgShape
+                    ui.txtImg.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtImg.addItem(key)
+                        if key == "imgShape":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtImg.setCurrentText("imgShape")
+                        try:
+                            print(f'Input image shape is {tuple(data["imgShape"][0])}')
+                        except:
+                            print("Cannot find ImgShape")
+
+
+                    ui.txtInFile.setText(filename)
+                except Exception as e:
+                    print(e)
+                    print("Cannot load data file!")
+                    return
+            else:
+                print("File not found!")
+
+    def btnAtlas_click(self):
+        global ui
+        roi_file = LoadFile('Select Atlas image file ...',['ROI image (*.nii.gz)','All files (*.*)'], 'nii.gz',\
+                            os.path.dirname(ui.txtAtlas.text()))
+        if len(roi_file):
+            if os.path.isfile(roi_file):
+                ui.txtAtlas.setText(roi_file)
+
+                try:
+                    ImgHDR = nb.load(roi_file)
+                    ImgDAT = ImgHDR.get_data()
+                    Area = np.unique(ImgDAT)
+                    Area = Area[np.where(Area != 0)[0]]
+                    print(f'Regions are {Area}')
+                    print(f'We consider 0 area as black space/rest; Max region ID: {np.max(Area)}, Min region ID: {np.min(Area)}')
+                    print(f'Atlas shape is {np.shape(ImgDAT)}')
+                except Exception as e:
+                    print(f'Cannot load atlas {e}')
+
+
+            else:
+                print("Atlas file not found!")
+
+
+    def btnOutFile_click(self):
+        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+                             os.path.dirname(ui.txtOutFile.text()))
+        if len(ofile):
+            ui.txtOutFile.setText(ofile)
+
+    def btnConvert_click(self):
+        msgBox = QMessageBox()
+        print("Loading...")
+
+        try:
+            FoldFrom = np.int32(ui.txtFoldFrom.text())
+            FoldTo   = np.int32(ui.txtFoldTo.text())
+        except:
+            print("Please check fold parameters!")
+            return
+
+        # OutFile
+        OutFile = ui.txtOutFile.text()
+        if not len(OutFile):
+            msgBox.setText("Please enter out file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        # Atlas
+        InAtlas = ui.txtAtlas.text()
+        if not len(InAtlas):
+            msgBox.setText("Please enter atlas file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        if not os.path.isfile(InAtlas):
+            msgBox.setText("Atlas file not found!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
+
+        try:
+            AtlasHdr = nb.load(InAtlas)
+            AtlasImg = AtlasHdr.get_data()
+            AtlasShape = np.shape(AtlasImg)
+            if np.shape(AtlasShape)[0] != 3:
+                msgBox.setText("Atlas must be 3D image")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+        except:
+            msgBox.setText("Cannot load atlas file!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        OutData = dict()
+        MappingVectorRegion = None
+
+        for fold in range(FoldFrom, FoldTo + 1):
+            print(f"Analyzing Fold: {fold}...")
+            # InFile
+            InFile = ui.txtInFile.text()
+            if not len(InFile):
+                msgBox.setText(f"FOLD {fold}: Please enter input file!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+            InFile = InFile.replace("$FOLD$", str(fold))
+            if not os.path.isfile(InFile):
+                msgBox.setText(f"FOLD {fold}: Input file not found!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+            # Load InData
+            try:
+                InData = io.loadmat(InFile)
+            except:
+                print(f"FOLD {fold}: Cannot load file: {InFile}")
+
+            # Train data
+            if not len(ui.txtData.currentText()):
+                msgBox.setText(f"FOLD {fold}: Please enter train data variable name!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+            try:
+                Xtr = InData[ui.txtData.currentText()]
+                if ui.cbScale.isChecked():
+                    Xtr = preprocessing.scale(Xtr)
+                    print(f"FOLD {fold}: Whole of train data is scaled X~N(0,1).")
+            except:
+                print(f"FOLD {fold}: Cannot load train data")
+                msgBox.setText(f"FOLD {fold}: Cannot load train data!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            # Test data
+            if not len(ui.txtTeData.currentText()):
+                msgBox.setText(f"FOLD {fold}: Please enter test data variable name!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+            try:
+                Xte = InData[ui.txtTeData.currentText()]
+                if ui.cbScale.isChecked():
+                    Xte = preprocessing.scale(Xte)
+                    print(f"FOLD {fold}: Whole of test data is scaled X~N(0,1).")
+            except:
+                print(f"FOLD {fold}: Cannot load test data")
+                msgBox.setText(f"FOLD {fold}: Cannot load train data!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            # Train Label
+            if not len(ui.txtLabel.currentText()):
+                    msgBox.setText(f"FOLD {fold}: Please enter Label variable name!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+            try:
+                Ytr = InData[ui.txtLabel.currentText()][0]
+            except:
+                print(f"FOLD {fold}: Cannot load label")
+                return
+
+            # Test Label
+            if not len(ui.txtTeLabel.currentText()):
+                    msgBox.setText(f"FOLD {fold}: Please enter test Label variable name!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+            try:
+                Yte = InData[ui.txtTeLabel.currentText()][0]
+            except:
+                print(f"FOLD {fold}: Cannot load test label")
+                return
+
+            if MappingVectorRegion is None:
+                # Coordinate
+                if not len(ui.txtCol.currentText()):
+                    msgBox.setText("Please enter Condition variable name!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+                try:
+                    Coord = np.transpose(InData[ui.txtCol.currentText()])
+                except:
+                    print("Cannot load coordinate")
+                    return
+                # imgShape
+                if not len(ui.txtImg.currentText()):
+                    msgBox.setText("Please enter Image Shape variable name!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+                try:
+                    DataShape = tuple(InData[ui.txtImg.currentText()][0])
+                except:
+                    print("Cannot load data image shape")
+                    return
+
+                # Check shape
+                if AtlasShape[0] != DataShape[0] or AtlasShape[1] != DataShape[1] or AtlasShape[2] != DataShape[2]:
+                    print(f'Atlas and data must have the same shape.\nAtlas: {AtlasShape} vs. Data: {DataShape}')
+                    msgBox.setText(f'Atlas and data must have the same shape.\nAtlas: {AtlasShape} vs. Data: {DataShape}')
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+                print("Mapping 2D vector space to 3D region area...")
+                MappingVectorRegion = dict()
+                for cooIdx, coo in enumerate(Coord):
+                    reg = AtlasImg[coo[0], coo[1], coo[2]]
+                    if reg == 0:
+                        print(f'{tuple(coo)} is belong to black area.')
+                    else:
+                        try:
+                            MappingVectorRegion[str(reg)].append(cooIdx)
+                        except:
+                            MappingVectorRegion[str(reg)] = list()
+                            MappingVectorRegion[str(reg)].append(cooIdx)
+                        print(f'{tuple(coo)}:{cooIdx} is belong to region {reg}')
+
+
+            print(f"FOLD {fold}: analyzing regions...")
+            for reg in sorted(MappingVectorRegion.keys()):
+                RegIndex = MappingVectorRegion[reg]
+                SubXtr = Xtr[:, RegIndex]
+                SubXte = Xte[:, RegIndex]
+
+                try:
+                    allvars = dict(locals(), **globals())
+                    exec(ui.txtEvents.toPlainText(), allvars, allvars)
+                    model = allvars['model']
+
+                    model.fit(SubXtr, Ytr)
+                    Pte = model.predict(SubXte)
+                    acc = accuracy_score(Yte, Pte)
+                except Exception as e:
+                    print(f'Cannot generate model\n{e}')
+                    msgBox.setText(f'Cannot generate model\n{e}')
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+                try:
+                    OutData[f"Region_{reg}_vector"].append(acc)
+                    OutData[f"Region_{reg}_count"] += 1
+                except:
+                    OutData[f"Region_{reg}_vector"] = list()
+                    OutData[f"Region_{reg}_vector"].append(acc)
+                    OutData[f"Region_{reg}_count"]  = 1
+                print(f"FOLD {fold}: Linear accuracy for {reg} is {acc}")
+
+        for reg in sorted(MappingVectorRegion.keys()):
+            macc = np.mean(OutData[f"Region_{reg}_vector"])
+            OutData[f"Region_{reg}_mean_acc"] = macc
+            print(f"Mean accuracy of region {reg}: {macc}")
+
+        print("Saving ...")
+        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        print("DONE.")
+        msgBox.setText("Wise area analysis: Atlas is done.")
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.exec_()
+
+
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    frmWAAtlas.show(frmWAAtlas)
+    sys.exit(app.exec_())

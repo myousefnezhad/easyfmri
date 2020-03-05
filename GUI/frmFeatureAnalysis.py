@@ -232,6 +232,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.cbFE.addItem("MatLab: Convolutional Neural Network (CNN)", 40000)
         ui.cbFE.addItem("MatLab: Linear Discriminant Analysis (LDA)",5)
 
+        # Wise Area Analysis
+        ui.cbWA.addItem("Atlas based analysis", 10001)
+        #ui.cbWA.addItem("Voxel based analysis", 10002)
+
         # Temporal Alignment
         ui.cbTA.addItem("Report: Shape Alignment", 10001)
         ui.cbTA.addItem("Report: Label Alignment", 10002)
@@ -282,6 +286,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnFERun.clicked.connect(self.btnFE_click)
         ui.btnDIDraw.clicked.connect(self.btnDIDraw_click)
         ui.btnFARun.clicked.connect(self.btnFA_click)
+        ui.btnWARun.clicked.connect(self.btnWA_click)
         ui.btnTools.clicked.connect(self.btnTools_click)
         ui.btnSSDIR.clicked.connect(self.btnSSDIR_click)
         ui.btnDIDIR.clicked.connect(self.btnDIDIR_click)
@@ -1898,6 +1903,18 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             frmFELabelAlign.show(frmFELabelAlign)
         elif   TAID == 20001:
             frmTAIntersec.show(frmTAIntersec)
+
+
+    def btnWA_click(self):
+        WAID = ui.cbWA.currentData()
+        if WAID == 10001:
+            from GUI.frmWAAtlas import frmWAAtlas
+            frmWAAtlas.show(frmWAAtlas)
+            return
+        elif WAID == 10002:
+            # from GUI.frmFAHA2 import frmFAHA
+            # frmFAHA.show(frmFAHA)
+            return
 
 
 # Auto Run
