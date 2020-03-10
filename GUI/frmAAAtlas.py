@@ -31,7 +31,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from GUI.frmWAAtlasGUI import *
+from GUI.frmAAAtlasGUI import *
 
 import logging
 
@@ -54,15 +54,15 @@ model = CLS()
 
 
 
-class frmWAAtlas(Ui_frmWAAtlas):
-    ui = Ui_frmWAAtlas()
+class frmAAAtlas(Ui_frmAAAtlas):
+    ui = Ui_frmAAAtlas()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmWAAtlas()
+        ui = Ui_frmAAAtlas()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
@@ -299,6 +299,8 @@ class frmWAAtlas(Ui_frmWAAtlas):
         OutData = dict()
         MappingVectorRegion = None
 
+        CodeText = ui.txtEvents.toPlainText()
+
         for fold in range(FoldFrom, FoldTo + 1):
             print(f"Analyzing Fold: {fold}...")
             # InFile
@@ -446,7 +448,7 @@ class frmWAAtlas(Ui_frmWAAtlas):
 
                 try:
                     allvars = dict(locals(), **globals())
-                    exec(ui.txtEvents.toPlainText(), allvars, allvars)
+                    exec(CodeText, allvars, allvars)
                     model = allvars['model']
 
                     model.fit(SubXtr, Ytr)
@@ -487,5 +489,5 @@ class frmWAAtlas(Ui_frmWAAtlas):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmWAAtlas.show(frmWAAtlas)
+    frmAAAtlas.show(frmAAAtlas)
     sys.exit(app.exec_())

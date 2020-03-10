@@ -233,7 +233,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.cbFE.addItem("MatLab: Linear Discriminant Analysis (LDA)",5)
 
         # Wise Area Analysis
-        ui.cbWA.addItem("Atlas based analysis", 10001)
+        ui.cbAA.addItem("Finding informative regions based on atlas", 10001)
         #ui.cbWA.addItem("Voxel based analysis", 10002)
 
         # Temporal Alignment
@@ -286,7 +286,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnFERun.clicked.connect(self.btnFE_click)
         ui.btnDIDraw.clicked.connect(self.btnDIDraw_click)
         ui.btnFARun.clicked.connect(self.btnFA_click)
-        ui.btnWARun.clicked.connect(self.btnWA_click)
+        ui.btnAARun.clicked.connect(self.btnAA_click)
         ui.btnTools.clicked.connect(self.btnTools_click)
         ui.btnSSDIR.clicked.connect(self.btnSSDIR_click)
         ui.btnDIDIR.clicked.connect(self.btnDIDIR_click)
@@ -1905,13 +1905,13 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             frmTAIntersec.show(frmTAIntersec)
 
 
-    def btnWA_click(self):
-        WAID = ui.cbWA.currentData()
-        if WAID == 10001:
-            from GUI.frmWAAtlas import frmWAAtlas
-            frmWAAtlas.show(frmWAAtlas)
+    def btnAA_click(self):
+        AAID = ui.cbAA.currentData()
+        if AAID == 10001:
+            from GUI.frmAAAtlas import frmAAAtlas
+            frmAAAtlas.show(frmAAAtlas)
             return
-        elif WAID == 10002:
+        elif AAID == 10002:
             # from GUI.frmFAHA2 import frmFAHA
             # frmFAHA.show(frmFAHA)
             return

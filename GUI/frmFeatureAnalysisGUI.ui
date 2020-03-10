@@ -2421,16 +2421,11 @@ It's case sensitive.</string>
       </rect>
      </property>
     </widget>
-   </widget>
-   <widget class="QWidget" name="tab_4">
-    <attribute name="title">
-     <string>Advanced Feature Analysis</string>
-    </attribute>
-    <widget class="QPushButton" name="btnWARun">
+    <widget class="QPushButton" name="btnAARun">
      <property name="geometry">
       <rect>
        <x>12</x>
-       <y>80</y>
+       <y>470</y>
        <width>780</width>
        <height>32</height>
       </rect>
@@ -2439,27 +2434,27 @@ It's case sensitive.</string>
       <string>Run</string>
      </property>
     </widget>
-    <widget class="QComboBox" name="cbWA">
-     <property name="geometry">
-      <rect>
-       <x>210</x>
-       <y>30</y>
-       <width>581</width>
-       <height>26</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_52">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>30</y>
+       <y>420</y>
        <width>191</width>
        <height>16</height>
       </rect>
      </property>
      <property name="text">
-      <string>Wise area analysis</string>
+      <string>Advanced analysis</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbAA">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>420</y>
+       <width>581</width>
+       <height>26</height>
+      </rect>
      </property>
     </widget>
    </widget>
