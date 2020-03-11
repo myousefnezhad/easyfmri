@@ -72,8 +72,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
                 msgBox.setIcon(QMessageBox.Critical)
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
-
-        ui.cbSource.addItem("Fast via pull request", ["", "", False, True ])
+        if has_git_branch():
+            ui.cbSource.addItem("Fast via pull request", ["", "", False, True ])
         ui.cbSource.addItem("GitLab (Clone/Full)", ["gitlab.com/easyfmri/easyfmri.git", "https", False, False])
         ui.cbSource.addItem("GitHub (Clone/Full)", ["github.com/easyfmri/easyfmri.git", "https", False, False])
 
