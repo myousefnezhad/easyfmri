@@ -112,7 +112,7 @@ def getVersion():
 
 
 def getBuild():
-    return "8300"
+    return "8400"
 
 def getSettingVersion():
     return "2.0"
