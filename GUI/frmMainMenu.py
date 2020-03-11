@@ -159,10 +159,15 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             ezcmd = "ezfmri"
         item = ui.cbSource.currentData()
         if item[3]:
+            branch = getGitBranch() if has_git_branch(ezdir) else None
             cmd = ezdir + "/bin/ezupdate_pull_request.sh"
             print("Running:", cmd)
-            process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-            process.wait()
+            process1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+            process1.wait()
+            if branch is not None:
+                process2 = subprocess.Popen(["git", f"checkout {branch}"], cwd=ezdir)
+                process2.wait()
+                print(f"Checkout to {branch}")
             msgBox.setText("Update is done!")
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setStandardButtons(QMessageBox.Ok)
