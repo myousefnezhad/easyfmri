@@ -93,6 +93,8 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Random Forest",80004)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Stochastic Gradient Descent based approaches",80003)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Support Vector Machine (libsvm)",10000)
+        ui.cbMAS.addItem("MatLab, MVPA, Atlas-based ensemble analysis", 99999)
+
 
         dialog.setWindowTitle("easy fMRI model analysis - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -213,6 +215,14 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMAAdaBoost import frmMAAdaBoost
             frmMAAdaBoost.show(frmMAAdaBoost)
             return
+
+
+
+        if MAID == 99999:
+            from GUI.frmMAAtlasEnsemble import frmMAAtlasEnsemble
+            frmMAAtlasEnsemble.show(frmMAAtlasEnsemble)
+            return
+
 
 # Auto Run
 if __name__ == "__main__":
