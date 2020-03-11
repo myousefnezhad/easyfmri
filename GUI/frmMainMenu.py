@@ -31,7 +31,7 @@ from GUI.frmVisualization import *
 from GUI.Login import Login
 from Base.tools import Tools
 from Base.utility import About
-from Base.git import clone_git, has_git_branch
+from Base.git import clone_git, has_git_branch, getGitBranch
 from Base.utility import MyMessageBox
 
 
@@ -78,7 +78,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         ui.cbSource.addItem("GitHub (Clone/Full)", ["github.com/easyfmri/easyfmri.git", "https", False, False])
 
 
-        dialog.setWindowTitle("easy fMRI - V" + getVersion() + "B" + getBuild())
+        dialog.setWindowTitle(f"easy fMRI - V{getVersion()}B{getBuild()}:{getGitBranch()}")
 
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)

@@ -35,7 +35,22 @@ def clone_git(url, protocol, user=None, passwd=None, dir='~/.ezupdate'):
     process.wait()
 
 
+def getGitBranch(dir=None):
+    try:
+        from subprocess import check_output
+
+        if dir is None:
+            import  os
+            dir = str(os.environ['EASYFMRI'])
+
+        out = check_output(["git", "branch"], cwd=dir).decode("utf8")
+        current = next(line for line in out.split("\n") if line.startswith("*"))
+        print(current.strip("*").strip())
+        branch = current.strip("*").strip()
+        return branch
+    except:
+        return "unknown"
+
 
 if __name__ == "__main__":
-    print(has_git_branch())
-    print(has_git_branch('/home/tony/'))
+    print(getGitBranch())
