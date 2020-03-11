@@ -78,7 +78,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         ui.cbSource.addItem("GitHub (Clone/Full)", ["github.com/easyfmri/easyfmri.git", "https", False, False])
 
 
-        dialog.setWindowTitle(f"easy fMRI - V{getVersion()}B{getBuild()}:{getGitBranch()}")
+        dialog.setWindowTitle(f"easy fMRI - V{getVersion()}B{getBuild()} ({getGitBranch()})")
 
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
@@ -165,7 +165,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             process1 = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
             process1.wait()
             if branch is not None:
-                process2 = subprocess.Popen(["git", f"checkout {branch}"], cwd=ezdir)
+                process2 = subprocess.Popen(["git", "checkout", branch], cwd=ezdir)
                 process2.wait()
                 print(f"Checkout to {branch}")
             msgBox.setText("Update is done!")
