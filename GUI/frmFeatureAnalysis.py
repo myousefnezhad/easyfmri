@@ -234,7 +234,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         # Wise Area Analysis
         ui.cbAA.addItem("Finding informative regions based on atlas", 10001)
-        #ui.cbWA.addItem("Voxel based analysis", 10002)
+        ui.cbAA.addItem("Finding informative regions based on voxels", 10002)
+
 
         # Temporal Alignment
         ui.cbTA.addItem("Report: Shape Alignment", 10001)
@@ -1912,8 +1913,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             frmAAAtlas.show(frmAAAtlas)
             return
         elif AAID == 10002:
-            # from GUI.frmFAHA2 import frmFAHA
-            # frmFAHA.show(frmFAHA)
+            from GUI.frmAAVoxel import frmAAVoxel
+            frmAAVoxel.show(frmAAVoxel)
             return
 
 

@@ -188,6 +188,9 @@ def getFSLxml():
     return ProgramPath + "/data/fslatlas.ini"
 
 
+def getCPUCore():
+    return os.cpu_count()
+
 def convertDesignMatrix(filename,cond=None):
     import os
     if not len(filename):

@@ -30,8 +30,9 @@ from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild
-from GUI.frmAAAtlasGUI import *
+from Base.utility import getVersion, getBuild, getCPUCore
+from GUI.frmAAVoxelGUI import *
+from MVPA.MultiThreadingVectorClassification import MultiThreadingVectorClassification
 
 import logging
 
@@ -54,15 +55,15 @@ model = CLS()
 
 
 
-class frmAAAtlas(Ui_frmAAAtlas):
-    ui = Ui_frmAAAtlas()
+class frmAAVoxel(Ui_frmAAVoxel):
+    ui = Ui_frmAAVoxel()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmAAAtlas()
+        ui = Ui_frmAAVoxel()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
@@ -79,7 +80,6 @@ class frmAAAtlas(Ui_frmAAAtlas):
         ui.txtEvents.modes.append(modes.CodeCompletionMode())
         ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())
         ui.txtEvents.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
-        #ui.txtEvents.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
         ui.txtEvents.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
 
         font = QtGui.QFont()
@@ -90,7 +90,7 @@ class frmAAAtlas(Ui_frmAAAtlas):
 
 
 
-        dialog.setWindowTitle("easy fMRI Atlas based analysis - V" + getVersion() + "B" + getBuild())
+        dialog.setWindowTitle("easy fMRI Voxel based analysis - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -104,7 +104,6 @@ class frmAAAtlas(Ui_frmAAAtlas):
         ui.btnInFile.clicked.connect(self.btnInFile_click)
         ui.btnOutFile.clicked.connect(self.btnOutFile_click)
         ui.btnConvert.clicked.connect(self.btnConvert_click)
-        ui.btnAtlas.clicked.connect(self.btnAtlas_click)
 
 
     def btnClose_click(self):
@@ -190,20 +189,6 @@ class frmAAAtlas(Ui_frmAAAtlas):
                     if HasDefualt:
                         ui.txtCol.setCurrentText("coordinate")
 
-                    # ImgShape
-                    ui.txtImg.clear()
-                    HasDefualt = False
-                    for key in Keys:
-                        ui.txtImg.addItem(key)
-                        if key == "imgShape":
-                            HasDefualt = True
-                    if HasDefualt:
-                        ui.txtImg.setCurrentText("imgShape")
-                        try:
-                            print(f'Input image shape is {tuple(data["imgShape"][0])}')
-                        except:
-                            print("Cannot find ImgShape")
-
 
                     ui.txtInFile.setText(filename)
                 except Exception as e:
@@ -213,28 +198,6 @@ class frmAAAtlas(Ui_frmAAAtlas):
             else:
                 print("File not found!")
 
-    def btnAtlas_click(self):
-        global ui
-        roi_file = LoadFile('Select Atlas image file ...',['ROI image (*.nii.gz)','All files (*.*)'], 'nii.gz',\
-                            os.path.dirname(ui.txtAtlas.text()))
-        if len(roi_file):
-            if os.path.isfile(roi_file):
-                ui.txtAtlas.setText(roi_file)
-
-                try:
-                    ImgHDR = nb.load(roi_file)
-                    ImgDAT = ImgHDR.get_data()
-                    Area = np.unique(ImgDAT)
-                    Area = Area[np.where(Area != 0)[0]]
-                    print(f'Regions are {Area}')
-                    print(f'We consider 0 area as black space/rest; Max region ID: {np.max(Area)}, Min region ID: {np.min(Area)}')
-                    print(f'Atlas shape is {np.shape(ImgDAT)}')
-                except Exception as e:
-                    print(f'Cannot load atlas {e}')
-
-
-            else:
-                print("Atlas file not found!")
 
 
     def btnOutFile_click(self):
@@ -246,6 +209,11 @@ class frmAAAtlas(Ui_frmAAAtlas):
     def btnConvert_click(self):
         msgBox = QMessageBox()
         print("Loading...")
+
+        # Job
+        NumJob = ui.txtJob.value()
+        if NumJob < 1:
+            NumJob = getCPUCore()
 
         try:
             FoldFrom = np.int32(ui.txtFoldFrom.text())
@@ -262,45 +230,11 @@ class frmAAAtlas(Ui_frmAAAtlas):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        # Atlas
-        InAtlas = ui.txtAtlas.text()
-        if not len(InAtlas):
-            msgBox.setText("Please enter atlas file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        if not os.path.isfile(InAtlas):
-            msgBox.setText("Atlas file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
 
 
-
-        try:
-            AtlasHdr = nb.load(InAtlas)
-            AtlasImg = AtlasHdr.get_data()
-            AtlasShape = np.shape(AtlasImg)
-            if np.shape(AtlasShape)[0] != 3:
-                msgBox.setText("Atlas must be 3D image")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Cannot load atlas file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-
-        OutData = dict()
-        MappingVectorRegion = None
-
+        ResData = dict()
+        Coord   = None
         CodeText = ui.txtEvents.toPlainText()
-
         for fold in range(FoldFrom, FoldTo + 1):
             print(f"Analyzing Fold: {fold}...")
             # InFile
@@ -318,7 +252,9 @@ class frmAAAtlas(Ui_frmAAAtlas):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
+
             # Load InData
+            InData = None
             try:
                 InData = io.loadmat(InFile)
             except:
@@ -390,8 +326,8 @@ class frmAAAtlas(Ui_frmAAAtlas):
                 print(f"FOLD {fold}: Cannot load test label")
                 return
 
-            if MappingVectorRegion is None:
-                # Coordinate
+            # Coordinate
+            if Coord is None:
                 if not len(ui.txtCol.currentText()):
                     msgBox.setText("Please enter Condition variable name!")
                     msgBox.setIcon(QMessageBox.Critical)
@@ -400,60 +336,21 @@ class frmAAAtlas(Ui_frmAAAtlas):
                     return False
                 try:
                     Coord = np.transpose(InData[ui.txtCol.currentText()])
+                    CoordSize = np.shape(Coord)[0]
                 except:
                     print("Cannot load coordinate")
                     return
-                # imgShape
-                if not len(ui.txtImg.currentText()):
-                    msgBox.setText("Please enter Image Shape variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                    return False
-                try:
-                    DataShape = tuple(InData[ui.txtImg.currentText()][0])
-                except:
-                    print("Cannot load data image shape")
-                    return
-
-                # Check shape
-                if AtlasShape[0] != DataShape[0] or AtlasShape[1] != DataShape[1] or AtlasShape[2] != DataShape[2]:
-                    print(f'Atlas and data must have the same shape.\nAtlas: {AtlasShape} vs. Data: {DataShape}')
-                    msgBox.setText(f'Atlas and data must have the same shape.\nAtlas: {AtlasShape} vs. Data: {DataShape}')
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                    return False
-
-                print("Mapping 2D vector space to 3D region area...")
-                MappingVectorRegion = dict()
-                for cooIdx, coo in enumerate(Coord):
-                    reg = AtlasImg[coo[0], coo[1], coo[2]]
-                    if reg == 0:
-                        print(f'{tuple(coo)} is belong to black area.')
-                    else:
-                        try:
-                            MappingVectorRegion[str(reg)].append(cooIdx)
-                        except:
-                            MappingVectorRegion[str(reg)] = list()
-                            MappingVectorRegion[str(reg)].append(cooIdx)
-                        print(f'{tuple(coo)}:{cooIdx} is belong to region {reg}')
-
 
             print(f"FOLD {fold}: analyzing regions...")
-            for reg in sorted(MappingVectorRegion.keys()):
-                RegIndex = MappingVectorRegion[reg]
-                SubXtr = Xtr[:, RegIndex]
-                SubXte = Xte[:, RegIndex]
-
+            startIndex = 0
+            stepIndex  = int(CoordSize / NumJob) + 1
+            ThreadList = list()
+            ThreadID   = 1
+            while startIndex < CoordSize:
                 try:
                     allvars = dict(locals(), **globals())
                     exec(CodeText, allvars, allvars)
                     model = allvars['model']
-
-                    model.fit(SubXtr, Ytr)
-                    Pte = model.predict(SubXte)
-                    acc = accuracy_score(Yte, Pte)
                 except Exception as e:
                     print(f'Cannot generate model\n{e}')
                     msgBox.setText(f'Cannot generate model\n{e}')
@@ -462,24 +359,60 @@ class frmAAAtlas(Ui_frmAAAtlas):
                     msgBox.exec_()
                     return False
 
-                try:
-                    OutData[f"Region_{reg}_vector"].append(acc)
-                    OutData[f"Region_{reg}_count"] += 1
-                except:
-                    OutData[f"Region_{reg}_vector"] = list()
-                    OutData[f"Region_{reg}_vector"].append(acc)
-                    OutData[f"Region_{reg}_count"]  = 1
-                print(f"FOLD {fold}: Linear accuracy for {reg} is {acc}")
+                if startIndex + stepIndex < CoordSize:
+                    endIndex = startIndex + stepIndex
+                else:
+                    endIndex = CoordSize
+                TrainX = Xtr[:, startIndex:endIndex]
+                TestX  = Xte[:, startIndex:endIndex]
+                T = MultiThreadingVectorClassification(TrX=TrainX,
+                                                       Try=Ytr,
+                                                       TeX=TestX,
+                                                       Tey=Yte,
+                                                       startIndex=startIndex,
+                                                       model=model,
+                                                       processID=ThreadID)
+                print("Thread {:5d} is generated for voxels in range from {:15d} to {:15d}. # voxels: {:15d}. # cores: {:5d}. Step size: {:10d}".format(ThreadID, startIndex, endIndex, CoordSize, NumJob, stepIndex))
+                ThreadList.append(T)
+                ThreadID    += 1
+                startIndex  += stepIndex
 
-        for reg in sorted(MappingVectorRegion.keys()):
-            macc = np.mean(OutData[f"Region_{reg}_vector"])
-            OutData[f"Region_{reg}_mean_acc"] = macc
-            print(f"Mean accuracy of region {reg}: {macc}")
 
+            print(f"FOLD {fold}: running threads...")
+
+            for tt in ThreadList:
+                if not tt.is_alive():
+                    tt.start()
+
+            # Waiting the process will be finish
+            for tt in ThreadList:
+                tt.join()
+            print(f"FOLD {fold}: finalizing results...")
+
+
+            for ttIdx, tt in enumerate(ThreadList):
+                for res in tt.Results:
+                    try:
+                        ResData[res[0]] += res[1]
+                    except:
+                        ResData[res[0]] = res[1]
+                print('FOLD {:5d} and thread {:5d} is done.'.format(fold, ttIdx+1))
+
+        OutData = dict()
+        NumFold = FoldTo - FoldFrom + 1
+        FinalResult = list()
+        FinalAccuracy = list()
+        for key in ResData.keys():
+            coo = Coord[key, :]
+            acc = ResData[key] / NumFold
+            FinalResult.append([coo, acc])
+            FinalAccuracy.append(acc)
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        io.savemat(ui.txtOutFile.text(), mdict={"accuracy": FinalAccuracy,
+                                                "results": FinalResult,
+                                                ui.txtCol.currentText():Coord})
         print("DONE.")
-        msgBox.setText("Wise area analysis: Atlas is done.")
+        msgBox.setText("Wised voxel analysis is done.")
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
@@ -489,5 +422,5 @@ class frmAAAtlas(Ui_frmAAAtlas):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmAAAtlas.show(frmAAAtlas)
+    frmAAVoxel.show(frmAAVoxel)
     sys.exit(app.exec_())
