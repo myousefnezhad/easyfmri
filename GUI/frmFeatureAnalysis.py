@@ -244,6 +244,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         # Functional Alignment
         ui.cbFA.addItem("MatLab: GPU Hyperalignment (GPUHA)", 10008)
+        ui.cbFA.addItem("MatLab: Autoregressive Hyperalignment (ARHA)", 10012)
         ui.cbFA.addItem("MatLab: Supervised Hyperalignment (SHA)", 10011)
         ui.cbFA.addItem("MatLab: Deep Hyperalignment (DHA)", 10100)
         ui.cbFA.addItem("MatLab: Robust Deep Hyperalignment (RDHA)", 10101)
@@ -1886,6 +1887,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         elif FAID == 10011:
             from GUI.frmFASHA import frmFASHA
             frmFASHA.show(frmFASHA)
+            return
+        elif FAID == 10012:
+            from GUI.frmFAARHA import frmFAARHA
+            frmFAARHA.show(frmFAARHA)
             return
         elif FAID == 10100:
             from GUI.frmFADHA import frmFADHA
