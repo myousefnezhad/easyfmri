@@ -68,9 +68,9 @@
   <widget class="QPushButton" name="btnConvert">
    <property name="geometry">
     <rect>
-     <x>590</x>
+     <x>640</x>
      <y>380</y>
-     <width>141</width>
+     <width>91</width>
      <height>32</height>
     </rect>
    </property>
@@ -406,6 +406,19 @@
    </property>
    <property name="text">
     <string>$FOLD$ will be replaced by fold number.</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnSelection">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>380</y>
+     <width>151</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Voxel Selection</string>
    </property>
   </widget>
  </widget>

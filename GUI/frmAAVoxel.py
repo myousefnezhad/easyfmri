@@ -32,6 +32,7 @@ from sklearn.linear_model import LogisticRegression
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild, getCPUCore
 from GUI.frmAAVoxelGUI import *
+from GUI.frmAAVoxelSelection import *
 from MVPA.MultiThreadingVectorClassification import MultiThreadingVectorClassification
 
 import logging
@@ -104,7 +105,10 @@ class frmAAVoxel(Ui_frmAAVoxel):
         ui.btnInFile.clicked.connect(self.btnInFile_click)
         ui.btnOutFile.clicked.connect(self.btnOutFile_click)
         ui.btnConvert.clicked.connect(self.btnConvert_click)
+        ui.btnSelection.clicked.connect(self.btnSelection_click)
 
+    def btnSelection_click(self):
+        frmAAVoxelSelection.show(frmAAVoxelSelection)
 
     def btnClose_click(self):
         global dialog

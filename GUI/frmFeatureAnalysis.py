@@ -235,6 +235,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         # Wise Area Analysis
         ui.cbAA.addItem("Finding informative regions based on atlas", 10001)
         ui.cbAA.addItem("Finding informative regions based on voxels", 10002)
+        ui.cbAA.addItem("Selecting informative ROI based on voxels", 10003)
 
 
         # Temporal Alignment
@@ -1926,7 +1927,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             from GUI.frmAAVoxel import frmAAVoxel
             frmAAVoxel.show(frmAAVoxel)
             return
-
+        elif AAID == 10003:
+            from GUI.frmAAVoxelSelection import frmAAVoxelSelection
+            frmAAVoxelSelection.show(frmAAVoxelSelection)
+            return
 
 # Auto Run
 if __name__ == "__main__":

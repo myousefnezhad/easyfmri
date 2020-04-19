@@ -26,7 +26,7 @@ class Ui_frmAAVoxel(object):
         self.txtInFile.setText("")
         self.txtInFile.setObjectName("txtInFile")
         self.btnConvert = QtWidgets.QPushButton(frmAAVoxel)
-        self.btnConvert.setGeometry(QtCore.QRect(590, 380, 141, 32))
+        self.btnConvert.setGeometry(QtCore.QRect(640, 380, 91, 32))
         self.btnConvert.setObjectName("btnConvert")
         self.label_35 = QtWidgets.QLabel(frmAAVoxel)
         self.label_35.setGeometry(QtCore.QRect(30, 70, 111, 16))
@@ -123,6 +123,9 @@ class Ui_frmAAVoxel(object):
         self.label_12 = QtWidgets.QLabel(frmAAVoxel)
         self.label_12.setGeometry(QtCore.QRect(190, 380, 391, 20))
         self.label_12.setObjectName("label_12")
+        self.btnSelection = QtWidgets.QPushButton(frmAAVoxel)
+        self.btnSelection.setGeometry(QtCore.QRect(480, 380, 151, 32))
+        self.btnSelection.setObjectName("btnSelection")
 
         self.retranslateUi(frmAAVoxel)
         self.tabWidget.setCurrentIndex(0)
@@ -160,4 +163,5 @@ class Ui_frmAAVoxel(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("frmAAVoxel", "Fold"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("frmAAVoxel", "Model"))
         self.label_12.setText(_translate("frmAAVoxel", "$FOLD$ will be replaced by fold number."))
+        self.btnSelection.setText(_translate("frmAAVoxel", "Voxel Selection"))
 
