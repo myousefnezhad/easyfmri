@@ -41,6 +41,7 @@ import scipy
 import scipy.sparse
 import scipy.linalg
 import scipy.io as io
+from Base.AR import AR
 
 class ARHA:
     def __init__(self, Dim=None, regularization=10**-4, rho=0.5, rank=1):
@@ -53,13 +54,6 @@ class ARHA:
         self.rank = rank
         self.regularization=regularization
 
-    def AR(self, T, rho, rank = 1):
-        P = np.zeros((T, T))
-        for i in range(T):
-            for j in range(i - rank, i):
-                if i >= 0 and j >= 0:
-                    P[i, j] = 1
-        return np.eye(T) - rho * P
 
 
 
@@ -99,7 +93,7 @@ class ARHA:
         for i, (eps, view) in enumerate(zip(self.eps, views)):
             if self.verbose:
                 print('TRAIN DATA -> View %d -> Run SVD ...' % (i + 1))
-            A, S_thin, B = scipy.linalg.svd(np.dot(self.AR(np.shape(view)[0], self.rho, self.rank), view), full_matrices=False)
+            A, S_thin, B = scipy.linalg.svd(np.dot(AR(np.shape(view)[0], self.rho, self.rank), view), full_matrices=False)
             if self.verbose:
                 print('TRAIN DATA -> View %d -> Calculate Sigma inverse ...' % (i + 1))
             S2_inv = 1. / (np.multiply(S_thin, S_thin) + eps)

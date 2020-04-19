@@ -244,13 +244,14 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         # Functional Alignment
         ui.cbFA.addItem("MatLab: GPU Hyperalignment (GPUHA)", 10008)
-        ui.cbFA.addItem("MatLab: Autoregressive Hyperalignment (ARHA)", 10012)
         ui.cbFA.addItem("MatLab: Supervised Hyperalignment (SHA)", 10011)
         ui.cbFA.addItem("MatLab: Deep Hyperalignment (DHA)", 10100)
         ui.cbFA.addItem("MatLab: Robust Deep Hyperalignment (RDHA)", 10101)
         ui.cbFA.addItem("MatLab: Regularized Hyperalignment (direct solution, without trans. matrix)", 10001)
         ui.cbFA.addItem("MatLab: Kernel/SVD Hyperalignment (direct solution, without trans. matrix)", 10006)
         ui.cbFA.addItem("MatLab: Shared Response Model (SRM)", 10005)
+        ui.cbFA.addItem("MatLab: Autoregressive Hyperalignment (ARHA)", 10012)
+        ui.cbFA.addItem("MatLab: Autoregressive Shared Response Model (ARSRM)", 10013)
         ui.cbFA.addItem("MatLab: Regularized Hyperalignment (direct solution, with trans. matrix)", 10000)
         ui.cbFA.addItem("MatLab: Regularized Hyperalignment (classical solution)", 10009)
         ui.cbFA.addItem("MatLab: Kernel/SVD Hyperalignment (direct solution, with trans. matrix)", 10007)
@@ -1891,6 +1892,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         elif FAID == 10012:
             from GUI.frmFAARHA import frmFAARHA
             frmFAARHA.show(frmFAARHA)
+            return
+        elif FAID == 10013:
+            from GUI.frmFAARSRM import frmFAARSRM
+            frmFAARSRM.show(frmFAARSRM)
             return
         elif FAID == 10100:
             from GUI.frmFADHA import frmFADHA
