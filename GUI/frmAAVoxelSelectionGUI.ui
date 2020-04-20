@@ -785,6 +785,58 @@
        <string>P</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="btnAvaiDS">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>100</y>
+        <width>31</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>DS</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnAvaiSA">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>100</y>
+        <width>31</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>SA</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnSeleDS">
+      <property name="geometry">
+       <rect>
+        <x>575</x>
+        <y>100</y>
+        <width>31</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>DS</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnSeleSA">
+      <property name="geometry">
+       <rect>
+        <x>536</x>
+        <y>100</y>
+        <width>31</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>SA</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QLineEdit" name="txtInFile">

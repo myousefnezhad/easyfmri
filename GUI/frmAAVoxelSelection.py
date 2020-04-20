@@ -97,17 +97,35 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.btnMask.clicked.connect(self.btnASelect_click)
         ui.btnAdd.clicked.connect(self.btnAddItems_click)
         ui.btnRemove.clicked.connect(self.btnRemoveItems_click)
+        ui.btnAvaiSA.clicked.connect(self.btnAvaiSA_click)
+        ui.btnAvaiDS.clicked.connect(self.btnAvaiDS_click)
+        ui.btnSeleSA.clicked.connect(self.btnSeleSA_click)
+        ui.btnSeleDS.clicked.connect(self.btnSeleDS_click)
         ui.btnAvaiR.clicked.connect(self.btnAvaiR_click)
+        ui.btnSeleR.clicked.connect(self.btnSeleR_click)
 
 
     def btnClose_click(self):
         global dialog
         dialog.close()
 
+    def btnAvaiSA_click(self):
+        ui.vwAvai.selectAll()
+
+    def btnAvaiDS_click(self):
+        ui.vwAvai.clearSelection()
+
+    def btnSeleSA_click(self):
+        ui.vwSele.selectAll()
+
+    def btnSeleDS_click(self):
+        ui.vwSele.clearSelection()
+
+
+
 
     def btnAvaiR_click(self):
         global data
-
         msgBox = QMessageBox()
         if ui.vwAvai.rowCount() == 0:
             print("Please load voxel analysis first")
@@ -162,7 +180,6 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         # Finding selected coordinates
         indxList = list()
         for selectID in sorted(ui.vwAvai.selectionModel().selectedRows()):
-
             try:
                 itemString = str(ui.vwAvai.item(selectID.row(), 0).text()).split(";")
                 item = (int(itemString[0]), int(itemString[1]), int(itemString[2]))
@@ -175,7 +192,82 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         x2 = X[:, indxList[1][0]]
         R, pValue = pearsonr(x1, x2)
         print(f"Pearson correlation: {R} 2-tailed p-value: {pValue}")
+        #TODO: change instance color based on labels
+        plt.plot(x1, x2, 'b.')
+        plt.xlabel(indxList[0][1])
+        plt.ylabel(indxList[1][1])
+        plt.show()
 
+
+    def btnSeleR_click(self):
+        global data
+        msgBox = QMessageBox()
+        if ui.vwSele.rowCount() == 0:
+            print("Please load voxel analysis first")
+            msgBox.setText("Please load voxel analysis first")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        if data is None:
+            print("Please load dataset first")
+            msgBox.setText("Please load dataset first")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        if len(ui.vwSele.selectionModel().selectedRows()) != 2:
+            print("You have to select only 2 rows for correlation analysis")
+            msgBox.setText("You have to select only 2 rows for correlation analysis")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        # Data
+        if not len(ui.txtData.currentText()):
+            msgBox.setText("Please enter Data variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            X = data[ui.txtData.currentText()]
+        except:
+            print("Cannot load data")
+            return
+        # Coordinate
+        if not len(ui.txtCol.currentText()):
+            msgBox.setText("Please enter Coordinator variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            Coord = data[ui.txtCol.currentText()]
+        except:
+            print("Cannot load data")
+            return
+        # Make dict of Coord indexes
+        dCoord = {}
+        for cooInd, coo in enumerate(np.transpose(Coord)):
+            dCoord[tuple(coo)] = cooInd
+        # Finding selected coordinates
+        indxList = list()
+        for selectID in sorted(ui.vwSele.selectionModel().selectedRows()):
+            try:
+                itemString = str(ui.vwSele.item(selectID.row(), 0).text()).split(";")
+                item = (int(itemString[0]), int(itemString[1]), int(itemString[2]))
+                indxList.append([dCoord[item], ui.vwSele.item(selectID.row(), 0).text()])
+            except:
+                print("Cannot load data")
+                return
+        # Time Point Values for selected coordinates
+        x1 = X[:, indxList[0][0]]
+        x2 = X[:, indxList[1][0]]
+        R, pValue = pearsonr(x1, x2)
+        print(f"Pearson correlation: {R} 2-tailed p-value: {pValue}")
+        #TODO: change instance color based on labels
         plt.plot(x1, x2, 'b.')
         plt.xlabel(indxList[0][1])
         plt.ylabel(indxList[1][1])
