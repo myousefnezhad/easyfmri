@@ -628,7 +628,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Based on accuracy:</string>
+        <string>Based on accuracy</string>
        </property>
       </widget>
       <widget class="QPushButton" name="btnMask">
@@ -647,11 +647,24 @@
       <widget class="QLineEdit" name="txtAcc">
        <property name="geometry">
         <rect>
-         <x>340</x>
+         <x>550</x>
          <y>30</y>
-         <width>171</width>
+         <width>111</width>
          <height>23</height>
         </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_6">
+       <property name="geometry">
+        <rect>
+         <x>450</x>
+         <y>30</y>
+         <width>101</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Min Accuracy:</string>
        </property>
       </widget>
      </widget>
@@ -915,6 +928,32 @@
     </property>
     <property name="text">
      <string>...</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnVBA">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>670</y>
+      <width>141</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Voxel Analysis</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnVBATemp">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>670</y>
+      <width>201</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Make Empty Coordinates</string>
     </property>
    </widget>
   </widget>

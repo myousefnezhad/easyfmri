@@ -29,6 +29,7 @@ from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmAAVoxelSelectionGUI import *
+from GUI.frmAAVoxel import *
 
 from scipy.stats import  pearsonr
 
@@ -103,6 +104,10 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.btnSeleDS.clicked.connect(self.btnSeleDS_click)
         ui.btnAvaiR.clicked.connect(self.btnAvaiR_click)
         ui.btnSeleR.clicked.connect(self.btnSeleR_click)
+        ui.btnAvaiP.clicked.connect(self.btnAvaiP_click)
+        ui.btnSeleP.clicked.connect(self.btnSeleP_click)
+        ui.btnVBA.clicked.connect(self.btnVBA_click)
+        ui.btnVBATemp.clicked.connect(self.btnVBATemp_click)
 
 
     def btnClose_click(self):
@@ -120,6 +125,232 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
 
     def btnSeleDS_click(self):
         ui.vwSele.clearSelection()
+
+    def btnVBA_click(self):
+        frmAAVoxel.show(frmAAVoxel)
+
+    def btnVBATemp_click(self):
+        global data
+        msgBox = QMessageBox()
+        if data is None:
+            print("Please load dataset first")
+            msgBox.setText("Please load dataset first")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        # Coordinate
+        if not len(ui.txtCol.currentText()):
+            msgBox.setText("Please enter Coordinator variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            Coord = np.transpose(data[ui.txtCol.currentText()])
+        except:
+            print("Cannot load data")
+            return
+        # Clear Views
+        ui.vwSele.clear()
+        ui.vwSele.setColumnCount(2)
+        ui.vwSele.setRowCount(0)
+        ui.vwSele.setColumnWidth(0, 120)
+        ui.vwSele.setColumnWidth(1, 100)
+        ui.vwSele.setHorizontalHeaderLabels(['Coordinate', 'Accuracy'])
+        ui.vwSele.setSortingEnabled(True)
+        ui.vwSele.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        ui.vwSele.setSelectionBehavior(QAbstractItemView.SelectRows)
+        ui.vwAvai.clear()
+        ui.vwAvai.setColumnCount(2)
+        ui.vwSele.setRowCount(0)
+        ui.vwAvai.setColumnWidth(0, 120)
+        ui.vwAvai.setColumnWidth(1, 100)
+        ui.vwAvai.setHorizontalHeaderLabels(['Coordinate', 'Accuracy'])
+        ui.vwAvai.setSortingEnabled(True)
+        ui.vwAvai.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        ui.vwAvai.setSelectionBehavior(QAbstractItemView.SelectRows)
+        # Draw
+        ui.vwAvai.setRowCount(np.shape(Coord)[0])
+        ui.vwAvai.setRowCount(np.shape(Coord)[0])
+        for rowId, coo in enumerate(Coord):
+            try:
+                item = QTableWidgetItem('{:5};{:5};{:5}'.format(coo[0], coo[1], coo[2]))
+                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                ui.vwAvai.setItem(rowId, 0, item)
+                item = QTableWidgetItem('None')
+                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                ui.vwAvai.setItem(rowId, 1, item)
+            except:
+                print(f'Item: {rowId} cannot add to the list --- format error')
+        print(f"We have added {np.shape(Coord)[0]} items")
+        ui.tabWidget.setCurrentIndex(1)
+
+
+
+    def btnAvaiP_click(self):
+        global data
+        msgBox = QMessageBox()
+        if ui.vwAvai.rowCount() == 0:
+            print("Please load voxel analysis first")
+            msgBox.setText("Please load voxel analysis first")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        if data is None:
+            print("Please load dataset first")
+            msgBox.setText("Please load dataset first")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        if len(ui.vwAvai.selectionModel().selectedRows()) < 1:
+            print("You have to select at least an item first")
+            msgBox.setText("You have to select at least an item first")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        if len(ui.vwAvai.selectionModel().selectedRows()) > 9:
+            print("You have to select at most 9 items")
+            msgBox.setText("You have to select at most 9 items")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        # Data
+        if not len(ui.txtData.currentText()):
+            msgBox.setText("Please enter Data variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            X = data[ui.txtData.currentText()]
+        except:
+            print("Cannot load data")
+            return
+        # Coordinate
+        if not len(ui.txtCol.currentText()):
+            msgBox.setText("Please enter Coordinator variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            Coord = data[ui.txtCol.currentText()]
+        except:
+            print("Cannot load data")
+            return
+        # Make dict of Coord indexes
+        dCoord = {}
+        for cooInd, coo in enumerate(np.transpose(Coord)):
+            dCoord[tuple(coo)] = cooInd
+        # Finding selected coordinates
+        indxList = list()
+        for selectID in sorted(ui.vwAvai.selectionModel().selectedRows()):
+            try:
+                itemString = str(ui.vwAvai.item(selectID.row(), 0).text()).split(";")
+                item = (int(itemString[0]), int(itemString[1]), int(itemString[2]))
+                indxList.append([dCoord[item], ui.vwAvai.item(selectID.row(), 0).text()])
+            except:
+                print("Cannot load data")
+                return
+        plotSize = np.shape(indxList)[0]
+        plotSize *= 100
+        plotSize += 10
+        plt.xlabel("Time Points")
+        for rowID, (idx, cooID) in enumerate(indxList):
+            x = X[:, idx]
+            plt.subplot(plotSize + rowID + 1)
+            plt.plot(x, 'b.')
+            plt.ylabel(cooID)
+            plt.xlabel("Time Points")
+        plt.show()
+
+
+
+    def btnSeleP_click(self):
+        global data
+        msgBox = QMessageBox()
+        if ui.vwSele.rowCount() == 0:
+            print("Please load voxel analysis first")
+            msgBox.setText("Please load voxel analysis first")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        if data is None:
+            print("Please load dataset first")
+            msgBox.setText("Please load dataset first")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        if len(ui.vwSele.selectionModel().selectedRows()) < 1:
+            print("You have to select at least an item first")
+            msgBox.setText("You have to select at least an item first")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        if len(ui.vwSele.selectionModel().selectedRows()) > 9:
+            print("You have to select at most 9 items")
+            msgBox.setText("You have to select at most 9 items")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        # Data
+        if not len(ui.txtData.currentText()):
+            msgBox.setText("Please enter Data variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            X = data[ui.txtData.currentText()]
+        except:
+            print("Cannot load data")
+            return
+        # Coordinate
+        if not len(ui.txtCol.currentText()):
+            msgBox.setText("Please enter Coordinator variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            Coord = data[ui.txtCol.currentText()]
+        except:
+            print("Cannot load data")
+            return
+        # Make dict of Coord indexes
+        dCoord = {}
+        for cooInd, coo in enumerate(np.transpose(Coord)):
+            dCoord[tuple(coo)] = cooInd
+        # Finding selected coordinates
+        indxList = list()
+        for selectID in sorted(ui.vwSele.selectionModel().selectedRows()):
+            try:
+                itemString = str(ui.vwSele.item(selectID.row(), 0).text()).split(";")
+                item = (int(itemString[0]), int(itemString[1]), int(itemString[2]))
+                indxList.append([dCoord[item], ui.vwSele.item(selectID.row(), 0).text()])
+            except:
+                print("Cannot load data")
+                return
+        plotSize = np.shape(indxList)[0]
+        plotSize *= 100
+        plotSize += 10
+        plt.xlabel("Time Points")
+        for rowID, (idx, cooID) in enumerate(indxList):
+            x = X[:, idx]
+            plt.subplot(plotSize + rowID + 1)
+            plt.plot(x, 'b.')
+            plt.ylabel(cooID)
+            plt.xlabel("Time Points")
+        plt.show()
 
 
 
