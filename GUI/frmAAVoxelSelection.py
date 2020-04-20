@@ -30,14 +30,24 @@ from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmAAVoxelSelectionGUI import *
 
+from scipy.stats import  pearsonr
+
+# Plot
+import matplotlib
+matplotlib.use('Qt5Agg')
+import matplotlib.pyplot as plt
+
+
 class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
     ui = Ui_frmAAVoxelSelection()
     dialog = None
+    data = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
+        global data
         ui = Ui_frmAAVoxelSelection()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
@@ -66,6 +76,7 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.vwAvai.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         ui.vwAvai.setSelectionBehavior(QAbstractItemView.SelectRows)
 
+        data = None
 
         dialog.setWindowTitle("easy fMRI Voxel-based analysis: Voxel Selection - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
@@ -86,13 +97,96 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.btnMask.clicked.connect(self.btnASelect_click)
         ui.btnAdd.clicked.connect(self.btnAddItems_click)
         ui.btnRemove.clicked.connect(self.btnRemoveItems_click)
+        ui.btnAvaiR.clicked.connect(self.btnAvaiR_click)
 
 
     def btnClose_click(self):
         global dialog
         dialog.close()
 
+
+    def btnAvaiR_click(self):
+        global data
+
+        msgBox = QMessageBox()
+        if ui.vwAvai.rowCount() == 0:
+            print("Please load voxel analysis first")
+            msgBox.setText("Please load voxel analysis first")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        if data is None:
+            print("Please load dataset first")
+            msgBox.setText("Please load dataset first")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        if len(ui.vwAvai.selectionModel().selectedRows()) != 2:
+            print("You have to select only 2 rows for correlation analysis")
+            msgBox.setText("You have to select only 2 rows for correlation analysis")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
+        # Data
+        if not len(ui.txtData.currentText()):
+            msgBox.setText("Please enter Data variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            X = data[ui.txtData.currentText()]
+        except:
+            print("Cannot load data")
+            return
+        # Coordinate
+        if not len(ui.txtCol.currentText()):
+            msgBox.setText("Please enter Coordinator variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            Coord = data[ui.txtCol.currentText()]
+        except:
+            print("Cannot load data")
+            return
+        # Make dict of Coord indexes
+        dCoord = {}
+        for cooInd, coo in enumerate(np.transpose(Coord)):
+            dCoord[tuple(coo)] = cooInd
+        # Finding selected coordinates
+        indxList = list()
+        for selectID in sorted(ui.vwAvai.selectionModel().selectedRows()):
+
+            try:
+                itemString = str(ui.vwAvai.item(selectID.row(), 0).text()).split(";")
+                item = (int(itemString[0]), int(itemString[1]), int(itemString[2]))
+                indxList.append([dCoord[item], ui.vwAvai.item(selectID.row(), 0).text()])
+            except:
+                print("Cannot load data")
+                return
+        # Time Point Values for selected coordinates
+        x1 = X[:, indxList[0][0]]
+        x2 = X[:, indxList[1][0]]
+        R, pValue = pearsonr(x1, x2)
+        print(f"Pearson correlation: {R} 2-tailed p-value: {pValue}")
+
+        plt.plot(x1, x2, 'b.')
+        plt.xlabel(indxList[0][1])
+        plt.ylabel(indxList[1][1])
+        plt.show()
+
+
+
+
     def btnInFile_click(self):
+        global data
+        data = None
         filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
                             os.path.dirname(ui.txtInFile.text()))
 
@@ -435,6 +529,8 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
+        global data
+        data = None
         msgBox = QMessageBox()
         if ui.vwSele.rowCount() == 0:
             print("Please select some voxel first")

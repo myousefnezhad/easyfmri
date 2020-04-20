@@ -660,7 +660,7 @@
        <rect>
         <x>20</x>
         <y>100</y>
-        <width>321</width>
+        <width>111</width>
         <height>20</height>
        </rect>
       </property>
@@ -668,15 +668,15 @@
        <string>Available Loci</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignCenter</set>
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
       </property>
      </widget>
      <widget class="QLabel" name="label_7">
       <property name="geometry">
        <rect>
-        <x>430</x>
+        <x>400</x>
         <y>98</y>
-        <width>251</width>
+        <width>101</width>
         <height>20</height>
        </rect>
       </property>
@@ -684,7 +684,7 @@
        <string>Selected Loci</string>
       </property>
       <property name="alignment">
-       <set>Qt::AlignCenter</set>
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
       </property>
      </widget>
      <widget class="QPushButton" name="btnAdd">
@@ -731,6 +731,58 @@
         <width>298</width>
         <height>351</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnAvaiR">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>100</y>
+        <width>31</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>R</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnAvaiP">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>100</y>
+        <width>31</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>P</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnSeleR">
+      <property name="geometry">
+       <rect>
+        <x>655</x>
+        <y>100</y>
+        <width>31</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>R</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnSeleP">
+      <property name="geometry">
+       <rect>
+        <x>615</x>
+        <y>100</y>
+        <width>31</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>P</string>
       </property>
      </widget>
     </widget>
