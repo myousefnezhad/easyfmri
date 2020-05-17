@@ -595,7 +595,15 @@ class frmMASSA(Ui_frmMASSA):
                 Index = [Index[1]]
 
             Xi.append(X[Index])
-            Yi.append(label_binarize(L[Index], np.unique(L)))
+            yyi = label_binarize(L[Index], np.unique(L))
+
+            # Adopt it for binary labels (just two class SSA comparison)
+            if np.shape(yyi)[1] == 1:
+                yyi_inv = yyi.copy()
+                yyi_inv[np.where(yyi_inv == 0)] = 2
+                yyi_inv -= 1
+                yyi = np.concatenate((yyi, yyi_inv), axis=1)
+            Yi.append(yyi)
 
         try:
             ssa  = SSA(gamma=gamma, gpu=gpu)
