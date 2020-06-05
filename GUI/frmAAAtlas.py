@@ -27,7 +27,7 @@ import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.svm import LinearSVC
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report, precision_score, recall_score, roc_auc_score, f1_score, confusion_matrix
 from sklearn.linear_model import LogisticRegression
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
@@ -450,10 +450,14 @@ class frmAAAtlas(Ui_frmAAAtlas):
                     allvars = dict(locals(), **globals())
                     exec(CodeText, allvars, allvars)
                     model = allvars['model']
-
                     model.fit(SubXtr, Ytr)
                     Pte = model.predict(SubXte)
                     acc = accuracy_score(Yte, Pte)
+                    clr = classification_report(Yte, Pte)
+                    cfm = confusion_matrix(Yte, Pte)
+                    pre = precision_score(Yte, Pte)
+                    f1  = f1_score(Yte, Pte)
+                    rca = recall_score(Yte, Pte)
                 except Exception as e:
                     print(f'Cannot generate model\n{e}')
                     msgBox.setText(f'Cannot generate model\n{e}')
@@ -463,17 +467,44 @@ class frmAAAtlas(Ui_frmAAAtlas):
                     return False
 
                 try:
-                    OutData[f"Region_{reg}_vector"].append(acc)
+                    OutData[f"Region_{reg}_accuracy_score"].append(acc)
                     OutData[f"Region_{reg}_count"] += 1
+                    OutData[f"Region_{reg}_classification_report"].append(clr)
+                    OutData[f"Region_{reg}_precision_score"].append(pre)
+                    OutData[f"Region_{reg}_f1_score"].append(f1)
+                    OutData[f"Region_{reg}_recall_score"].append(rca)
+                    OutData[f"Region_{reg}_confusion_matrix"].append(cfm)
                 except:
-                    OutData[f"Region_{reg}_vector"] = list()
-                    OutData[f"Region_{reg}_vector"].append(acc)
                     OutData[f"Region_{reg}_count"]  = 1
+                    OutData[f"Region_{reg}_accuracy_score"] = list()
+                    OutData[f"Region_{reg}_accuracy_score"].append(acc)
+                    OutData[f"Region_{reg}_classification_report"] = list()
+                    OutData[f"Region_{reg}_classification_report"].append(clr)
+                    OutData[f"Region_{reg}_precision_score"] = list()
+                    OutData[f"Region_{reg}_precision_score"].append(pre)
+                    OutData[f"Region_{reg}_f1_score"] = list()
+                    OutData[f"Region_{reg}_f1_score"].append(f1)
+                    OutData[f"Region_{reg}_recall_score"] = list()
+                    OutData[f"Region_{reg}_recall_score"].append(rca)
+                    OutData[f"Region_{reg}_confusion_matrix"] = list()
+                    OutData[f"Region_{reg}_confusion_matrix"].append(cfm)
+
                 print(f"FOLD {fold}: Linear accuracy for {reg} is {acc}")
 
         for reg in sorted(MappingVectorRegion.keys()):
-            macc = np.mean(OutData[f"Region_{reg}_vector"])
-            OutData[f"Region_{reg}_mean_acc"] = macc
+            macc = np.mean(OutData[f"Region_{reg}_accuracy_score"])
+            mpre = np.mean(OutData[f"Region_{reg}_precision_score"])
+            mf1  = np.mean(OutData[f"Region_{reg}_f1_score"])
+            mrca = np.mean(OutData[f"Region_{reg}_recall_score"])
+            mcfm = None
+            for ecmf in OutData[f"Region_{reg}_confusion_matrix"]:
+                mcfm = ecmf if mcfm is None else mcfm + ecmf
+            mcfm = mcfm / OutData[f"Region_{reg}_count"]
+            OutData[f"Region_{reg}_mean_accuracy"]  = macc
+            OutData[f"Region_{reg}_mean_precision"] = mpre
+            OutData[f"Region_{reg}_mean_recall"]    = mrca
+            OutData[f"Region_{reg}_mean_f1"]        = mf1
+            OutData[f"Region_{reg}_mean_confusion_matrix"] = mcfm
             print(f"Mean accuracy of region {reg}: {macc}")
 
         print("Saving ...")
