@@ -31,7 +31,7 @@ import sklearn.linear_model as linmdl
 from scipy.cluster.hierarchy import dendrogram, linkage
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
-from GUI.frmMASKRSAGUI import *
+from GUI.frmMAEncodingAnalysisGUI import *
 
 # Plot
 import matplotlib
@@ -40,15 +40,15 @@ import matplotlib.pyplot as plt
 
 
 
-class frmMASKRSA(Ui_frmMASKRSA):
-    ui = Ui_frmMASKRSA()
+class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
+    ui = Ui_frmMAEncodingAnalysis()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmMASKRSA()
+        ui = Ui_frmMAEncodingAnalysis()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
@@ -75,7 +75,7 @@ class frmMASKRSA(Ui_frmMASKRSA):
         ui.cbSolver.addItem("saga")
 
 
-        dialog.setWindowTitle("easy fMRI SK Session Level Representational Similarity Analysis (RSA) - V" + getVersion() + "B" + getBuild())
+        dialog.setWindowTitle("easy fMRI Encoding Analysis (Session Level) - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -1012,5 +1012,5 @@ class frmMASKRSA(Ui_frmMASKRSA):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmMASKRSA.show(frmMASKRSA)
+    frmMAEncodingAnalysis.show(frmMAEncodingAnalysis)
     sys.exit(app.exec_())

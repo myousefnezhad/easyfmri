@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>frmMAGRSA</class>
- <widget class="QDialog" name="frmMAGRSA">
+ <class>frmMAEncodingAnalysis</class>
+ <widget class="QDialog" name="frmMAEncodingAnalysis">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>782</width>
-    <height>636</height>
+    <height>709</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,7 +56,7 @@
    <property name="geometry">
     <rect>
      <x>620</x>
-     <y>580</y>
+     <y>660</y>
      <width>141</width>
      <height>32</height>
     </rect>
@@ -69,7 +69,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>580</y>
+     <y>660</y>
      <width>141</width>
      <height>32</height>
     </rect>
@@ -84,7 +84,7 @@
      <x>30</x>
      <y>150</y>
      <width>731</width>
-     <height>411</height>
+     <height>491</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -156,7 +156,7 @@
      <property name="geometry">
       <rect>
        <x>180</x>
-       <y>170</y>
+       <y>210</y>
        <width>181</width>
        <height>26</height>
       </rect>
@@ -172,7 +172,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>170</y>
+       <y>210</y>
        <width>111</width>
        <height>16</height>
       </rect>
@@ -185,7 +185,7 @@
      <property name="geometry">
       <rect>
        <x>180</x>
-       <y>210</y>
+       <y>250</y>
        <width>181</width>
        <height>26</height>
       </rect>
@@ -201,7 +201,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>210</y>
+       <y>250</y>
        <width>60</width>
        <height>16</height>
       </rect>
@@ -214,7 +214,7 @@
      <property name="geometry">
       <rect>
        <x>180</x>
-       <y>250</y>
+       <y>290</y>
        <width>181</width>
        <height>26</height>
       </rect>
@@ -230,7 +230,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>250</y>
+       <y>290</y>
        <width>131</width>
        <height>16</height>
       </rect>
@@ -256,7 +256,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>290</y>
+       <y>330</y>
        <width>131</width>
        <height>16</height>
       </rect>
@@ -269,6 +269,70 @@
      <property name="geometry">
       <rect>
        <x>180</x>
+       <y>330</y>
+       <width>181</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="txtRunVal">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>250</y>
+       <width>181</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="txtTaskVal">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>330</y>
+       <width>181</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="txtSubjectVal">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>210</y>
+       <width>181</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="txtCounterVal">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
        <y>290</y>
        <width>181</width>
        <height>26</height>
@@ -279,6 +343,32 @@
      </property>
      <property name="sizeAdjustPolicy">
       <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>10</y>
+       <width>111</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Value</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnRef">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>410</y>
+       <width>181</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Referesh</string>
      </property>
     </widget>
     <widget class="QComboBox" name="txtDesign">
@@ -310,122 +400,33 @@
       <string>Design</string>
      </property>
     </widget>
-   </widget>
-   <widget class="QWidget" name="tab_3">
-    <attribute name="title">
-     <string>Level</string>
-    </attribute>
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QComboBox" name="txtCond">
      <property name="geometry">
       <rect>
-       <x>40</x>
-       <y>30</y>
-       <width>451</width>
-       <height>101</height>
+       <x>180</x>
+       <y>170</y>
+       <width>181</width>
+       <height>26</height>
       </rect>
      </property>
-     <property name="title">
-      <string>&lt;Subject Level&gt;</string>
+     <property name="editable">
+      <bool>true</bool>
      </property>
-     <widget class="QCheckBox" name="cbFSubject">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>130</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Subject</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButton">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>60</y>
-        <width>201</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Without Run</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rbFRun">
-      <property name="geometry">
-       <rect>
-        <x>220</x>
-        <y>60</y>
-        <width>221</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>With Run</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QCheckBox" name="cbFTask">
-     <property name="geometry">
-      <rect>
-       <x>510</x>
-       <y>60</y>
-       <width>161</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Task</string>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
      </property>
     </widget>
-    <widget class="QCheckBox" name="cbFCounter">
+    <widget class="QLabel" name="label_31">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>100</y>
-       <width>161</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Counter</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_11">
-     <property name="geometry">
-      <rect>
-       <x>40</x>
-       <y>160</y>
-       <width>121</width>
+       <x>20</x>
+       <y>170</y>
+       <width>131</width>
        <height>16</height>
       </rect>
      </property>
      <property name="text">
-      <string>Unit number</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="txtUnit">
-     <property name="geometry">
-      <rect>
-       <x>160</x>
-       <y>160</y>
-       <width>181</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>1000000000</number>
+      <string>Condition</string>
      </property>
     </widget>
    </widget>
@@ -437,9 +438,9 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>20</y>
+       <y>10</y>
        <width>671</width>
-       <height>80</height>
+       <height>71</height>
       </rect>
      </property>
      <property name="title">
@@ -449,8 +450,8 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>40</y>
-        <width>161</width>
+        <y>35</y>
+        <width>641</width>
         <height>21</height>
        </rect>
       </property>
@@ -461,90 +462,237 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QRadioButton" name="rbScale">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>40</y>
-        <width>161</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Session Level</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioButton_2">
-      <property name="geometry">
-       <rect>
-        <x>350</x>
-        <y>40</y>
-        <width>131</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Whole Data</string>
-      </property>
-     </widget>
     </widget>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QLabel" name="label_13">
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>120</y>
-       <width>671</width>
-       <height>71</height>
+       <y>300</y>
+       <width>391</width>
+       <height>16</height>
       </rect>
      </property>
-     <property name="title">
-      <string>&lt;Integration Metric&gt;</string>
+     <property name="text">
+      <string>L1 (ElasticNet)</string>
      </property>
-     <widget class="QRadioButton" name="rbAvg">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>30</y>
-        <width>116</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Average</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rbMax">
-      <property name="geometry">
-       <rect>
-        <x>170</x>
-        <y>30</y>
-        <width>116</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Max</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rbMin">
-      <property name="geometry">
-       <rect>
-        <x>330</x>
-        <y>30</y>
-        <width>116</width>
-        <height>22</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Min</string>
-      </property>
-     </widget>
+    </widget>
+    <widget class="QLabel" name="label_14">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>220</y>
+       <width>401</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Max Iteration (Ridge, LASSO, ElasticNet)</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtAlpha">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>180</y>
+       <width>160</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0.01</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtL1">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>300</y>
+       <width>160</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0.5</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtTole">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>260</y>
+       <width>160</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0.0001</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_15">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>140</y>
+       <width>411</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Number of parallel jobs (OLS)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_16">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>180</y>
+       <width>411</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Alpha (Ridge, LASSO, ElasticNet)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_17">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>260</y>
+       <width>401</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Tolerance (Ridge=0.001, LASSO or ElasticNet=0.0001)</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtMaxIter">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>220</y>
+       <width>160</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1000</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtJobs">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>140</y>
+       <width>160</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_18">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>100</y>
+       <width>421</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Method</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbMethod">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>100</y>
+       <width>160</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_19">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>340</y>
+       <width>391</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Selection (LASSO, ElasticNet)</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbSelection">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>340</y>
+       <width>160</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbSolver">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>380</y>
+       <width>160</width>
+       <height>26</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_20">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>380</y>
+       <width>391</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Solver (Ridge)</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="cbFit">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>420</y>
+       <width>191</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Fit Intercept</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="cbNormalize">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>420</y>
+       <width>251</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Normalize</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
     </widget>
    </widget>
    <widget class="QWidget" name="tab_4">
@@ -596,7 +744,7 @@
        <x>190</x>
        <y>70</y>
        <width>91</width>
-       <height>221</height>
+       <height>371</height>
       </rect>
      </property>
      <property name="readOnly">
@@ -651,6 +799,176 @@
      </property>
      <property name="checked">
       <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_3">
+    <attribute name="title">
+     <string>Options</string>
+    </attribute>
+    <widget class="QLineEdit" name="txtTitleDen">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>194</y>
+       <width>461</width>
+       <height>35</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_28">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>100</y>
+       <width>221</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Figure Title: Cov (Null = Auto)</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtTitleCov">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>93</y>
+       <width>461</width>
+       <height>35</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_30">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>200</y>
+       <width>221</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Figure Title: Den (Null = Auto)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_29">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>149</y>
+       <width>221</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Figure Title: Corr (Null = Auto)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_27">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>49</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Font Size</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="txtFontSize">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>43</y>
+       <width>171</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+     <property name="value">
+      <number>14</number>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtTitleCorr">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>143</y>
+       <width>461</width>
+       <height>35</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="txtXRotation">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>240</y>
+       <width>171</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>359</number>
+     </property>
+     <property name="value">
+      <number>45</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_32">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>247</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>X Rotation</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="txtYRotation">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>288</y>
+       <width>171</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>359</number>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_34">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>295</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Y Rotation</string>
      </property>
     </widget>
    </widget>
@@ -730,7 +1048,7 @@
    <property name="geometry">
     <rect>
      <x>460</x>
-     <y>580</y>
+     <y>660</y>
      <width>141</width>
      <height>32</height>
     </rect>

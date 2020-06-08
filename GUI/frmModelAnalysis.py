@@ -69,18 +69,16 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
 
         ui.tabWidget.setCurrentIndex(0)
         # Unsupervised
-        ui.cbMAU.addItem("MatLab, PyTorch: Shared Similarity Analysis", 30000)
-        ui.cbMAU.addItem("MatLab, SK Clustering: Agglomerative",10002)
-        ui.cbMAU.addItem("MatLab, SK Clustering: Birch",10003)
-        ui.cbMAU.addItem("MatLab, SK Clustering: Gaussian Mixture",10004)
-        ui.cbMAU.addItem("MatLab, SK Clustering: KMeans",10000)
-        ui.cbMAU.addItem("MatLab, SK Clustering: Spectral",10001)
-        ui.cbMAU.addItem("MatLab, SK RSA: Session Level Representational Similarity Analysis",20007)
-        ui.cbMAU.addItem("MatLab, SK RSA: Group Level Representational Similarity Analysis",20008)
-        ui.cbMAU.addItem("MatLab, NumPy RSA: Session Level Representational Similarity Analysis",20000)
-        ui.cbMAU.addItem("MatLab, NumPy RSA: Group Level Representational Similarity Analysis",20001)
-        ui.cbMAU.addItem("MatLab, PyTorch RSA: Session Level Gradient Representational Similarity Analysis",20002)
-        ui.cbMAU.addItem("MatLab, PyTorch RSA: Group Level Gradient Representational Similarity Analysis",20003)
+        ui.cbMAU.addItem("MatLab, Shared Similarity Analysis (SSA)", 30000)
+        ui.cbMAU.addItem("MatLab, RSA (Group Level)",20008)
+        ui.cbMAU.addItem("MatLab, Gradient RSA (Group Level)",20003)
+        ui.cbMAU.addItem("MatLab, Encoding Analysis (Session Level)",20007)
+        ui.cbMAU.addItem("MatLab, Gradient Encoding Analysis (Session Level) ",20002)
+        ui.cbMAU.addItem("MatLab, Clustering: Agglomerative",10002)
+        ui.cbMAU.addItem("MatLab, Clustering: Birch",10003)
+        ui.cbMAU.addItem("MatLab, Clustering: Gaussian Mixture",10004)
+        ui.cbMAU.addItem("MatLab, Clustering: KMeans",10000)
+        ui.cbMAU.addItem("MatLab, Clustering: Spectral",10001)
 
         # Supervised
         ui.cbMAS.addItem("MatLab, MVPA, PyTorch: GPU Support Vector Machine",10003)
@@ -123,6 +121,30 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
 
     def btnMAU_click(self):
         MAID = ui.cbMAU.currentData()
+        # SSA
+        if MAID == 30000:
+            from GUI.frmMASSA import frmMASSA
+            frmMASSA.show(frmMASSA)
+            return
+        # RSA
+        if MAID == 20008:
+            from GUI.frmMARSA import frmMARSA
+            frmMARSA.show(frmMARSA)
+            return
+        if MAID == 20003:
+            from GUI.frmMAGradientRSA import frmMAGradientRSA
+            frmMAGradientRSA.show(frmMAGradientRSA)
+            return
+        # Encoding Analysis
+        if MAID == 20007:
+            from GUI.frmMAEncodingAnalysis import frmMAEncodingAnalysis
+            frmMAEncodingAnalysis.show(frmMAEncodingAnalysis)
+            return
+        if MAID == 20002:
+            from GUI.frmMAGradientEncodingAnalysis import frmMAGradientEncodingAnalysis
+            frmMAGradientEncodingAnalysis.show(frmMAGradientEncodingAnalysis)
+            return
+        # Clustering
         if MAID == 10000:
             from GUI.frmMAKMeans import frmMAKMeans
             frmMAKMeans.show(frmMAKMeans)
@@ -143,34 +165,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMAGaussian import frmMAGaussian
             frmMAGaussian.show(frmMAGaussian)
             return
-        if MAID == 20000:
-            from GUI.frmMARSA import frmMARSA
-            frmMARSA.show(frmMARSA)
-            return
-        if MAID == 20001:
-            from GUI.frmMAGRSA import frmMAGRSA
-            frmMAGRSA.show(frmMAGRSA)
-            return
-        if MAID == 20007:
-            from GUI.frmMASKRSA import frmMASKRSA
-            frmMASKRSA.show(frmMASKRSA)
-            return
-        if MAID == 20008:
-            from GUI.frmMASKGRSA import frmMASKGRSA
-            frmMASKGRSA.show(frmMASKGRSA)
-            return
-        if MAID == 20002:
-            from GUI.frmMAGrRSA import frmMAGrRSA
-            frmMAGrRSA.show(frmMAGrRSA)
-            return
-        if MAID == 20003:
-            from GUI.frmMAGGrRSA import frmMAGGrRSA
-            frmMAGGrRSA.show(frmMAGGrRSA)
-            return
-        if MAID == 30000:
-            from GUI.frmMASSA import frmMASSA
-            frmMASSA.show(frmMASSA)
-            return
+
 
 
     def btnMAS_click(self):

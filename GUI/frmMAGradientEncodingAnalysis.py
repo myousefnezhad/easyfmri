@@ -18,7 +18,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
 import os
 import sys
 import time
@@ -26,11 +25,11 @@ import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
-from sklearn.metrics import mean_squared_error
-import sklearn.linear_model as linmdl
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
-from GUI.frmMASKGRSAGUI import *
+import torch
+from RSA.GrRSA import GrRSA
+from GUI.frmMAGradientEncodingAnalysisGUI import *
 
 # Plot
 import matplotlib
@@ -39,16 +38,33 @@ import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import dendrogram, linkage
 
 
+def MethodTitle(str):
+    if   str == 'ridge':
+        return 'Ridge Regression'
+    elif str == 'ln1':
+        return 'Least Norm 1'
+    elif str == 'ln2':
+        return 'Least Norm 2'
+    elif str == 'ln12':
+        return 'Least Norms 1, 2'
+    elif str == 'linear':
+        return 'Linear Model'
+    elif str == 'lasso':
+        return 'LASSO'
+    elif str == 'elastic':
+        return 'Elastic Net'
+    return ''
 
-class frmMASKGRSA(Ui_frmMASKGRSA):
-    ui = Ui_frmMASKGRSA()
+
+class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
+    ui = Ui_frmMAGradientEncodingAnalysis()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmMASKGRSA()
+        ui = Ui_frmMAGradientEncodingAnalysis()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
@@ -56,26 +72,31 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
         ui.tabWidget.setCurrentIndex(0)
 
         # Method
-        ui.cbMethod.addItem("Ridge Regression","ridge")
-        ui.cbMethod.addItem("Ordinary Least Squares","ols")
-        ui.cbMethod.addItem("LASSO","lasso")
-        ui.cbMethod.addItem("Elastic Net","elast")
-
-        # Selection
-        ui.cbSelection.addItem("cyclic")
-        ui.cbSelection.addItem("random")
-
-        # Solver {‘auto’, ‘svd’, ‘cholesky’, ‘lsqr’, ‘sparse_cg’, ‘sag’, ‘saga’}
-        ui.cbSolver.addItem("auto")
-        ui.cbSolver.addItem("svd")
-        ui.cbSolver.addItem("cholesky")
-        ui.cbSolver.addItem("lsqr")
-        ui.cbSolver.addItem("sparse_cg")
-        ui.cbSolver.addItem("sag")
-        ui.cbSolver.addItem("saga")
+        ui.cbMethod.addItem('Linear Model' , 'linear')
+        ui.cbMethod.addItem('Ridge Regression','ridge')
+        ui.cbMethod.addItem('LASSO' , 'lasso')
+        ui.cbMethod.addItem('Elastic Net', 'elastic')
+        ui.cbMethod.addItem('Least Norm 1','ln1')
+        ui.cbMethod.addItem('Least Norm 2', 'ln2')
+        ui.cbMethod.addItem('Least Norms 1, 2' , 'ln12')
 
 
-        dialog.setWindowTitle("easy fMRI SK Group Representational Similarity Analysis (RSA) - V" + getVersion() + "B" + getBuild())
+        # LOSS Type
+        ui.cbLossType.addItem('Mean Square Error', 'mse')
+        ui.cbLossType.addItem('Soft Margin Loss', 'soft')
+        ui.cbLossType.addItem('Norm', 'norm')
+        ui.cbLossType.addItem('Mean', 'mean')
+
+        # Optimization
+        ui.cbOptim.addItem('Adam', 'adam')
+        ui.cbOptim.addItem('SGD', 'sgd')
+
+        # Device
+        ui.cbDevice.addItem("Auto", torch.cuda.is_available())
+        ui.cbDevice.addItem("Just CPU", False)
+
+
+        dialog.setWindowTitle("easy fMRI Gradient Encoding Analysis (Session Level) - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -87,6 +108,7 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
         global ui
         ui.btnClose.clicked.connect(self.btnClose_click)
         ui.btnInFile.clicked.connect(self.btnInFile_click)
+        ui.btnRef.clicked.connect(self.btnRefresh_click)
         ui.btnOutFile.clicked.connect(self.btnOutFile_click)
         ui.btnConvert.clicked.connect(self.btnConvert_click)
         ui.btnRedraw.clicked.connect(self.btnRedraw_click)
@@ -131,8 +153,7 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                         Labels = data[ui.txtLabel.currentText()]
                         Labels = np.unique(Labels)
                         print("Number of labels: ", np.shape(Labels)[0])
-                        print("Labels:")
-                        print(Labels)
+                        print("Labels: ", Labels)
                         ui.txtClass.clear()
                         for lbl in Labels:
                             ui.txtClass.append(str(lbl))
@@ -147,6 +168,49 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                     if HasDefualt:
                         ui.txtDesign.setCurrentText("design")
 
+                    # Subject
+                    ui.txtSubject.clear()
+                    ui.txtSubjectVal.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtSubject.addItem(key)
+                        if key == "subject":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtSubject.setCurrentText("subject")
+                        print("Number of subjects: ", np.shape(np.unique(data["subject"]))[0])
+                        values = np.unique(data["subject"])
+                        for val in values:
+                            ui.txtSubjectVal.addItem(str(val))
+
+                    # Run
+                    ui.txtRun.clear()
+                    ui.txtRunVal.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtRun.addItem(key)
+                        if key == "run":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtRun.setCurrentText("run")
+                        values = np.unique(data["run"])
+                        for val in values:
+                            ui.txtRunVal.addItem(str(val))
+
+                    # Counter
+                    ui.txtCounter.clear()
+                    ui.txtCounterVal.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtCounter.addItem(key)
+                        if key == "counter":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtCounter.setCurrentText("counter")
+                        values = np.unique(data["counter"])
+                        for val in values:
+                            ui.txtCounterVal.addItem(str(val))
+
                     # Condition
                     ui.txtCond.clear()
                     HasDefualt = False
@@ -157,38 +221,9 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                     if HasDefualt:
                         ui.txtCond.setCurrentText("condition")
 
-                    # Subject
-                    ui.txtSubject.clear()
-                    HasDefualt = False
-                    for key in Keys:
-                        ui.txtSubject.addItem(key)
-                        if key == "subject":
-                            HasDefualt = True
-                    if HasDefualt:
-                        ui.txtSubject.setCurrentText("subject")
-
-                    # Run
-                    ui.txtRun.clear()
-                    HasDefualt = False
-                    for key in Keys:
-                        ui.txtRun.addItem(key)
-                        if key == "run":
-                            HasDefualt = True
-                    if HasDefualt:
-                        ui.txtRun.setCurrentText("run")
-
-                    # Counter
-                    ui.txtCounter.clear()
-                    HasDefualt = False
-                    for key in Keys:
-                        ui.txtCounter.addItem(key)
-                        if key == "counter":
-                            HasDefualt = True
-                    if HasDefualt:
-                        ui.txtCounter.setCurrentText("counter")
-
                     # Task
                     ui.txtTask.clear()
+                    ui.txtTaskVal.clear()
                     HasDefualt = False
                     for key in Keys:
                         ui.txtTask.addItem(key)
@@ -196,16 +231,135 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                             HasDefualt = True
                     if HasDefualt:
                         ui.txtTask.setCurrentText("task")
+                        values = np.unique(data["task"])
+                        for val in values:
+                            ui.txtTaskVal.addItem(str(val[0]))
 
                     ui.txtInFile.setText(filename)
                     print("DONE.")
-
                 except Exception as e:
                     print(e)
                     print("Cannot load data file!")
                     return
             else:
                 print("File not found!")
+
+
+    def btnRefresh_click(self):
+        filename = ui.txtInFile.text()
+        if len(filename):
+            if os.path.isfile(filename):
+                try:
+                    data = io.loadmat(filename)
+                    Keys = data.keys()
+                    # Data
+                    ui.txtData.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtData.addItem(key)
+                        if key == "data":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtData.setCurrentText("data")
+
+                    # Label
+                    ui.txtLabel.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtLabel.addItem(key)
+                        if key == "label":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtLabel.setCurrentText("label")
+                        Labels = data[ui.txtLabel.currentText()]
+                        Labels = np.unique(Labels)
+                        ui.txtClass.clear()
+                        for lbl in Labels:
+                            ui.txtClass.append(str(lbl))
+                    # Design
+                    ui.txtDesign.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtDesign.addItem(key)
+                        if key == "design":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtDesign.setCurrentText("design")
+
+                    # Subject
+                    ui.txtSubject.clear()
+                    ui.txtSubjectVal.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtSubject.addItem(key)
+                        if key == "subject":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtSubject.setCurrentText("subject")
+                        values = np.unique(data["subject"])
+                        for val in values:
+                            ui.txtSubjectVal.addItem(str(val))
+
+                    # Run
+                    ui.txtRun.clear()
+                    ui.txtRunVal.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtRun.addItem(key)
+                        if key == "run":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtRun.setCurrentText("run")
+                        values = np.unique(data["run"])
+                        for val in values:
+                            ui.txtRunVal.addItem(str(val))
+
+                    # Counter
+                    ui.txtCounter.clear()
+                    ui.txtCounterVal.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtCounter.addItem(key)
+                        if key == "counter":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtCounter.setCurrentText("counter")
+                        values = np.unique(data["counter"])
+                        for val in values:
+                            ui.txtCounterVal.addItem(str(val))
+
+                    # Condition
+                    ui.txtCond.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtCond.addItem(key)
+                        if key == "condition":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtCond.setCurrentText("condition")
+
+                    # Task
+                    ui.txtTask.clear()
+                    ui.txtTaskVal.clear()
+                    HasDefualt = False
+                    for key in Keys:
+                        ui.txtTask.addItem(key)
+                        if key == "task":
+                            HasDefualt = True
+                    if HasDefualt:
+                        ui.txtTask.setCurrentText("task")
+                        values = np.unique(data["task"])
+                        for val in values:
+                            ui.txtTaskVal.addItem(str(val[0]))
+
+                    ui.txtInFile.setText(filename)
+                except Exception as e:
+                    print(e)
+                    print("Cannot load data file!")
+                    return
+            else:
+                print("File not found!")
+
 
     def btnOutFile_click(self):
         ofile = SaveFile("Save result file ...",['Result files (*.mat)'],'mat',\
@@ -215,72 +369,88 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
 
     def btnConvert_click(self):
-        msgBox = QMessageBox()
-        tStart = time.time()
+        msgBox      = QMessageBox()
+        tStart      = time.time()
+        Method      = ui.cbMethod.currentData()
+        LossType    = ui.cbLossType.currentData()
+        Optim       = ui.cbOptim.currentData()
+
+        try:
+            Epoch = np.int32(ui.txtIter.text())
+        except:
+            msgBox.setText("Number of iteration is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            BatchSize = np.int32(ui.txtBatch.text())
+        except:
+            msgBox.setText("Number of batch is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            ReportStep = np.int32(ui.txtReportStep.text())
+        except:
+            msgBox.setText("Number of Report Step is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            LearningRate = np.float32(ui.txtRate.text())
+        except:
+            msgBox.setText("Number of Report Step is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            LassoAlpha = np.float32(ui.txtLParam.text())
+        except:
+            msgBox.setText("Number of Lasso Parameter is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
+        try:
+            ElasticLambda1 = np.float32(ui.txtEL1.text())
+        except:
+            msgBox.setText("Number of Elastic Lambda 1 is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            ElasticAlpha = np.float32(ui.txtEL2.text())
+        except:
+            msgBox.setText("Number of Elastic Lambda 2 is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+        try:
+            RidgeReg = np.float32(ui.txtRRP.text())
+        except:
+            msgBox.setText("Number of Ridge Regression Parameter is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
         if not ui.cbCov.isChecked() and not ui.cbCorr.isChecked():
             msgBox.setText("At least, you must select one metric!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-
-        # Method
-        method      = ui.cbMethod.currentData()
-
-        # Solver
-        solver      = ui.cbSolver.currentText()
-
-        # Selection
-        selection   = ui.cbSelection.currentText()
-
-        # Fit
-        fit         = ui.cbFit.isChecked()
-
-        # normalize
-        normalize   = ui.cbNormalize.isChecked()
-
-        try:
-            alpha = np.float(ui.txtAlpha.text())
-        except:
-            msgBox.setText("Alpha is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-
-
-        try:
-            iter = np.int(ui.txtMaxIter.text())
-        except:
-            msgBox.setText("Max Iteration is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-
-
-        try:
-            tol = np.float(ui.txtTole.text())
-        except:
-            msgBox.setText("Tolerance is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-
-        try:
-            l1 = np.float(ui.txtL1.text())
-        except:
-            msgBox.setText("L1 is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-
-        try:
-            njob = np.float(ui.txtJobs.text())
-        except:
-            msgBox.setText("Number of jobs is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
@@ -359,7 +529,6 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             msgBox.exec_()
             return False
 
-
         # Condition
         if not len(ui.txtCond.currentText()):
             msgBox.setText("Please enter Condition variable name!")
@@ -375,7 +544,6 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             for con in Cond:
                 labels.append(con[1][0])
             labels = np.array(labels)
-
         except:
             msgBox.setText("Condition value is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -385,14 +553,10 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
         FontSize = ui.txtFontSize.value()
 
+
         try:
             X = InData[ui.txtData.currentText()]
             L = InData[ui.txtLabel.currentText()][0]
-            if ui.cbScale.isChecked() and not ui.rbScale.isChecked():
-                X = preprocessing.scale(X)
-                print("Whole of data is scaled X~N(0,1).")
-
-
         except:
             print("Cannot load data or label")
             return
@@ -404,6 +568,23 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
+        # Task Val
+        if not len(ui.txtTaskVal.currentText()):
+                msgBox.setText("Please enter Task value!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+        try:
+            TaskIDTitle = ui.txtTaskVal.currentText()
+        except:
+            msgBox.setText("Task value is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
         try:
             TaskTitle = InData[ui.txtTask.currentText()][0]
         except:
@@ -422,6 +603,13 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                     Task[ttinx] = ttlinx + 1
                     break
 
+        for ttlinx, ttl in enumerate(TaskTitleUnique):
+            if TaskIDTitle == ttl:
+                TaskID = ttlinx + 1
+                break
+
+        OutData["Task"] = TaskIDTitle
+
         # Subject
         if not len(ui.txtSubject.currentText()):
             msgBox.setText("Please enter Subject variable name!")
@@ -429,7 +617,21 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
+        # Subject Val
+        if not len(ui.txtSubjectVal.currentText()):
+            msgBox.setText("Please enter Subject value!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            SubID = np.int32(ui.txtSubjectVal.currentText())
+        except:
+            msgBox.setText("Subject value is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
         try:
             Sub = InData[ui.txtSubject.currentText()][0]
         except:
@@ -438,6 +640,7 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
+        OutData["SubjectID"] = SubID
 
         # Run
         if not len(ui.txtRun.currentText()):
@@ -446,7 +649,21 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
+        # Run Val
+        if not len(ui.txtRunVal.currentText()):
+            msgBox.setText("Please enter Run value!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            RunID = np.int32(ui.txtRunVal.currentText())
+        except:
+            msgBox.setText("Run value is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
         try:
             Run = InData[ui.txtRun.currentText()][0]
         except:
@@ -455,10 +672,26 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
+        OutData["RunID"] = RunID
 
         # Counter
         if not len(ui.txtCounter.currentText()):
             msgBox.setText("Please enter Counter variable name!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        # Counter Val
+        if not len(ui.txtCounterVal.currentText()):
+            msgBox.setText("Please enter Counter value!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        try:
+            ConID = np.int32(ui.txtCounterVal.currentText())
+        except:
+            msgBox.setText("Counter value is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
@@ -471,6 +704,7 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
+        OutData["CounterID"] = ConID
 
 
         if Filter is not None:
@@ -486,177 +720,84 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                 Con = np.delete(Con, labelIndx, axis=0)
                 print("Class ID = " + str(fil) + " is removed from data.")
 
-        try:
-            Unit = np.int32(ui.txtUnit.text())
-        except:
-            msgBox.setText("Unit for the test set must be a number!")
+        # Select Task
+        TaskIndex = np.where(Task == TaskID)
+        Design  = Design[TaskIndex,:][0]
+        X       = X[TaskIndex,:][0]
+        L       = L[TaskIndex]
+        Sub     = Sub[TaskIndex]
+        Run     = Run[TaskIndex]
+        Con     = Con[TaskIndex]
+        # Select Subject
+        SubIndex = np.where(Sub == SubID)
+        Design  = Design[SubIndex,:][0]
+        X       = X[SubIndex,:][0]
+        L       = L[SubIndex]
+        Run     = Run[SubIndex]
+        Con     = Con[SubIndex]
+        # Select Counter
+        ConIndex = np.where(Con == ConID)
+        Design  = Design[ConIndex,:][0]
+        X       = X[ConIndex,:][0]
+        L       = L[ConIndex]
+        Run     = Run[ConIndex]
+        # Select Run
+        RunIndex = np.where(Run == RunID)
+        Design  = Design[RunIndex,:][0]
+        X       = X[RunIndex,:][0]
+        L       = L[RunIndex]           # This will only use in supervised methods
+        LUnique = np.unique(L)
+        LNum    = np.shape(LUnique)[0]
+        OutData["Label"] = LUnique
+        OutData["ModelAnalysis"] = "PyTorch.Session.Gradient.RSA." + ui.cbMethod.currentText()
+
+
+        if np.shape(X)[0] == 0:
+            msgBox.setText("The selected data is empty!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
 
-        if Unit < 1:
-            msgBox.setText("Unit for the test set must be greater than zero!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
+        if ui.cbScale.isChecked():
+            X = preprocessing.scale(X)
+            print("Data is scaled to N(0,1).")
+        print("Running Gradient RSA ...")
+        # RSA Method
+        OutData['Method'] = dict()
+        OutData['Method']['Method']         = Method
+        OutData['Method']['LossType']       = LossType
+        OutData['Method']['Optimization']   = Optim
+        OutData['Method']['LearningRate']   = LearningRate
+        OutData['Method']['Epoch']          = Epoch
+        OutData['Method']['BatchSize']      = BatchSize
+        OutData['Method']['ReportStep']     = ReportStep
+        OutData['Method']['RidgeAlpha']     = RidgeReg
+        OutData['Method']['ElaticLambda1']  = ElasticLambda1
+        OutData['Method']['ElaticAlpha']    = ElasticAlpha
+        OutData['Method']['LassoAlpha']     = LassoAlpha
+        OutData['Method']['Verbose']        = ui.cbVerbose.isChecked()
 
-        print("Calculating Levels ...")
-        GroupFold = None
-        FoldStr = ""
-        if ui.cbFSubject.isChecked():
-            if not ui.rbFRun.isChecked():
-                GroupFold = [Sub]
-                FoldStr = "Subject"
-            else:
-                GroupFold = np.concatenate(([Sub],[Run]))
-                FoldStr = "Subject+Run"
-
-        if ui.cbFTask.isChecked():
-            GroupFold = np.concatenate((GroupFold,[Task])) if GroupFold is not None else [Task]
-            FoldStr = FoldStr + "+Task"
-
-        if ui.cbFCounter.isChecked():
-            GroupFold = np.concatenate((GroupFold,[Con])) if GroupFold is not None else [Con]
-            FoldStr = FoldStr + "+Counter"
-
-        if FoldStr == "":
-            FoldStr = "Whole-Data"
-            GUFold = [1]
-            ListFold = [1]
-            UniqFold = [1]
-            GroupFold = [1]
-            UnitFold = np.ones((1, np.shape(X)[0]))
-        else:
-            GroupFold = np.transpose(GroupFold)
-            UniqFold = np.array(list(set(tuple(i) for i in GroupFold.tolist())))
-            FoldIDs = np.arange(len(UniqFold)) + 1
-
-            if len(UniqFold) <= Unit:
-                msgBox.setText("Unit must be smaller than all possible levels! Number of all levels is: " + str(len(UniqFold)))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-
-            if np.mod(len(UniqFold),Unit):
-                msgBox.setText("Unit must be divorceable to all possible levels! Number of all levels is: " + str(len(UniqFold)))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-            ListFold = list()
-            for gfold in GroupFold:
-                for ufoldindx, ufold in enumerate(UniqFold):
-                    if (ufold == gfold).all():
-                        currentID = FoldIDs[ufoldindx]
-                        break
-                ListFold.append(currentID)
-
-            ListFold = np.int32(ListFold)
-            if Unit == 1:
-                UnitFold = np.int32(ListFold)
-            else:
-                UnitFold = np.int32((ListFold - 0.1) / Unit) + 1
-
-            GUFold = np.unique(UnitFold)
+        rsa = GrRSA(method=Method,loss_type=LossType, optim=Optim, learning_rate=LearningRate, epoch=Epoch, \
+                    batch_size=BatchSize, report_step=ReportStep, ridge_param=RidgeReg, elstnet_l1_ratio=ElasticLambda1,\
+                    elstnet_alpha=ElasticAlpha, lasso_alpha=LassoAlpha, verbose=ui.cbVerbose.isChecked(),\
+                    gpu_enable=ui.cbDevice.currentData(),normalization=False)
 
 
-        FoldInfo = dict()
-        FoldInfo["Unit"]    = Unit
-        FoldInfo["Group"]   = GroupFold
-        FoldInfo["Order"]   = FoldStr
-        FoldInfo["List"]    = ListFold
-        FoldInfo["Unique"]  = UniqFold
-        FoldInfo["Folds"]   = UnitFold
 
-        OutData["FoldInfo"] = FoldInfo
-        OutData["ModelAnalysis"] = "SK.Group.RSA." + ui.cbMethod.currentText()
+        Betas, Eps, loss_vec, MSE, Performacne, _ = rsa.fit(data_vals=X, design_vals=Design)
+        OutData["LossVec"] = loss_vec
+        OutData["MSE"] = MSE
+        OutData["Performance"] = Performacne
+        print("MSE: ", OutData["MSE"])
 
-
-        print("Number of all levels is: " + str(len(UniqFold)))
-
-        Cov = None
-        Corr = None
-        AMSE = list()
-        Beta = None
-
-        for foldID, fold in enumerate(GUFold):
-            print("Analyzing level " + str(foldID + 1)," of ", str(len(UniqFold)) , " ...")
-            Index = np.where(UnitFold == fold)
-            # Whole-Data
-            if FoldStr == "Whole-Data" and np.shape(Index)[0]:
-                Index = [Index[1]]
-            XLi      = X[Index]
-            if ui.cbScale.isChecked() and ui.rbScale.isChecked():
-                XLi = preprocessing.scale(XLi)
-                print("Whole of data is scaled X%d~N(0,1)." % (foldID + 1))
-            RegLi       =  np.insert(Design[Index], 0, 1, axis=1)
-
-            if method == "ols":
-                model = linmdl.LinearRegression(fit_intercept=fit, normalize=normalize, n_jobs=njob)
-            elif method == "ridge":
-                model = linmdl.Ridge(alpha=alpha, fit_intercept=fit, normalize=normalize, max_iter=iter, tol=tol,
-                                     solver=solver)
-            elif method == "lasso":
-                model = linmdl.Lasso(alpha=alpha, fit_intercept=fit, normalize=normalize, max_iter=iter, tol=tol,
-                                     selection=selection)
-            elif method == "elast":
-                model = linmdl.ElasticNet(alpha=alpha, l1_ratio=l1, fit_intercept=fit, normalize=normalize, \
-                                          max_iter=iter, tol=tol, selection=selection)
-            model.fit(RegLi, XLi)
-            BetaLi = np.transpose(model.coef_)[1:, :]
-            Beta = BetaLi if Beta is None else Beta + BetaLi
-
-            print("Calculating MSE for level %d ..." % (foldID + 1))
-            MSE = mean_squared_error(XLi, np.matmul(Design[Index], BetaLi))
-            print("MSE%d: %f" % (foldID + 1, MSE))
-            OutData["MSE" + str(foldID)] = MSE
-            AMSE.append(MSE)
-            if ui.cbBeta.isChecked():
-                OutData["BetaL" + str(foldID + 1)] = BetaLi
-            # Calculate Results
-            if ui.cbCorr.isChecked():
-                print("Calculating Correlation for level %d ..." % (foldID + 1))
-                CorrLi = np.corrcoef(BetaLi)
-                OutData["Corr" + str(foldID + 1)] = CorrLi
-                if Corr is None:
-                    Corr = CorrLi.copy()
-                else:
-                    if ui.rbAvg.isChecked():
-                        Corr = np.add(Corr, CorrLi)
-                    elif ui.rbMin.isChecked():
-                        Corr = np.minimum(Corr, CorrLi)
-                    else:
-                        Corr = np.maximum(Corr, CorrLi)
-            if ui.cbCov.isChecked():
-                print("Calculating Covariance for level %d ..." % (foldID + 1))
-                CovLi = np.cov(BetaLi)
-                OutData["Cov" + str(foldID + 1)]  = CovLi
-                if Cov is None:
-                    Cov = CovLi.copy()
-                else:
-                    if ui.rbAvg.isChecked():
-                        Cov = np.add(Cov, CovLi)
-                    elif ui.rbMin.isChecked():
-                        Cov = np.minimum(Cov, CovLi)
-                    else:
-                        Cov = np.maximum(Cov, CovLi)
-
-        CoEff = len(UniqFold) - 1 if len(UniqFold) > 2 else 1
-        if ui.cbCov.isChecked():
-            if ui.rbAvg.isChecked():
-                Cov = Cov / CoEff
-            covClass = SimilarityMatrixBetweenClass(Cov)
-            OutData["Covariance"]       = Cov
-            OutData["Covariance_min"]   = covClass.min()
-            OutData["Covariance_max"]   = covClass.max()
-            OutData["Covariance_std"]   = covClass.std()
-            OutData["Covariance_mean"]  = covClass.mean()
+        if ui.cbBeta.isChecked():
+            OutData["Betas"]  = Betas
+            OutData["Eps"]    = Eps
+        # Calculate Results
         if ui.cbCorr.isChecked():
-            if ui.rbAvg.isChecked():
-                Corr = Corr / CoEff
+            print("Calculating Correlation ...")
+            Corr = np.corrcoef(Betas)
             corClass = SimilarityMatrixBetweenClass(Corr)
             OutData["Correlation"]      = Corr
             OutData["Correlation_min"]  = corClass.min()
@@ -664,26 +805,34 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             OutData["Correlation_std"]  = corClass.std()
             OutData["Correlation_mean"] = corClass.mean()
 
+        if ui.cbCov.isChecked():
+            print("Calculating Covariance ...")
+            Cov = np.cov(Betas)
+            covClass = SimilarityMatrixBetweenClass(Cov)
+            OutData["Covariance"]       = Cov
+            OutData["Covariance_min"]   = covClass.min()
+            OutData["Covariance_max"]   = covClass.max()
+            OutData["Covariance_std"]   = covClass.std()
+            OutData["Covariance_mean"]  = covClass.mean()
+
 
         # Calculating Distance Matrix
-        dis = np.zeros((np.shape(Beta)[0], np.shape(Beta)[0]))
+        dis = np.zeros((np.shape(Betas)[0], np.shape(Betas)[0]))
 
-        for i in range(np.shape(Beta)[0]):
-            for j in range(i + 1, np.shape(Beta)[0]):
-                dis[i, j] = 1 - np.dot(Beta[i, :], Beta[j, :].T)
+        for i in range(np.shape(Betas)[0]):
+            for j in range(i + 1, np.shape(Betas)[0]):
+                dis[i, j] = 1 - np.dot(Betas[i, :], Betas[j, :].T)
                 dis[j, i] = dis[i, j]
         OutData["DistanceMatrix"] = dis
         Z = linkage(dis)
         OutData["Linkage"] = Z
 
-        OutData["MSE"] = np.mean(AMSE)
-        print("Average MSE: %f" % (OutData["MSE"]))
+
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))
         print("Saving results ...")
         io.savemat(OutFile,mdict=OutData,do_compression=True)
         print("Output is saved.")
-
 
         if ui.cbDiagram.isChecked():
             if ui.cbCorr.isChecked():
@@ -700,8 +849,8 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -715,7 +864,8 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                 if len(ui.txtTitleCorr.text()):
                     plt.title(ui.txtTitleCorr.text())
                 else:
-                    plt.title('Group RSA: Correlation\nLevel: ' + FoldStr)
+                    plt.title('Correlation (' + ui.cbMethod.currentText() + \
+                               ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
 
@@ -733,8 +883,8 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -747,21 +897,22 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                 if len(ui.txtTitleCov.text()):
                     plt.title(ui.txtTitleCov.text())
                 else:
-                    plt.title('Group RSA: Covariance\nLevel: ' + FoldStr)
+                    plt.title('Covariance (' + ui.cbMethod.currentText() + \
+                               ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+
                 plt.show()
 
             fig3 = plt.figure(figsize=(25, 10), )
             if len(ui.txtTitleDen.text()):
                 plt.title(ui.txtTitleDen.text())
             else:
-                plt.title('Group MP Gradient RSA: Similarity Analysis\nLevel: ' + FoldStr)
-
-            dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1, leaf_rotation=ui.txtXRotation.value())
+                plt.title('Similarity Analysis (' + ui.cbMethod.currentText() + \
+                          ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+            dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1)
             plt.show()
 
-
         print("DONE.")
-        msgBox.setText("Group Representational Similarity Analysis (RSA) is done.")
+        msgBox.setText("Gradient Representational Similarity Analysis (RSA) is done.")
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
@@ -778,6 +929,12 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
         if len(ofile):
             try:
                 Res     = io.loadmat(ofile)
+                LUnique = Res["Label"][0]
+                LNum    = np.shape(LUnique)[0]
+                SubID   = Res["SubjectID"]
+                ConID   = Res["CounterID"]
+                RunID   = Res["RunID"]
+                TaskIDTitle = Res["Task"][0]
             except:
                 print("Cannot load result file!")
                 msgBox.setText("Cannot load result file!")
@@ -817,7 +974,6 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
             labels = np.array(labels)
 
 
-
             if ui.cbCorr.isChecked():
                 try:
                     Corr = Res["Correlation"]
@@ -828,6 +984,8 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
+
+
                 NumData = np.shape(Corr)[0]
                 fig1 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
                 plt.pcolor(Corr, vmin=np.min(Corr), vmax=np.max(Corr))
@@ -841,8 +999,8 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -856,7 +1014,7 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                 if len(ui.txtTitleCov.text()):
                     plt.title(ui.txtTitleCov.text())
                 else:
-                    plt.title('Group RSA: Correlation\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+                    plt.title('Gradient RSA: Correlation\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
 
@@ -870,6 +1028,8 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
+
+
                 NumData = np.shape(Cov)[0]
                 fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
                 plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
@@ -883,8 +1043,8 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
 
                 ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
                 ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
+                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
                 ax.grid(False)
                 ax.set_aspect(1)
                 ax.set_frame_on(False)
@@ -897,23 +1057,84 @@ class frmMASKGRSA(Ui_frmMASKGRSA):
                 if len(ui.txtTitleCorr.text()):
                     plt.title(ui.txtTitleCorr.text())
                 else:
-                    plt.title('Group RSA: Covariance\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+                    plt.title('Gradient RSA: Covariance\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
                 plt.show()
 
             fig3 = plt.figure(figsize=(25, 10), )
-            dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1, leaf_rotation=ui.txtXRotation.value())
+            dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1)
             if len(ui.txtTitleDen.text()):
                 plt.title(ui.txtTitleDen.text())
             else:
-                plt.title('Group MP Gradient RSA: Similarity Analysis\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+                plt.title('Gradient RSA: Similarity Analysis\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
             plt.show()
 
+    def btnRedraw_clickq(self):
+        msgBox = QMessageBox()
+
+        ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
+                             os.path.dirname(ui.txtOutFile.text()))
+        if len(ofile):
+            try:
+                Res     = io.loadmat(ofile)
+                LUnique = Res["Label"][0]
+                LNum    = np.shape(LUnique)[0]
+                SubID   = Res["SubjectID"]
+                ConID   = Res["CounterID"]
+                RunID   = Res["RunID"]
+                TaskIDTitle = Res["Task"][0]
+            except:
+                print("Cannot load result file!")
+                msgBox.setText("Cannot load result file!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            if ui.cbCorr.isChecked():
+                try:
+                    Corr = Res["Correlation"]
+                except:
+                    print("Cannot load Correlation variable!")
+                    msgBox.setText("Cannot load Correlation variable!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+                fig1 = plt.figure(num=None, figsize=(5, 5), dpi=100)
+                plt.pcolor(Corr, vmin=-0.1, vmax=1)
+                plt.xlim([0, LNum])
+                plt.ylim([0, LNum])
+                plt.colorbar()
+                ax = plt.gca()
+                ax.set_aspect(1)
+                plt.title('Correlation (' + MethodTitle(str(Res['Method']['Type'][0][0][0])) + \
+                          ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+                plt.show()
 
 
-
+            if ui.cbCov.isChecked():
+                try:
+                    Cov = Res["Covariance"]
+                except:
+                    print("Cannot load Covariance variable!")
+                    msgBox.setText("Cannot load Covariance variable!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+                fig2 = plt.figure(num=None, figsize=(5, 5), dpi=100)
+                plt.pcolor(Cov)
+                plt.xlim([0, LNum])
+                plt.ylim([0, LNum])
+                plt.colorbar()
+                ax = plt.gca()
+                ax.set_aspect(1)
+                plt.title('Covariance (' + MethodTitle(str(Res['Method']['Type'][0][0][0])) + \
+                          ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+                plt.show()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmMASKGRSA.show(frmMASKGRSA)
+    frmMAGradientEncodingAnalysis.show(frmMAGradientEncodingAnalysis)
     sys.exit(app.exec_())
