@@ -134,7 +134,7 @@ class Ui_frmMAGradientEncodingAnalysis(object):
         self.groupBox.setObjectName("groupBox")
         self.cbScale = QtWidgets.QCheckBox(self.groupBox)
         self.cbScale.setGeometry(QtCore.QRect(20, 40, 641, 21))
-        self.cbScale.setChecked(True)
+        self.cbScale.setChecked(False)
         self.cbScale.setObjectName("cbScale")
         self.label_16 = QtWidgets.QLabel(self.tab_2)
         self.label_16.setGeometry(QtCore.QRect(20, 250, 201, 16))
