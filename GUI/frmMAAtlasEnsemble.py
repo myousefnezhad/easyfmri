@@ -34,8 +34,6 @@ from Base.utility import getVersion, getBuild
 from GUI.frmMAAtlasEnsembleGUI import *
 
 import logging
-
-
 logging.basicConfig(level=logging.DEBUG)
 from pyqode.core import api
 from pyqode.core import modes

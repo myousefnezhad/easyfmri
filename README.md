@@ -317,7 +317,7 @@ conda install -c conda-forge mpi4py
 
 -- Install easy fMRI required python packages by using: 
 ```
-pip install -U future nibabel nitime nilearn pyqode.core pyqode.qt
+pip install -U future nibabel nitime nilearn pyqode.core pyqode.qt pydicom
 ```
 
 -- Install [PyTorch](https://pytorch.org/) package:
