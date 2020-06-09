@@ -71,6 +71,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         # Unsupervised
         ui.cbMAU.addItem("MatLab, Shared Similarity Analysis (SSA)", 30000)
         ui.cbMAU.addItem("MatLab, RSA (Group Level)",20008)
+        ui.cbMAU.addItem("MatLab, Bayesian RSA (Group Level)",20001)
         ui.cbMAU.addItem("MatLab, Gradient RSA (Group Level)",20003)
         ui.cbMAU.addItem("MatLab, Encoding Analysis (Session Level)",20007)
         ui.cbMAU.addItem("MatLab, Gradient Encoding Analysis (Session Level) ",20002)
@@ -130,6 +131,10 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         if MAID == 20008:
             from GUI.frmMARSA import frmMARSA
             frmMARSA.show(frmMARSA)
+            return
+        if MAID == 20001:
+            from GUI.frmMABayesianRSA import frmMABayesianRSA
+            frmMABayesianRSA.show(frmMABayesianRSA)
             return
         if MAID == 20003:
             from GUI.frmMAGradientRSA import frmMAGradientRSA
