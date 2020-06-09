@@ -42,8 +42,6 @@ from pyqode.core import panels
 from pyqode.qt import QtWidgets as pyWidgets
 
 
-
-
 def OptimizationCode():
     return\
 """# Please refer to follwoing link for the other options:
@@ -53,7 +51,53 @@ optimizer='L-BFGS-B'
 minimize_options={'gtol': 1e-4, 'disp': False, 'maxiter': 6}
 """
 
+def Lic():
+    return\
+"""
+#  Copyright 2016 Mingbo Cai, Princeton Neuroscience Instititute,
+#  Princeton University
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+    Bayesian Representational Similarity Analysis (BRSA)
 
+    This implementation is based the work in [Cai2016]_.
+
+ .. [Cai2016] "A Bayesian method for reducing bias in neural
+    representational similarity analysis",
+    M.B. Cai, N. Schuck, J. Pillow, Y. Niv,
+    Advances in Neural Information Processing Systems 29, 2016, 4952--4960
+    Available at:
+    http://papers.nips.cc/paper/6131-a-bayesian-method-for-reducing-bias-in-neural-representational-similarity-analysis.pdf
+    Some extensions beyond the paper have been made here.
+    More specifically:
+    (1) spatial noise correlation (or alternatively
+    considered as signals of intrinsic fluctuation not related to tasks);
+    (2) new fitting procedure which marginalizes all voxel-specific
+    parameters such as pseudo-SNR, noise variance, auto-regressive
+    coefficients, in `.GBRSA` class;
+    (3) capacity to jointly fit to data of multiple participants,
+    in `.GBRSA` class;
+    (4) cross-validation score between a full model and a null model
+    in `.BRSA.score` and `.GBRSA.score`;
+    (5) capability of decoding task-related signals and intrinsic
+    fluctuation from new data based on model fitted from training data
+    in `.BRSA.transform` and `.GBRSA.transform`.
+    `.GBRSA` may perform better than `.BRSA` due to (2). It can be
+    use for single participant as well.
+
+Authors: Mingbo Cai
+Princeton Neuroscience Institute, Princeton University, 2016
+"""
 
 # Plot
 import matplotlib
@@ -111,6 +155,9 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
         font.setWeight(75)
         ui.txtEvents.setFont(font)
         ui.txtEvents.setPlainText(OptimizationCode(),"","")
+
+
+        ui.txtLic.setText(Lic())
 
         dialog.setWindowTitle("easy fMRI Bayesian RSA - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)

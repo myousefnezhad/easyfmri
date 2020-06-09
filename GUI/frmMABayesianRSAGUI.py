@@ -376,7 +376,7 @@ class Ui_frmMABayesianRSA(object):
         self.tab_8 = QtWidgets.QWidget()
         self.tab_8.setObjectName("tab_8")
         self.txtLic = QtWidgets.QTextEdit(self.tab_8)
-        self.txtLic.setGeometry(QtCore.QRect(10, 10, 711, 621))
+        self.txtLic.setGeometry(QtCore.QRect(10, 10, 711, 591))
         self.txtLic.setReadOnly(True)
         self.txtLic.setObjectName("txtLic")
         self.tabWidget.addTab(self.tab_8, "")
