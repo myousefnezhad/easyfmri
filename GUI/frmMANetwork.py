@@ -27,8 +27,7 @@ import nibabel as nb
 import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
-from sklearn.metrics import mean_squared_error
-import sklearn.linear_model as linmdl
+from nilearn import plotting
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
 from GUI.frmMANetworkGUI import *
@@ -488,9 +487,9 @@ class frmMANetwork(Ui_frmMANetwork):
                         Net[nn, i, j] = 0
                         Net[nn, j, i] = 0
                         print(f"Label: {nn}, Network: {i} vs {j} is thresholded.")
-        Out["ThresholdNetworks"] = Net
         # Active Region
         ActiveRegions = list()
+        ActiveRegionIndex = list()
         for regIndx, regID in enumerate(sorted(RegionMap.keys())):
             IsZero = True
             for nn, _ in enumerate(XR):
@@ -499,15 +498,34 @@ class frmMANetwork(Ui_frmMANetwork):
                     break
             if not IsZero:
                 ActiveRegions.append(regID)
+                ActiveRegionIndex.append(regIndx)
         print(f"Number of active regions: {np.shape(ActiveRegions)[0]}")
         print(f"Active Regions: {ActiveRegions}")
         Out["ActiveRegions"] = ActiveRegions
 
+        print("Generating thresholded networks ...")
+        ThrNet = list()
+        for nn in Net:
+            nn1 = nn[ActiveRegionIndex, :]
+            ThrNet.append(nn1[:, ActiveRegionIndex])
+        Out["ThresholdNetworks"] = ThrNet
 
+        # Generate Atlas
+        print("Generating atlas...")
+        A = np.zeros(AtlasShape)
+        for ar in ActiveRegions:
+            for index in RegionMap[ar]:
+                A[Coord[index, 0], Coord[index, 1], Coord[index, 2]] = ar
+        Out["Atlas"] = A
+        Out["Atlas_affine"] = AtlasHDR.affine
+        AIMG = nb.Nifti1Image(A, AtlasHDR.affine)
+        nb.save(AIMG, "/tmp/atlas.nii.gz")
+        # Atlas parcellation
+        print("Parcellating atlas ...")
+        ACoord = plotting.find_parcellation_cut_coords(labels_img="/tmp/atlas.nii.gz")
+        Out["Atlas_parcellation"] = ACoord
 
-
-
-
+        plotting.plot_connectome(ThrNet[0], ACoord, edge_threshold="80%", title="Label: 0")
 
 
 
