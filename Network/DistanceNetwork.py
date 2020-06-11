@@ -3,7 +3,7 @@ import nibabel as nb
 from Visualization.AtlasParcellation import AtlasParcellation
 
 def ClassicNetworkAnalysis(X, L, Coord, Integration, Metric, AtlasImg, affine=np.eye(4), AtlasPath="/tmp/atlas.nii.gz", Threshold=0.95):
-    listL = np.unique(L)
+    listL = sorted(np.unique(L))
     print(f"List of labels {listL}")
     # Generate RegMap
     RegionMap = {}
@@ -82,4 +82,4 @@ def ClassicNetworkAnalysis(X, L, Coord, Integration, Metric, AtlasImg, affine=np
     # Atlas parcellation
     print("Parcellating atlas ...")
     ACoord = AtlasParcellation(AtlasPath)
-    return Net, ThrNet, ActiveRegions, A, ACoord
+    return Net, ThrNet, ActiveRegions, A, ACoord, listL

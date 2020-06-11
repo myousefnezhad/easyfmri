@@ -406,7 +406,6 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        FontSize = ui.txtFontSize.value()
 
         try:
             X = InData[ui.txtData.currentText()]
@@ -439,7 +438,7 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
                 L = np.delete(L, labelIndx, axis=0)
                 print("Class ID = " + str(fil) + " is removed from data.")
 
-        Net, ThrNet, ActiveRegions, A, ACoord = ClassicNetworkAnalysis(X=X, L=L, Coord=Coord,
+        Net, ThrNet, ActiveRegions, A, ACoord, listL = ClassicNetworkAnalysis(X=X, L=L, Coord=Coord,
                                                                        Integration=Integration,
                                                                        Metric=Metric,
                                                                        AtlasImg=AtlasImg,
@@ -453,210 +452,24 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
         Out["Atlas"] = A
         Out["Atlas_parcellation"] = ACoord
         Out["Atlas_affine"] =  AtlasHDR.affine
+        Out["condition"] = Cond
+        Out["labels"] = listL
         Out["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (Out["RunTime"]))
         print("Saving results ...")
         io.savemat(OutFile, mdict=Out, do_compression=True)
         print("Output is saved.")
         if ui.cbDiagram.isChecked():
-
-            for nnIndex, nn in enumerate(ThrNet):
+            for nnIndex, (nn, tnn) in enumerate(zip(Net, ThrNet)):
                 try:
-                    Title = f"Label: {Cond[nnIndex][1]}"
+                    Title = f"Label: {Cond[nnIndex][1][0]}"
                 except:
                     Title = f"Label: {nnIndex}"
-                PlotConnectome(nn, ACoord, Title, EdgeThreshold)
+                PlotConnectome(tnn, ACoord, Title, EdgeThreshold)
+                fig = plt.figure()
+                plt.imshow(np.transpose(nn))
+                plt.title(Title)
             plt.show()
-
-
-
-
-
-
-
-
-
-
-
-        #
-        #
-        #
-        #
-        #
-        # for foldID, fold in enumerate(GUFold):
-        #     print("Analyzing level " + str(foldID + 1)," of ", str(len(UniqFold)) , " ...")
-        #     Index = np.where(UnitFold == fold)
-        #     # Whole-Data
-        #     if FoldStr == "Whole-Data" and np.shape(Index)[0]:
-        #         Index = [Index[1]]
-        #     XLi      = X[Index]
-        #     if ui.cbScale.isChecked() and ui.rbScale.isChecked():
-        #         XLi = preprocessing.scale(XLi)
-        #         print("Whole of data is scaled X%d~N(0,1)." % (foldID + 1))
-        #     RegLi       =  np.insert(Design[Index], 0, 1, axis=1)
-        #
-        #     if method == "ols":
-        #         model = linmdl.LinearRegression(fit_intercept=fit, normalize=normalize, n_jobs=njob)
-        #     elif method == "ridge":
-        #         model = linmdl.Ridge(alpha=alpha, fit_intercept=fit, normalize=normalize, max_iter=iter, tol=tol,
-        #                              solver=solver)
-        #     elif method == "lasso":
-        #         model = linmdl.Lasso(alpha=alpha, fit_intercept=fit, normalize=normalize, max_iter=iter, tol=tol,
-        #                              selection=selection)
-        #     elif method == "elast":
-        #         model = linmdl.ElasticNet(alpha=alpha, l1_ratio=l1, fit_intercept=fit, normalize=normalize, \
-        #                                   max_iter=iter, tol=tol, selection=selection)
-        #     model.fit(RegLi, XLi)
-        #     BetaLi = np.transpose(model.coef_)[1:, :]
-        #     Beta = BetaLi if Beta is None else Beta + BetaLi
-        #
-        #     print("Calculating MSE for level %d ..." % (foldID + 1))
-        #     MSE = mean_squared_error(XLi, np.matmul(Design[Index], BetaLi))
-        #     print("MSE%d: %f" % (foldID + 1, MSE))
-        #     OutData["MSE" + str(foldID)] = MSE
-        #     AMSE.append(MSE)
-        #     if ui.cbBeta.isChecked():
-        #         OutData["BetaL" + str(foldID + 1)] = BetaLi
-        #     # Calculate Results
-        #     if ui.cbCorr.isChecked():
-        #         print("Calculating Correlation for level %d ..." % (foldID + 1))
-        #         CorrLi = np.corrcoef(BetaLi)
-        #         OutData["Corr" + str(foldID + 1)] = CorrLi
-        #         if Corr is None:
-        #             Corr = CorrLi.copy()
-        #         else:
-        #             if ui.rbAvg.isChecked():
-        #                 Corr = np.add(Corr, CorrLi)
-        #             elif ui.rbMin.isChecked():
-        #                 Corr = np.minimum(Corr, CorrLi)
-        #             else:
-        #                 Corr = np.maximum(Corr, CorrLi)
-        #     if ui.cbCov.isChecked():
-        #         print("Calculating Covariance for level %d ..." % (foldID + 1))
-        #         CovLi = np.cov(BetaLi)
-        #         OutData["Cov" + str(foldID + 1)]  = CovLi
-        #         if Cov is None:
-        #             Cov = CovLi.copy()
-        #         else:
-        #             if ui.rbAvg.isChecked():
-        #                 Cov = np.add(Cov, CovLi)
-        #             elif ui.rbMin.isChecked():
-        #                 Cov = np.minimum(Cov, CovLi)
-        #             else:
-        #                 Cov = np.maximum(Cov, CovLi)
-        #
-        # CoEff = len(UniqFold) - 1 if len(UniqFold) > 2 else 1
-        # if ui.cbCov.isChecked():
-        #     if ui.rbAvg.isChecked():
-        #         Cov = Cov / CoEff
-        #     covClass = SimilarityMatrixBetweenClass(Cov)
-        #     OutData["Covariance"]       = Cov
-        #     OutData["Covariance_min"]   = covClass.min()
-        #     OutData["Covariance_max"]   = covClass.max()
-        #     OutData["Covariance_std"]   = covClass.std()
-        #     OutData["Covariance_mean"]  = covClass.mean()
-        # if ui.cbCorr.isChecked():
-        #     if ui.rbAvg.isChecked():
-        #         Corr = Corr / CoEff
-        #     corClass = SimilarityMatrixBetweenClass(Corr)
-        #     OutData["Correlation"]      = Corr
-        #     OutData["Correlation_min"]  = corClass.min()
-        #     OutData["Correlation_max"]  = corClass.max()
-        #     OutData["Correlation_std"]  = corClass.std()
-        #     OutData["Correlation_mean"] = corClass.mean()
-        #
-        #
-        # # Calculating Distance Matrix
-        # dis = np.zeros((np.shape(Beta)[0], np.shape(Beta)[0]))
-        #
-        # for i in range(np.shape(Beta)[0]):
-        #     for j in range(i + 1, np.shape(Beta)[0]):
-        #         dis[i, j] = 1 - np.dot(Beta[i, :], Beta[j, :].T)
-        #         dis[j, i] = dis[i, j]
-        # OutData["DistanceMatrix"] = dis
-        # Z = linkage(dis)
-        # OutData["Linkage"] = Z
-        #
-        # OutData["MSE"] = np.mean(AMSE)
-        # print("Average MSE: %f" % (OutData["MSE"]))
-
-        #
-        #
-        # if ui.cbDiagram.isChecked():
-        #     if ui.cbCorr.isChecked():
-        #         NumData = np.shape(Corr)[0]
-        #         fig1 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
-        #         plt.pcolor(Corr, vmin=np.min(Corr), vmax=np.max(Corr))
-        #         plt.xlim([0, NumData])
-        #         plt.ylim([0, NumData])
-        #         cbar = plt.colorbar()
-        #         cbar.ax.tick_params(labelsize=FontSize)
-        #         ax = plt.gca()
-        #         ax.invert_yaxis()
-        #         ax.set_aspect(1)
-        #
-        #         ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
-        #         ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-        #         ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
-        #         ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
-        #         ax.grid(False)
-        #         ax.set_aspect(1)
-        #         ax.set_frame_on(False)
-        #         for t in ax.xaxis.get_major_ticks():
-        #             t.tick1On = False
-        #             t.tick2On = False
-        #         for t in ax.yaxis.get_major_ticks():
-        #             t.tick1On = False
-        #             t.tick2On = False
-        #
-        #         if len(ui.txtTitleCorr.text()):
-        #             plt.title(ui.txtTitleCorr.text())
-        #         else:
-        #             plt.title('Group RSA: Correlation\nLevel: ' + FoldStr)
-        #         plt.show()
-        #
-        #
-        #     if ui.cbCov.isChecked():
-        #         NumData = np.shape(Cov)[0]
-        #         fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
-        #         plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
-        #         plt.xlim([0, NumData])
-        #         plt.ylim([0, NumData])
-        #         cbar = plt.colorbar()
-        #         cbar.ax.tick_params(labelsize=FontSize)
-        #         ax = plt.gca()
-        #         ax.invert_yaxis()
-        #         ax.set_aspect(1)
-        #
-        #         ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
-        #         ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-        #         ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
-        #         ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
-        #         ax.grid(False)
-        #         ax.set_aspect(1)
-        #         ax.set_frame_on(False)
-        #         for t in ax.xaxis.get_major_ticks():
-        #             t.tick1On = False
-        #             t.tick2On = False
-        #         for t in ax.yaxis.get_major_ticks():
-        #             t.tick1On = False
-        #             t.tick2On = False
-        #         if len(ui.txtTitleCov.text()):
-        #             plt.title(ui.txtTitleCov.text())
-        #         else:
-        #             plt.title('Group RSA: Covariance\nLevel: ' + FoldStr)
-        #         plt.show()
-        #
-        #     fig3 = plt.figure(figsize=(25, 10), )
-        #     if len(ui.txtTitleDen.text()):
-        #         plt.title(ui.txtTitleDen.text())
-        #     else:
-        #         plt.title('Group MP Gradient RSA: Similarity Analysis\nLevel: ' + FoldStr)
-        #
-        #     dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1, leaf_rotation=ui.txtXRotation.value())
-        #     plt.show()
-
-
         print("DONE.")
         msgBox.setText("Network analysis is done.")
         msgBox.setIcon(QMessageBox.Information)
@@ -664,17 +477,27 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
         msgBox.exec_()
 
 
+
+
+
     def btnRedraw_click(self):
         msgBox = QMessageBox()
-
+        try:
+            EdgeThreshold = np.float(ui.txtEdgeThre.text())
+            assert EdgeThreshold <= 1
+            assert EdgeThreshold >= 0
+        except:
+            msgBox.setText("Edge threshold is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
         ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
-                             os.path.dirname(ui.txtOutFile.text()))
-
-        FontSize = ui.txtFontSize.value()
-
+                         os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
+            Out = {}
             try:
-                Res     = io.loadmat(ofile)
+                Out = io.loadmat(ofile)
             except:
                 print("Cannot load result file!")
                 msgBox.setText("Cannot load result file!")
@@ -682,132 +505,20 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-
-
-            HasDefaultCond = False
-            # Condition
-            if not len(ui.txtCond.currentText()):
+            Net = Out["Networks"]
+            ThrNet = Out["ThresholdNetworks"]
+            ACoord = Out["Atlas_parcellation"]
+            for nnIndex, (nn, tnn) in enumerate(zip(Net, ThrNet)):
                 try:
-                    Cond = Res["condition"]
-                    HasDefaultCond = True
+                    Cond = Out["condition"]
+                    Title = f"Label: {Cond[nnIndex][1][0]}"
                 except:
-                    msgBox.setText("Please enter Condition variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                    return False
-
-            if not HasDefaultCond:
-                try:
-                    Cond = Res[ui.txtCond.currentText()]
-                except:
-                    msgBox.setText("Condition value is wrong!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                    return False
-
-
-            labels = list()
-            for con in Cond:
-                labels.append(con[1][0])
-            labels = np.array(labels)
-
-
-
-            if ui.cbCorr.isChecked():
-                try:
-                    Corr = Res["Correlation"]
-                except:
-                    print("Cannot load Correlation variable!")
-                    msgBox.setText("Cannot load Correlation variable!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                    return False
-                NumData = np.shape(Corr)[0]
-                fig1 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
-                plt.pcolor(Corr, vmin=np.min(Corr), vmax=np.max(Corr))
-                plt.xlim([0, NumData])
-                plt.ylim([0, NumData])
-                cbar = plt.colorbar()
-                cbar.ax.tick_params(labelsize=FontSize)
-                ax = plt.gca()
-                ax.invert_yaxis()
-                ax.set_aspect(1)
-
-                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
-                ax.grid(False)
-                ax.set_aspect(1)
-                ax.set_frame_on(False)
-                for t in ax.xaxis.get_major_ticks():
-                    t.tick1On = False
-                    t.tick2On = False
-                for t in ax.yaxis.get_major_ticks():
-                    t.tick1On = False
-                    t.tick2On = False
-
-                if len(ui.txtTitleCov.text()):
-                    plt.title(ui.txtTitleCov.text())
-                else:
-                    plt.title('Group RSA: Correlation\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
-                plt.show()
-
-
-            if ui.cbCov.isChecked():
-                try:
-                    Cov = Res["Covariance"]
-                except:
-                    print("Cannot load Covariance variable!")
-                    msgBox.setText("Cannot load Covariance variable!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                    return False
-                NumData = np.shape(Cov)[0]
-                fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
-                plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
-                plt.xlim([0, NumData])
-                plt.ylim([0, NumData])
-                cbar = plt.colorbar()
-                cbar.ax.tick_params(labelsize=FontSize)
-                ax = plt.gca()
-                ax.invert_yaxis()
-                ax.set_aspect(1)
-
-                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtXRotation.value())
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize, rotation=ui.txtYRotation.value())
-                ax.grid(False)
-                ax.set_aspect(1)
-                ax.set_frame_on(False)
-                for t in ax.xaxis.get_major_ticks():
-                    t.tick1On = False
-                    t.tick2On = False
-                for t in ax.yaxis.get_major_ticks():
-                    t.tick1On = False
-                    t.tick2On = False
-                if len(ui.txtTitleCorr.text()):
-                    plt.title(ui.txtTitleCorr.text())
-                else:
-                    plt.title('Group RSA: Covariance\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
-                plt.show()
-
-            fig3 = plt.figure(figsize=(25, 10), )
-            dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1, leaf_rotation=ui.txtXRotation.value())
-            if len(ui.txtTitleDen.text()):
-                plt.title(ui.txtTitleDen.text())
-            else:
-                plt.title('Group MP Gradient RSA: Similarity Analysis\nLevel: ' + str(Res["FoldInfo"]["Order"][0][0][0]))
+                    Title = f"Label: {nnIndex}"
+                PlotConnectome(tnn, ACoord, Title, EdgeThreshold)
+                fig = plt.figure()
+                plt.imshow(np.transpose(nn))
+                plt.title(Title)
             plt.show()
-
-
-
-
 
 
 if __name__ == '__main__':
