@@ -29,8 +29,10 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from nilearn import plotting
 from Base.dialogs import LoadFile, SaveFile
+from Visualization.Connectome import PlotConnectome
+from Network.DistanceNetwork import ClassicNetworkAnalysis
 from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
-from GUI.frmMANetworkGUI import *
+from GUI.frmMAClassicNetworkGUI import *
 
 # Plot
 import matplotlib
@@ -48,9 +50,11 @@ from pyqode.qt import QtWidgets as pyWidgets
 
 def MetricCode():
     return\
-"""import scipy.stats as stats 
+"""import scipy.stats as stats
+import numpy as np 
 
-metric = stats.pearsonr 
+def metric(a, b):
+    return np.abs(stats.pearsonr(a, b)[0]) 
 """
 
 def IntegrationCode():
@@ -63,15 +67,15 @@ integration = np.mean
 """
 
 
-class frmMANetwork(Ui_frmMANetwork):
-    ui = Ui_frmMANetwork()
+class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
+    ui = Ui_frmMAClassicNetwork()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmMANetwork()
+        ui = Ui_frmMAClassicNetwork()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
@@ -109,16 +113,7 @@ class frmMANetwork(Ui_frmMANetwork):
         ui.txtIntegration.setFont(font)
         ui.txtIntegration.setPlainText(IntegrationCode(),"","")
 
-
-
-
-
-
-
-
-
-
-        dialog.setWindowTitle("easy fMRI Network Analysis - V" + getVersion() + "B" + getBuild())
+        dialog.setWindowTitle("easy fMRI Classic Network Analysis - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -247,15 +242,27 @@ class frmMANetwork(Ui_frmMANetwork):
     def btnConvert_click(self):
         msgBox = QMessageBox()
         tStart = time.time()
-
         try:
             Threshold = np.float(ui.txtThre.text())
+            assert Threshold <= 1
+            assert Threshold >= 0
         except:
             msgBox.setText("Threshold is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
+        try:
+            EdgeThreshold = np.float(ui.txtEdgeThre.text())
+            assert EdgeThreshold <= 1
+            assert EdgeThreshold >= 0
+        except:
+            msgBox.setText("Edge threshold is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
         try:
             MetricCode  = ui.txtMetric.toPlainText()
             allvars = dict(locals(), **globals())
@@ -278,6 +285,8 @@ class frmMANetwork(Ui_frmMANetwork):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
+
+        AtlasPath = ui.txtAtlasPath.text()
 
         # Filter
         try:
@@ -322,7 +331,7 @@ class frmMANetwork(Ui_frmMANetwork):
             AtlasImg    = AtlasHDR.get_data() # numpy.asanyarray(img.dataobj)
             AtlasReg    = np.unique(AtlasImg)
             AtlasReg    = AtlasReg[np.where(AtlasReg != 0)[0]]
-            AtlasShape  = np.shape(AtlasImg)
+            AtlasShape = np.shape(AtlasImg)
         except:
             msgBox.setText("Cannot load atlas file!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -381,19 +390,16 @@ class frmMANetwork(Ui_frmMANetwork):
                 return False
 
         # Condition
-        if not len(ui.txtCond.currentText()):
-            msgBox.setText("Please enter Condition variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
         try:
-            Cond = InData[ui.txtCond.currentText()]
-            OutData[ui.txtCond.currentText()] = Cond
-            labels = list()
-            for con in Cond:
-                labels.append(con[1][0])
-            labels = np.array(labels)
+            if not len(ui.txtCond.currentText()):
+                Cond = None
+            else:
+                Cond = InData[ui.txtCond.currentText()]
+                OutData[ui.txtCond.currentText()] = Cond
+                labels = list()
+                for con in Cond:
+                    labels.append(con[1][0])
+                labels = np.array(labels)
         except:
             msgBox.setText("Condition value is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -433,100 +439,34 @@ class frmMANetwork(Ui_frmMANetwork):
                 L = np.delete(L, labelIndx, axis=0)
                 print("Class ID = " + str(fil) + " is removed from data.")
 
-
+        Net, ThrNet, ActiveRegions, A, ACoord = ClassicNetworkAnalysis(X=X, L=L, Coord=Coord,
+                                                                       Integration=Integration,
+                                                                       Metric=Metric,
+                                                                       AtlasImg=AtlasImg,
+                                                                       affine=AtlasHDR.affine,
+                                                                       AtlasPath=AtlasPath,
+                                                                       Threshold=Threshold)
         Out = {}
-
-
-        listL = np.unique(L)
-        print(f"List of labels {listL}")
-        # Generate RegMap
-        RegionMap = {}
-        for cooIdx, coo in enumerate(Coord):
-            reg = AtlasImg[coo[0], coo[1], coo[2]]
-            if reg != 0:
-                try:
-                    RegionMap[reg].append(cooIdx)
-                except:
-                    RegionMap[reg] = list()
-                    RegionMap[reg].append(cooIdx)
-
-        AtlasRegNum = len(RegionMap.keys())
-        print(f"Number of regions: {AtlasRegNum}")
-        print("Region map is generated!")
-        # Reshape data over label
-        XR = list()
-        for ll in listL:
-            xl = X[np.where(L == ll)[0], :]
-            xri = list()
-            for regID in sorted(RegionMap.keys()):
-                xlr = xl[:, RegionMap[regID]]
-                xlri = Integration(xlr, axis=1)
-                xri.append(xlri)
-                print(f"Label: {ll}, Region {regID} is done.")
-            XR.append(np.transpose(xri))
-        NetworkNum = np.shape(XR)[0]
-        print(f"Number of networks: {NetworkNum}")
-        # Generate Network
-        Net = np.zeros((NetworkNum, AtlasRegNum, AtlasRegNum))
-        for nn, xxr in enumerate(XR):
-            for i in range(AtlasRegNum):
-                for j in range(i + 1, AtlasRegNum):
-                    Net[nn, i, j] = Metric(xxr[:, i], xxr[:, j])[0]
-                    Net[nn, j, i] = Net[nn, i, j]
-                    print(f"Label: {nn}, Network: {i} vs {j} is compared.")
-        NetMaxValue = np.max(Net[:])
-        print(f"Network maximum value: {NetMaxValue}")
-        NetThreshold = Threshold * NetMaxValue
-        print(f"Network Threshold: {NetThreshold}")
         Out["Networks"] = Net
-        # Threshold
-        for nn, _ in enumerate(XR):
-            for i in range(AtlasRegNum):
-                for j in range(i + 1, AtlasRegNum):
-                    if Net[nn, i, j] < NetThreshold:
-                        Net[nn, i, j] = 0
-                        Net[nn, j, i] = 0
-                        print(f"Label: {nn}, Network: {i} vs {j} is thresholded.")
-        # Active Region
-        ActiveRegions = list()
-        ActiveRegionIndex = list()
-        for regIndx, regID in enumerate(sorted(RegionMap.keys())):
-            IsZero = True
-            for nn, _ in enumerate(XR):
-                if sum(Net[nn, regIndx, :]) != 0:
-                    IsZero = False
-                    break
-            if not IsZero:
-                ActiveRegions.append(regID)
-                ActiveRegionIndex.append(regIndx)
-        print(f"Number of active regions: {np.shape(ActiveRegions)[0]}")
-        print(f"Active Regions: {ActiveRegions}")
-        Out["ActiveRegions"] = ActiveRegions
-
-        print("Generating thresholded networks ...")
-        ThrNet = list()
-        for nn in Net:
-            nn1 = nn[ActiveRegionIndex, :]
-            ThrNet.append(nn1[:, ActiveRegionIndex])
         Out["ThresholdNetworks"] = ThrNet
-
-        # Generate Atlas
-        print("Generating atlas...")
-        A = np.zeros(AtlasShape)
-        for ar in ActiveRegions:
-            for index in RegionMap[ar]:
-                A[Coord[index, 0], Coord[index, 1], Coord[index, 2]] = ar
+        Out["ActiveRegions"] = ActiveRegions
         Out["Atlas"] = A
-        Out["Atlas_affine"] = AtlasHDR.affine
-        AIMG = nb.Nifti1Image(A, AtlasHDR.affine)
-        nb.save(AIMG, "/tmp/atlas.nii.gz")
-        # Atlas parcellation
-        print("Parcellating atlas ...")
-        ACoord = plotting.find_parcellation_cut_coords(labels_img="/tmp/atlas.nii.gz")
         Out["Atlas_parcellation"] = ACoord
+        Out["Atlas_affine"] =  AtlasHDR.affine
+        Out["RunTime"] = time.time() - tStart
+        print("Runtime (s): %f" % (Out["RunTime"]))
+        print("Saving results ...")
+        io.savemat(OutFile, mdict=Out, do_compression=True)
+        print("Output is saved.")
+        if ui.cbDiagram.isChecked():
 
-        plotting.plot_connectome(ThrNet[0], ACoord, edge_threshold="80%", title="Label: 0")
-
+            for nnIndex, nn in enumerate(ThrNet):
+                try:
+                    Title = f"Label: {Cond[nnIndex][1]}"
+                except:
+                    Title = f"Label: {nnIndex}"
+                PlotConnectome(nn, ACoord, Title, EdgeThreshold)
+            plt.show()
 
 
 
@@ -639,11 +579,7 @@ class frmMANetwork(Ui_frmMANetwork):
         #
         # OutData["MSE"] = np.mean(AMSE)
         # print("Average MSE: %f" % (OutData["MSE"]))
-        # OutData["RunTime"] = time.time() - tStart
-        # print("Runtime (s): %f" % (OutData["RunTime"]))
-        # print("Saving results ...")
-        # io.savemat(OutFile,mdict=OutData,do_compression=True)
-        # print("Output is saved.")
+
         #
         #
         # if ui.cbDiagram.isChecked():
@@ -876,5 +812,5 @@ class frmMANetwork(Ui_frmMANetwork):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmMANetwork.show(frmMANetwork)
+    frmMAClassicNetwork.show(frmMAClassicNetwork)
     sys.exit(app.exec_())

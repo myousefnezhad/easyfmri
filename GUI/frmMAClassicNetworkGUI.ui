@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>frmMANetwork</class>
- <widget class="QDialog" name="frmMANetwork">
+ <class>frmMAClassicNetwork</class>
+ <widget class="QDialog" name="frmMAClassicNetwork">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -123,7 +123,7 @@
     <widget class="QComboBox" name="txtLabel">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>210</x>
        <y>90</y>
        <width>181</width>
        <height>26</height>
@@ -139,7 +139,7 @@
     <widget class="QComboBox" name="txtData">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>210</x>
        <y>50</y>
        <width>181</width>
        <height>26</height>
@@ -155,7 +155,7 @@
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>260</x>
+       <x>290</x>
        <y>10</y>
        <width>51</width>
        <height>17</height>
@@ -170,18 +170,18 @@
       <rect>
        <x>20</x>
        <y>130</y>
-       <width>131</width>
+       <width>181</width>
        <height>16</height>
       </rect>
      </property>
      <property name="text">
-      <string>Condition</string>
+      <string>Condition (can be empty)</string>
      </property>
     </widget>
     <widget class="QComboBox" name="txtCond">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>210</x>
        <y>130</y>
        <width>181</width>
        <height>26</height>
@@ -223,7 +223,7 @@
     <widget class="QComboBox" name="txtCoord">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>210</x>
        <y>170</y>
        <width>181</width>
        <height>26</height>
@@ -274,26 +274,78 @@
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>100</y>
-       <width>181</width>
+       <y>110</y>
+       <width>251</width>
        <height>16</height>
       </rect>
      </property>
      <property name="text">
-      <string>Thresholding (of max)</string>
+      <string>Network thresholding (of max)</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="txtThre">
      <property name="geometry">
       <rect>
-       <x>220</x>
-       <y>100</y>
+       <x>290</x>
+       <y>110</y>
        <width>160</width>
        <height>21</height>
       </rect>
      </property>
      <property name="text">
-      <string>0.9</string>
+      <string>0.95</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtEdgeThre">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>144</y>
+       <width>160</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0.8</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_16">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>144</y>
+       <width>251</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Edge thresholding (in figure)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_17">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>180</y>
+       <width>251</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Atlas PATH</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtAtlasPath">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>180</y>
+       <width>160</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>/tmp/atlas.nii.gz</string>
      </property>
     </widget>
    </widget>
