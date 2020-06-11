@@ -75,6 +75,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("MatLab, Gradient RSA (Group Level)",20003)
         ui.cbMAU.addItem("MatLab, Encoding Analysis (Session Level)",20007)
         ui.cbMAU.addItem("MatLab, Gradient Encoding Analysis (Session Level) ",20002)
+        ui.cbMAU.addItem("MatLab, Classic Network Analysis ",40000)
         ui.cbMAU.addItem("MatLab, Clustering: Agglomerative",10002)
         ui.cbMAU.addItem("MatLab, Clustering: Birch",10003)
         ui.cbMAU.addItem("MatLab, Clustering: Gaussian Mixture",10004)
@@ -122,6 +123,11 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
 
     def btnMAU_click(self):
         MAID = ui.cbMAU.currentData()
+        # Network
+        if MAID == 40000:
+            from GUI.frmMAClassicNetwork import frmMAClassicNetwork
+            frmMAClassicNetwork.show(frmMAClassicNetwork)
+            return
         # SSA
         if MAID == 30000:
             from GUI.frmMASSA import frmMASSA
