@@ -392,7 +392,7 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
         # Condition
         try:
             if not len(ui.txtCond.currentText()):
-                Cond = None
+                Cond = 0
             else:
                 Cond = InData[ui.txtCond.currentText()]
                 OutData[ui.txtCond.currentText()] = Cond
