@@ -61,9 +61,10 @@ def IntegrationCode():
     return\
 """import numpy as np
 
-#integration = np.max
-#integration = np.min
-integration = np.mean
+def integration(a): 
+    #return np.min(a, axis=1)
+    #return np.max(a, axis=1)
+    return np.mean(a, axis=1)
 """
 
 
@@ -343,7 +344,7 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
 
         try:
             AtlasHDR    = nb.load(AtlasFile)
-            AtlasImg    = AtlasHDR.get_data() # numpy.asanyarray(img.dataobj)
+            AtlasImg    = np.asanyarray(AtlasHDR.dataobj) # AtlasHDR.get_data() #
             AtlasReg    = np.unique(AtlasImg)
             if not 0 in RegionFilter:
                 AtlasReg    = AtlasReg[np.where(AtlasReg != 0)[0]]

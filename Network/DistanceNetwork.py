@@ -25,7 +25,7 @@ def ClassicNetworkAnalysis(X, L, Coord, Integration, Metric, AtlasImg, affine=np
         xri = list()
         for regID in sorted(RegionMap.keys()):
             xlr = xl[:, RegionMap[regID]]
-            xlri = Integration(xlr, axis=1)
+            xlri = Integration(xlr)
             xri.append(xlri)
             print(f"Label: {ll}, Region {regID} is done.")
         XR.append(np.transpose(xri))
