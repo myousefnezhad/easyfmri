@@ -8,4 +8,6 @@ MVPA/__pycache__/*
 Network/__pycache__/*
 Preprocess/__pycache__/*
 RSA/__pycache__/*
+RSA/BRSA/__pycache__/*
+Visualization/__pycache__/*
 history

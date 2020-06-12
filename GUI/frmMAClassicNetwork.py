@@ -148,6 +148,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
                     ImgHDR = nb.load(roi_file)
                     ImgDAT = ImgHDR.get_data()
                     Area = np.unique(ImgDAT)
+                    ui.lblRegion.setText(f"Number of regions: {len(Area)}")
+                    for a in Area:
+                        ui.txtRegionList.append(str(a))
                     Area = Area[np.where(Area != 0)[0]]
                     print(f'Regions are {Area}')
                     print(f'We consider 0 area as black space/rest; Max region ID: {np.max(Area)}, Min region ID: {np.min(Area)}')
@@ -300,6 +303,18 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             print("Filter is wrong!")
             return
 
+        # Region Filter
+        try:
+            RegionFilter = ui.txtRegions.text()
+            if not len(Filter):
+                RegionFilter = None
+            else:
+                RegionFilter = RegionFilter.replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()
+                RegionFilter = np.int32(RegionFilter)
+        except:
+            print("Region filter is wrong!")
+            return
+
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
@@ -330,7 +345,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             AtlasHDR    = nb.load(AtlasFile)
             AtlasImg    = AtlasHDR.get_data() # numpy.asanyarray(img.dataobj)
             AtlasReg    = np.unique(AtlasImg)
-            AtlasReg    = AtlasReg[np.where(AtlasReg != 0)[0]]
+            if not 0 in RegionFilter:
+                AtlasReg    = AtlasReg[np.where(AtlasReg != 0)[0]]
+                print("Region 0 is considered as rest mode!")
             AtlasShape = np.shape(AtlasImg)
         except:
             msgBox.setText("Cannot load atlas file!")
@@ -443,6 +460,7 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
                                                                        Metric=Metric,
                                                                        AtlasImg=AtlasImg,
                                                                        affine=AtlasHDR.affine,
+                                                                       KeepRegions=RegionFilter,
                                                                        AtlasPath=AtlasPath,
                                                                        Threshold=Threshold)
         Out = {}

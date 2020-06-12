@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 from Visualization.AtlasParcellation import AtlasParcellation
 
-def ClassicNetworkAnalysis(X, L, Coord, Integration, Metric, AtlasImg, affine=np.eye(4), AtlasPath="/tmp/atlas.nii.gz", Threshold=0.95):
+def ClassicNetworkAnalysis(X, L, Coord, Integration, Metric, AtlasImg, affine=np.eye(4), KeepRegions=None, AtlasPath="/tmp/atlas.nii.gz", Threshold=0.95):
     listL = sorted(np.unique(L))
     print(f"List of labels {listL}")
     # Generate RegMap
@@ -56,10 +56,13 @@ def ClassicNetworkAnalysis(X, L, Coord, Integration, Metric, AtlasImg, affine=np
     ActiveRegionIndex = list()
     for regIndx, regID in enumerate(sorted(RegionMap.keys())):
         IsZero = True
-        for nn, _ in enumerate(XR):
-            if sum(Net[nn, regIndx, :]) != 0:
-                IsZero = False
-                break
+        if regID in KeepRegions:
+            IsZero = False
+        else:
+            for nn, _ in enumerate(XR):
+                if sum(Net[nn, regIndx, :]) != 0:
+                    IsZero = False
+                    break
         if not IsZero:
             ActiveRegions.append(regID)
             ActiveRegionIndex.append(regIndx)
