@@ -87,7 +87,7 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
         # Metric
         ui.txtMetric = api.CodeEdit(ui.tab_5)
         ui.txtMetric.setGeometry(QtCore.QRect(10, 10, 700, 350))
-        ui.txtMetric.setObjectName("txtEvents")
+        ui.txtMetric.setObjectName("txtMetric")
         ui.txtMetric.backend.start('backend/server.py')
         ui.txtMetric.modes.append(modes.CodeCompletionMode())
         ui.txtMetric.modes.append(modes.CaretLineHighlighterMode())
@@ -102,7 +102,7 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
         # Integration
         ui.txtIntegration = api.CodeEdit(ui.tab_3)
         ui.txtIntegration.setGeometry(QtCore.QRect(10, 10, 700, 350))
-        ui.txtIntegration.setObjectName("txtEvents")
+        ui.txtIntegration.setObjectName("txtIntegration")
         ui.txtIntegration.backend.start('backend/server.py')
         ui.txtIntegration.modes.append(modes.CodeCompletionMode())
         ui.txtIntegration.modes.append(modes.CaretLineHighlighterMode())
