@@ -45,12 +45,13 @@ def ClassicNetworkAnalysis(X, L, Coord, Integration, Metric, AtlasImg, affine=np
     print(f"Network Threshold: {NetThreshold}")
     # Threshold
     for nn, _ in enumerate(XR):
-        for i in range(AtlasRegNum):
-            for j in range(i + 1, AtlasRegNum):
-                if Net[nn, i, j] < NetThreshold:
-                    Net[nn, i, j] = 0
-                    Net[nn, j, i] = 0
-                    print(f"Label: {nn}, Network: {i} vs {j} is thresholded.")
+        for i, regID in enumerate(sorted(RegionMap.keys())):
+            if not regID in KeepRegions:
+                for j in range(i + 1, AtlasRegNum):
+                    if Net[nn, i, j] < NetThreshold:
+                        Net[nn, i, j] = 0
+                        Net[nn, j, i] = 0
+                        print(f"Label: {nn}, Network: {i} vs {j} is thresholded.")
     # Active Region
     ActiveRegions = list()
     ActiveRegionIndex = list()
