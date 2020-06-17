@@ -32,7 +32,7 @@ from Base.dialogs import LoadFile, SaveFile
 from Visualization.Connectome import PlotConnectome
 from Network.DistanceNetwork import ClassicNetworkAnalysis
 from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
-from GUI.frmMAClassicNetworkGUI import *
+from GUI.frmMAClassicNetworkROIGUI import *
 
 # Plot
 import matplotlib
@@ -64,7 +64,7 @@ def IntegrationCode():
     return\
 """# This function generates a vector from matrix 'a'
 # By default, it calculate row mean of the matrix 'a'
-
+ 
 import numpy as np
 
 def integration(a): 
@@ -74,15 +74,15 @@ def integration(a):
 """
 
 
-class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
-    ui = Ui_frmMAClassicNetwork()
+class frmMAClassicNetworkROI(Ui_frmMAClassicNetworkROI):
+    ui = Ui_frmMAClassicNetworkROI()
     dialog = None
     # This function is run when the main form start
     # and initiate the default parameters.
     def show(self):
         global dialog
         global ui
-        ui = Ui_frmMAClassicNetwork()
+        ui = Ui_frmMAClassicNetworkROI()
         QtWidgets.QApplication.setStyle(QtWidgets.QStyleFactory.create('Fusion'))
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
@@ -120,7 +120,7 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
         ui.txtIntegration.setFont(font)
         ui.txtIntegration.setPlainText(IntegrationCode(),"","")
 
-        dialog.setWindowTitle("easy fMRI Classic Network Analysis - V" + getVersion() + "B" + getBuild())
+        dialog.setWindowTitle("easy fMRI Classic Network Analysis (ROI-based) - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
@@ -312,15 +312,24 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
 
         # Region Filter
         try:
-            RegionFilter = ui.txtRegions.text()
+            RegionFilter = ui.txtRegions.text().strip()
             if not len(RegionFilter):
-                RegionFilter = None
+                msgBox.setText("Please enter ROI!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
             else:
                 RegionFilter = RegionFilter.replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()
                 RegionFilter = np.int32(RegionFilter)
         except:
-            print("Region filter is wrong!")
-            return
+            print("ROI is wrong!")
+            msgBox.setText("ROI is wrong!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
 
         # OutFile
         OutFile = ui.txtOutFile.text()
@@ -548,5 +557,5 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    frmMAClassicNetwork.show(frmMAClassicNetwork)
+    frmMAClassicNetworkROI.show(frmMAClassicNetworkROI)
     sys.exit(app.exec_())
