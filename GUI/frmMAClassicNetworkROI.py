@@ -30,8 +30,8 @@ from sklearn import preprocessing
 from nilearn import plotting
 from Base.dialogs import LoadFile, SaveFile
 from Visualization.Connectome import PlotConnectome
-from Network.DistanceNetwork import ClassicNetworkAnalysis
-from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
+from Network.DistanceNetwork import ClassicNetworkAnalysisROI
+from Base.utility import getVersion, getBuild
 from GUI.frmMAClassicNetworkROIGUI import *
 
 # Plot
@@ -471,14 +471,14 @@ class frmMAClassicNetworkROI(Ui_frmMAClassicNetworkROI):
                 L = np.delete(L, labelIndx, axis=0)
                 print("Class ID = " + str(fil) + " is removed from data.")
 
-        Net, ThrNet, ActiveRegions, A, ACoord, listL = ClassicNetworkAnalysis(X=X, L=L, Coord=Coord,
-                                                                       Integration=Integration,
-                                                                       Metric=Metric,
-                                                                       AtlasImg=AtlasImg,
-                                                                       affine=AtlasHDR.affine,
-                                                                       KeepRegions=RegionFilter,
-                                                                       AtlasPath=AtlasPath,
-                                                                       Threshold=Threshold)
+        Net, ThrNet, ActiveRegions, A, ACoord, listL = ClassicNetworkAnalysisROI(X=X, L=L, Coord=Coord,
+                                                                                 ROI=RegionFilter,
+                                                                                 Integration=Integration,
+                                                                                 Metric=Metric,
+                                                                                 AtlasImg=AtlasImg,
+                                                                                 affine=AtlasHDR.affine,
+                                                                                 AtlasPath=AtlasPath,
+                                                                                 Threshold=Threshold)
         Out = {}
         Out["Networks"] = Net
         Out["ThresholdNetworks"] = ThrNet

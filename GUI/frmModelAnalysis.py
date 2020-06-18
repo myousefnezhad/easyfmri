@@ -76,6 +76,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("MatLab, Encoding Analysis (Session Level)",20007)
         ui.cbMAU.addItem("MatLab, Gradient Encoding Analysis (Session Level) ",20002)
         ui.cbMAU.addItem("MatLab, Classic Network Analysis ",40000)
+        ui.cbMAU.addItem("MatLab, Classic Network Analysis (ROI-based)",40001)
         ui.cbMAU.addItem("MatLab, Clustering: Agglomerative",10002)
         ui.cbMAU.addItem("MatLab, Clustering: Birch",10003)
         ui.cbMAU.addItem("MatLab, Clustering: Gaussian Mixture",10004)
@@ -127,6 +128,10 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         if MAID == 40000:
             from GUI.frmMAClassicNetwork import frmMAClassicNetwork
             frmMAClassicNetwork.show(frmMAClassicNetwork)
+            return
+        if MAID == 40001:
+            from GUI.frmMAClassicNetworkROI import frmMAClassicNetworkROI
+            frmMAClassicNetworkROI.show(frmMAClassicNetworkROI)
             return
         # SSA
         if MAID == 30000:

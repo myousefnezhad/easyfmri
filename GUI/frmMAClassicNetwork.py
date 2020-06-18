@@ -31,7 +31,7 @@ from nilearn import plotting
 from Base.dialogs import LoadFile, SaveFile
 from Visualization.Connectome import PlotConnectome
 from Network.DistanceNetwork import ClassicNetworkAnalysis
-from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
+from Base.utility import getVersion, getBuild
 from GUI.frmMAClassicNetworkGUI import *
 
 # Plot
