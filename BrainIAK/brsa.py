@@ -53,7 +53,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils import assert_all_finite, check_random_state
 from sklearn.decomposition import PCA, FactorAnalysis, SparsePCA, FastICA
 import logging
-import RSA.BRSA.utils as utils
+import BrainIAK.utils as utils
 import scipy.spatial.distance as spdist
 from nitime import algorithms as alg
 import copy

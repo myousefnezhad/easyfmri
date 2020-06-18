@@ -34,7 +34,7 @@ import datetime
 import nibabel  # type: ignore
 import numpy as np  # type: ignore
 import pydicom as dicom
-from RSA.BRSA import fmrisim as sim  # type: ignore
+from BrainIAK import fmrisim as sim  # type: ignore
 import logging
 from pkg_resources import resource_stream
 from nibabel.nifti1 import Nifti1Image

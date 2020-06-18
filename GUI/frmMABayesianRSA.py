@@ -28,7 +28,7 @@ from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.metrics import mean_squared_error
 import sklearn.linear_model as linmdl
-from RSA.BRSA.brsa import BRSA, GBRSA, prior_GP_var_inv_gamma, prior_GP_var_half_cauchy
+from BrainIAK.brsa import BRSA, GBRSA, prior_GP_var_inv_gamma, prior_GP_var_half_cauchy
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
 from GUI.frmMABayesianRSAGUI import *
