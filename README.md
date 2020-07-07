@@ -277,6 +277,8 @@ sh Miniconda3-latest-Linux-<platform>.sh
 
 
 -- Load environment variables: 
+
+* You have to edit both `~/.startupscript` and `~/.zstartupscript` and set the Miniconda3 path as `ANACON_PATH`. Then:
 ```
 source ~/.startupscript # for bash
 source ~/.zstartupscript # for zsh
@@ -368,6 +370,8 @@ show_channel_urls: true
 ```
 
 -- Load environment variables: 
+
+* You have to edit both `~/.startupscript` and `~/.zstartupscript` and set the Anaconda3 path as `ANACON_PATH`. Then:
 ```
 source ~/.startupscript # for bash
 source ~/.zstartupscript # for zsh
