@@ -51,7 +51,26 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
 
         tools = Tools()
         tools.combo(ui.cbTools)
+        print()
+        print(20*"#" + " Platform Information " + 20*"#")
+        # Base Info
+        print("Base:", os.name)
+        # OS Info
+        try:
+            import platform
+            print("OS:", platform.system())
+            print("Kernel:", platform.release())
+        except:
+            pass
+        # Python Info
+        try:
+            pythonInfo = str(sys.version).split("\n")
+            print("Python:", pythonInfo[0])
+            print("C Compiler:", pythonInfo[1])
 
+        except:
+            pass
+        print(20*"#" + " Software Information " + 20*"#")
         try:
             ezdir = str(os.environ['EASYFMRI'])
             if len(ezdir):
