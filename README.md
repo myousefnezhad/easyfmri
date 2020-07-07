@@ -178,7 +178,7 @@ For Mac:
 python2 fslinstaller.py -f fsl-6.0.0-macOS_64.tar.gz -M
 ```
 
-#### STEP D) Install AFNI 17.3.x or above
+#### STEP C) Install AFNI 17.3.x or above
 
 -- Download [AFNI](https://afni.nimh.nih.gov/):
 * [Ubuntu 16+](https://afni.nimh.nih.gov/pub/dist/tgz/linux_ubuntu_16_64.tgz)
@@ -254,7 +254,79 @@ sudo yum install -y tcsh libXp openmotif gsl xorg-x11-fonts-misc       \
 sudo yum update -y
 ```
 
-#### STEP D) Install Python 3.7.x
+#### STEP D) Install Python 
+
+##### D.1) Install Python 3.8.x (Miniconda): This option is recommended
+
+-- Download [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) for Python **3.7**
+
+* Note: In Windows 10, you must install the linux version of Miniconda 3
+
+
+-- Install Python 3.7
+
+
+* For Linux:
+
+```
+sh Miniconda3-latest-Linux-<platform>.sh
+```
+
+* For Mac: click PKG file and continue installation.
+
+
+
+-- Load environment variables: 
+```
+source ~/.startupscript # for bash
+source ~/.zstartupscript # for zsh
+```
+
+-- Update Conda Components: 
+```
+conda update --all
+```
+
+
+-- NOW UPDATE Python 3.7.x to Python 3.8.x:
+
+```
+conda install python=3.8
+conda update --all
+```
+
+-- Install easy fMRI required python packages by using: 
+
+```
+conda install numpy scipy qt pyqt ipython matplotlib pandas seaborn psutil statsmodels
+conda install -c conda-forge mpi4py scikit-learn
+pip install -U future nibabel nitime nilearn pyqode.core pyqode.qt pydicom matplotlib
+```
+
+-- Install [PyTorch](https://pytorch.org/) package:
+
+For CPU version:
+
+
+* In Linux (GPU):
+
+```
+conda install pytorch torchvision cudatoolkit=10.2 -c pytorch
+```
+
+
+* In Linux (CPU):
+```
+conda install pytorch torchvision cpuonly -c pytorch
+```
+
+* In Mac OS:
+```
+conda install pytorch torchvision -c pytorch
+```
+
+
+##### D.2) Install Python 3.7.x (Anaconda): Just for old systems
 
 -- Download [Anaconda3](https://anaconda.org/anaconda/python) for Python 3.7
 
@@ -297,7 +369,8 @@ show_channel_urls: true
 
 -- Load environment variables: 
 ```
-source ~/.startupscript
+source ~/.startupscript # for bash
+source ~/.zstartupscript # for zsh
 ```
 
 -- Update Conda Components: 
