@@ -26,7 +26,11 @@ import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.externals import joblib
+# Python 3.8: Support both old and new joblib
+try:
+    from sklearn.externals import joblib
+except:
+    import joblib
 from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild

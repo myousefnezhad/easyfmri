@@ -14,3 +14,4 @@ history
 /BrainIAK/htfa.py
 /BrainIAK/tfa.py
 /BrainIAK/tfa_extension.cpp
+BrainIAK/__pycache__/*

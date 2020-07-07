@@ -27,10 +27,13 @@ from PyQt5.QtWidgets import *
 
 from sklearn import preprocessing
 from sklearn.metrics import accuracy_score
+# Python 3.8: Support both old and new joblib
+try:
+    from sklearn.externals import joblib
+except:
+    import joblib
 
-from sklearn.externals import joblib
 from sklearn.metrics import normalized_mutual_info_score, adjusted_mutual_info_score, adjusted_rand_score
-
 
 from Base.utility import getVersion, getBuild
 from Base.dialogs import LoadFile
