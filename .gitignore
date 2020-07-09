@@ -15,3 +15,5 @@ history
 /BrainIAK/tfa.py
 /BrainIAK/tfa_extension.cpp
 BrainIAK/__pycache__/*
+.DS_Store
+Script/.DS_Store
