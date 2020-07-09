@@ -27,7 +27,7 @@ Easy fMRI needs following software:
 
   * Platform: Linux (recommended), Mac, Windows (via Linux Virtual Machine, or Windows WSL)
   
-  ** Note: easy fMRI is natively developed on the last version of [Fedora](https://getfedora.org/) 
+    * Note: easy fMRI is natively developed on the last version of [Fedora](https://getfedora.org/) 
   
   * [Python3](https://anaconda.org/anaconda/python) (version=3.8.x [preferred] or 3.7.x)
 
@@ -212,6 +212,8 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
 ## STEP C: Install AFNI 17.3.x or above
 
+
+### Copy AFNI files
 * Download [AFNI](https://afni.nimh.nih.gov/):
     * [Ubuntu (>= 16.04)](https://afni.nimh.nih.gov/pub/dist/tgz/linux_ubuntu_16_64.tgz)
     * [Ubuntu (<16), Fedora, Red Hat, etc.](https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz)
@@ -220,10 +222,10 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
     * [Mac 10.7—10.11](https://afni.nimh.nih.gov/pub/dist/tgz/macosx_10.7_local.tgz)
     * [Other versions](https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/download_links.html#b-downloading-a-set-of-the-newest-precompiled-afni-binaries)
 
-* Extract AFNI to `~/abin`
+* Extract [AFNI](https://afni.nimh.nih.gov/) files to `~/abin`
 
 
-### Install linux packages for [AFNI](https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/index.html)
+### Install Linux packages for [AFNI](https://afni.nimh.nih.gov/pub/dist/doc/htmldoc/background_install/install_instructs/index.html)
 
 * Fedora (>= 32): The essential system setup
     ```
