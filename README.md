@@ -78,36 +78,36 @@ Easy fMRI needs following software:
 * Copy executable files (ezfmri, ezedit, etc.) to `/usr/local/bin`:
     * For Linux:
         ```
-        cd ~/.easyfmri/Script
+        cd ~/easyfmri/Script
         ./cp_script_linux
         ```
     * For Mac:
         ```
-        cd ~/.easyfmri/Script
+        cd ~/easyfmri/Script
         ./cp_script_mac
         ```
 * Copy startup script:
     * For Linux (bash and ~/.bashrc) 
         ```
-        cd ~/.easyfmri/Script
+        cd ~/easyfmri/Script
         ./install_script_linux_bashrc
         ```
 
     * For Linux (bash and ~/.profile) 
         ```
-        cd ~/.easyfmri/Script
+        cd ~/easyfmri/Script
         ./install_script_linux_profile
         ```
 
     * For Linux (zsh and ~/.zshrc) 
         ```
-        cd ~/.easyfmri/Script
+        cd ~/easyfmri/Script
         ./install_script_linux_zshrc
         ```
 
     * For Mac (bash and ~/.bash_profile) 
         ```
-        cd ~/.easyfmri/Script
+        cd ~/easyfmri/Script
         ./install_script_mac
         ```
  
