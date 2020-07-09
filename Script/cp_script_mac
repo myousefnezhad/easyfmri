@@ -1,15 +1,21 @@
 #!/bin/bash
 
 # General Executable Files
-sudo cp ezfmri /usr/local/bin/.
+sudo cp ezfmri /usr/local/bin/
 sudo chmod 7777 /usr/local/bin/ezfmri
-sudo cp ezfmri2 /usr/local/bin/.
+sudo cp ezfmri2 /usr/local/bin/
 sudo chmod 7777 /usr/local/bin/ezfmri2
-sudo cp ezedit /usr/local/bin/.
+sudo cp ezedit /usr/local/bin/
 sudo chmod 7777 /usr/local/bin/ezedit
-sudo cp ezedit2 /usr/local/bin/.
+sudo cp ezedit2 /usr/local/bin/
 sudo chmod 7777 /usr/local/bin/ezedit2
-sudo cp ezfmri_scaled /usr/local/bin/.
+sudo cp ezfmri_scaled /usr/local/bin/
 sudo chmod 7777 /usr/local/bin/ezfmri_scaled
-sudo cp ezfmri_scaled2 /usr/local/bin/.
+sudo cp ezfmri_scaled2 /usr/local/bin/
 sudo chmod 7777 /usr/local/bin/ezfmri_scaled2
+
+# Copy Mac apps
+sudo cp -r ezfmri.app /Applications/easy\ fMRI.app
+sudo cp -r ezedit.app /Applications/easy\ edit.app
+
+rm /var/folders/*/*/*/com.apple.dock.iconcache;killall Dock
