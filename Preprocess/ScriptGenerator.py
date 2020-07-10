@@ -18,11 +18,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import numpy as np
+import nibabel as nb
+import scipy.io as io
+from Base.MRI import get_mri_shape
+
 class ScriptGenerator:
     def run(self,SettingFileName):
-        import numpy as np
-        import nibabel as nb
-        import scipy.io as io
 
         from Base.utility import fixstr,setParameters3, strRange, strMultiRange
         from Base.Setting import Setting
@@ -67,6 +69,8 @@ class ScriptGenerator:
 
                             MRIFile = nb.load(BOLDaddr)
 
+                            MRIShape = MRIFile.img.shape
+
                             # Generate Script
                             scriptFile = open(ScriptAddr,"w")
                             scriptFile.write("\n# FEAT version number\nset fmri(version) 6.00\n\n# Are we in MELODIC?\nset fmri(inmelodic) 0\n\n")
@@ -82,8 +86,8 @@ class ScriptGenerator:
                             scriptFile.write("# TR(s)\nset fmri(tr) %0.6f \n\n" % setting.TR)
                             # Total Volumes
                             if setting.TotalVol == 0:
-                                print("Auto Detect Total Volumes = " + str(MRIFile.get_shape()[3]) + ", File: " + BOLDaddr)
-                                scriptFile.write("# Total volumes\nset fmri(npts) " + str(MRIFile.get_shape()[3]) + "\n\n")
+                                print("Auto Detect Total Volumes = " + str(get_mri_shape(MRIFile)[3]) + ", File: " + BOLDaddr)
+                                scriptFile.write("# Total volumes\nset fmri(npts) " + str(get_mri_shape(MRIFile)[3]) + "\n\n")
                             else:
                                 scriptFile.write("# Total volumes\nset fmri(npts) " + str(setting.TotalVol) + "\n\n")
                             # Delete Volumes
@@ -185,7 +189,7 @@ class ScriptGenerator:
 
 
                             # Total Voxel
-                            TotalVoxel = MRIFile.get_shape()[0] * MRIFile.get_shape()[1] * MRIFile.get_shape()[2] * MRIFile.get_shape()[3]
+                            TotalVoxel = get_mri_shape(MRIFile)[0] * get_mri_shape(MRIFile)[1] * get_mri_shape(MRIFile)[2] * get_mri_shape(MRIFile)[3]
                             scriptFile.write("# Total voxels\nset fmri(totalVoxels) " + str(TotalVoxel) + "\n\n\n")
 
                             scriptFile.write("# Number of lower-level copes feeding into higher-level analysis\nset fmri(ncopeinputs) 0\n\n")
@@ -317,8 +321,8 @@ class ScriptGenerator:
                             scriptFile.write("# TR(s)\nset fmri(tr) %0.6f \n\n" % setting.TR)
                             # Total Volumes
                             if setting.TotalVol == 0:
-                                print("Auto Detect Total Volumes = " + str(MRIFile.get_shape()[3]) + ", File: " + BOLDaddr)
-                                scriptFile.write("# Total volumes\nset fmri(npts) " + str(MRIFile.get_shape()[3]) + "\n\n")
+                                print("Auto Detect Total Volumes = " + str(get_mri_shape(MRIFile)[3]) + ", File: " + BOLDaddr)
+                                scriptFile.write("# Total volumes\nset fmri(npts) " + str(get_mri_shape(MRIFile)[3]) + "\n\n")
                             else:
                                 scriptFile.write("# Total volumes\nset fmri(npts) " + str(setting.TotalVol) + "\n\n")
                             # Delete Volumes
@@ -415,7 +419,7 @@ class ScriptGenerator:
 
 
                             # Total Voxel
-                            TotalVoxel = MRIFile.get_shape()[0] * MRIFile.get_shape()[1] * MRIFile.get_shape()[2] * MRIFile.get_shape()[3]
+                            TotalVoxel = get_mri_shape(MRIFile)[0] * get_mri_shape(MRIFile)[1] * get_mri_shape(MRIFile)[2] * get_mri_shape(MRIFile)[3]
                             scriptFile.write("# Total voxels\nset fmri(totalVoxels) " + str(TotalVoxel) + "\n\n\n")
 
                             scriptFile.write("# Number of lower-level copes feeding into higher-level analysis\nset fmri(ncopeinputs) 0\n\n")

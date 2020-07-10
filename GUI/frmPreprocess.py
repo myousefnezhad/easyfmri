@@ -331,10 +331,8 @@ class frmPreprocess(Ui_frmPreprocess):
             try:
                 BoldHDR = nb.load(FirstFile)
                 ui.txtTR.setText(str(float(BoldHDR.header.get_zooms()[3])))
-                #ui.txtTotalVol.setValue(int(BoldHDR.get_shape()[3]))
                 Voxels = BoldHDR.header.get_zooms()[0:3]
                 ui.txtVoxel.setText("Voxel Size: " + str(Voxels))
-                #ui.txtFWHM.setText(str(float(np.max(Voxels)*3)))
 
                 msgBox = QMessageBox()
                 msgBox.setText("Basic information is read from the 1st BOLD file\n\nTR: " +\
