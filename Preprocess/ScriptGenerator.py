@@ -69,8 +69,6 @@ class ScriptGenerator:
 
                             MRIFile = nb.load(BOLDaddr)
 
-                            MRIShape = MRIFile.img.shape
-
                             # Generate Script
                             scriptFile = open(ScriptAddr,"w")
                             scriptFile.write("\n# FEAT version number\nset fmri(version) 6.00\n\n# Are we in MELODIC?\nset fmri(inmelodic) 0\n\n")
@@ -130,7 +128,6 @@ class ScriptGenerator:
                             scriptFile.write("# Robust outlier detection in FLAME?\nset fmri(robust_yn) 0\n\n")
                             scriptFile.write("# Higher-level modelling\n# 3 : Fixed effects\n# 0 : Mixed Effects: Simple OLS\n# 2 : Mixed Effects: FLAME 1\n# 1 : Mixed Effects: FLAME 1+2\nset fmri(mixed_yn) 2\n\n")
                             # Conditions
-                            #ConditionFile = SubDIR + "/func/" + "sub-" + fixstr(s, SubLen, setting.SubPer) + "_task-" + setting.Task + "_run-" + fixstr(r, RunLen, setting.RunPer) + "_events/Cond.mat"
                             ConditionFile =  setParameters3(setting.EventFolder,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),\
                                                         fixstr(r, setting.RunLen, setting.RunPer), setting.Task, fixstr(cnt, setting.ConLen, setting.ConPer)) + setting.CondPre + ".mat"
 
