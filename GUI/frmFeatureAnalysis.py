@@ -285,6 +285,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.btnROIManuallyDesign.clicked.connect(self.btnROIManuallyDesign_click)
         ui.btnROIAtlas.clicked.connect(self.btnROIAtlas_click)
         ui.btnDIOutFile.clicked.connect(self.btnDIOutFile_click)
+        ui.btnDIOutFile2.clicked.connect(self.btnDIOutFile2_click)
         ui.btnDIROIFile.clicked.connect(self.btnDIROIFile_click)
         ui.btnDILabels.clicked.connect(self.btnDILabels_click)
         ui.btnFERun.clicked.connect(self.btnFE_click)
@@ -800,12 +801,17 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
     def btnFECrossEzData_click(self):
         frmFEEZCrossValidation.show(frmFEEZCrossValidation)
 
+
     def btnDIOutFile_click(self):
+        msgBox = QMessageBox()
+        ofile = SaveFile("Save data file ...", ['easyX files (*.ezx)', 'MatLab files (*.mat)'],'ezx',\
+                             os.path.dirname(ui.txtDIOutFile.text()))
+        if len(ofile):
+            ui.txtDIOutFile.setText(ofile)
+
+    def btnDIOutFile2_click(self):
         global ui
         ofile = SelectDir("Select output directory", ui.txtDIOutDIR.text())
-
-        #ofile = SaveFile("Output data file ...",['Data file (*.mat)'],'mat',\
-                         #os.path.dirname(ui.txtDIOutFile.text()))
         if len(ofile):
             ui.txtDIOutDIR.setText(ofile)
 

@@ -238,7 +238,7 @@ It's case sensitive.</string>
         <string/>
        </property>
        <property name="text">
-        <string>Main Directory:</string>
+        <string>Main Directory</string>
        </property>
        <property name="setToolTip" stdset="0">
         <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
@@ -254,7 +254,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>Task Name:</string>
+        <string>Task Name</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="txtSSTask">
@@ -788,9 +788,132 @@ It's case sensitive.</string>
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <widget class="QWidget" name="tab_4">
+      <attribute name="title">
+       <string>Output</string>
+      </attribute>
+      <widget class="QPushButton" name="btnDIOutFile">
+       <property name="geometry">
+        <rect>
+         <x>700</x>
+         <y>130</y>
+         <width>51</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_50">
+       <property name="geometry">
+        <rect>
+         <x>11</x>
+         <y>130</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Ouput File</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtDIOutFile">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>130</y>
+         <width>521</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>741</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>&lt;Output file type&gt;</string>
+       </property>
+       <widget class="QRadioButton" name="rbDIezxType">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>40</y>
+          <width>131</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>easyX</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="rbDImatType">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>40</y>
+          <width>100</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>MAT</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="radioButton_4">
+        <property name="geometry">
+         <rect>
+          <x>310</x>
+          <y>40</y>
+          <width>161</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Easy Data</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QLabel" name="label_53">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>190</y>
+         <width>731</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>11</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="text">
+        <string>Easy Data parameters must be set from &quot;Easy Data&quot; tab</string>
+       </property>
+      </widget>
+     </widget>
      <widget class="QWidget" name="tab_13">
       <attribute name="title">
-       <string>General</string>
+       <string>Input</string>
       </attribute>
       <widget class="QLineEdit" name="txtDIDIR">
        <property name="geometry">
@@ -830,7 +953,7 @@ It's case sensitive.</string>
         <string/>
        </property>
        <property name="text">
-        <string>Main Directory:</string>
+        <string>Main Directory</string>
        </property>
        <property name="setToolTip" stdset="0">
         <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
@@ -846,7 +969,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>Task Name:</string>
+        <string>Task Name</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="txtDITask">
@@ -868,97 +991,6 @@ It's case sensitive.</string>
         <string/>
        </property>
       </widget>
-      <widget class="QLabel" name="label_7">
-       <property name="geometry">
-        <rect>
-         <x>11</x>
-         <y>140</y>
-         <width>141</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Ouput Header:</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_30">
-       <property name="geometry">
-        <rect>
-         <x>11</x>
-         <y>180</y>
-         <width>141</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Ouput Data:</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="txtDIOutHDR">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>140</y>
-         <width>591</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>data-$TASK$.ezdata</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="txtDIOutDIR">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>100</y>
-         <width>521</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>$MAINDIR$/Integration</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="btnDIOutFile">
-       <property name="geometry">
-        <rect>
-         <x>700</x>
-         <y>100</y>
-         <width>51</width>
-         <height>32</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="txtDIOutDAT">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>180</y>
-         <width>591</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>data-$TASK$_sub-$SUB$_con-$COUNT$_run-$RUN$</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_29">
-       <property name="geometry">
-        <rect>
-         <x>11</x>
-         <y>100</y>
-         <width>141</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Ouput Directory:</string>
-       </property>
-      </widget>
       <widget class="QPushButton" name="btnDIDIR">
        <property name="geometry">
         <rect>
@@ -970,48 +1002,6 @@ It's case sensitive.</string>
        </property>
        <property name="text">
         <string>...</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_31">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>220</y>
-         <width>141</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Ouput Data Type:</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="rbMatFile">
-       <property name="geometry">
-        <rect>
-         <x>160</x>
-         <y>220</y>
-         <width>200</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>EZMAT</string>
-       </property>
-      </widget>
-      <widget class="QRadioButton" name="radioButton_2">
-       <property name="geometry">
-        <rect>
-         <x>340</x>
-         <y>220</y>
-         <width>200</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>NII.GZ</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
        </property>
       </widget>
      </widget>
@@ -1096,7 +1086,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>Range:</string>
+        <string>Range</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="txtDISubRange">
@@ -1210,7 +1200,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>Ranges:</string>
+        <string>Ranges</string>
        </property>
       </widget>
      </widget>
@@ -1302,7 +1292,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>Ranges:</string>
+        <string>Ranges</string>
        </property>
       </widget>
      </widget>
@@ -1333,7 +1323,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>Generated Event Folders:</string>
+        <string>Generated Event Folders</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_48">
@@ -1346,7 +1336,7 @@ It's case sensitive.</string>
         </rect>
        </property>
        <property name="text">
-        <string>Condition Prefix:</string>
+        <string>Condition Prefix</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="txtDICondPre">
@@ -2062,6 +2052,144 @@ E.g. Line 1 represents the class label of the first timepoint. </string>
          <string>Boxed 4D (Tensor)</string>
         </property>
        </widget>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_22">
+      <attribute name="title">
+       <string>Easy Data</string>
+      </attribute>
+      <widget class="QLineEdit" name="txtDIOutDAT">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>110</y>
+         <width>591</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>data-$TASK$_sub-$SUB$_con-$COUNT$_run-$RUN$</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radioButton_2">
+       <property name="geometry">
+        <rect>
+         <x>340</x>
+         <y>150</y>
+         <width>200</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>NII.GZ</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_7">
+       <property name="geometry">
+        <rect>
+         <x>11</x>
+         <y>70</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Ouput header</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtDIOutDIR">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>30</y>
+         <width>521</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>$MAINDIR$/Integration</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_30">
+       <property name="geometry">
+        <rect>
+         <x>11</x>
+         <y>110</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Ouput subdata</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_31">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>150</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Subdata type</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="txtDIOutHDR">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>70</y>
+         <width>591</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>data-$TASK$.ezdata</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="rbMatFile">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>150</y>
+         <width>200</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>EZMAT</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_29">
+       <property name="geometry">
+        <rect>
+         <x>11</x>
+         <y>30</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Ouput directory</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btnDIOutFile2">
+       <property name="geometry">
+        <rect>
+         <x>700</x>
+         <y>30</y>
+         <width>51</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
       </widget>
      </widget>
     </widget>
