@@ -24,7 +24,8 @@ from IO.easyX import easyX
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
-from Base.utility import getVersion, getBuild, LoadEzData
+from Base.utility import getVersion, getBuild
+from IO.EasyData import LoadEzData
 from Base.dialogs import LoadFile, SaveFile
 
 
@@ -106,7 +107,7 @@ class frmEzEzX(Ui_frmEzEzx):
         try:
             print("STEP1: Load data to memory ...")
             Out = LoadEzData(InFile)
-            assert Out is None, "Cannot load easy data file!"
+            assert Out is not None, "Cannot load easy data file!"
             print("STEP2: Saving ...")
             ezx = easyX()
             ezx.save(Out, OutFile)

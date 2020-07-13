@@ -36,7 +36,7 @@ class easyX:
                 if verbose:
                     print(f"Binary data {bk} is saved!")
             except Exception as e:
-                raise Exception("Cannot save data\n" + str(e))
+                raise Exception(f"Cannot save data: {bk}\n" + str(e))
         hf.close()
 
 
