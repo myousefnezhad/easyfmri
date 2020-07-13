@@ -252,7 +252,9 @@ class frmDataEditor(Ui_frmDataEditor):
                 if valueType.replace("32", "").replace("64", "").lower() == "int" or \
                         valueType.replace("32", "").replace("64", "").lower() == "float" or \
                         valueType.replace("32", "").replace("64", "").lower() == "double":
-                    if valueShape == (1, 1):
+                    if valueShape == ():
+                        valueShape = 1
+                    elif valueShape == (1, 1):
                         value = value[0, 0]
                         valueShape = 1
                     elif valueShape == ():
@@ -267,18 +269,26 @@ class frmDataEditor(Ui_frmDataEditor):
                             except:
                                 pass
                 if valueType.lower() == "str":
-                    if valueShape == (1,):
+                    if valueShape == ():
+                        valueShape = 1
+                    elif valueShape == (1,):
                         value = value[0]
                         valueShape = len(value)
                 if valueType.lower() == "void":
-                    if valueShape == (1, 1):
+                    if valueShape == ():
+                        valueShape = 1
+                    elif valueShape == (1, 1):
                         value = value[0, 0]
                         valueType = "complex"
                         valueShape = np.shape(value)
                 if valueType.lower() == "ndarray":
-                    if valueShape[0] == 1:
-                        value = value[0]
-                        valueShape = np.shape(value)
+                    if valueShape == ():
+                        valueShape = 1
+                    else:
+                        if valueShape[0] == 1:
+                            value = value[0]
+                            valueShape = np.shape(value)
+
                 item.setText(0, str(key).strip())
                 item.setText(1, valueType)
                 item.setText(2, str(valueShape).replace("(", "").replace(")", ""))
@@ -410,26 +420,34 @@ class frmDataEditor(Ui_frmDataEditor):
         if valueType.replace("32", "").replace("64", "").lower() == "int" or \
                         valueType.replace("32", "").replace("64", "").lower() == "float" or \
                         valueType.replace("32", "").replace("64", "").lower() == "double":
-            if valueShape == (1, 1):
+            if valueShape == ():
+                valueShape = 1
+            elif valueShape == (1, 1):
                 value = value[0, 0]
                 valueShape = 1
             elif valueShape[0] == 1:
                 value = value[0]
                 valueShape = valueShape[1]
         if valueType.lower() == "str":
-            if valueShape == (1,):
+            if valueShape == ():
+                valueShape = 1
+            elif valueShape == (1,):
                 value = value[0]
                 valueShape = len(value)
         if valueType.lower() == "void":
-            if valueShape == (1, 1):
+            if valueShape == ():
+                valueShape = 1
+            elif valueShape == (1, 1):
                 value = value[0, 0]
                 valueType = "complex"
                 valueShape = np.shape(value)
         if valueType.lower() == "ndarray":
-            if valueShape[0] == 1:
-                value = value[0]
-                valueShape = np.shape(value)
-
+            if valueShape == ():
+                valueShape = 1
+            else:
+                if valueShape[0] == 1:
+                    value = value[0]
+                    valueShape = np.shape(value)
         frmDataV = frmDataViewer()
 
         if valueShape == 1:
@@ -905,9 +923,11 @@ class frmDataEditor(Ui_frmDataEditor):
         varName = ui.lwData.topLevelItem(Index).text(0)
 
         dat, _ = frmDataEditor.getCurrentVar(self)
-
         try:
-            val = dat[varName][ui.txtInside.value()]
+            if str(type(dat[varName])) == "<class 'dict'>":
+                val = dat[varName]
+            else:
+                val = dat[varName][ui.txtInside.value()]
             if str(type(val)) == "<class 'str'>":
                 raise Exception
         except:

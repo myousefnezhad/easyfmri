@@ -26,6 +26,7 @@ import PyQt5.QtWidgets as QtWidgets
 import matplotlib
 import nibabel as nb
 import numpy as np
+from IO.mainIO import mainIO_load, mainIO_save
 import scipy.io as io
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
@@ -807,6 +808,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ofile = SaveFile("Save data file ...", ['easyX files (*.ezx)', 'MatLab files (*.mat)'],'ezx',\
                              os.path.dirname(ui.txtDIOutFile.text()))
         if len(ofile):
+            if ui.rbDImatType.isChecked():
+                if ofile[-3:] != "mat":
+                    ofile = ofile[:-3] + "mat"
             ui.txtDIOutFile.setText(ofile)
 
     def btnDIOutFile2_click(self):
@@ -838,10 +842,20 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
     def btnDIRUN_click(self):
         global ui
-
         msgBox = QMessageBox()
         mainDIR = ui.txtDIDIR.text()
         Task = ui.txtDITask.text()
+
+        outType = 3
+        if ui.rbDIezxType.isChecked():
+            outType = 1
+        elif ui.rbDImatType.isChecked():
+            outType = 2
+
+        do_compress = False
+        if outType > 1:
+            reply = QMessageBox.question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.Yes, QMessageBox.No)
+            do_compress = True if reply == QMessageBox.Yes else False
 
         if not(ui.txtDISetting.currentText()):
             msgBox.setText("In order to save setting, you must load setting file!")
@@ -964,31 +978,52 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             return False
         print("Length of runs is valid")
 
-        OutDIR = ui.txtDIOutDIR.text()
-        if not len(OutDIR):
-            msgBox.setText("Please enter output file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        OutDIR = OutDIR.replace("$MAINDIR$", mainDIR)
 
-        OutHDR = ui.txtDIOutHDR.text()
-        OutHDR = OutHDR.replace("$TASK$", Task)
-        if not len(OutHDR):
-            msgBox.setText("Please enter output header file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
+        if outType < 3:
+            OutFileName = ui.txtDIOutFile.text()
+            if not len(OutFileName):
+                msgBox.setText("Please enter output file!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+            OutFileName = OutFileName.replace("$MAINDIR$", mainDIR)
+            if ui.rbDIezxType.isChecked():
+                if str(OutFileName[-3:]).lower() != "ezx":
+                    OutFileName += "ezx"
+            if ui.rbDImatType.isChecked():
+                if str(OutFileName[-3:]).lower() != "mat":
+                    OutFileName += "mat"
 
-        OutDAT = ui.txtDIOutDAT.text()
-        if not len(OutDAT):
-            msgBox.setText("Please enter output data file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
+
+
+
+        else:
+            OutDIR = ui.txtDIOutDIR.text()
+            if not len(OutDIR):
+                msgBox.setText("Please enter output file!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+            OutDIR = OutDIR.replace("$MAINDIR$", mainDIR)
+
+            OutHDR = ui.txtDIOutHDR.text()
+            OutHDR = OutHDR.replace("$TASK$", Task)
+            if not len(OutHDR):
+                msgBox.setText("Please enter output header file!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            OutDAT = ui.txtDIOutDAT.text()
+            if not len(OutDAT):
+                msgBox.setText("Please enter output data file!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
 
         ROIFile = ui.txtDIROIFile.text()
         if not len(ROIFile):
@@ -1007,7 +1042,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         try:
             roiHDR = nb.load(ROIFile)
-            roiIMG = roiHDR.get_data()
+            #roiIMG = roiHDR.get_data()
+            roiIMG = np.asanyarray(roiHDR.dataobj)
             roiSize = np.shape(roiIMG)
             roiIND = np.where(roiIMG != 0)
             if ui.rb4DShape2.isChecked():
@@ -1218,6 +1254,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         RunID       = list()
         TaskID      = list()
         CounterID   = list()
+        X           = list()
         Y           = list()
         NScanID     = list()
         DesignID    = list()
@@ -1228,19 +1265,18 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         BatchFiles = list()
 
         # RUNNING ...
-        try:
-            os.stat(OutDIR)
-        except:
-            os.makedirs(OutDIR,exist_ok=True)
+        if outType > 2:
+            try:
+                os.stat(OutDIR)
+            except:
+                os.makedirs(OutDIR,exist_ok=True)
 
 
         print("Extraction ...")
         for si, s in enumerate(SubRange):
             for cnt in ConRange[si]:
                 print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                # SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
                 for r in RunRange[si]:
-                    X = list()
                     try:
                         InFile = setParameters3(In, mainDIR,
                                     fixstr(s, SubLen, ui.txtDISubPer.text()), \
@@ -1248,7 +1284,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                                     fixstr(cnt, ConLen, ui.txtDIConPer.text()))
                         InHDR = None # Free Mem
                         InHDR = nb.load(InFile)
-                        InIMG = InHDR.get_data()
+                        InIMG = np.asanyarray(InHDR.dataobj)
+                        #InIMG = InHDR.get_data()
                         if fMRISize is None:
                             fMRISize = np.shape(InIMG)[0:3]
                             if roiSize != fMRISize:
@@ -1400,23 +1437,28 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
                     # Data Files
                     if ui.cbDIDataID.isChecked():
-                        if ui.rbMatFile.isChecked():
-                            OutDataFile = setParameters3(OutDAT, "", str(s), str(r), ui.txtDITask.text(), str(cnt)) + ".ezmat"
-                        else:
-                            OutDataFile = setParameters3(OutDAT, "", str(s), str(r), ui.txtDITask.text(), str(cnt)) + ".nii.gz"
+                        if outType > 2:
+                            if ui.rbMatFile.isChecked():
+                                OutDataFile = setParameters3(OutDAT, "", str(s), str(r), ui.txtDITask.text(), str(cnt)) + ".ezmat"
+                            else:
+                                OutDataFile = setParameters3(OutDAT, "", str(s), str(r), ui.txtDITask.text(), str(cnt)) + ".nii.gz"
 
-                        BatchFiles.append([s, r, cnt, ui.txtDITask.text(), OutDataFile])
-                        print("Saving data " + OutDataFile + "... ")
-                        DataFiles.append(OutDataFile)
+                            BatchFiles.append([s, r, cnt, ui.txtDITask.text(), OutDataFile])
+                            print("Saving data " + OutDataFile + "... ")
+                            DataFiles.append(OutDataFile)
 
-                        if ui.rbMatFile.isChecked():
-                            io.savemat(OutDIR + '/' + OutDataFile, mdict={ui.txtDIDataID.text(): X},appendmat=False, do_compression=True)
-                        else:
-                            convertedXtoIMG = nb.Nifti1Image(np.asarray(X).T, np.eye(4))
-                            nb.save(convertedXtoIMG, OutDIR + '/' + OutDataFile)
-                        print("Data " + OutDataFile + " is saved!")
+                            if ui.rbMatFile.isChecked():
+                                io.savemat(OutDIR + '/' + OutDataFile, mdict={ui.txtDIDataID.text(): X},appendmat=False, do_compression=do_compress)
+                            else:
+                                convertedXtoIMG = nb.Nifti1Image(np.asarray(X).T, np.eye(4))
+                                nb.save(convertedXtoIMG, OutDIR + '/' + OutDataFile)
+                            print("Data " + OutDataFile + " is saved!")
+                            X = list()
 
-        print("Saving Header " + OutHDR + "...")
+        if outType < 3:
+            print(f"Saving data: {OutFileName} ...")
+        else:
+            print("Saving Header " + OutHDR + "...")
         OutData = dict()
         OutData["imgShape"] = np.array(fMRISize)
 
@@ -1426,22 +1468,17 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             OutData["dataShape"] = 4
 
 
-        if ui.rbMatFile.isChecked():
-            OutData["DataFileType"] = 1
-        else:
-            OutData["DataFileType"] = 0
-
-        OutData["BatchFiles"] = BatchFiles
 
         Integration = dict()
-        Integration["DataStructure"] = list()
-        if len(DataFiles):
-            Integration["DataStructure"].append(ui.txtDIDataID.text())
-            Integration[ui.txtDIDataID.text() + "_files"] = DataFiles
-
-        Integration["Preprocess"] = list()
+        Integration["SubLen"]    = SubLen
+        Integration["SubPer"]    = ui.txtDISubPer.text()
+        Integration["RunLen"]    = RunLen
+        Integration["RunPer"]    = ui.txtDIRunPer.text()
+        Integration["ConLen"]    = ConLen
+        Integration["ConPer"]    = ui.txtDIConPer.text()
         if ui.cbDISetting.isChecked():
             # Save Preprocessing Setting
+            Integration["Preprocess"] = list()
             Preprocess  = dict()
             Preprocess["Version"]       = setting.Version
             Preprocess["Mode"]          = setting.Mode
@@ -1482,55 +1519,78 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             Preprocess["EventCodes"]    = setting.EventCodes
             OutData["setting_" + Task]  = Preprocess
             Integration["Preprocess"].append("Setting_" + Task)
-
-        Integration["OutHeader"] = ui.txtDIOutHDR.text()
-        Integration["OutData"]   = ui.txtDIOutDAT.text()
-        Integration["SubLen"]    = SubLen
-        Integration["SubPer"]    = ui.txtDISubPer.text()
-        Integration["RunLen"]    = RunLen
-        Integration["RunPer"]    = ui.txtDIRunPer.text()
-        Integration["ConLen"]    = ConLen
-        Integration["ConPer"]    = ui.txtDIConPer.text()
+        if outType > 2:
+            OutData["BatchFiles"]    = BatchFiles
+            Integration["OutHeader"] = ui.txtDIOutHDR.text()
+            Integration["OutData"]   = ui.txtDIOutDAT.text()
+            if ui.rbMatFile.isChecked():
+                OutData["DataFileType"] = 1
+            else:
+                OutData["DataFileType"] = 0
+            Integration["DataStructure"] = list()
+            if len(DataFiles):
+                Integration["DataStructure"].append(ui.txtDIDataID.text())
+                Integration[ui.txtDIDataID.text() + "_files"] = DataFiles
+        else:
+            Integration["OutFile"] = ui.txtDIOutFile.text()
         OutData["Integration"]   = Integration
 
         # NScan
         if ui.cbDINScanID.isChecked():
             OutData[ui.txtDINScanID.text()] = NScanID
+            del NScan
         # Subject
         if ui.cbDISubjectID.isChecked():
             OutData[ui.txtDISubjectID.text()] = SubjectID
+            del SubjectID
         # Task
         if ui.cbDITaskID.isChecked():
             OutData[ui.txtDITaskID.text()] = np.array(TaskID,dtype=object)
+            del TaskID
         # Run
         if ui.cbDIRunID.isChecked():
             OutData[ui.txtDIRunID.text()] = RunID
+            del RunID
         # Counter
         if ui.cbDICounterID.isChecked():
             OutData[ui.txtDICounterID.text()] = CounterID
-        # Label
-        if ui.cbDILabelID.isChecked():
-            OutData[ui.txtDILabelID.text()] = Y
+            del CounterID
         # Matrix Label
         if ui.cbDImLabelID.isChecked():
             OutData[ui.txtDImLabelID.text()] = label_binarize(Y,np.unique(Y))
+        # Label
+        if ui.cbDILabelID.isChecked():
+            OutData[ui.txtDILabelID.text()] = Y
+            del Y
         # Design
         if ui.cbDIDM.isChecked():
             OutData[ui.txtDIDMID.text()] = DesignID
+            del DesignID
         # Coordinate
         if ui.cbDICoID.isChecked():
             OutData[ui.txtDICoID.text()] = np.array(roiIND)
             if ui.rb4DShape2.isChecked():
                 OutData[ui.txtDICoID.text() + "_box"] = np.array(vroiIND)
-
+                del vroiIND
+            ShapeROIind = np.shape(roiIND)[1]
+            del roiIND
         # Condition
         if ui.cbDICondID.isChecked():
             OutData[ui.txtDICoundID.text()] = np.array(CondID.get_cond(),dtype=object)
+            del CondID
+        if outType < 3:
+            # Data
+            if ui.cbDIDataID.isChecked():
+                OutData[ui.txtDIDataID.text()] = X
+                del X
 
-        io.savemat(OutDIR + '/' + OutHDR, mdict=OutData,appendmat=False,do_compression=True)
+        if outType < 3:
+            mainIO_save(OutData, OutFileName, do_compress)
+        else:
+            io.savemat(OutDIR + '/' + OutHDR, mdict=OutData,appendmat=False,do_compression=do_compress)
         print("Number of all instances:", NumberOFALL)
         print("Number of selected instances:", NumberOFExtract)
-        print("Number of features: ", np.shape(roiIND)[1])
+        print("Number of features: ", ShapeROIind)
         print("DONE.")
         msgBox.setText("Data Integration is done.")
         msgBox.setIcon(QMessageBox.Information)
