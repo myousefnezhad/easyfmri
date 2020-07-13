@@ -361,8 +361,8 @@ class frmDataEditor(Ui_frmDataEditor):
         if len(ui.txtInFile.text()):
 
             ifile = LoadFile("Open data files ...",\
-                             ['Data files (*.mat *.ezdata *.ezmat, *.model)', 'MatLab files (*.mat)','EasyData files (*.ezdata)', \
-                              'EasyMat (*.ezmat)', 'All files (*.*)'],'mat')
+                         ['Data files (*.ezx *.mat *.ezdata *.ezmat, *.model)', "easyX files (*.ezx)", 'MatLab files (*.mat)','EasyData files (*.ezdata)', \
+                          'EasyMat (*.ezmat)', 'All files (*.*)'],'mat')
             if len(ifile):
                 if os.path.isfile(ifile):
                     try:

@@ -37,8 +37,6 @@ def get_file_type(fname):
         except:
             pass
     assert FileType is not None, "Cannot find file type"
-
-    print("File type:", FileType)
     return FileType, dat
 
 def can_do_compression(fname):
@@ -54,21 +52,26 @@ def mainIO_load(fname):
     assert os.path.isfile(fname), "Cannot find file!"
     FileType, dat = get_file_type(fname)
     if FileType == "ezx":
+        print("File type: easyX")
         ezx = easyX()
         return ezx.load(fname)
     if FileType == "mat" or FileType == "ezmat":
         if dat is not None:
             return dat
+        print(f"File type: {FileType}")
         return sio.loadmat(fname)
     if FileType == "ezdata":
+        print(f"File type: {FileType}")
         return LoadEzData(fname)
 
 
 def mainIO_save(data, fname, do_compression=False):
     FileType, dat = get_file_type(fname)
     if FileType == "ezx":
+        print("File type: easyX")
         ezx = easyX()
         ezx.save(data, fname)
         return
+    print(f"File type: {FileType}")
     sio.savemat(fname, data, do_compression=do_compression, appendmat=False)
     return
