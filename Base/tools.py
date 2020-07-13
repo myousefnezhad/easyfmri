@@ -28,6 +28,7 @@ from GUI.frmfMRIConcatenator import frmfMRIConcatenator
 from GUI.frmEventConcatenator import frmEventConcatenator
 # Feature Analysis
 from GUI.frmEzMat import frmEzMat
+from GUI.frmEzEzx import frmEzEzX
 from GUI.frmCombineData import frmCombineData
 from GUI.frmRemoveRestScan import frmRemoveRestScan
 from GUI.frmRemoveRestScanCross import frmRemoveRestScanCross
@@ -60,6 +61,7 @@ class Tools:
         # Feature Analysis
         combobox.addItem("Feature Analysis: Create Transformation Matrix",  30001)
         combobox.addItem("Feature Analysis: Convert EasyData to MatLab",  30002)
+        combobox.addItem("Feature Analysis: Convert EasyData to easyX",  30006)
         combobox.addItem("Feature Analysis: MatLab: Combine Datasets",  30003)
         combobox.addItem("Feature Analysis: MatLab: Remove Rest Scans (before cross validation)",  30004)
         combobox.addItem("Feature Analysis: MatLab: Remove Rest Scans (after cross validation)",  30005)
@@ -98,6 +100,8 @@ class Tools:
             frmTansformationMatrix.show(frmTansformationMatrix)
         elif ID == 30002:
             frmEzMat.show(frmEzMat)
+        elif ID == 30006:
+            frmEzEzX.show(frmEzEzX)
         elif ID == 30003:
             frmCombineData.show(frmCombineData)
         elif ID == 30004:
