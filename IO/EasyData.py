@@ -47,9 +47,7 @@ def LoadEzData(Header=None,data=None):
                             X = dat if X is None else np.concatenate((X, dat))
                             del dat, niiimgdata
                         else:
-                            del io
-                            import scipy.io as io
-                            dat = io.loadmat(str.strip(os.path.dirname(Header) + "/" + fdata), appendmat=False)[dkey[0]]
+                            dat = sio.loadmat(str.strip(os.path.dirname(Header) + "/" + fdata), appendmat=False)[dkey[0]]
                             X = dat if X is None else np.concatenate((X,dat))
                             del dat
                         print("Data %s is load!" % (fdata))

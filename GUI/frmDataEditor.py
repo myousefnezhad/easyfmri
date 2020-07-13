@@ -24,6 +24,7 @@ import queue
 import numpy as np
 import scipy.io as io
 from sklearn import preprocessing
+from IO.mainIO import mainIO_load
 from dir import getDIR
 from PyQt5.QtWidgets import *
 from Base.utility import getVersion, getBuild
@@ -155,7 +156,7 @@ class frmDataEditor(Ui_frmDataEditor):
         if len(ifile):
             if os.path.isfile(ifile):
                 try:
-                    data = io.loadmat(ifile)
+                    data = mainIO_load(ifile)
                 except:
                     print("Cannot load file!")
                     return
@@ -341,7 +342,7 @@ class frmDataEditor(Ui_frmDataEditor):
         global data
         global root
         ifile = LoadFile("Open data files ...",\
-                         ['Data files (*.mat *.ezdata *.ezmat, *.model)', 'MatLab files (*.mat)','EasyData files (*.ezdata)', \
+                         ['Data files (*.ezx *.mat *.ezdata *.ezmat, *.model)', "easyX files (*.ezx)", 'MatLab files (*.mat)','EasyData files (*.ezdata)', \
                           'EasyMat (*.ezmat)', 'All files (*.*)'],'mat')
         if len(ifile):
             if os.path.isfile(ifile):
@@ -391,6 +392,9 @@ class frmDataEditor(Ui_frmDataEditor):
 
         try:
             valueType = str(type(value[0][0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "")
+            if valueType == 'str':
+                if str(type(value)).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.", "") == 'ndarray':
+                    valueType = 'ndarray'
         except:
             try:
                 valueType = str(type(value[0])).strip().replace("<class \'", "").replace("\'>", "").replace("numpy.",
