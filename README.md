@@ -371,7 +371,7 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
     ```
     conda install numpy scipy qt pyqt ipython matplotlib pandas seaborn psutil statsmodels
     conda install -c conda-forge mpi4py scikit-learn
-    pip install -U future nibabel nitime nilearn pyqode.core pyqode.qt pydicom matplotlib
+    pip install -U future nibabel nitime nilearn pyqode.core pyqode.qt pydicom matplotlib h5py
     ```
 
 * Install [PyTorch](https://pytorch.org/) package:
@@ -426,7 +426,7 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
 * Install easy fMRI required python packages by using: 
     ```
-    pip install -U future nibabel nitime nilearn pyqode.core pyqode.qt pydicom
+    pip install -U future nibabel nitime nilearn pyqode.core pyqode.qt pydicom h5py
     ```
 
 * Install [PyTorch](https://pytorch.org/) package:

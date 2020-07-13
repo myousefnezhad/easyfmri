@@ -12,16 +12,14 @@ def get_file_type(fname):
     FileType = None
     dat = None
     # Detect file type based on extension
-    _, fileExt = os.path.split(fname)
-    fileExt = str(fileExt).replace(".", "").lower()
-    if  fileExt == "mat":
+    if  str(fname[-3:]).lower() == "mat":
         FileType = "mat"
-    elif fileExt == "ezdata":
-        FileType = "ezdata"
-    elif fileExt == "ezmat":
-        FileType = "ezmat"
-    elif fileExt == "ezx":
+    elif str(fname[-3:]).lower() == "ezx":
         FileType = "ezx"
+    elif str(fname[-6:]).lower() == "ezdata":
+        FileType = "ezdata"
+    elif str(fname[-5:]).lower() == "ezmat":
+        FileType = "ezmat"
     # Detect file type based on loading data
     if FileType is None:
         try:
@@ -39,8 +37,17 @@ def get_file_type(fname):
         except:
             pass
     assert FileType is not None, "Cannot find file type"
+
+    print("File type:", FileType)
     return FileType, dat
 
+def can_do_compression(fname):
+    try:
+        FileType, _ = get_file_type(fname)
+        assert FileType != "ezx"
+    except:
+        return False
+    return True
 
 def mainIO_load(fname):
     # Check file exists
@@ -56,3 +63,12 @@ def mainIO_load(fname):
     if FileType == "ezdata":
         return LoadEzData(fname)
 
+
+def mainIO_save(data, fname, do_compression=False):
+    FileType, dat = get_file_type(fname)
+    if FileType == "ezx":
+        ezx = easyX()
+        ezx.save(data, fname)
+        return
+    sio.savemat(fname, data, do_compression=do_compression, appendmat=False)
+    return

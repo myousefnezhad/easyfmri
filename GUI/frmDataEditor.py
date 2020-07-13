@@ -22,9 +22,8 @@ import os
 import sys
 import queue
 import numpy as np
-import scipy.io as io
 from sklearn import preprocessing
-from IO.mainIO import mainIO_load
+from IO.mainIO import mainIO_load, mainIO_save, can_do_compression
 from dir import getDIR
 from PyQt5.QtWidgets import *
 from Base.utility import getVersion, getBuild
@@ -157,6 +156,7 @@ class frmDataEditor(Ui_frmDataEditor):
             if os.path.isfile(ifile):
                 try:
                     data = mainIO_load(ifile)
+                    assert data is not None
                 except:
                     print("Cannot load file!")
                     return
@@ -295,9 +295,11 @@ class frmDataEditor(Ui_frmDataEditor):
         global data
         msgBox = QMessageBox()
         if len(ui.txtInFile.text()):
-            reply = QMessageBox.question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.Yes, QMessageBox.No)
-            do_compress = True if reply == QMessageBox.Yes else False
-            io.savemat(ui.txtInFile.text(), data, do_compression=do_compress,appendmat=False)
+            do_compress = False
+            if can_do_compression(ui.txtInFile.text()):
+                reply = QMessageBox.question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.Yes, QMessageBox.No)
+                do_compress = True if reply == QMessageBox.Yes else False
+            mainIO_save(data, ui.txtInFile.text(), do_compression=do_compress)
             ui.btnSave.setEnabled(False)
             print("Data is saved in: ", ui.txtInFile.text())
             msgBox.setText("Data is saved")
@@ -311,13 +313,16 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not len(ui.txtInFile.text()):
             return False
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save MatLab data file ...",['easyX files (*.ezx)', 'MatLab files (*.mat)'],'ezx',\
                              os.path.dirname(ui.txtInFile.text()))
         if len(ofile):
             if len(ui.txtInFile.text()):
-                reply = QMessageBox.question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.Yes, QMessageBox.No)
-                do_compress = True if reply == QMessageBox.Yes else False
-                io.savemat(ofile, data, do_compression=do_compress,appendmat=False)
+                do_compress = False
+                if can_do_compression(ofile):
+                    reply = QMessageBox.question(None, 'Data Compress', "Do you like to compress data?",
+                                                 QMessageBox.Yes, QMessageBox.No)
+                    do_compress = True if reply == QMessageBox.Yes else False
+                mainIO_save(data, ofile, do_compression=do_compress)
                 ui.btnSave.setEnabled(False)
                 ui.txtInFile.setText(ofile)
                 print("Data is saved in: ", ui.txtInFile.text())
@@ -361,7 +366,7 @@ class frmDataEditor(Ui_frmDataEditor):
             if len(ifile):
                 if os.path.isfile(ifile):
                     try:
-                        data2 = io.loadmat(ifile)
+                        data2 = mainIO_load(ifile)
                     except:
                         print("Cannot load file!")
                         return
