@@ -12,8 +12,8 @@ class easyX:
 
     def save(self, data, fname, verbose=True):
         binaryKeys = list()
-        encodedKeys = list()
         hf = h5py.File(fname, "w")
+        hf.create_dataset("__easyfMRI__", data="easyX")
         # Save RAW data
         rawGroup = hf.create_group("raw")
         for k in data.keys():
@@ -35,33 +35,61 @@ class easyX:
         hf.close()
 
 
-    def load(self, fname, verbose=True):
-        out = {}
+    def load(self, fname, partial=None, verbose=True):
+        out = dict()
         hf = h5py.File(fname, "r")
+        try:
+            if str(np.asanyarray(hf.get("__easyfMRI__"))) == "easyX":
+                print("Signed by easyX project!")
+        except:
+            pass
+        try:
+            if len(partial) == 0:
+                raise Exception
+        except:
+            partial = None
         # Load RAW data
         rawData = hf['raw']
         for k in rawData.keys():
-            out[k] = np.asarray(rawData[k])
-            if verbose:
-                print(f"Raw data {k} is loaded!")
+            is_load = True
+            if partial is not None:
+                is_load = False
+                try:
+                    if k in partial:
+                        is_load = True
+                except:
+                    pass
+            if is_load:
+                out[k] = np.asarray(rawData[k])
+                if verbose:
+                    print(f"Raw data {k} is loaded!")
         # Load Binary data
         binaryData = hf['binary']
         for bk in binaryData.keys():
-            out[bk] = self._binary_to_obj(np.asarray(binaryData[bk]))
-            if verbose:
-                print(f"Binary data {bk} is loaded!")
+            is_load = True
+            if partial is not None:
+                is_load = False
+                try:
+                    if bk in partial:
+                        is_load = True
+                except:
+                    pass
+            if is_load:
+                out[bk] = self._binary_to_obj(np.asarray(binaryData[bk]))
+                if verbose:
+                    print(f"Binary data {bk} is loaded!")
         return out
 
     def load_keys(self, fname):
-        out = list()
+        out = dict()
         hf = h5py.File(fname, "r")
         rawData = hf['raw']
         for k in rawData.keys():
-            out.append(k)
+            out[k] = None
         # Load Binary data
         binaryData = hf['binary']
         for bk in binaryData.keys():
-            out.append(bk)
+            out[bk] = None
         return out
 
 if __name__=="__main__":

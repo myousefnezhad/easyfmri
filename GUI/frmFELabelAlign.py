@@ -22,7 +22,7 @@ import os
 import sys
 import seaborn as sns
 import numpy as np
-import scipy.io as io
+from IO.mainIO import mainIO_load
 from PyQt5.QtWidgets import *
 from Base.utility import getVersion, getBuild, fixstr
 from Base.dialogs import LoadFile
@@ -65,15 +65,14 @@ class frmFELabelAlign(Ui_frmFELabelAlign):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['Data files (*.mat *.ezdata)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
                     print("Loading ...")
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
-
                     # Label
                     ui.txtLabel.clear()
                     HasDefualt = False
@@ -210,7 +209,7 @@ class frmFELabelAlign(Ui_frmFELabelAlign):
             return False
 
         print("Loading data ...")
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
 
         try:
             Label = InData[ui.txtLabel.currentText()][0]

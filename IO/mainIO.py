@@ -47,14 +47,16 @@ def can_do_compression(fname):
         return False
     return True
 
-def mainIO_load(fname):
+def mainIO_load(fname, only_keys=False, partial=None):
     # Check file exists
     assert os.path.isfile(fname), "Cannot find file!"
     FileType, dat = get_file_type(fname)
     if FileType == "ezx":
         print("File type: easyX")
         ezx = easyX()
-        return ezx.load(fname)
+        if only_keys:
+            return ezx.load_keys(fname)
+        return ezx.load(fname, partial=partial)
     if FileType == "mat" or FileType == "ezmat":
         if dat is not None:
             return dat
