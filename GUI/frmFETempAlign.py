@@ -20,19 +20,13 @@
 
 import os
 import sys
-
-import numpy as np
-import scipy.io as io
-from PyQt5.QtWidgets import *
-
-
-from Base.utility import getVersion, getBuild, fixstr
-from Base.dialogs import LoadFile, SaveFile
-
-from GUI.frmFETempAlignGUI import *
-
-
 import logging
+import numpy as np
+from PyQt5.QtWidgets import *
+from IO.mainIO import mainIO_load
+from GUI.frmFETempAlignGUI import *
+from Base.utility import getVersion, getBuild, fixstr
+from Base.dialogs import LoadFile
 
 
 
@@ -63,7 +57,6 @@ class frmFETempAlign(Ui_frmFETempAlign):
         ui.btnClose.clicked.connect(self.btnClose_click)
         ui.btnInFile.clicked.connect(self.btnInFile_click)
         ui.btnReport.clicked.connect(self.btnReport_click)
-        # ui.btnOutFile.clicked.connect(self.btnOutFile_click)
 
 
     def btnClose_click(self):
@@ -72,14 +65,14 @@ class frmFETempAlign(Ui_frmFETempAlign):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
                     print("Loading ...")
                     ui.txtReport.clear()
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -168,12 +161,6 @@ class frmFETempAlign(Ui_frmFETempAlign):
             else:
                 print("File not found!")
 
-    # def btnOutFile_click(self):
-    #     ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
-    #                          os.path.dirname(ui.txtOutFile.text()))
-    #     if len(ofile):
-    #         ui.txtOutFile.setText(ofile)
-
     def btnReport_click(self):
         msgBox = QMessageBox()
 
@@ -233,7 +220,7 @@ class frmFETempAlign(Ui_frmFETempAlign):
             return False
 
         print("Loading data ...")
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
 
         try:
             X = InData[ui.txtData.currentText()]
