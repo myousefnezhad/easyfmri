@@ -6,7 +6,15 @@ import scipy.io as sio
 from IO.easyX import easyX
 from IO.EasyData import LoadEzData
 
-
+def reshape_1Dvector(vec):
+    if len(np.shape(vec)) > 1:
+        return vec
+    try:
+        if len(vec) < 1:
+            raise Exception
+    except:
+        return vec
+    return [vec]
 
 def get_file_type(fname):
     FileType = None

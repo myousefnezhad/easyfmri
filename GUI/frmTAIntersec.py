@@ -20,15 +20,13 @@
 
 import os
 import sys
-import time
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
-from sklearn.decomposition import KernelPCA, PCA, IncrementalPCA
-from sklearn import preprocessing
+from GUI.frmTAIntersecGUI import *
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from GUI.frmTAIntersecGUI import *
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
+
 
 
 class frmTAIntersec(Ui_frmTAInterSec):
@@ -65,13 +63,13 @@ class frmTAIntersec(Ui_frmTAInterSec):
         dialog.close()
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
                     print("Loading ...")
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     ui.txtClassList.clear()
@@ -216,7 +214,7 @@ class frmTAIntersec(Ui_frmTAInterSec):
 
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -456,7 +454,7 @@ class frmTAIntersec(Ui_frmTAInterSec):
             return False
 
 
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         OutData = dict()
         OutData["imgShape"] = InData["imgShape"]
 
@@ -689,21 +687,19 @@ class frmTAIntersec(Ui_frmTAInterSec):
                 print("Data belong to fold {:6} and label {:6d} is collected.".format(fold, lbl))
 
         OutData[ui.txtOData.text()]     = XOut
-        OutData[ui.txtOLabel.text()]    = LabelOut
-        OutData[ui.txtOSubject.text()]  = SubjectOut
-        OutData[ui.txtORun.text()]      = RunOut
         OutData[ui.txtOTask.text()]     = TaskOut
-        OutData[ui.txtOCounter.text()]  = CounterOut
-
+        OutData[ui.txtOLabel.text()]    = reshape_1Dvector(LabelOut)
+        OutData[ui.txtOSubject.text()]  = reshape_1Dvector(SubjectOut)
+        OutData[ui.txtORun.text()]      = reshape_1Dvector(RunOut)
+        OutData[ui.txtOCounter.text()]  = reshape_1Dvector(CounterOut)
         if ui.cbmLabel.isChecked():
             OutData[ui.txtOmLabel.text()]   = mLabelOut
         if ui.cbDM.isChecked():
             OutData[ui.txtODM.text()]       = DMOut
         if ui.cbNScan.isChecked():
-            OutData[ui.txtOScan.text()]     = ScanOut
-
+            OutData[ui.txtOScan.text()]     = reshape_1Dvector(ScanOut)
         print("Saving ...")
-        io.savemat(OutFile, mdict=OutData, do_compression=True)
+        mainIO_save(OutData, OutFile)
         print("Temporal Alignment is done.")
         msgBox.setText("Temporal Alignment is done.")
         msgBox.setIcon(QMessageBox.Information)
