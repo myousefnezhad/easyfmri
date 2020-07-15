@@ -20,22 +20,18 @@
 
 import os
 import sys
-
+import logging
 import numpy as np
 import nibabel as nb
-import scipy.io as io
 from PyQt5.QtWidgets import *
+from GUI.frmAAAtlasGUI import *
 from sklearn import preprocessing
 from sklearn.svm import LinearSVC
-from sklearn.metrics import accuracy_score, classification_report, precision_score, recall_score, roc_auc_score, f1_score, confusion_matrix
-from sklearn.linear_model import LogisticRegression
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from GUI.frmAAAtlasGUI import *
-
-import logging
-
-
+from sklearn.linear_model import LogisticRegression
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
+from sklearn.metrics import accuracy_score, classification_report, precision_score, recall_score, roc_auc_score, f1_score, confusion_matrix
 logging.basicConfig(level=logging.DEBUG)
 from pyqode.core import api
 from pyqode.core import modes
@@ -73,15 +69,11 @@ class frmAAAtlas(Ui_frmAAAtlas):
         ui.txtEvents = api.CodeEdit(ui.tab_2)
         ui.txtEvents.setGeometry(QtCore.QRect(10, 10, 641, 200))
         ui.txtEvents.setObjectName("txtEvents")
-
         ui.txtEvents.backend.start('backend/server.py')
-
         ui.txtEvents.modes.append(modes.CodeCompletionMode())
         ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())
         ui.txtEvents.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
-        #ui.txtEvents.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
         ui.txtEvents.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
@@ -113,15 +105,13 @@ class frmAAAtlas(Ui_frmAAAtlas):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
-
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
-
                     # Data
                     ui.txtData.clear()
                     HasDefualt = 0
@@ -223,7 +213,8 @@ class frmAAAtlas(Ui_frmAAAtlas):
 
                 try:
                     ImgHDR = nb.load(roi_file)
-                    ImgDAT = ImgHDR.get_data()
+                    ImgDAT = np.asanyarray(ImgHDR.dataobj)
+                    #ImgDAT = ImgHDR.get_data()
                     Area = np.unique(ImgDAT)
                     Area = Area[np.where(Area != 0)[0]]
                     print(f'Regions are {Area}')
@@ -238,7 +229,7 @@ class frmAAAtlas(Ui_frmAAAtlas):
 
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -246,14 +237,12 @@ class frmAAAtlas(Ui_frmAAAtlas):
     def btnConvert_click(self):
         msgBox = QMessageBox()
         print("Loading...")
-
         try:
             FoldFrom = np.int32(ui.txtFoldFrom.text())
             FoldTo   = np.int32(ui.txtFoldTo.text())
         except:
             print("Please check fold parameters!")
             return
-
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
@@ -276,12 +265,10 @@ class frmAAAtlas(Ui_frmAAAtlas):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
-
-
         try:
             AtlasHdr = nb.load(InAtlas)
-            AtlasImg = AtlasHdr.get_data()
+            AtlasImg = np.asanyarray(AtlasHdr.dataobj)
+            #AtlasImg = AtlasHdr.get_data()
             AtlasShape = np.shape(AtlasImg)
             if np.shape(AtlasShape)[0] != 3:
                 msgBox.setText("Atlas must be 3D image")
@@ -295,12 +282,9 @@ class frmAAAtlas(Ui_frmAAAtlas):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         OutData = dict()
         MappingVectorRegion = None
-
         CodeText = ui.txtEvents.toPlainText()
-
         for fold in range(FoldFrom, FoldTo + 1):
             print(f"Analyzing Fold: {fold}...")
             # InFile
@@ -320,7 +304,7 @@ class frmAAAtlas(Ui_frmAAAtlas):
                 return False
             # Load InData
             try:
-                InData = io.loadmat(InFile)
+                InData = mainIO_load(InFile)
             except:
                 print(f"FOLD {fold}: Cannot load file: {InFile}")
 
@@ -508,7 +492,7 @@ class frmAAAtlas(Ui_frmAAAtlas):
             print(f"Mean accuracy of region {reg}: {macc}")
 
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("Wise area analysis: Atlas is done.")
         msgBox.setIcon(QMessageBox.Information)

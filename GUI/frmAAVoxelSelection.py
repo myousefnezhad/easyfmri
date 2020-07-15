@@ -23,16 +23,14 @@ import sys
 import time
 import numpy as np
 import nibabel as nb
-import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmAAVoxelSelectionGUI import *
 from GUI.frmAAVoxel import *
-
 from scipy.stats import  pearsonr
-
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 # Plot
 import matplotlib
 matplotlib.use('Qt5Agg')
@@ -510,16 +508,14 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
     def btnInFile_click(self):
         global data
         data = None
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
-
         if len(filename):
             if os.path.isfile(filename):
                 try:
                     print("Loading...")
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
-
                     # Data
                     ui.txtData.clear()
                     HasDefualt = False
@@ -529,7 +525,6 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                             HasDefualt = True
                     if HasDefualt:
                         ui.txtData.setCurrentText("data")
-
                     # Label
                     ui.txtLabel.clear()
                     HasDefualt = False
@@ -539,7 +534,6 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                             HasDefualt = True
                     if HasDefualt:
                         ui.txtLabel.setCurrentText("label")
-
                     # mLabel
                     ui.txtmLabel.clear()
                     HasDefualt = False
@@ -550,7 +544,6 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                     if HasDefualt:
                         ui.txtmLabel.setCurrentText("mlabel")
                     ui.cbmLabel.setChecked(HasDefualt)
-
                     # Coordinate
                     ui.txtCol.clear()
                     HasDefualt = False
@@ -560,7 +553,6 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                             HasDefualt = True
                     if HasDefualt:
                         ui.txtCol.setCurrentText("coordinate")
-
                     # Design
                     ui.txtDM.clear()
                     HasDefualt = False
@@ -571,7 +563,6 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                     if HasDefualt:
                         ui.txtDM.setCurrentText("design")
                     ui.cbDM.setChecked(HasDefualt)
-
                     # Subject
                     ui.txtSubject.clear()
                     HasDefualt = False
@@ -582,8 +573,6 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                     if HasDefualt:
                         ui.txtSubject.setCurrentText("subject")
                     ui.cbSubject.setChecked(HasDefualt)
-
-
                     # Task
                     ui.txtTask.clear()
                     HasDefualt = False
@@ -594,7 +583,6 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                     if HasDefualt:
                         ui.txtTask.setCurrentText("task")
                     ui.cbTask.setChecked(HasDefualt)
-
                     # Run
                     ui.txtRun.clear()
                     HasDefualt = False
@@ -605,7 +593,6 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                     if HasDefualt:
                         ui.txtRun.setCurrentText("run")
                     ui.cbRun.setChecked(HasDefualt)
-
                     # Counter
                     ui.txtCounter.clear()
                     HasDefualt = False
@@ -650,12 +637,12 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
 
 
     def btnAnalysisFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtAnFile.text()))
         # Load File
         dat = None
         try:
-            dat = io.loadmat(filename)
+            dat = mainIO_load(filename)
         except:
             print("Cannot load Analysis file!")
             return
@@ -690,14 +677,12 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.vwAvai.setRowCount(np.shape(results)[0])
         for rowId, (coo, acc) in enumerate(results):
             try:
-                item = QTableWidgetItem('{:5};{:5};{:5}'.format(coo[0, 0], coo[0, 1], coo[0, 2]))
+                item = QTableWidgetItem('{:5};{:5};{:5}'.format(coo[0][0], coo[0][1], coo[0][2]))
                 item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
                 ui.vwAvai.setItem(rowId, 0, item)
                 item = QTableWidgetItem('{:8f}'.format(acc[0][0] * 100))
                 item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
                 ui.vwAvai.setItem(rowId, 1, item)
-
-
             except:
                 print(f'Item: {rowId} cannot add to the list --- format error')
         print(f"We have added {np.shape(results)[0]} items")
@@ -801,11 +786,6 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         print(f'Atlas file: {roi_file}')
 
 
-
-
-
-
-
     def btnTSelect_click(self):
         msgBox = QMessageBox()
         if ui.vwAvai.rowCount() == 0:
@@ -846,7 +826,7 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
 
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -885,10 +865,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
             msgBox.exec_()
             return False
         print("Loading...")
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         OutData = dict()
-        OutData["imgShape"] = InData["imgShape"]
-
+        OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
         # Label
         if not len(ui.txtLabel.currentText()):
                 msgBox.setText("Please enter Label variable name!")
@@ -897,7 +876,7 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                 msgBox.exec_()
                 return
         try:
-            OutData[ui.txtOLabel.text()] = InData[ui.txtLabel.currentText()]
+            OutData[ui.txtOLabel.text()] = reshape_1Dvector(InData[ui.txtLabel.currentText()])
         except:
             print("Cannot load Label ID")
             return
@@ -910,7 +889,7 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                 msgBox.exec_()
                 return False
             try:
-                OutData[ui.txtOSubject.text()] = InData[ui.txtSubject.currentText()]
+                OutData[ui.txtOSubject.text()] = reshape_1Dvector(InData[ui.txtSubject.currentText()])
             except:
                 print("Cannot load Subject ID")
                 return
@@ -923,7 +902,7 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                 msgBox.exec_()
                 return False
             try:
-                OutData[ui.txtOTask.text()] = InData[ui.txtTask.currentText()]
+                OutData[ui.txtOTask.text()] = reshape_1Dvector(InData[ui.txtTask.currentText()])
             except:
                 print("Cannot load Task ID")
                 return
@@ -936,7 +915,7 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                 msgBox.exec_()
                 return False
             try:
-                OutData[ui.txtORun.text()] = InData[ui.txtRun.currentText()]
+                OutData[ui.txtORun.text()] = reshape_1Dvector(InData[ui.txtRun.currentText()])
             except:
                 print("Cannot load Run ID")
                 return
@@ -949,7 +928,7 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                 msgBox.exec_()
                 return False
             try:
-                OutData[ui.txtOCounter.text()] = InData[ui.txtCounter.currentText()]
+                OutData[ui.txtOCounter.text()] = reshape_1Dvector(InData[ui.txtCounter.currentText()])
             except:
                 print("Cannot load Counter ID")
                 return
@@ -1001,7 +980,7 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
                 msgBox.exec_()
                 return False
             try:
-                OutData[ui.txtOScan.text()] = InData[ui.txtScan.currentText()]
+                OutData[ui.txtOScan.text()] = reshape_1Dvector(InData[ui.txtScan.currentText()])
             except:
                 print("Cannot load NumScan ID")
                 return
@@ -1049,7 +1028,7 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         OutData[ui.txtOCol.text()] = np.transpose(NewCoord)
         OutData[ui.txtOData.text()] = X[:, VoxelID]
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("Data with new ROI is created.")
         msgBox.setIcon(QMessageBox.Information)

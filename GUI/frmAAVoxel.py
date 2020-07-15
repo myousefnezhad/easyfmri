@@ -23,7 +23,6 @@ import sys
 
 import numpy as np
 import nibabel as nb
-import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.svm import LinearSVC
@@ -34,6 +33,7 @@ from Base.utility import getVersion, getBuild, getCPUCore
 from GUI.frmAAVoxelGUI import *
 from GUI.frmAAVoxelSelection import *
 from MVPA.MultiThreadingVectorClassification import MultiThreadingVectorClassification
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 
 import logging
 
@@ -116,13 +116,13 @@ class frmAAVoxel(Ui_frmAAVoxel):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
 
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -205,7 +205,7 @@ class frmAAVoxel(Ui_frmAAVoxel):
 
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -213,19 +213,16 @@ class frmAAVoxel(Ui_frmAAVoxel):
     def btnConvert_click(self):
         msgBox = QMessageBox()
         print("Loading...")
-
         # Job
         NumJob = ui.txtJob.value()
         if NumJob < 1:
             NumJob = getCPUCore()
-
         try:
             FoldFrom = np.int32(ui.txtFoldFrom.text())
             FoldTo   = np.int32(ui.txtFoldTo.text())
         except:
             print("Please check fold parameters!")
             return
-
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
@@ -234,8 +231,6 @@ class frmAAVoxel(Ui_frmAAVoxel):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
-
         ResData = dict()
         Coord   = None
         CodeText = ui.txtEvents.toPlainText()
@@ -256,14 +251,12 @@ class frmAAVoxel(Ui_frmAAVoxel):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-
             # Load InData
             InData = None
             try:
-                InData = io.loadmat(InFile)
+                InData = mainIO_load(InFile)
             except:
                 print(f"FOLD {fold}: Cannot load file: {InFile}")
-
             # Train data
             if not len(ui.txtData.currentText()):
                 msgBox.setText(f"FOLD {fold}: Please enter train data variable name!")
@@ -283,7 +276,6 @@ class frmAAVoxel(Ui_frmAAVoxel):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-
             # Test data
             if not len(ui.txtTeData.currentText()):
                 msgBox.setText(f"FOLD {fold}: Please enter test data variable name!")
@@ -303,7 +295,6 @@ class frmAAVoxel(Ui_frmAAVoxel):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-
             # Train Label
             if not len(ui.txtLabel.currentText()):
                     msgBox.setText(f"FOLD {fold}: Please enter Label variable name!")
@@ -316,7 +307,6 @@ class frmAAVoxel(Ui_frmAAVoxel):
             except:
                 print(f"FOLD {fold}: Cannot load label")
                 return
-
             # Test Label
             if not len(ui.txtTeLabel.currentText()):
                     msgBox.setText(f"FOLD {fold}: Please enter test Label variable name!")
@@ -329,7 +319,6 @@ class frmAAVoxel(Ui_frmAAVoxel):
             except:
                 print(f"FOLD {fold}: Cannot load test label")
                 return
-
             # Coordinate
             if Coord is None:
                 if not len(ui.txtCol.currentText()):
@@ -344,7 +333,6 @@ class frmAAVoxel(Ui_frmAAVoxel):
                 except:
                     print("Cannot load coordinate")
                     return
-
             print(f"FOLD {fold}: analyzing regions...")
             startIndex = 0
             stepIndex  = int(CoordSize / NumJob) + 1
@@ -362,7 +350,6 @@ class frmAAVoxel(Ui_frmAAVoxel):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
-
                 if startIndex + stepIndex < CoordSize:
                     endIndex = startIndex + stepIndex
                 else:
@@ -380,14 +367,10 @@ class frmAAVoxel(Ui_frmAAVoxel):
                 ThreadList.append(T)
                 ThreadID    += 1
                 startIndex  += stepIndex
-
-
             print(f"FOLD {fold}: running threads...")
-
             for tt in ThreadList:
                 if not tt.is_alive():
                     tt.start()
-
             # Waiting the process will be finish
             for tt in ThreadList:
                 tt.join()
@@ -409,12 +392,16 @@ class frmAAVoxel(Ui_frmAAVoxel):
         for key in ResData.keys():
             coo = Coord[key, :]
             acc = ResData[key] / NumFold
-            FinalResult.append([coo, acc])
+            FinalResult.append([[coo], [[acc]]])
             FinalAccuracy.append(acc)
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict={"accuracy": FinalAccuracy,
-                                                "results": FinalResult,
-                                                ui.txtCol.currentText():Coord})
+        mainIO_save({"accuracy": reshape_1Dvector(FinalAccuracy),\
+                     "results": reshape_1Dvector(FinalResult),\
+                     ui.txtCol.currentText():Coord}, \
+                    ui.txtOutFile.text())
+        # io.savemat(ui.txtOutFile.text(), mdict={"accuracy": FinalAccuracy,
+        #                                         "results": FinalResult,
+        #                                         ui.txtCol.currentText():Coord})
         print("DONE.")
         msgBox.setText("Wised voxel analysis is done.")
         msgBox.setIcon(QMessageBox.Information)
