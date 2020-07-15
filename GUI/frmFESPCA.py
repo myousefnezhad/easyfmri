@@ -20,15 +20,14 @@
 
 import os
 import sys
-
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
+from GUI.frmFESPCAGUI import *
 from sklearn import preprocessing
 from sklearn.decomposition import SparsePCA
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from GUI.frmFESPCAGUI import *
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 
 
 class frmFESPCA(Ui_frmFESPCA):
@@ -45,10 +44,6 @@ class frmFESPCA(Ui_frmFESPCA):
         ui.setupUi(dialog)
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
-
-
-
-
         dialog.setWindowTitle("easy fMRI Sparse Principal Component Analysis (PCA) - V" + getVersion() + "B" + getBuild())
         dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
         dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
@@ -71,12 +66,12 @@ class frmFESPCA(Ui_frmFESPCA):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -199,14 +194,11 @@ class frmFESPCA(Ui_frmFESPCA):
                     ui.cbNScan.setChecked(HasDefualt)
 
                     # set number of features
-                    data = io.loadmat(filename)
                     XShape = np.shape(data[ui.txtData.currentText()])
                     ui.txtNumFea.setMaximum(1)
                     ui.txtNumFea.setMaximum(XShape[1])
                     ui.txtNumFea.setValue(XShape[1])
                     ui.lblFeaNum.setText("1 ... " + str(XShape[1]))
-
-
 
                     ui.txtInFile.setText(filename)
                 except Exception as e:
@@ -217,14 +209,13 @@ class frmFESPCA(Ui_frmFESPCA):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
         msgBox = QMessageBox()
-
         # Alpha
         try:
             Alpha = np.float(ui.txtAlpha.text())
@@ -234,7 +225,6 @@ class frmFESPCA(Ui_frmFESPCA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # Ridge
         try:
             Ridge = np.float(ui.txtRidge.text())
@@ -244,7 +234,6 @@ class frmFESPCA(Ui_frmFESPCA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # Max Iter
         try:
             MaxIter = np.int32(ui.txtMaxIter.text())
@@ -254,7 +243,6 @@ class frmFESPCA(Ui_frmFESPCA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # Tolerance
         try:
             Tol = np.float(ui.txtTole.text())
@@ -264,13 +252,11 @@ class frmFESPCA(Ui_frmFESPCA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         #Method
         if ui.rbLars.isChecked():
             Method = "lars"
         else:
             Method = "cd"
-
         # Number of Job
         try:
             njob = np.int32(ui.txtJobs.text())
@@ -280,7 +266,6 @@ class frmFESPCA(Ui_frmFESPCA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
@@ -289,7 +274,6 @@ class frmFESPCA(Ui_frmFESPCA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
@@ -298,42 +282,35 @@ class frmFESPCA(Ui_frmFESPCA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         if ui.rbScale.isChecked() == True and ui.rbALScale.isChecked() == False:
             msgBox.setText("Subject Level Normalization is just available for Subject Level Analysis!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         OutData = dict()
-        OutData["imgShape"] = InData["imgShape"]
-
+        OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         try:
             X = InData[ui.txtData.currentText()]
-
             if ui.cbScale.isChecked() and (not ui.rbScale.isChecked()):
                 X = preprocessing.scale(X)
                 print("Whole of data is scaled X~N(0,1).")
         except:
             print("Cannot load data")
             return
-
         try:
             NumFea = np.int32(ui.txtNumFea.text())
         except:
@@ -348,14 +325,12 @@ class frmFESPCA(Ui_frmFESPCA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         if NumFea > np.shape(X)[1]:
             msgBox.setText("Number of features is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # Subject
         if not len(ui.txtSubject.currentText()):
             msgBox.setText("Please enter Subject variable name!")
@@ -363,14 +338,12 @@ class frmFESPCA(Ui_frmFESPCA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         try:
             Subject = InData[ui.txtSubject.currentText()]
-            OutData[ui.txtOSubject.text()] = Subject
+            OutData[ui.txtOSubject.text()] = reshape_1Dvector(Subject)
         except:
             print("Cannot load Subject ID")
             return
-
         # Label
         if not len(ui.txtLabel.currentText()):
                 msgBox.setText("Please enter Label variable name!")
@@ -378,9 +351,7 @@ class frmFESPCA(Ui_frmFESPCA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-        OutData[ui.txtOLabel.text()] = InData[ui.txtLabel.currentText()]
-
-
+        OutData[ui.txtOLabel.text()] = reshape_1Dvector(InData[ui.txtLabel.currentText()])
         # Task
         if ui.cbTask.isChecked():
             if not len(ui.txtTask.currentText()):
@@ -389,8 +360,7 @@ class frmFESPCA(Ui_frmFESPCA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOTask.text()] = InData[ui.txtTask.currentText()]
-
+            OutData[ui.txtOTask.text()] = reshape_1Dvector(InData[ui.txtTask.currentText()])
         # Run
         if ui.cbRun.isChecked():
             if not len(ui.txtRun.currentText()):
@@ -399,9 +369,7 @@ class frmFESPCA(Ui_frmFESPCA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtORun.text()] = InData[ui.txtRun.currentText()]
-
-
+            OutData[ui.txtORun.text()] = reshape_1Dvector(InData[ui.txtRun.currentText()])
         # Counter
         if ui.cbCounter.isChecked():
             if not len(ui.txtCounter.currentText()):
@@ -410,9 +378,7 @@ class frmFESPCA(Ui_frmFESPCA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOCounter.text()] = InData[ui.txtCounter.currentText()]
-
-
+            OutData[ui.txtOCounter.text()] = reshape_1Dvector(InData[ui.txtCounter.currentText()])
         # Matrix Label
         if ui.cbmLabel.isChecked():
             if not len(ui.txtmLabel.currentText()):
@@ -422,8 +388,6 @@ class frmFESPCA(Ui_frmFESPCA):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOmLabel.text()] = InData[ui.txtmLabel.currentText()]
-
-
         # Design
         if ui.cbDM.isChecked():
             if not len(ui.txtDM.currentText()):
@@ -433,7 +397,6 @@ class frmFESPCA(Ui_frmFESPCA):
                 msgBox.exec_()
                 return False
             OutData[ui.txtODM.text()] = InData[ui.txtDM.currentText()]
-
         # Coordinate
         if ui.cbCol.isChecked():
             if not len(ui.txtCol.currentText()):
@@ -443,7 +406,6 @@ class frmFESPCA(Ui_frmFESPCA):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOCol.text()] = InData[ui.txtCol.currentText()]
-
         # Condition
         if ui.cbCond.isChecked():
             if not len(ui.txtCond.currentText()):
@@ -453,7 +415,6 @@ class frmFESPCA(Ui_frmFESPCA):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOCond.text()] = InData[ui.txtCond.currentText()]
-
         # Number of Scan
         if ui.cbNScan.isChecked():
             if not len(ui.txtScan.currentText()):
@@ -462,11 +423,9 @@ class frmFESPCA(Ui_frmFESPCA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOScan.text()] = InData[ui.txtScan.currentText()]
-
+            OutData[ui.txtOScan.text()] = reshape_1Dvector(InData[ui.txtScan.currentText()])
         Models = dict()
         Models["Name"] = "SPCA"
-
         if ui.rbALScale.isChecked():
             print("Partition data to subject level ...")
             SubjectUniq = np.unique(Subject)
@@ -478,18 +437,15 @@ class frmFESPCA(Ui_frmFESPCA):
                 else:
                     X_Sub.append(X[np.where(Subject == subj)[1],:])
                 print("Subject ", subj, " is extracted from data.")
-
             print("Running SPCA in subject level ...")
             X_Sub_PCA = list()
             lenPCA    = len(X_Sub)
-
             for xsubindx, xsub in enumerate(X_Sub):
                 model = SparsePCA(n_components=NumFea,alpha=Alpha,ridge_alpha=Ridge,max_iter=MaxIter,\
                                   tol=Tol, method=Method, n_jobs=njob)
                 X_Sub_PCA.append(model.fit_transform(xsub))
                 Models["Model" + str(xsubindx + 1)] = str(model.get_params(deep=True))
                 print("SPCA: ", xsubindx + 1, " of ", lenPCA, " is done.")
-
             print("Data integration ... ")
             X_new = None
             for xsubindx, xsub in enumerate(X_Sub_PCA):
@@ -502,11 +458,9 @@ class frmFESPCA(Ui_frmFESPCA):
                               tol=Tol, method=Method, n_jobs=njob)
             OutData[ui.txtOData.text()] = model.fit_transform(X)
             Models["Model"] = str(model.get_params(deep=True))
-
-
         OutData["ModelParameter"] = Models
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("Sparse PCA is done.")
         msgBox.setIcon(QMessageBox.Information)
