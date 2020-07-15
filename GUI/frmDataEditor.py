@@ -267,7 +267,7 @@ class frmDataEditor(Ui_frmDataEditor):
                             try:
                                 valueShape = valueShape[0]
                             except:
-                                pass
+                                valueShape = 1
                 if valueType.lower() == "str":
                     if valueShape == ():
                         valueShape = 1
@@ -427,7 +427,13 @@ class frmDataEditor(Ui_frmDataEditor):
                 valueShape = 1
             elif valueShape[0] == 1:
                 value = value[0]
-                valueShape = valueShape[1]
+                try:
+                    valueShape = valueShape[1]
+                except:
+                    try:
+                        valueShape = valueShape[0]
+                    except:
+                        valueShape = 1
         if valueType.lower() == "str":
             if valueShape == ():
                 valueShape = 1
