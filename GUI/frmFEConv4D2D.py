@@ -20,15 +20,13 @@
 
 import os
 import sys
-
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
-from sklearn import preprocessing
-
-from Base.utility import getVersion, getBuild
-from Base.dialogs import LoadFile, SaveFile
 from GUI.frmFEConv4D2DGUI import *
+from sklearn import preprocessing
+from Base.dialogs import LoadFile, SaveFile
+from Base.utility import getVersion, getBuild
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 
 
 class frmFEConv4D2D(Ui_frmFEConv4D2D):
@@ -68,12 +66,12 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -227,14 +225,13 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
         msgBox = QMessageBox()
-
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
@@ -243,7 +240,6 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
@@ -252,20 +248,16 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         OutData = dict()
         OutData["dataShape"] = 2
-        OutData["imgShape"] = InData["imgShape"]
-
-
+        OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
@@ -273,13 +265,11 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         try:
             X = InData[ui.txtData.currentText()]
         except:
             print("Cannot load data")
             return
-
         # Coordinate
         if ui.cbCol.isChecked():
             if not len(ui.txtCol.currentText()):
@@ -294,15 +284,13 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
             except:
                 print("Cannot load Coordinate!")
                 return
-
         if ui.rb4DShape.isChecked():
             if not ui.cbCol.isChecked() or not len(ui.txtCol.currentText()):
-                msgBox.setText("For using coordinate vectorication, you must set Coordinate variable!")
+                msgBox.setText("For using coordinate vectorization, you must set Coordinate variable!")
                 msgBox.setIcon(QMessageBox.Critical)
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-
         # Coordinate_box
         if ui.cbColBox.isChecked():
             if not len(ui.txtColBox.currentText()):
@@ -317,7 +305,6 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
             except:
                 print("Cannot load Coordinate_box!")
                 return
-
         if ui.rb4DShape2.isChecked():
             if not ui.cbColBox.isChecked() or not len(ui.txtColBox.currentText()):
                 msgBox.setText("For using coordinate_box vectorication, you must set Coordinate_box variable!")
@@ -325,7 +312,6 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-
         # Subject
         if ui.cbSubject.isChecked():
             if not len(ui.txtSubject.currentText()):
@@ -334,8 +320,7 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOSubject.text()] = InData[ui.txtSubject.currentText()]
-
+            OutData[ui.txtOSubject.text()] = reshape_1Dvector(InData[ui.txtSubject.currentText()])
         # Task
         if ui.cbTask.isChecked():
             if not len(ui.txtTask.currentText()):
@@ -344,8 +329,7 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOTask.text()] = InData[ui.txtTask.currentText()]
-
+            OutData[ui.txtOTask.text()] = reshape_1Dvector(InData[ui.txtTask.currentText()])
         # Run
         if ui.cbRun.isChecked():
             if not len(ui.txtRun.currentText()):
@@ -354,8 +338,7 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtORun.text()] = InData[ui.txtRun.currentText()]
-
+            OutData[ui.txtORun.text()] = reshape_1Dvector(InData[ui.txtRun.currentText()])
         # Counter
         if ui.cbCounter.isChecked():
             if not len(ui.txtCounter.currentText()):
@@ -364,8 +347,7 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOCounter.text()] = InData[ui.txtCounter.currentText()]
-
+            OutData[ui.txtOCounter.text()] = reshape_1Dvector(InData[ui.txtCounter.currentText()])
         # Label
         if ui.cbLabel.isChecked():
             if not len(ui.txtLabel.currentText()):
@@ -374,8 +356,7 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
-            OutData[ui.txtOLabel.text()] = InData[ui.txtLabel.currentText()]
-
+            OutData[ui.txtOLabel.text()] = reshape_1Dvector(InData[ui.txtLabel.currentText()])
         # Matrix Label
         if ui.cbmLabel.isChecked():
             if not len(ui.txtmLabel.currentText()):
@@ -385,8 +366,6 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOmLabel.text()] = InData[ui.txtmLabel.currentText()]
-
-
         # Design
         if ui.cbDM.isChecked():
             if not len(ui.txtDM.currentText()):
@@ -396,7 +375,6 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
                 msgBox.exec_()
                 return False
             OutData[ui.txtODM.text()] = InData[ui.txtDM.currentText()]
-
         # Condition
         if ui.cbCond.isChecked():
             if not len(ui.txtCond.currentText()):
@@ -406,7 +384,6 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOCond.text()] = InData[ui.txtCond.currentText()]
-
         # Number of Scan
         if ui.cbNScan.isChecked():
             if not len(ui.txtScan.currentText()):
@@ -415,14 +392,11 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOScan.text()] = InData[ui.txtScan.currentText()]
-
-
+            OutData[ui.txtOScan.text()] = reshape_1Dvector(InData[ui.txtScan.currentText()])
         timepoints = np.shape(X)[0]
         Coord = Coor
         if ui.rb4DShape2.isChecked():
             Coord = CoorBox
-
         Xnew = list()
         for i, xi in enumerate(X):
             xi_new = None
@@ -434,18 +408,14 @@ class frmFEConv4D2D(Ui_frmFEConv4D2D):
             Xnew.append(xi_new)
             if (i + 1) % 100 == 0:
                 print("Time point {:8d} of {:8d} is reshaped!".format(i + 1, timepoints))
-
         print("Time point {:8d} of {:8d} is reshaped!".format(i + 1, timepoints))
-
         if ui.cbNormalize.isChecked():
             Xnew = preprocessing.scale(Xnew)
             print("Data is scaled X~N(0,1).")
-
         OutData[ui.txtOData.text()] = Xnew
-
         print("Data shape: ", np.shape(Xnew))
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("Data is reshaped.")
         msgBox.setIcon(QMessageBox.Information)
