@@ -1544,7 +1544,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             del SubjectID
         # Task
         if ui.cbDITaskID.isChecked():
-            OutData[ui.txtDITaskID.text()] = reshape_1Dvector(np.array(TaskID,dtype=object))
+            OutData[ui.txtDITaskID.text()] = reshape_1Dvector(np.array(TaskID, dtype=object))
             del TaskID
         # Run
         if ui.cbDIRunID.isChecked():
