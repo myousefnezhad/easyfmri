@@ -20,15 +20,13 @@
 
 import os
 import sys
-
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
-
-from Base.utility import getVersion, getBuild
-from Base.dialogs import LoadFile, SaveFile
 from GUI.frmFENormalizationGUI import *
+from Base.dialogs import LoadFile, SaveFile
+from Base.utility import getVersion, getBuild
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 
 
 class frmFENormalization(Ui_frmFENormalization):
@@ -69,12 +67,12 @@ class frmFENormalization(Ui_frmFENormalization):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -206,14 +204,13 @@ class frmFENormalization(Ui_frmFENormalization):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
         msgBox = QMessageBox()
-
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
@@ -222,7 +219,6 @@ class frmFENormalization(Ui_frmFENormalization):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
@@ -231,19 +227,15 @@ class frmFENormalization(Ui_frmFENormalization):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         OutData = dict()
-        OutData["imgShape"] = InData["imgShape"]
-
-
+        OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
         # Subject
         if not len(ui.txtSubject.currentText()):
             msgBox.setText("Please enter Subject variable name!")
@@ -251,25 +243,20 @@ class frmFENormalization(Ui_frmFENormalization):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         try:
             Subject = InData[ui.txtSubject.currentText()]
-            OutData[ui.txtOSubject.text()] = Subject
+            OutData[ui.txtOSubject.text()] = reshape_1Dvector(Subject)
         except:
             print("Cannot load Subject ID")
             return
-
-
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         try:
             X = InData[ui.txtData.currentText()]
-
             if not ui.rbScale.isChecked():
                 X_new = preprocessing.scale(X)
                 print("Whole of data is scaled X~N(0,1).")
@@ -280,28 +267,16 @@ class frmFENormalization(Ui_frmFENormalization):
                 for subj in SubjectUniq:
                     X_Sub.append(preprocessing.scale(X[np.where(Subject == subj)[1], :]))
                     print("Data in subject level is scaled, X_" + str(subj) + "~N(0,1).")
-
                 lenPCA = len(X_Sub)
                 print("Data integration ... ")
                 X_new = None
                 for xsubindx, xsub in enumerate(X_Sub):
                     X_new = np.concatenate((X_new, xsub)) if X_new is not None else xsub
                     print("Integration: ", xsubindx + 1, " of ", lenPCA, " is done.")
-
             OutData[ui.txtOData.text()] = X_new
-
-
-
-
-
         except:
             print("Cannot load data")
             return
-
-
-
-
-
         # Label
         if not len(ui.txtLabel.currentText()):
                 msgBox.setText("Please enter Label variable name!")
@@ -309,9 +284,7 @@ class frmFENormalization(Ui_frmFENormalization):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-        OutData[ui.txtOLabel.text()] = InData[ui.txtLabel.currentText()]
-
-
+        OutData[ui.txtOLabel.text()] = reshape_1Dvector(InData[ui.txtLabel.currentText()])
         # Task
         if ui.cbTask.isChecked():
             if not len(ui.txtTask.currentText()):
@@ -320,8 +293,7 @@ class frmFENormalization(Ui_frmFENormalization):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOTask.text()] = InData[ui.txtTask.currentText()]
-
+            OutData[ui.txtOTask.text()] = reshape_1Dvector(InData[ui.txtTask.currentText()])
         # Run
         if ui.cbRun.isChecked():
             if not len(ui.txtRun.currentText()):
@@ -330,9 +302,7 @@ class frmFENormalization(Ui_frmFENormalization):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtORun.text()] = InData[ui.txtRun.currentText()]
-
-
+            OutData[ui.txtORun.text()] = reshape_1Dvector(InData[ui.txtRun.currentText()])
         # Counter
         if ui.cbCounter.isChecked():
             if not len(ui.txtCounter.currentText()):
@@ -341,11 +311,7 @@ class frmFENormalization(Ui_frmFENormalization):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOCounter.text()] = InData[ui.txtCounter.currentText()]
-
-
-
-
+            OutData[ui.txtOCounter.text()] = reshape_1Dvector(InData[ui.txtCounter.currentText()])
         # Matrix Label
         if ui.cbmLabel.isChecked():
             if not len(ui.txtmLabel.currentText()):
@@ -355,8 +321,6 @@ class frmFENormalization(Ui_frmFENormalization):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOmLabel.text()] = InData[ui.txtmLabel.currentText()]
-
-
         # Design
         if ui.cbDM.isChecked():
             if not len(ui.txtDM.currentText()):
@@ -366,7 +330,6 @@ class frmFENormalization(Ui_frmFENormalization):
                 msgBox.exec_()
                 return False
             OutData[ui.txtODM.text()] = InData[ui.txtDM.currentText()]
-
         # Coordinate
         if ui.cbCol.isChecked():
             if not len(ui.txtCol.currentText()):
@@ -376,7 +339,6 @@ class frmFENormalization(Ui_frmFENormalization):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOCol.text()] = InData[ui.txtCol.currentText()]
-
         # Condition
         if ui.cbCond.isChecked():
             if not len(ui.txtCond.currentText()):
@@ -386,7 +348,6 @@ class frmFENormalization(Ui_frmFENormalization):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOCond.text()] = InData[ui.txtCond.currentText()]
-
         # Number of Scan
         if ui.cbNScan.isChecked():
             if not len(ui.txtScan.currentText()):
@@ -395,30 +356,15 @@ class frmFENormalization(Ui_frmFENormalization):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOScan.text()] = InData[ui.txtScan.currentText()]
-
-
-
+            OutData[ui.txtOScan.text()] = reshape_1Dvector(InData[ui.txtScan.currentText()])
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
+        #io.savemat(ui.txtOutFile.text(), mdict=OutData)
         print("DONE.")
         msgBox.setText("Normalization is done.")
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.exec_()
-
-
-
-
-
-
-
-
-
-
-        pass
-
-
 
 
 if __name__ == '__main__':

@@ -20,15 +20,13 @@
 
 import os
 import sys
-
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
-from sklearn import preprocessing
-
-from Base.utility import getVersion, getBuild
-from Base.dialogs import LoadFile, SaveFile
 from GUI.frmFEConv2D4DGUI import *
+from sklearn import preprocessing
+from Base.dialogs import LoadFile, SaveFile
+from Base.utility import getVersion, getBuild
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 
 
 class frmFEConv2D4D(Ui_frmFEConv2D4D):
@@ -69,12 +67,12 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -228,14 +226,13 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
         msgBox = QMessageBox()
-
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
@@ -244,7 +241,6 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
@@ -253,18 +249,15 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         OutData = dict()
         OutData["dataShape"] = 4
-
         # Coordinate
         if not len(ui.txtCol.currentText()):
             msgBox.setText("Please enter Coordinate variable name!")
@@ -278,7 +271,6 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
         except:
             print("Cannot load Coordinate!")
             return
-
         # imgShape
         if not len(ui.txtImgShape.currentText()):
             msgBox.setText("Please enter imgShape variable name!")
@@ -288,11 +280,10 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
             return False
         try:
             imgShape = InData[ui.txtImgShape.currentText()]
-            OutData[ui.txtOImgShape.text()] = imgShape
+            OutData[ui.txtOImgShape.text()] = reshape_1Dvector(imgShape)
         except:
             print("Cannot load Coordinate!")
             return
-
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
@@ -300,7 +291,6 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         try:
             X = InData[ui.txtData.currentText()]
 
@@ -310,7 +300,6 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
         except:
             print("Cannot load data")
             return
-
         # Subject
         if ui.cbSubject.isChecked():
             if not len(ui.txtSubject.currentText()):
@@ -319,8 +308,7 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOSubject.text()] = InData[ui.txtSubject.currentText()]
-
+            OutData[ui.txtOSubject.text()] = reshape_1Dvector(InData[ui.txtSubject.currentText()])
         # Task
         if ui.cbTask.isChecked():
             if not len(ui.txtTask.currentText()):
@@ -329,8 +317,7 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOTask.text()] = InData[ui.txtTask.currentText()]
-
+            OutData[ui.txtOTask.text()] = reshape_1Dvector(InData[ui.txtTask.currentText()])
         # Run
         if ui.cbRun.isChecked():
             if not len(ui.txtRun.currentText()):
@@ -339,8 +326,7 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtORun.text()] = InData[ui.txtRun.currentText()]
-
+            OutData[ui.txtORun.text()] = reshape_1Dvector(InData[ui.txtRun.currentText()])
         # Counter
         if ui.cbCounter.isChecked():
             if not len(ui.txtCounter.currentText()):
@@ -349,8 +335,7 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOCounter.text()] = InData[ui.txtCounter.currentText()]
-
+            OutData[ui.txtOCounter.text()] = reshape_1Dvector(InData[ui.txtCounter.currentText()])
         # Label
         if ui.cbLabel.isChecked():
             if not len(ui.txtLabel.currentText()):
@@ -359,8 +344,7 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec_()
                     return False
-            OutData[ui.txtOLabel.text()] = InData[ui.txtLabel.currentText()]
-
+            OutData[ui.txtOLabel.text()] = reshape_1Dvector(InData[ui.txtLabel.currentText()])
         # Matrix Label
         if ui.cbmLabel.isChecked():
             if not len(ui.txtmLabel.currentText()):
@@ -370,8 +354,6 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOmLabel.text()] = InData[ui.txtmLabel.currentText()]
-
-
         # Design
         if ui.cbDM.isChecked():
             if not len(ui.txtDM.currentText()):
@@ -381,7 +363,6 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
                 msgBox.exec_()
                 return False
             OutData[ui.txtODM.text()] = InData[ui.txtDM.currentText()]
-
         # Condition
         if ui.cbCond.isChecked():
             if not len(ui.txtCond.currentText()):
@@ -391,7 +372,6 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOCond.text()] = InData[ui.txtCond.currentText()]
-
         # Number of Scan
         if ui.cbNScan.isChecked():
             if not len(ui.txtScan.currentText()):
@@ -400,14 +380,12 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOScan.text()] = InData[ui.txtScan.currentText()]
-
+            OutData[ui.txtOScan.text()] = reshape_1Dvector(InData[ui.txtScan.currentText()])
         # Boxed Data
         if ui.rb4DShape2.isChecked():
             imgShape = np.array([np.max(Coor,axis=1) - np.min(Coor,axis=1) + 1])
             Coor  = np.array([Coor[0] - np.min(Coor,axis=1)[0], Coor[1] - np.min(Coor,axis=1)[1], Coor[2] - np.min(Coor,axis=1)[2]])
             OutData[ui.txtOCol.text() + "_box"] = Coor
-
         imgShape = imgShape[0]
         timepoints =  np.shape(X)[0]
         Xnew = list()
@@ -422,7 +400,7 @@ class frmFEConv2D4D(Ui_frmFEConv2D4D):
         OutData[ui.txtOData.text()] = np.array(Xnew, dtype=np.float32)
         print("Data shape: ", np.shape(Xnew))
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("Data is reshaped.")
         msgBox.setIcon(QMessageBox.Information)
