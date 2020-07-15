@@ -226,7 +226,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.cbFE.addItem("Factor Analysis",20000)
         ui.cbFE.addItem("Fast Independent Component Analysis (FastICA)",20001)
         ui.cbFE.addItem("Incremental Principal Component Analysis (IPCA)",10001)
-        ui.cbFE.addItem("MatLab: Kernel Principal Component Analysis (KPCA)",10002)
+        ui.cbFE.addItem("Kernel Principal Component Analysis (KPCA)",10002)
         ui.cbFE.addItem("MatLab: Multi Region Pattern Analysis (Snapshots)", 30000)
         ui.cbFE.addItem("MatLab: Principal Component Analysis (PCA)",10000)
         ui.cbFE.addItem("MatLab: Sparse Principal Component Analysis (SPCA)",10003)
