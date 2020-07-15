@@ -20,15 +20,14 @@
 
 import os
 import sys
-
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
+from GUI.frmFELDAGUI import *
 from sklearn import preprocessing
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from GUI.frmFELDAGUI import *
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 
 
 class frmFELDA(Ui_frmFELDA):
@@ -73,13 +72,13 @@ class frmFELDA(Ui_frmFELDA):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
 
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Train Data
@@ -330,7 +329,6 @@ class frmFELDA(Ui_frmFELDA):
 
 
                     # set number of features
-                    data = io.loadmat(filename)
                     XShape = np.shape(data[ui.txtITrData.currentText()])
                     ui.txtNumFea.setMaximum(1)
                     ui.txtNumFea.setMaximum(XShape[1])
@@ -349,7 +347,7 @@ class frmFELDA(Ui_frmFELDA):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)

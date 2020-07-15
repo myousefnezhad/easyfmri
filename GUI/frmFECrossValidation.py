@@ -69,7 +69,7 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
@@ -524,7 +524,7 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
             OutData["imgShape"] = InData["imgShape"]
 
             OutData["FoldInfo"] = FoldInfo
-            OutData["FoldID"]     = fold
+            OutData["FoldID"]   = [[fold]]
 
             TestIndex = np.where(UnitFold == fold)
             TrainIndex = np.where(UnitFold != fold)
