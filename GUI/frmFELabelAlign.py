@@ -236,8 +236,7 @@ class frmFELabelAlign(Ui_frmFELabelAlign):
             return
 
         try:
-            Task = InData[ui.txtTask.currentText()]
-
+            Task = np.asarray(InData[ui.txtTask.currentText()])
             TaskIndex = Task.copy()
             for tasindx, tas in enumerate(np.unique(Task)):
                 TaskIndex[Task == tas] = tasindx + 1

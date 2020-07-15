@@ -456,7 +456,7 @@ class frmTAIntersec(Ui_frmTAInterSec):
 
         InData = mainIO_load(InFile)
         OutData = dict()
-        OutData["imgShape"] = InData["imgShape"]
+        OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
 
         # Data
         try:
@@ -490,8 +490,7 @@ class frmTAIntersec(Ui_frmTAInterSec):
             return
         # Task
         try:
-            Task = InData[ui.txtTask.currentText()]
-
+            Task = np.asarray(InData[ui.txtTask.currentText()])
             TaskIndex = Task.copy()
             for tasindx, tas in enumerate(np.unique(Task)):
                 TaskIndex[Task == tas] = tasindx + 1
@@ -687,7 +686,7 @@ class frmTAIntersec(Ui_frmTAInterSec):
                 print("Data belong to fold {:6} and label {:6d} is collected.".format(fold, lbl))
 
         OutData[ui.txtOData.text()]     = XOut
-        OutData[ui.txtOTask.text()]     = TaskOut
+        OutData[ui.txtOTask.text()]     = reshape_1Dvector(TaskOut)
         OutData[ui.txtOLabel.text()]    = reshape_1Dvector(LabelOut)
         OutData[ui.txtOSubject.text()]  = reshape_1Dvector(SubjectOut)
         OutData[ui.txtORun.text()]      = reshape_1Dvector(RunOut)

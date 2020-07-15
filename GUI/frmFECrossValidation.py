@@ -22,12 +22,14 @@ import os
 import sys
 
 import numpy as np
-import scipy.io as io
+#import scipy.io as io
 from PyQt5.QtWidgets import *
-from sklearn.preprocessing import label_binarize
+from GUI.frmFECrossValidationGUI import *
 from Base.dialogs import LoadFile, SelectDir
 from Base.utility import getVersion, getBuild
-from GUI.frmFECrossValidationGUI import *
+from sklearn.preprocessing import label_binarize
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
+
 
 
 class frmFECrossValidation(Ui_frmFECrossValidation):
@@ -67,12 +69,12 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load MatLab data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -353,7 +355,7 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
             return False
 
         try:
-            InData = io.loadmat(InFile)
+            InData = mainIO_load(InFile)
         except:
             print("Cannot load data file!")
             return
@@ -397,7 +399,7 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
                 return False
 
         try:
-            Task = InData[ui.txtTask.currentText()]
+            Task = np.asarray(InData[ui.txtTask.currentText()])
             TaskIndex = Task.copy()
             for tasindx, tas in enumerate(np.unique(Task)):
                 TaskIndex[Task == tas] = tasindx + 1
@@ -533,30 +535,30 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
 
             # Subject
             if ui.cbSubject.isChecked():
-                OutData[ui.txtTrain.text() + ui.txtOSubject.text()] = Subject[0,TrainIndex]
-                OutData[ui.txtTest.text()  + ui.txtOSubject.text()] = Subject[0,TestIndex]
+                OutData[ui.txtTrain.text() + ui.txtOSubject.text()] = reshape_1Dvector(Subject[0,TrainIndex])
+                OutData[ui.txtTest.text()  + ui.txtOSubject.text()] = reshape_1Dvector(Subject[0,TestIndex])
 
             # Task
             if ui.cbTask.isChecked():
-                OutData[ui.txtTrain.text() + ui.txtOTask.text()] = Task[0,TrainIndex]
-                OutData[ui.txtTest.text()  + ui.txtOTask.text()] = Task[0,TestIndex]
+                OutData[ui.txtTrain.text() + ui.txtOTask.text()] = reshape_1Dvector(Task[0,TrainIndex])
+                OutData[ui.txtTest.text()  + ui.txtOTask.text()] = reshape_1Dvector(Task[0,TestIndex])
 
             # Run
             if ui.cbRun.isChecked():
-                OutData[ui.txtTrain.text() + ui.txtORun.text()] = Run[0,TrainIndex]
-                OutData[ui.txtTest.text()  + ui.txtORun.text()] = Run[0,TestIndex]
+                OutData[ui.txtTrain.text() + ui.txtORun.text()] = reshape_1Dvector(Run[0,TrainIndex])
+                OutData[ui.txtTest.text()  + ui.txtORun.text()] = reshape_1Dvector(Run[0,TestIndex])
 
             # Counter
             if ui.cbCounter.isChecked():
-                OutData[ui.txtTrain.text() + ui.txtOCounter.text()] = Counter[0,TrainIndex]
-                OutData[ui.txtTest.text()  + ui.txtOCounter.text()] = Counter[0,TestIndex]
+                OutData[ui.txtTrain.text() + ui.txtOCounter.text()] = reshape_1Dvector(Counter[0,TrainIndex])
+                OutData[ui.txtTest.text()  + ui.txtOCounter.text()] = reshape_1Dvector(Counter[0,TestIndex])
 
             # Label
             Label = InData[ui.txtLabel.currentText()]
             TrainLabel = Label[0, TrainIndex]
             TestLabel  = Label[0, TestIndex]
-            OutData[ui.txtTrain.text() + ui.txtOLabel.text()] = TrainLabel
-            OutData[ui.txtTest.text()  + ui.txtOLabel.text()] = TestLabel
+            OutData[ui.txtTrain.text() + ui.txtOLabel.text()] = reshape_1Dvector(TrainLabel)
+            OutData[ui.txtTest.text()  + ui.txtOLabel.text()] = reshape_1Dvector(TestLabel)
 
             # m Label
             if ui.cbmLabel.isChecked():
@@ -572,8 +574,8 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
             # NScan
             if ui.cbNScan.isChecked():
                 NScan = InData[ui.txtScan.currentText()]
-                OutData[ui.txtTrain.text() + ui.txtOScan.text()] = NScan[0, TrainIndex]
-                OutData[ui.txtTest.text()  + ui.txtOScan.text()] = NScan[0, TestIndex]
+                OutData[ui.txtTrain.text() + ui.txtOScan.text()] = reshape_1Dvector(NScan[0, TrainIndex])
+                OutData[ui.txtTest.text()  + ui.txtOScan.text()] = reshape_1Dvector(NScan[0, TestIndex])
 
             # Coordination
             if ui.cbCol.isChecked():
@@ -585,7 +587,8 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
 
 
             OutFileUpdate = str.replace(OutFile,"$FOLD$", str(foldID + 1))
-            io.savemat(OutDIR + OutFileUpdate, mdict=OutData)
+            mainIO_save(OutData, OutDIR + OutFileUpdate)
+            #io.savemat(OutDIR + OutFileUpdate, mdict=OutData)
 
 
         print("Cross validation is done.")

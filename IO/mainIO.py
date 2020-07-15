@@ -7,7 +7,7 @@ from IO.easyX import easyX
 from IO.EasyData import LoadEzData
 
 def reshape_1Dvector(vec):
-    if len(np.shape(vec)) > 1:
+    if len(np.shape(vec)) != 1:
         return vec
     try:
         if len(vec) < 1:

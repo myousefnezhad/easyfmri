@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'frmFECrossValidationGUI.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -322,6 +322,6 @@ class Ui_frmFECrossValidation(object):
         self.rbFRun.setText(_translate("frmFECrossValidation", "With Run"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("frmFECrossValidation", "Parameters"))
         self.label_36.setText(_translate("frmFECrossValidation", "Output Files"))
-        self.txtOutFile.setText(_translate("frmFECrossValidation", "/data_fold$FOLD$.mat"))
+        self.txtOutFile.setText(_translate("frmFECrossValidation", "/data_fold$FOLD$.ezx"))
         self.label_6.setText(_translate("frmFECrossValidation", "$FOLD$ will be replaced by fold number."))
 

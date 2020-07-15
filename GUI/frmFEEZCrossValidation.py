@@ -365,7 +365,7 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
             return False
 
         try:
-            Task = InData[ui.txtTask.currentText()]
+            Task = np.asarray(InData[ui.txtTask.currentText()])
             TaskIndex = Task.copy()
             TaskList = list()
             for tasindx, tas in enumerate(np.unique(Task)):

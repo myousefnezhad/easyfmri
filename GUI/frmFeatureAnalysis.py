@@ -26,7 +26,7 @@ import PyQt5.QtWidgets as QtWidgets
 import matplotlib
 import nibabel as nb
 import numpy as np
-from IO.mainIO import mainIO_load, mainIO_save
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 import scipy.io as io
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
@@ -1042,7 +1042,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         try:
             roiHDR = nb.load(ROIFile)
-            #roiIMG = roiHDR.get_data()
             roiIMG = np.asanyarray(roiHDR.dataobj)
             roiSize = np.shape(roiIMG)
             roiIND = np.where(roiIMG != 0)
@@ -1460,7 +1459,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         else:
             print("Saving Header " + OutHDR + "...")
         OutData = dict()
-        OutData["imgShape"] = np.array(fMRISize)
+        OutData["imgShape"] = reshape_1Dvector(np.array(fMRISize))
 
         if ui.rb2DShape.isChecked():
             OutData["dataShape"] = 2
@@ -1537,30 +1536,30 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         # NScan
         if ui.cbDINScanID.isChecked():
-            OutData[ui.txtDINScanID.text()] = NScanID
+            OutData[ui.txtDINScanID.text()] = reshape_1Dvector(NScanID)
             del NScan
         # Subject
         if ui.cbDISubjectID.isChecked():
-            OutData[ui.txtDISubjectID.text()] = SubjectID
+            OutData[ui.txtDISubjectID.text()] = reshape_1Dvector(SubjectID)
             del SubjectID
         # Task
         if ui.cbDITaskID.isChecked():
-            OutData[ui.txtDITaskID.text()] = np.array(TaskID,dtype=object)
+            OutData[ui.txtDITaskID.text()] = reshape_1Dvector(np.array(TaskID,dtype=object))
             del TaskID
         # Run
         if ui.cbDIRunID.isChecked():
-            OutData[ui.txtDIRunID.text()] = RunID
+            OutData[ui.txtDIRunID.text()] = reshape_1Dvector(RunID)
             del RunID
         # Counter
         if ui.cbDICounterID.isChecked():
-            OutData[ui.txtDICounterID.text()] = CounterID
+            OutData[ui.txtDICounterID.text()] = reshape_1Dvector(CounterID)
             del CounterID
         # Matrix Label
         if ui.cbDImLabelID.isChecked():
             OutData[ui.txtDImLabelID.text()] = label_binarize(Y,np.unique(Y))
         # Label
         if ui.cbDILabelID.isChecked():
-            OutData[ui.txtDILabelID.text()] = Y
+            OutData[ui.txtDILabelID.text()] = reshape_1Dvector(Y)
             del Y
         # Design
         if ui.cbDIDM.isChecked():

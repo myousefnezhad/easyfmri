@@ -850,7 +850,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>/data_fold$FOLD$.mat</string>
+    <string>/data_fold$FOLD$.ezx</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_6">
