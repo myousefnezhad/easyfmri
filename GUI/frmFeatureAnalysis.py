@@ -144,7 +144,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         tools = Tools()
         tools.combo(ui.cbTools)
 
-        ui.tabWidget.setCurrentIndex(0)
+        ui.tabWidget.setCurrentIndex(3)
         ui.tabWidget_2.setCurrentIndex(0)
         ui.tabWidget_3.setCurrentIndex(0)
         ui.tabWidget_4.setCurrentIndex(0)
