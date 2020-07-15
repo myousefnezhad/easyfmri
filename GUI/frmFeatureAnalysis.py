@@ -215,17 +215,17 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             ui.txtFlirt.setText(fsl.flirt)
 
         # Cross Validation
-        ui.cbCV.addItem("Matlab: Cross Validation", 1)
+        ui.cbCV.addItem("Cross Validation", 1)
         # ui.cbCV.addItem("EzData: Cross Validation", 2)
 
         # Feature Engineering
-        ui.cbFE.addItem("MatLab: Data Normalization",1)
-        ui.cbFE.addItem("MatLab: Convert 2D data to 4D",3)
-        ui.cbFE.addItem("MatLab: Convert 4D data to 2D",4)
-        ui.cbFE.addItem("MatLab: Dictionary Learning",20002)
-        ui.cbFE.addItem("MatLab: Factor Analysis",20000)
-        ui.cbFE.addItem("MatLab: Fast Independent Component Analysis (FastICA)",20001)
-        ui.cbFE.addItem("MatLab: Incremental Principal Component Analysis (IPCA)",10001)
+        ui.cbFE.addItem("Data Normalization",1)
+        ui.cbFE.addItem("Convert 2D data to 4D",3)
+        ui.cbFE.addItem("Convert 4D data to 2D",4)
+        ui.cbFE.addItem("Dictionary Learning",20002)
+        ui.cbFE.addItem("Factor Analysis",20000)
+        ui.cbFE.addItem("Fast Independent Component Analysis (FastICA)",20001)
+        ui.cbFE.addItem("Incremental Principal Component Analysis (IPCA)",10001)
         ui.cbFE.addItem("MatLab: Kernel Principal Component Analysis (KPCA)",10002)
         ui.cbFE.addItem("MatLab: Multi Region Pattern Analysis (Snapshots)", 30000)
         ui.cbFE.addItem("MatLab: Principal Component Analysis (PCA)",10000)
@@ -240,9 +240,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         # Temporal Alignment
-        ui.cbTA.addItem("Report: Shape Alignment", 10001)
-        ui.cbTA.addItem("Report: Label Alignment", 10002)
-        ui.cbTA.addItem("Matlab: Temporal Alignment with intersection strategy", 20001)
+        ui.cbTA.addItem("Shape Alignment (Report)", 10001)
+        ui.cbTA.addItem("Label Alignment (Report)", 10002)
+        ui.cbTA.addItem("Temporal Alignment with intersection strategy", 20001)
 
         # Functional Alignment
         ui.cbFA.addItem("MatLab: GPU Hyperalignment (GPUHA)", 10008)
