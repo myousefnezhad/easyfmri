@@ -230,8 +230,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.cbFE.addItem("Multi Region Pattern Analysis (Snapshots)", 30000)
         ui.cbFE.addItem("Principal Component Analysis (PCA)",10000)
         ui.cbFE.addItem("Sparse Principal Component Analysis (SPCA)",10003)
-        ui.cbFE.addItem("MatLab: Convolutional Neural Network (CNN)", 40000)
-        ui.cbFE.addItem("MatLab: Linear Discriminant Analysis (LDA)",5)
+        ui.cbFE.addItem("Convolutional Neural Network (CNN)", 40000)
+        ui.cbFE.addItem("Linear Discriminant Analysis (LDA)",5)
 
         # Wise Area Analysis
         ui.cbAA.addItem("Finding informative regions based on atlas", 10001)

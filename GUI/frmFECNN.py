@@ -20,18 +20,18 @@
 
 import os
 import sys
-import torch
 import time
+import torch
 import numpy as np
-import scipy.io as io
-from PyQt5.QtWidgets import *
-from sklearn import preprocessing
-from Base.utility import getVersion, getBuild
-from Base.dialogs import LoadFile, SaveFile
-from GUI.frmFECNNGUI import *
-from GUI.frmCNNDialog import frmConv, frmAF, frmPool
 from Network.CNN import CNN
+from PyQt5.QtWidgets import *
+from GUI.frmFECNNGUI import *
 from Base.utility import Str2Bool
+from sklearn import preprocessing
+from Base.dialogs import LoadFile, SaveFile
+from Base.utility import getVersion, getBuild
+from GUI.frmCNNDialog import frmConv, frmAF, frmPool
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 
 def convertKernel(kerstr):
     ker = str.lower(kerstr).replace('[', '').replace(']', '').replace(')', '').replace('(', '').replace(';', ',').split(',')
@@ -119,12 +119,12 @@ class frmFECNN(Ui_frmFECNN):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -247,7 +247,6 @@ class frmFECNN(Ui_frmFECNN):
                     ui.cbNScan.setChecked(HasDefualt)
 
                     # set number of features
-                    data = io.loadmat(filename)
                     XShape = np.shape(data[ui.txtData.currentText()])
 
                     print("Data shape: ", XShape)
@@ -270,15 +269,13 @@ class frmFECNN(Ui_frmFECNN):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
         msgBox = QMessageBox()
-
-
         try:
             Threshold = np.float64(ui.txtThreshold.text())
         except:
@@ -287,7 +284,6 @@ class frmFECNN(Ui_frmFECNN):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         try:
             net_model = createModel(ui.tbModel)
         except Exception as e:
@@ -296,14 +292,12 @@ class frmFECNN(Ui_frmFECNN):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         if net_model is None:
             msgBox.setText("Please create a network model!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
@@ -312,7 +306,6 @@ class frmFECNN(Ui_frmFECNN):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
@@ -321,32 +314,27 @@ class frmFECNN(Ui_frmFECNN):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         if ui.rbScale.isChecked() == True and ui.rbALScale.isChecked() == False:
             msgBox.setText("Subject Level Normalization is just available for Subject Level Analysis!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         OutData = dict()
-        OutData["imgShape"] = InData["imgShape"]
-
+        OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         try:
             X = InData[ui.txtData.currentText()]
 
@@ -357,7 +345,6 @@ class frmFECNN(Ui_frmFECNN):
         except:
             print("Cannot load data")
             return
-
         # Subject
         if not len(ui.txtSubject.currentText()):
             msgBox.setText("Please enter Subject variable name!")
@@ -365,14 +352,12 @@ class frmFECNN(Ui_frmFECNN):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         try:
             Subject = InData[ui.txtSubject.currentText()]
-            OutData[ui.txtOSubject.text()] = Subject
+            OutData[ui.txtOSubject.text()] = reshape_1Dvector(Subject)
         except:
             print("Cannot load Subject ID")
             return
-
         # Label
         if not len(ui.txtLabel.currentText()):
                 msgBox.setText("Please enter Label variable name!")
@@ -380,9 +365,7 @@ class frmFECNN(Ui_frmFECNN):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-        OutData[ui.txtOLabel.text()] = InData[ui.txtLabel.currentText()]
-
-
+        OutData[ui.txtOLabel.text()] = reshape_1Dvector(InData[ui.txtLabel.currentText()])
         # Task
         if ui.cbTask.isChecked():
             if not len(ui.txtTask.currentText()):
@@ -391,8 +374,7 @@ class frmFECNN(Ui_frmFECNN):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOTask.text()] = InData[ui.txtTask.currentText()]
-
+            OutData[ui.txtOTask.text()] = reshape_1Dvector(InData[ui.txtTask.currentText()])
         # Run
         if ui.cbRun.isChecked():
             if not len(ui.txtRun.currentText()):
@@ -401,9 +383,7 @@ class frmFECNN(Ui_frmFECNN):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtORun.text()] = InData[ui.txtRun.currentText()]
-
-
+            OutData[ui.txtORun.text()] = reshape_1Dvector(InData[ui.txtRun.currentText()])
         # Counter
         if ui.cbCounter.isChecked():
             if not len(ui.txtCounter.currentText()):
@@ -412,8 +392,7 @@ class frmFECNN(Ui_frmFECNN):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOCounter.text()] = InData[ui.txtCounter.currentText()]
-
+            OutData[ui.txtOCounter.text()] = reshape_1Dvector(InData[ui.txtCounter.currentText()])
         # Matrix Label
         if ui.cbmLabel.isChecked():
             if not len(ui.txtmLabel.currentText()):
@@ -423,7 +402,6 @@ class frmFECNN(Ui_frmFECNN):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOmLabel.text()] = InData[ui.txtmLabel.currentText()]
-
         # Design
         if ui.cbDM.isChecked():
             if not len(ui.txtDM.currentText()):
@@ -433,7 +411,6 @@ class frmFECNN(Ui_frmFECNN):
                 msgBox.exec_()
                 return False
             OutData[ui.txtODM.text()] = InData[ui.txtDM.currentText()]
-
         # Coordinate
         if ui.cbCol.isChecked():
             if not len(ui.txtCol.currentText()):
@@ -443,7 +420,6 @@ class frmFECNN(Ui_frmFECNN):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOCol.text()] = InData[ui.txtCol.currentText()]
-
         # Condition
         if ui.cbCond.isChecked():
             if not len(ui.txtCond.currentText()):
@@ -453,7 +429,6 @@ class frmFECNN(Ui_frmFECNN):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOCond.text()] = InData[ui.txtCond.currentText()]
-
         # Number of Scan
         if ui.cbNScan.isChecked():
             if not len(ui.txtScan.currentText()):
@@ -462,8 +437,7 @@ class frmFECNN(Ui_frmFECNN):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOScan.text()] = InData[ui.txtScan.currentText()]
-
+            OutData[ui.txtOScan.text()] = reshape_1Dvector(InData[ui.txtScan.currentText()])
         if ui.rbALScale.isChecked():
             print("Partition data to subject level ...")
             SubjectUniq = np.unique(Subject)
@@ -481,7 +455,6 @@ class frmFECNN(Ui_frmFECNN):
             print("Running CNN in subject level ...")
             X_Sub_PCA = list()
             lenPCA    = len(X_Sub)
-
             for xsubindx, xsub in enumerate(X_Sub):
                 net = CNN(net_model)
                 if ui.rbMat.isChecked():
@@ -490,7 +463,6 @@ class frmFECNN(Ui_frmFECNN):
                     xsub_tran = net.tonumpy(net(torch.Tensor(np.expand_dims(xsub,axis=1))))
                 X_Sub_PCA.append(xsub_tran)
                 print("CNN: ", xsubindx + 1, " of ", lenPCA, " is done. Shape: " + str(np.shape(xsub_tran)))
-
             print("Data integration ... ")
             X_new = None
             for xsubindx, xsub in enumerate(X_Sub_PCA):
@@ -498,7 +470,6 @@ class frmFECNN(Ui_frmFECNN):
                 print("Integration: ", xsubindx + 1, " of ", lenPCA, " is done.")
             if not ui.rbMat.isChecked():
                 X_new = X_new[:,0,:,:,:]
-
             # Apply Thresholding
             print("Data shape before thresholding: ", np.shape(X_new))
             X_new_th = X_new
@@ -509,13 +480,11 @@ class frmFECNN(Ui_frmFECNN):
                 X_new_th = None
                 for xx_new in X_new_index:
                     X_new_th = xx_new if X_new_th is None else np.concatenate((X_new_th, xx_new), axis=0)
-
             # Apply Normalization
             if ui.rbMat.isChecked() and ui.cbOutNormal.isChecked():
                 X_new_th = X_new_th - np.mean(X_new_th)
                 X_new_th = X_new_th / np.std(X_new_th)
                 print("Output data is normalized!")
-
             OutData[ui.txtOData.text()] = X_new_th
         else:
             print("Running CNN ...")
@@ -525,7 +494,6 @@ class frmFECNN(Ui_frmFECNN):
             else:
                 X_new = net.tonumpy(net(torch.Tensor(np.expand_dims(X, axis=1))))
             print("CNN is done. Shape: " + str(np.shape(X_new)))
-
             # Apply Thresholding
             print("Data shape before thresholding: ", np.shape(X_new))
             X_new_th = X_new
@@ -536,18 +504,15 @@ class frmFECNN(Ui_frmFECNN):
                 X_new_th = None
                 for xx_new in X_new_index:
                     X_new_th = xx_new if X_new_th is None else np.concatenate((X_new_th, xx_new), axis=0)
-
             # Apply Normalization
             if ui.rbMat.isChecked() and ui.cbOutNormal.isChecked():
                 X_new_th = X_new_th - np.mean(X_new_th)
                 X_new_th = X_new_th / np.std(X_new_th)
                 print("Output data is normalized!")
-
             OutData[ui.txtOData.text()] = X_new_th
-
         print("Saving ...")
         print("Final data shape: ", np.shape(OutData[ui.txtOData.text()]))
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("CNN is done.")
         msgBox.setIcon(QMessageBox.Information)
