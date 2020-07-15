@@ -20,15 +20,14 @@
 
 import os
 import sys
-
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
+from GUI.frmFEMRPAGUI import *
 from scipy.signal import argrelextrema
-from sklearn.preprocessing import label_binarize
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from GUI.frmFEMRPAGUI import *
+from sklearn.preprocessing import label_binarize
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 
 
 class frmFEMRPA(Ui_frmFEMRPA):
@@ -69,12 +68,12 @@ class frmFEMRPA(Ui_frmFEMRPA):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -186,7 +185,6 @@ class frmFEMRPA(Ui_frmFEMRPA):
                         ui.txtScan.setCurrentText("nscan")
                     ui.cbNScan.setChecked(HasDefualt)
 
-
                     ui.txtInFile.setText(filename)
                 except Exception as e:
                     print(e)
@@ -196,14 +194,13 @@ class frmFEMRPA(Ui_frmFEMRPA):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
 
     def btnConvert_click(self):
         msgBox = QMessageBox()
-
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
@@ -212,7 +209,6 @@ class frmFEMRPA(Ui_frmFEMRPA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
@@ -221,21 +217,18 @@ class frmFEMRPA(Ui_frmFEMRPA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
         try:
             Sigma = np.int32(ui.txtSigma.text())
         except:
@@ -250,8 +243,6 @@ class frmFEMRPA(Ui_frmFEMRPA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
-
         # Design
         if not len(ui.txtDM.currentText()):
             msgBox.setText("Please enter Design Matrix variable name!")
@@ -259,24 +250,19 @@ class frmFEMRPA(Ui_frmFEMRPA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         OutData = dict()
-        OutData["imgShape"] = InData["imgShape"]
-
-
+        OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
         try:
             X = InData[ui.txtData.currentText()]
         except:
             print("Cannot load data")
             return
-
         try:
             DM = np.transpose(InData[ui.txtDM.currentText()])
         except:
             print("Cannot load design")
             return
-
         # Gaussian Kernel
         G = np.arange(-2 * Sigma, 2 * Sigma + 1, 1)
         G = np.exp(-1 * G**2  / 2 * Sigma * Sigma)
@@ -286,7 +272,6 @@ class frmFEMRPA(Ui_frmFEMRPA):
            dmx = dmx - np.min(dmx)
            dmx = dmx / np.max(dmx)
            LocalMaximum.append(argrelextrema(np.convolve(dmx,G)[0:len(dmx)],np.greater))
-
         #Check Conflict
         AllLabels = []
         AllIndex  = []
@@ -302,15 +287,12 @@ class frmFEMRPA(Ui_frmFEMRPA):
                         Indexs.append(dat)
                 AllIndex = np.concatenate((AllIndex,Indexs[0]))
                 AllLabels = np.concatenate((AllLabels, (lblinx + 1) * np.ones(np.shape(Indexs)[1])))
-
-        OutData[ui.txtOLabel.text()] = np.int32(AllLabels)
-
-
+        # Label
+        OutData[ui.txtOLabel.text()] = reshape_1Dvector(np.int32(AllLabels))
+        # Data
         OutData[ui.txtOData.text()] = X[AllIndex,:]
-
+        # DM
         OutData[ui.txtODM.text()]   = InData[ui.txtDM.currentText()][AllIndex,:]
-
-
         # Subject
         if ui.cbSubject.isChecked():
             if not len(ui.txtSubject.currentText()):
@@ -319,13 +301,11 @@ class frmFEMRPA(Ui_frmFEMRPA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-
         try:
-            OutData[ui.txtOSubject.text()] = InData[ui.txtSubject.currentText()][0][AllIndex]
+            OutData[ui.txtOSubject.text()] = reshape_1Dvector(InData[ui.txtSubject.currentText()][0][AllIndex])
         except:
             print("Cannot load Subject ID")
             return
-
         # Task
         if ui.cbTask.isChecked():
             if not len(ui.txtTask.currentText()):
@@ -334,8 +314,7 @@ class frmFEMRPA(Ui_frmFEMRPA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOTask.text()] = InData[ui.txtTask.currentText()][0][AllIndex]
-
+            OutData[ui.txtOTask.text()] = reshape_1Dvector(InData[ui.txtTask.currentText()][0][AllIndex])
         # Run
         if ui.cbRun.isChecked():
             if not len(ui.txtRun.currentText()):
@@ -344,9 +323,7 @@ class frmFEMRPA(Ui_frmFEMRPA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtORun.text()] = InData[ui.txtRun.currentText()][0][AllIndex]
-
-
+            OutData[ui.txtORun.text()] = reshape_1Dvector(InData[ui.txtRun.currentText()][0][AllIndex])
         # Counter
         if ui.cbCounter.isChecked():
             if not len(ui.txtCounter.currentText()):
@@ -355,8 +332,7 @@ class frmFEMRPA(Ui_frmFEMRPA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOCounter.text()] = InData[ui.txtCounter.currentText()][0][AllIndex]
-
+            OutData[ui.txtOCounter.text()] = reshape_1Dvector(InData[ui.txtCounter.currentText()][0][AllIndex])
         # Matrix Label
         if ui.cbmLabel.isChecked():
             if not len(ui.txtmLabel.currentText()):
@@ -366,7 +342,6 @@ class frmFEMRPA(Ui_frmFEMRPA):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOmLabel.text()] = label_binarize(AllLabels,np.unique(AllLabels))
-
         # Coordinate
         if ui.cbCol.isChecked():
             if not len(ui.txtCol.currentText()):
@@ -376,7 +351,6 @@ class frmFEMRPA(Ui_frmFEMRPA):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOCol.text()] = InData[ui.txtCol.currentText()]
-
         # Condition
         if ui.cbCond.isChecked():
             if not len(ui.txtCond.currentText()):
@@ -386,7 +360,6 @@ class frmFEMRPA(Ui_frmFEMRPA):
                 msgBox.exec_()
                 return False
             OutData[ui.txtOCond.text()] = InData[ui.txtCond.currentText()]
-
         # Number of Scan
         if ui.cbNScan.isChecked():
             if not len(ui.txtScan.currentText()):
@@ -395,20 +368,16 @@ class frmFEMRPA(Ui_frmFEMRPA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            OutData[ui.txtOScan.text()] = InData[ui.txtScan.currentText()][0][AllIndex]
-
+            OutData[ui.txtOScan.text()] = reshape_1Dvector(InData[ui.txtScan.currentText()][0][AllIndex])
         Models = dict()
         Models["Name"] = "MRPA"
         Models["Sigma"] = Sigma
         OutData["ModelParameter"] = Models
-
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
-
         print("Number of all instances :", np.shape(X)[0])
         print("Number of selected instances: ", len(AllLabels))
-
         msgBox.setText("MRPA is done.")
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setStandardButtons(QMessageBox.Ok)
