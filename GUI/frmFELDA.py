@@ -354,7 +354,6 @@ class frmFELDA(Ui_frmFELDA):
 
     def btnConvert_click(self):
         msgBox = QMessageBox()
-
         try:
             FoldFrom = np.int32(ui.txtFoldFrom.text())
             FoldTo   = np.int32(ui.txtFoldTo.text())
@@ -376,10 +375,8 @@ class frmFELDA(Ui_frmFELDA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-
             # Solver
             Solver = ui.cbSolver.currentData()
-
             # OutFile
             OutFile = ui.txtOutFile.text()
             OutFile = OutFile.replace("$FOLD$", str(fold))
@@ -389,7 +386,6 @@ class frmFELDA(Ui_frmFELDA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-
             # InFile
             InFile = ui.txtInFile.text()
             InFile = InFile.replace("$FOLD$", str(fold))
@@ -406,11 +402,9 @@ class frmFELDA(Ui_frmFELDA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-
-            InData = io.loadmat(InFile)
+            InData = mainIO_load(InFile)
             OutData = dict()
-            OutData["imgShape"] = InData["imgShape"]
-
+            OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
             # Data
             if not len(ui.txtITrData.currentText()):
                 msgBox.setText("Please enter Input Train Data variable name!")
@@ -439,7 +433,6 @@ class frmFELDA(Ui_frmFELDA):
             try:
                 XTr = InData[ui.txtITrData.currentText()]
                 XTe = InData[ui.txtITeData.currentText()]
-
                 if ui.cbScale.isChecked():
                     XTr = preprocessing.scale(XTr)
                     XTe = preprocessing.scale(XTe)
@@ -447,7 +440,6 @@ class frmFELDA(Ui_frmFELDA):
             except:
                 print("Cannot load data")
                 return
-
             # NComponent
             try:
                 NumFea = np.int32(ui.txtNumFea.text())
@@ -469,7 +461,6 @@ class frmFELDA(Ui_frmFELDA):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-
             # Label
             if not len(ui.txtITrLabel.currentText()):
                     msgBox.setText("Please enter Train Input Label variable name!")
@@ -498,11 +489,10 @@ class frmFELDA(Ui_frmFELDA):
             try:
                 YTr = InData[ui.txtITrLabel.currentText()][0]
                 YTe = InData[ui.txtITeLabel.currentText()][0]
-                OutData[ui.txtOTrLabel.text()] = YTr
-                OutData[ui.txtOTeLabel.text()] = YTe
+                OutData[ui.txtOTrLabel.text()] = reshape_1Dvector(YTr)
+                OutData[ui.txtOTeLabel.text()] = reshape_1Dvector(YTe)
             except:
                 print("Cannot load labels!")
-
             # Subject
             if ui.cbSubject.isChecked():
                 if not len(ui.txtITrSubject.currentText()):
@@ -530,12 +520,11 @@ class frmFELDA(Ui_frmFELDA):
                     msgBox.exec_()
                     return False
                 try:
-                    OutData[ui.txtOTrSubject.text()] = InData[ui.txtITrSubject.currentText()]
-                    OutData[ui.txtOTeSubject.text()] = InData[ui.txtITeSubject.currentText()]
+                    OutData[ui.txtOTrSubject.text()] = reshape_1Dvector(InData[ui.txtITrSubject.currentText()])
+                    OutData[ui.txtOTeSubject.text()] = reshape_1Dvector(InData[ui.txtITeSubject.currentText()])
                 except:
                     print("Cannot load Subject IDs")
                     return
-
             # Task
             if ui.cbTask.isChecked():
                 if not len(ui.txtITrTask.currentText()):
@@ -563,12 +552,11 @@ class frmFELDA(Ui_frmFELDA):
                     msgBox.exec_()
                     return False
                 try:
-                    OutData[ui.txtOTrTask.text()] = InData[ui.txtITrTask.currentText()]
-                    OutData[ui.txtOTeTask.text()] = InData[ui.txtITeTask.currentText()]
+                    OutData[ui.txtOTrTask.text()] = reshape_1Dvector(InData[ui.txtITrTask.currentText()])
+                    OutData[ui.txtOTeTask.text()] = reshape_1Dvector(InData[ui.txtITeTask.currentText()])
                 except:
                     print("Cannot load Tasks!")
                     return
-
             # Run
             if ui.cbRun.isChecked():
                 if not len(ui.txtITrRun.currentText()):
@@ -596,12 +584,11 @@ class frmFELDA(Ui_frmFELDA):
                     msgBox.exec_()
                     return False
                 try:
-                    OutData[ui.txtOTrRun.text()] = InData[ui.txtITrRun.currentText()]
-                    OutData[ui.txtOTeRun.text()] = InData[ui.txtITeRun.currentText()]
+                    OutData[ui.txtOTrRun.text()] = reshape_1Dvector(InData[ui.txtITrRun.currentText()])
+                    OutData[ui.txtOTeRun.text()] = reshape_1Dvector(InData[ui.txtITeRun.currentText()])
                 except:
                     print("Cannot load Runs!")
                     return
-
             # Counter
             if ui.cbCounter.isChecked():
                 if not len(ui.txtITrCounter.currentText()):
@@ -629,12 +616,11 @@ class frmFELDA(Ui_frmFELDA):
                     msgBox.exec_()
                     return False
                 try:
-                    OutData[ui.txtOTrCounter.text()] = InData[ui.txtITrCounter.currentText()]
-                    OutData[ui.txtOTeCounter.text()] = InData[ui.txtITeCounter.currentText()]
+                    OutData[ui.txtOTrCounter.text()] = reshape_1Dvector(InData[ui.txtITrCounter.currentText()])
+                    OutData[ui.txtOTeCounter.text()] = reshape_1Dvector(InData[ui.txtITeCounter.currentText()])
                 except:
                     print("Cannot load Counters!")
                     return
-
             # Matrix Label
             if ui.cbmLabel.isChecked():
                 if not len(ui.txtITrmLabel.currentText()):
@@ -667,7 +653,6 @@ class frmFELDA(Ui_frmFELDA):
                 except:
                     print("Cannot load matrix lables!")
                     return
-
             # Design
             if ui.cbDM.isChecked():
                 if not len(ui.txtITrDM.currentText()):
@@ -700,7 +685,6 @@ class frmFELDA(Ui_frmFELDA):
                 except:
                     print("Cannot load design matrices!")
                     return
-
             # Coordinate
             if ui.cbCol.isChecked():
                 if not len(ui.txtCol.currentText()):
@@ -720,7 +704,6 @@ class frmFELDA(Ui_frmFELDA):
                 except:
                     print("Cannot load coordinator!")
                     return
-
             # Condition
             if ui.cbCond.isChecked():
                 if not len(ui.txtCond.currentText()):
@@ -740,7 +723,6 @@ class frmFELDA(Ui_frmFELDA):
                 except:
                     print("Cannot load conditions!")
                     return
-
             # FoldID
             if ui.cbFoldID.isChecked():
                 if not len(ui.txtFoldID.currentText()):
@@ -756,11 +738,10 @@ class frmFELDA(Ui_frmFELDA):
                     msgBox.exec_()
                     return False
                 try:
-                    OutData[ui.txtOFoldID.text()] = InData[ui.txtFoldID.currentText()]
+                    OutData[ui.txtOFoldID.text()] = reshape_1Dvector(InData[ui.txtFoldID.currentText()])
                 except:
                     print("Cannot load Fold ID!")
                     return
-
             # FoldInfo
             if ui.cbFoldInfo.isChecked():
                 if not len(ui.txtFoldInfo.currentText()):
@@ -781,8 +762,6 @@ class frmFELDA(Ui_frmFELDA):
                     print("Cannot load Fold Info!")
                     return
                 pass
-
-
             # Number of Scan
             if ui.cbNScan.isChecked():
                 if not len(ui.txtITrScan.currentText()):
@@ -810,27 +789,22 @@ class frmFELDA(Ui_frmFELDA):
                     msgBox.exec_()
                     return False
                 try:
-                    OutData[ui.txtOTrScan.text()] = InData[ui.txtITrScan.currentText()]
-                    OutData[ui.txtOTeScan.text()] = InData[ui.txtITeScan.currentText()]
+                    OutData[ui.txtOTrScan.text()] = reshape_1Dvector(InData[ui.txtITrScan.currentText()])
+                    OutData[ui.txtOTeScan.text()] = reshape_1Dvector(InData[ui.txtITeScan.currentText()])
                 except:
                     print("Cannot load NScan!")
                     return
-
             print("Running LDA:")
             model = LDA(n_components=NumFea,solver=Solver,tol=Tol)
             print("Training ...")
             XTr_New = model.fit_transform(XTr,YTr)
             OutData[ui.txtOTrData.text()] = XTr_New
-
             print("Testing ...")
             XTe_New = model.transform(XTe)
             OutData[ui.txtOTeData.text()] = XTe_New
-
-
             print("Saving ...")
-            io.savemat(OutFile, mdict=OutData)
+            mainIO_save(OutData, OutFile)
             print("Fold " + str(fold) + " is DONE: " + OutFile)
-
         print("LDA is done.")
         msgBox.setText("LDA is done.")
         msgBox.setIcon(QMessageBox.Information)
