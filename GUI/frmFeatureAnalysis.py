@@ -228,7 +228,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.cbFE.addItem("Incremental Principal Component Analysis (IPCA)",10001)
         ui.cbFE.addItem("Kernel Principal Component Analysis (KPCA)",10002)
         ui.cbFE.addItem("Multi Region Pattern Analysis (Snapshots)", 30000)
-        ui.cbFE.addItem("MatLab: Principal Component Analysis (PCA)",10000)
+        ui.cbFE.addItem("Principal Component Analysis (PCA)",10000)
         ui.cbFE.addItem("MatLab: Sparse Principal Component Analysis (SPCA)",10003)
         ui.cbFE.addItem("MatLab: Convolutional Neural Network (CNN)", 40000)
         ui.cbFE.addItem("MatLab: Linear Discriminant Analysis (LDA)",5)
