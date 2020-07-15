@@ -108,7 +108,10 @@ class frmAAVoxel(Ui_frmAAVoxel):
         ui.btnSelection.clicked.connect(self.btnSelection_click)
 
     def btnSelection_click(self):
-        frmAAVoxelSelection.show(frmAAVoxelSelection)
+        try:
+            frmAAVoxelSelection.show(frmAAVoxelSelection)
+        except Exception as e:
+            print(str(e))
 
     def btnClose_click(self):
         global dialog

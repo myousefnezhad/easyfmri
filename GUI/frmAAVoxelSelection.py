@@ -125,7 +125,10 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.vwSele.clearSelection()
 
     def btnVBA_click(self):
-        frmAAVoxel.show(frmAAVoxel)
+        try:
+            frmAAVoxel.show(frmAAVoxel)
+        except Exception as e:
+            print(str(e))
 
     def btnVBATemp_click(self):
         global data
