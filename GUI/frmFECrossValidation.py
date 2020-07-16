@@ -521,7 +521,7 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
             print("Saving Fold " + str(foldID + 1)," of ", str(len(UniqFold)) , " ...")
 
             OutData = dict()
-            OutData["imgShape"] = InData["imgShape"]
+            OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
 
             OutData["FoldInfo"] = FoldInfo
             OutData["FoldID"]   = [[fold]]
