@@ -29,7 +29,7 @@ from GUI.frmMAAdaBoostGUI import *
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from sklearn.ensemble import AdaBoostClassifier
-from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
+from IO.mainIO import mainIO_load, mainIO_save
 from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
 logging.basicConfig(level=logging.DEBUG)
 from pyqode.core import api
