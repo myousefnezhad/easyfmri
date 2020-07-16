@@ -22,13 +22,13 @@ import os
 import sys
 
 import numpy as np
-import scipy.io as io
-from Base.Conditions import Conditions
+from Base.Conditions import Conditions, reshape_condition_cell
 from PyQt5.QtWidgets import *
 from sklearn.preprocessing import label_binarize
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmRemoveRestScanCrossGUI import *
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 
 
 class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
@@ -69,12 +69,12 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
         dialog.close()
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -353,7 +353,7 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
             msgBox.exec_()
             return False
 
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         try:
             Cond = InData[ui.txtCond.currentText()]
         except:
@@ -372,7 +372,7 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
 
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -583,12 +583,12 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
             msgBox.exec_()
             return False
 
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         OutData = dict()
-        OutData["imgShape"] = InData["imgShape"]
+        OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
 
         if ui.cbFoldID.isChecked():
-            OutData[ui.txtFoldID.currentText()] = InData[ui.txtFoldID.currentText()]
+            OutData[ui.txtFoldID.currentText()] = reshape_1Dvector(InData[ui.txtFoldID.currentText()])
 
         if ui.cbFoldInfo.isChecked():
             OutData[ui.txtFoldInfo.currentText()] = InData[ui.txtFoldInfo.currentText()]
@@ -599,16 +599,16 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
                 Cond = InData[ui.txtCond.currentText()]
                 New_Condition = Conditions()
                 for condition in Cond:
-                    if condition[0][0] != ui.txtClassName.currentText():
-                        New_Condition.add_cond(condition[0][0],condition[1][0])
-
-                OutData[ui.txtCond.currentText()] = np.array(New_Condition.get_cond(),dtype=object)
+                    if reshape_condition_cell(condition[0]) != ui.txtClassName.currentText():
+                        New_Condition.add_cond(reshape_condition_cell(condition[0]),\
+                                               reshape_condition_cell(condition[1]))
+                OutData[ui.txtCond.currentText()] = np.array(New_Condition.get_cond(), dtype=object)
             except Exception as e:
                 print(e)
                 print("Cannot load Condition ID!")
                 return
 
-
+        # Label
         try:
             Y = InData[ui.txtLabel.currentText()]
             YT = InData[ui.txtTLabel.currentText()]
@@ -632,13 +632,13 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
 
         NoneZeroArea = np.where(Y != ClassID)
         New_Y = Y[NoneZeroArea]
-        OutData[ui.txtLabel.currentText()] = New_Y
+        OutData[ui.txtLabel.currentText()] = reshape_1Dvector(New_Y)
 
         NoneZeroAreaT = np.where(YT != ClassID)
         New_YT = YT[NoneZeroAreaT]
-        OutData[ui.txtTLabel.currentText()] = New_YT
+        OutData[ui.txtTLabel.currentText()] = reshape_1Dvector(New_YT)
 
-
+        # Data
         try:
             X  = InData[ui.txtData.currentText()]
             XT = InData[ui.txtTData.currentText()]
@@ -652,10 +652,10 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
         if ui.cbSubject.isChecked():
             try:
                 Subject = InData[ui.txtSubject.currentText()]
-                OutData[ui.txtSubject.currentText()] = Subject[NoneZeroArea]
+                OutData[ui.txtSubject.currentText()] = reshape_1Dvector(Subject[NoneZeroArea])
 
                 SubjectT = InData[ui.txtTSubject.currentText()]
-                OutData[ui.txtTSubject.currentText()] = SubjectT[NoneZeroAreaT]
+                OutData[ui.txtTSubject.currentText()] = reshape_1Dvector(SubjectT[NoneZeroAreaT])
 
             except:
                 print("Cannot load Subject ID!")
@@ -665,10 +665,10 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
         if ui.cbTask.isChecked():
             try:
                 Task = InData[ui.txtTask.currentText()]
-                OutData[ui.txtTask.currentText()] = np.array(Task[NoneZeroArea],dtype=object)
+                OutData[ui.txtTask.currentText()] = reshape_1Dvector(np.array(Task[NoneZeroArea],dtype=object))
 
                 TaskT = InData[ui.txtTTask.currentText()]
-                OutData[ui.txtTTask.currentText()] = np.array(TaskT[NoneZeroAreaT],dtype=object)
+                OutData[ui.txtTTask.currentText()] = reshape_1Dvector(np.array(TaskT[NoneZeroAreaT],dtype=object))
             except:
                 print("Cannot load Task ID!")
                 return
@@ -677,10 +677,10 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
         if ui.cbRun.isChecked():
             try:
                 Run = InData[ui.txtRun.currentText()]
-                OutData[ui.txtRun.currentText()] = Run[NoneZeroArea]
+                OutData[ui.txtRun.currentText()] = reshape_1Dvector(Run[NoneZeroArea])
 
                 RunT = InData[ui.txtTRun.currentText()]
-                OutData[ui.txtTRun.currentText()] = RunT[NoneZeroAreaT]
+                OutData[ui.txtTRun.currentText()] = reshape_1Dvector(RunT[NoneZeroAreaT])
             except:
                 print("Cannot load Run ID!")
                 return
@@ -689,10 +689,10 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
         if ui.cbCounter.isChecked():
             try:
                 Counter = InData[ui.txtCounter.currentText()]
-                OutData[ui.txtCounter.currentText()] = Counter[NoneZeroArea]
+                OutData[ui.txtCounter.currentText()] = reshape_1Dvector(Counter[NoneZeroArea])
 
                 CounterT = InData[ui.txtTCounter.currentText()]
-                OutData[ui.txtTCounter.currentText()] = CounterT[NoneZeroAreaT]
+                OutData[ui.txtTCounter.currentText()] = reshape_1Dvector(CounterT[NoneZeroAreaT])
             except:
                 print("Cannot load Counter ID!")
                 return
@@ -730,9 +730,9 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
         if ui.cbNScan.isChecked():
             try:
                 NScan = InData[ui.txtNScan.currentText()]
-                OutData[ui.txtNScan.currentText()] = NScan[NoneZeroArea]
+                OutData[ui.txtNScan.currentText()] = reshape_1Dvector(NScan[NoneZeroArea])
                 NScanT = InData[ui.txtTNScan.currentText()]
-                OutData[ui.txtTNScan.currentText()] = NScanT[NoneZeroAreaT]
+                OutData[ui.txtTNScan.currentText()] = reshape_1Dvector(NScanT[NoneZeroAreaT])
             except:
                 print("Cannot load NScan ID!")
                 return
@@ -740,7 +740,7 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
 
 
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
         print("Train: Number of selected instances: ", np.shape(NoneZeroArea)[1])
         print("Train: Number of all instances: ", np.shape(Y)[1])
         print("Test: Number of selected instances: ", np.shape(NoneZeroAreaT)[1])
