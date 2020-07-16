@@ -94,7 +94,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAS.addItem("MVPA, SK Classification: Random Forest",80004)
         ui.cbMAS.addItem("SK Classification: Stochastic Gradient Descent based approaches",80003)
         ui.cbMAS.addItem("SK Classification: Support Vector Machine (libsvm)",10000)
-        ui.cbMAS.addItem("MatLab, MVPA, Atlas-based ensemble analysis", 99999)
+        ui.cbMAS.addItem("Atlas-based ensemble analysis", 99999)
 
 
         dialog.setWindowTitle("easy fMRI model analysis - V" + getVersion() + "B" + getBuild())

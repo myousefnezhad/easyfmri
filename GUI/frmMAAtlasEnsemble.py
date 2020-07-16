@@ -20,18 +20,19 @@
 
 import os
 import sys
-
 import numpy as np
 import nibabel as nb
 import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.svm import LinearSVC
-from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
-from sklearn.linear_model import LogisticRegression
+from GUI.frmMAAtlasEnsembleGUI import *
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from GUI.frmMAAtlasEnsembleGUI import *
+from IO.mainIO import mainIO_load, mainIO_save
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
+
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -106,10 +107,6 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
         ui.txtEvents2.setFont(font2)
         ui.txtEvents2.setPlainText(EventCode2(),"","")
 
-
-
-
-
         # Precision Avg
         ui.cbPrecisionAvg.addItem("weighted","weighted")
         ui.cbPrecisionAvg.addItem("micro","micro")
@@ -164,13 +161,13 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
 
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Train Filter
@@ -284,7 +281,7 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
 
                 try:
                     ImgHDR = nb.load(roi_file)
-                    ImgDAT = ImgHDR.get_data()
+                    ImgDAT = np.asanyarray(ImgHDR.dataobj)
                     Area = np.unique(ImgDAT)
                     Area = Area[np.where(Area != 0)[0]]
                     print(f'Regions are {Area}')
@@ -299,7 +296,7 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
 
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -340,7 +337,7 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
 
         try:
             AtlasHdr = nb.load(InAtlas)
-            AtlasImg = AtlasHdr.get_data()
+            AtlasImg = np.asanyarray(AtlasHdr.dataobj)
             AtlasShape = np.shape(AtlasImg)
             if np.shape(AtlasShape)[0] != 3:
                 msgBox.setText("Atlas must be 3D image")
@@ -417,7 +414,7 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                 return False
             # Load InData
             try:
-                InData = io.loadmat(InFile)
+                InData = mainIO_load(InFile)
             except:
                 print(f"FOLD {fold}: Cannot load file: {InFile}")
                 return False
@@ -847,7 +844,7 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
 
 
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("Atlas-based ensemble analysis is done.")
         msgBox.setIcon(QMessageBox.Information)
