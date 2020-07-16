@@ -22,7 +22,6 @@ import os
 import sys
 import time
 import numpy as np
-import scipy.io as io
 import scipy.linalg as lg
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
