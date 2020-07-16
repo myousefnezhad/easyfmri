@@ -245,7 +245,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.cbTA.addItem("Temporal Alignment with intersection strategy", 20001)
 
         # Functional Alignment
-        ui.cbFA.addItem("MatLab: GPU Hyperalignment (GPUHA)", 10008)
+        ui.cbFA.addItem("GPU Hyperalignment (GPUHA)", 10008)
         ui.cbFA.addItem("MatLab: Supervised Hyperalignment (SHA)", 10011)
         ui.cbFA.addItem("MatLab: Deep Hyperalignment (DHA)", 10100)
         ui.cbFA.addItem("MatLab: Robust Deep Hyperalignment (RDHA)", 10101)
