@@ -86,8 +86,8 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         # Supervised
         ui.cbMAS.addItem("PyTorch (GPU) Support Vector Machine",10003)
         ui.cbMAS.addItem("SK Classification: AdaBoost",80005)
-        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Decision Tree",80001)
-        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Gaussian Naive Bayes",80000)
+        ui.cbMAS.addItem("SK Classification: Decision Tree",80001)
+        ui.cbMAS.addItem("SK Classification: Gaussian Naive Bayes",80000)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Linear Support Vector Machine (liblinear)",10001)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Multi-Layer Perceptron (MLP)",80002)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Nu Support Vector Machine (libsvm)",10002)
