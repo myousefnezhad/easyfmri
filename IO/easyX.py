@@ -38,18 +38,23 @@ class easyX:
         rawGroup = hf.create_group("raw")
         for k in data.keys():
             try:
+                if verbose:
+                    print('\x1b[0m' + f"SAVE::RAW::{k}", end='')
                 rawGroup.create_dataset(k, data=data[k])
                 if verbose:
-                    print(f"Raw data \"{k}\" is saved!")
+                    print('\x1b[32m' + " ✓" + '\x1b[0m')
             except:
                 binaryKeys.append(k)
+                print('\x1b[0m' + " [" + '\x1b[94m' + "R2B" + '\x1b[0m' + "]" + '\x1b[0m')
         # Save Binary data
         binaryGroup = hf.create_group("binary")
         for bk in binaryKeys:
             try:
+                if verbose:
+                    print('\x1b[0m' + f"SAVE::BINARY::{bk}", end='')
                 binaryGroup.create_dataset(bk, data=self._obj_to_binary(data[bk]))
                 if verbose:
-                    print(f"Binary data \"{bk}\" is saved!")
+                    print('\x1b[32m' + " ✓" + '\x1b[0m')
             except Exception as e:
                 raise Exception(f"Cannot save data: \"{bk}\"\n" + str(e))
         hf.close()
@@ -80,9 +85,12 @@ class easyX:
                 except:
                     pass
             if is_load:
+                if verbose:
+                    print('\x1b[0m' + f"LOAD::RAW::{k}" , end='')
                 out[k] = np.asarray(rawData[k])
                 if verbose:
-                    print(f"Raw data {k} is loaded!")
+                    print('\x1b[32m' + " ✓" + '\x1b[0m')
+
         # Load Binary data
         binaryData = hf['binary']
         for bk in binaryData.keys():
@@ -95,9 +103,11 @@ class easyX:
                 except:
                     pass
             if is_load:
+                if verbose:
+                    print('\x1b[0m' + f"LOAD::BINARY::{bk}", end='')
                 out[bk] = self._binary_to_obj(np.asarray(binaryData[bk]))
                 if verbose:
-                    print(f"Binary data {bk} is loaded!")
+                    print('\x1b[32m' + " ✓" + '\x1b[0m')
         return out
 
     def load_keys(self, fname):
