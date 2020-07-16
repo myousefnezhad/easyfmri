@@ -20,21 +20,22 @@
 
 import os
 import sys
-
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
+from GUI.frmMADTGUI import *
 from sklearn import preprocessing
+from Base.dialogs import LoadFile, SaveFile
+from Base.utility import getVersion, getBuild
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
+
+
 # Python 3.8: Support both old and new joblib
 try:
     from sklearn.externals import joblib
 except:
     import joblib
-from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
-from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild
-from GUI.frmMADTGUI import *
 
 
 class frmMADT(Ui_frmMADT):
