@@ -62,7 +62,7 @@ class Tools:
         combobox.addItem("Feature Analysis: Create Transformation Matrix",  30001)
         combobox.addItem("Feature Analysis: Convert EasyData to MatLab",  30002)
         combobox.addItem("Feature Analysis: Convert EasyData to easyX",  30006)
-        combobox.addItem("Feature Analysis: MatLab: Combine Datasets",  30003)
+        combobox.addItem("Feature Analysis: Combine Datasets",  30003)
         combobox.addItem("Feature Analysis: MatLab: Remove Rest Scans (before cross validation)",  30004)
         combobox.addItem("Feature Analysis: MatLab: Remove Rest Scans (after cross validation)",  30005)
         # Alignment
