@@ -18,9 +18,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import numpy as np
+
+def reshape_condition_cell(x):
+    try:
+        if isinstance(x, np.ndarray):
+            return x[0]
+    except:
+        pass
+    return x
+
 
 class Conditions:
-
     def __init__(self):
         self.Conditions = list()
 

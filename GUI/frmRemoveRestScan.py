@@ -20,15 +20,14 @@
 
 import os
 import sys
-
 import numpy as np
-import scipy.io as io
-from Base.Conditions import Conditions
+from Base.Conditions import Conditions, reshape_condition_cell
 from PyQt5.QtWidgets import *
 from sklearn.preprocessing import label_binarize
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmRemoveRestScanGUI import *
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 
 
 class frmRemoveRestScan(Ui_frmRemoveRestScan):
@@ -69,12 +68,12 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
         dialog.close()
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -190,6 +189,7 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
                             try:
                                 ui.txtClassName.addItem("")
                                 for condition in Cond:
+                                    print(f"{condition[0][0]}::{condition[1][0]}")
                                     ui.txtClassName.addItem(condition[0][0])
                             except:
                                 ui.txtClassName.clear()
@@ -218,40 +218,44 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
                 print("File not found!")
 
     def btnLoadCondition_click(self):
-        msgBox = QMessageBox()
-        # InFile
-        InFile = ui.txtInFile.text()
-        if not len(InFile):
-            msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-
-        if not os.path.isfile(InFile):
-            msgBox.setText("Input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-
-        InData = io.loadmat(InFile)
         try:
-            Cond = InData[ui.txtCond.currentText()]
+            msgBox = QMessageBox()
+            # InFile
+            InFile = ui.txtInFile.text()
+            if not len(InFile):
+                msgBox.setText("Please enter input file!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            if not os.path.isfile(InFile):
+                msgBox.setText("Input file not found!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            InData = mainIO_load(InFile)
+            try:
+                Cond = InData[ui.txtCond.currentText()]
+            except:
+                msgBox.setText("Cannot find Condition ID!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+            ui.txtClassName.clear()
+            ui.txtClassName.addItem("")
+            for condition in Cond:
+                print(f"{condition[0][0]}::{condition[1][0]}")
+                ui.txtClassName.addItem(condition[0][0])
         except:
-            msgBox.setText("Cannot find Condition ID!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        ui.txtClassName.clear()
-        ui.txtClassName.addItem("")
-        for condition in Cond:
-            ui.txtClassName.addItem(condition[0][0])
+            print("Cannot read conditions!")
 
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -396,9 +400,9 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
             msgBox.exec_()
             return False
 
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         OutData = dict()
-        OutData["imgShape"] = InData["imgShape"]
+        OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
 
         # Condition
         if ui.cbCond.isChecked():
@@ -406,56 +410,50 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
                 Cond = InData[ui.txtCond.currentText()]
                 New_Condition = Conditions()
                 for condition in Cond:
-                    if condition[0][0] != ui.txtClassName.currentText():
-                        New_Condition.add_cond(condition[0][0],condition[1][0])
+                    if reshape_condition_cell(condition[0]) != ui.txtClassName.currentText():
+                        New_Condition.add_cond(reshape_condition_cell(condition[0]),
+                                               reshape_condition_cell(condition[1]))
 
-                OutData[ui.txtCond.currentText()] = np.array(New_Condition.get_cond(),dtype=object)
+                OutData[ui.txtCond.currentText()] = np.array(New_Condition.get_cond(), dtype=object)
             except Exception as e:
                 print(e)
                 print("Cannot load Condition ID!")
                 return
-
+        # Label
         try:
             Y = InData[ui.txtLabel.currentText()]
         except:
             print("Cannot load class labels!")
             return
-
         if not len(np.where(Y == ClassID)[0]):
             msgBox.setText("There is no label  with this Class ID!")
             msgBox.setIcon(QMessageBox.Critical)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
-
-
         NoneZeroArea = np.where(Y != ClassID)
         New_Y = Y[NoneZeroArea]
-        OutData[ui.txtLabel.currentText()] = New_Y
-
-
+        OutData[ui.txtLabel.currentText()] = reshape_1Dvector(New_Y)
+        # Data
         try:
             X = InData[ui.txtData.currentText()]
         except:
             print("Cannot load data")
             return
         OutData[ui.txtData.currentText()] = X[NoneZeroArea[1]]
-
         # Subject
         if ui.cbSubject.isChecked():
             try:
                 Subject = InData[ui.txtSubject.currentText()]
-                OutData[ui.txtSubject.currentText()] = Subject[NoneZeroArea]
+                OutData[ui.txtSubject.currentText()] = reshape_1Dvector(Subject[NoneZeroArea])
             except:
                 print("Cannot load Subject ID!")
                 return
-
         # Task
         if ui.cbTask.isChecked():
             try:
-                Task = InData[ui.txtTask.currentText()]
-                OutData[ui.txtTask.currentText()] = np.array(Task[NoneZeroArea],dtype=object)
+                Task = np.array(InData[ui.txtTask.currentText()])
+                OutData[ui.txtTask.currentText()] = reshape_1Dvector(np.array(Task[NoneZeroArea],dtype=object))
             except:
                 print("Cannot load Task ID!")
                 return
@@ -464,7 +462,7 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
         if ui.cbRun.isChecked():
             try:
                 Run = InData[ui.txtRun.currentText()]
-                OutData[ui.txtRun.currentText()] = Run[NoneZeroArea]
+                OutData[ui.txtRun.currentText()] = reshape_1Dvector(Run[NoneZeroArea])
             except:
                 print("Cannot load Run ID!")
                 return
@@ -473,7 +471,7 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
         if ui.cbCounter.isChecked():
             try:
                 Counter = InData[ui.txtCounter.currentText()]
-                OutData[ui.txtCounter.currentText()] = Counter[NoneZeroArea]
+                OutData[ui.txtCounter.currentText()] = reshape_1Dvector(Counter[NoneZeroArea])
             except:
                 print("Cannot load Counter ID!")
                 return
@@ -507,7 +505,7 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
         if ui.cbNScan.isChecked():
             try:
                 NScan = InData[ui.txtNScan.currentText()]
-                OutData[ui.txtNScan.currentText()] = NScan[NoneZeroArea]
+                OutData[ui.txtNScan.currentText()] = reshape_1Dvector(NScan[NoneZeroArea])
             except:
                 print("Cannot load NScan ID!")
                 return
@@ -515,7 +513,7 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
 
 
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
         print("Number of selected instances: ", np.shape(NoneZeroArea)[1])
         print("Number of all instances: ", np.shape(Y)[1])
         print("DONE.")
