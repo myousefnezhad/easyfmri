@@ -69,7 +69,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
 
         ui.tabWidget.setCurrentIndex(0)
         # Unsupervised
-        ui.cbMAU.addItem("MatLab, Shared Similarity Analysis (SSA)", 30000)
+        ui.cbMAU.addItem("Shared Similarity Analysis (SSA)", 30000)
         ui.cbMAU.addItem("MatLab, RSA (Group Level)",20008)
         ui.cbMAU.addItem("MatLab, Bayesian RSA (Group Level)",20001)
         ui.cbMAU.addItem("MatLab, Gradient RSA (Group Level)",20003)
