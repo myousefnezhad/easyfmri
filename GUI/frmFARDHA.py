@@ -30,7 +30,7 @@ from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmFARDHAGUI import *
 from GUI.frmMLPDialog import frmLayer
-
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 from Hyperalignment.RDHA import RDHA
 
 
@@ -109,12 +109,12 @@ class frmFARDHA(Ui_frmFARDHA):
         dialog.close()
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Train Data
@@ -360,7 +360,6 @@ class frmFARDHA(Ui_frmFARDHA):
                     ui.cbFoldInfo.setChecked(HasDefualt)
 
                     # set number of features
-                    data = io.loadmat(filename)
                     XShape = np.shape(data[ui.txtITrData.currentText()])
                     ui.txtNumFea.setMaximum(0)
                     ui.txtNumFea.setMaximum(XShape[1])
@@ -379,7 +378,7 @@ class frmFARDHA(Ui_frmFARDHA):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -408,7 +407,6 @@ class frmFARDHA(Ui_frmFARDHA):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-
 
         try:
             Iter = np.int32(ui.txtIter.text())
@@ -511,9 +509,9 @@ class frmFARDHA(Ui_frmFARDHA):
                 msgBox.exec_()
                 return False
 
-            InData = io.loadmat(InFile)
+            InData = mainIO_load(InFile)
             OutData = dict()
-            OutData["imgShape"] = InData["imgShape"]
+            OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
 
             # Data
             if not len(ui.txtITrData.currentText()):
@@ -603,8 +601,8 @@ class frmFARDHA(Ui_frmFARDHA):
                     msgBox.exec_()
                     return False
             try:
-                OutData[ui.txtOTrLabel.text()] = InData[ui.txtITrLabel.currentText()]
-                OutData[ui.txtOTeLabel.text()] = InData[ui.txtITeLabel.currentText()]
+                OutData[ui.txtOTrLabel.text()] = reshape_1Dvector(InData[ui.txtITrLabel.currentText()])
+                OutData[ui.txtOTeLabel.text()] = reshape_1Dvector(InData[ui.txtITeLabel.currentText()])
             except:
                 print("Cannot load labels!")
 
@@ -635,9 +633,9 @@ class frmFARDHA(Ui_frmFARDHA):
                 return False
             try:
                 TrSubject = InData[ui.txtITrSubject.currentText()]
-                OutData[ui.txtOTrSubject.text()] = TrSubject
+                OutData[ui.txtOTrSubject.text()] = reshape_1Dvector(TrSubject)
                 TeSubject = InData[ui.txtITeSubject.currentText()]
-                OutData[ui.txtOTeSubject.text()] = TeSubject
+                OutData[ui.txtOTeSubject.text()] = reshape_1Dvector(TeSubject)
             except:
                 print("Cannot load Subject IDs")
                 return
@@ -669,10 +667,10 @@ class frmFARDHA(Ui_frmFARDHA):
                     msgBox.exec_()
                     return False
                 try:
-                    TrTask = InData[ui.txtITrTask.currentText()]
-                    OutData[ui.txtOTrTask.text()] = TrTask
-                    TeTask = InData[ui.txtITeTask.currentText()]
-                    OutData[ui.txtOTeTask.text()] = TeTask
+                    TrTask = np.asarray(InData[ui.txtITrTask.currentText()])
+                    OutData[ui.txtOTrTask.text()] = reshape_1Dvector(TrTask)
+                    TeTask = np.asarray(InData[ui.txtITeTask.currentText()])
+                    OutData[ui.txtOTeTask.text()] = reshape_1Dvector(TeTask)
                     TrTaskIndex = TrTask.copy()
                     for tasindx, tas in enumerate(np.unique(TrTask)):
                         TrTaskIndex[TrTask == tas] = tasindx + 1
@@ -711,9 +709,9 @@ class frmFARDHA(Ui_frmFARDHA):
                     return False
                 try:
                     TrRun = InData[ui.txtITrRun.currentText()]
-                    OutData[ui.txtOTrRun.text()] = TrRun
+                    OutData[ui.txtOTrRun.text()] = reshape_1Dvector(TrRun)
                     TeRun = InData[ui.txtITeRun.currentText()]
-                    OutData[ui.txtOTeRun.text()] = TeRun
+                    OutData[ui.txtOTeRun.text()] = reshape_1Dvector(TeRun)
                 except:
                     print("Cannot load Runs!")
                     return
@@ -746,9 +744,9 @@ class frmFARDHA(Ui_frmFARDHA):
                     return False
                 try:
                     TrCounter = InData[ui.txtITrCounter.currentText()]
-                    OutData[ui.txtOTrCounter.text()] = TrCounter
+                    OutData[ui.txtOTrCounter.text()] = reshape_1Dvector(TrCounter)
                     TeCounter = InData[ui.txtITeCounter.currentText()]
-                    OutData[ui.txtOTeCounter.text()] = TeCounter
+                    OutData[ui.txtOTeCounter.text()] = reshape_1Dvector(TeCounter)
                 except:
                     print("Cannot load Counters!")
                     return
@@ -874,7 +872,7 @@ class frmFARDHA(Ui_frmFARDHA):
                     msgBox.exec_()
                     return False
                 try:
-                    OutData[ui.txtOFoldID.text()] = InData[ui.txtFoldID.currentText()]
+                    OutData[ui.txtOFoldID.text()] = reshape_1Dvector(InData[ui.txtFoldID.currentText()])
                 except:
                     print("Cannot load Fold ID!")
                     return
@@ -927,8 +925,8 @@ class frmFARDHA(Ui_frmFARDHA):
                     msgBox.exec_()
                     return False
                 try:
-                    OutData[ui.txtOTrScan.text()] = InData[ui.txtITrScan.currentText()]
-                    OutData[ui.txtOTeScan.text()] = InData[ui.txtITeScan.currentText()]
+                    OutData[ui.txtOTrScan.text()] = reshape_1Dvector(InData[ui.txtITrScan.currentText()])
+                    OutData[ui.txtOTeScan.text()] = reshape_1Dvector(InData[ui.txtITeScan.currentText()])
                 except:
                     print("Cannot load NScan!")
                     return
@@ -1114,26 +1112,11 @@ class frmFARDHA(Ui_frmFARDHA):
             HAParam = dict()
             HAParam["Share"] = G
             HAParam["Level"] = FoldStr
-            # HAParam["NetShape"] = np.array(NetShape, dtype=object)
-            # HAParam["ActiveShape"] = np.array(Active, dtype=object)
-            # HAParam["LossType"] = LossType
-            # HAParam["Optimization"] = Optim
-            # HAParam["Iteration"] = Iter
-            # HAParam["Epoch"] = Epoch
-            # HAParam["ItPerEpoch"] = Per
-            # HAParam["Batch"] = Batch
-            # HAParam["LearningRate"] = LearningRate
-            # HAParam["Alpha"] = Alpha
-            # HAParam["Regularization"] = Regularization
-            # HAParam["Norm1"] = ui.cbNorm1.isChecked()
-            # HAParam["Norm2"] = ui.cbNorm2.isChecked()
-            # HAParam["BestResult"] = ui.cbBest.isChecked()
-            # HAParam["DeviceMode"] = ui.cbDevice.currentData()
             OutData["FunctionalAlignment"] = HAParam
             OutData["Runtime"] = time.time() - tic
             totalTime += OutData["Runtime"]
             print("Saving ...")
-            io.savemat(OutFile, mdict=OutData)
+            mainIO_save(OutData, OutFile)
             print("Fold " + str(fold_all) + " is DONE: " + OutFile)
 
         print("Training -> Alignment Error: mean " + str(np.mean(TrFoldErr)) + " std " + str(np.std(TrFoldErr)))
