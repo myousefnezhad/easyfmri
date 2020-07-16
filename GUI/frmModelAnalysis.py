@@ -91,7 +91,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAS.addItem("SK Classification: Linear Support Vector Machine (liblinear)",10001)
         ui.cbMAS.addItem("SK Classification: Multi-Layer Perceptron (MLP)",80002)
         ui.cbMAS.addItem("SK Classification: Nu Support Vector Machine (libsvm)",10002)
-        ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Random Forest",80004)
+        ui.cbMAS.addItem("MVPA, SK Classification: Random Forest",80004)
         ui.cbMAS.addItem("SK Classification: Stochastic Gradient Descent based approaches",80003)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Support Vector Machine (libsvm)",10000)
         ui.cbMAS.addItem("MatLab, MVPA, Atlas-based ensemble analysis", 99999)
