@@ -25,13 +25,13 @@ import time
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
-
 from MVPA.GPUSVM import GPUSVM
-from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
+from GUI.frmMAGPUSVMGUI import *
+from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from sklearn import preprocessing
-from GUI.frmMAGPUSVMGUI import *
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
+from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
 
 # Plot
 import matplotlib
@@ -119,7 +119,7 @@ class frmMASVM(Ui_frmMAGPUSVM):
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    InData = io.loadmat(filename)
+                    InData = mainIO_load(filename)
                     if ui.cbFilterTrID.isChecked():
                         try:
                             # Check Filter ID for training
@@ -183,12 +183,12 @@ class frmMASVM(Ui_frmMAGPUSVM):
         dialog.close()
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Train Filter
@@ -279,7 +279,7 @@ class frmMASVM(Ui_frmMAGPUSVM):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = SaveFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -291,7 +291,7 @@ class frmMASVM(Ui_frmMAGPUSVM):
             ui.txtOutModel.setText(ofile)
 
     def btnOutSim_click(self):
-        ofile = SaveFile("Save data file ...",['data files (*.mat)'],'mat',\
+        ofile = SaveFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutSim.setText(ofile)
@@ -477,7 +477,7 @@ class frmMASVM(Ui_frmMAGPUSVM):
                 msgBox.exec_()
                 return False
 
-            InData = io.loadmat(InFile)
+            InData = mainIO_load(InFile)
             # Data
             if not len(ui.txtITrData.currentText()):
                 msgBox.setText("Please enter Input Train Data variable name!")
@@ -828,60 +828,61 @@ class frmMASVM(Ui_frmMAGPUSVM):
         OutData["Runtime"] = time.time() - tme
         print("Runtime: ", OutData["Runtime"])
         print("Saving ...")
-        io.savemat(OutFile, mdict=OutData)
+        mainIO_save(OutData, OutFile)
 
         if SimFile is not None:
-            Cov = SimW - np.min(SimW) / (np.max(SimW) - np.min(SimW))
-            SimData["SimMat"] = Cov
-            Z = linkage(SimData["SimMat"])
-            # Normalization Z
-            zMin = np.min(Z[:, 2])
-            zMax = np.max(Z[:, 2]) - zMin
-            for zZ, _ in enumerate(Z):
-                Z[zZ, 2] = (Z[zZ, 2] - zMin) / zMax
-                Z[zZ, 2] += 0.1
-            SimData["Linkage"] = Z
-            io.savemat(SimFile, mdict=SimData)
+            if len(SimW) > 1:
+                Cov = SimW - np.min(SimW) / (np.max(SimW) - np.min(SimW))
+                SimData["SimMat"] = Cov
+                Z = linkage(SimData["SimMat"])
+                # Normalization Z
+                zMin = np.min(Z[:, 2])
+                zMax = np.max(Z[:, 2]) - zMin
+                for zZ, _ in enumerate(Z):
+                    Z[zZ, 2] = (Z[zZ, 2] - zMin) / zMax
+                    Z[zZ, 2] += 0.1
+                SimData["Linkage"] = Z
+                mainIO_save(SimData, SimFile)
 
-            if ui.cbSimMatrix.isChecked():
-                NumData = np.shape(Cov)[0]
-                fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
-                plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
-                plt.xlim([0, NumData])
-                plt.ylim([0, NumData])
-                cbar = plt.colorbar()
-                cbar.ax.tick_params(labelsize=FontSize)
-                ax = plt.gca()
-                ax.invert_yaxis()
-                ax.set_aspect(1)
-                ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
-                ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
-                ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
-                ax.grid(False)
-                ax.set_aspect(1)
-                ax.set_frame_on(False)
-                for t in ax.xaxis.get_major_ticks():
-                    t.tick1On = False
-                    t.tick2On = False
-                for t in ax.yaxis.get_major_ticks():
-                    t.tick1On = False
-                    t.tick2On = False
-                if len(ui.txtTitleCorr.text()):
-                    plt.title(ui.txtTitleCorr.text())
-                else:
-                    plt.title('Similarity Analysis')
-                plt.show()
+                if ui.cbSimMatrix.isChecked():
+                    NumData = np.shape(Cov)[0]
+                    fig2 = plt.figure(num=None, figsize=(NumData, NumData), dpi=100)
+                    plt.pcolor(Cov, vmin=np.min(Cov), vmax=np.max(Cov))
+                    plt.xlim([0, NumData])
+                    plt.ylim([0, NumData])
+                    cbar = plt.colorbar()
+                    cbar.ax.tick_params(labelsize=FontSize)
+                    ax = plt.gca()
+                    ax.invert_yaxis()
+                    ax.set_aspect(1)
+                    ax.set_yticks(np.arange(NumData) + 0.5, minor=False)
+                    ax.set_xticks(np.arange(NumData) + 0.5, minor=False)
+                    ax.set_xticklabels(labels, minor=False, fontsize=FontSize, rotation=45)
+                    ax.set_yticklabels(labels, minor=False, fontsize=FontSize)
+                    ax.grid(False)
+                    ax.set_aspect(1)
+                    ax.set_frame_on(False)
+                    for t in ax.xaxis.get_major_ticks():
+                        t.tick1On = False
+                        t.tick2On = False
+                    for t in ax.yaxis.get_major_ticks():
+                        t.tick1On = False
+                        t.tick2On = False
+                    if len(ui.txtTitleCorr.text()):
+                        plt.title(ui.txtTitleCorr.text())
+                    else:
+                        plt.title('Similarity Analysis')
+                    plt.show()
 
-            if ui.cbSimDend.isChecked():
-                fig3 = plt.figure(figsize=(25, 10), )
-                if len(ui.txtTitleDen.text()):
-                    plt.title(ui.txtTitleDen.text())
-                else:            #zMin -= 0.01
+                if ui.cbSimDend.isChecked():
+                    fig3 = plt.figure(figsize=(25, 10), )
+                    if len(ui.txtTitleDen.text()):
+                        plt.title(ui.txtTitleDen.text())
+                    else:            #zMin -= 0.01
 
-                    plt.title('Similarity Analysis')
-                dn = dendrogram(Z, labels=labels, leaf_font_size=FontSize, color_threshold=1, count_sort=True, distance_sort=True)
-                plt.show()
+                        plt.title('Similarity Analysis')
+                    dn = dendrogram(Z, labels=list(labels), leaf_font_size=FontSize, color_threshold=1, count_sort=True, distance_sort=True)
+                    plt.show()
 
         print("DONE.")
         msgBox.setText("GPU Support Vector Classification is done.")
@@ -894,14 +895,14 @@ class frmMASVM(Ui_frmMAGPUSVM):
     def btnRedraw_click(self):
         msgBox = QMessageBox()
 
-        ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = LoadFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
 
         FontSize = ui.txtFontSize.value()
 
         if len(ofile):
             try:
-                Res     = io.loadmat(ofile)
+                Res     = mainIO_load(ofile)
             except:
                 print("Cannot load result file!")
                 msgBox.setText("Cannot load result file!")
@@ -975,7 +976,7 @@ class frmMASVM(Ui_frmMAGPUSVM):
 
             if ui.cbSimDend.isChecked():
                 fig3 = plt.figure(figsize=(25, 10), )
-                dn = dendrogram(Res["Linkage"], labels=labels, leaf_font_size=FontSize, color_threshold=1)
+                dn = dendrogram(Res["Linkage"], labels=list(labels), leaf_font_size=FontSize, color_threshold=1)
                 if len(ui.txtTitleDen.text()):
                     plt.title(ui.txtTitleDen.text())
                 else:
