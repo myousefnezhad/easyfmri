@@ -22,6 +22,7 @@
 import os
 import sys
 import time
+import torch
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
@@ -32,8 +33,8 @@ from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
 from Base.draw import DrawRSA
 from GUI.frmMASSAGUI import *
 from RSA.SSA import SSA
-
-import torch
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
+from Base.Conditions import reshape_condition_cell
 
 # Plot
 import matplotlib
@@ -101,13 +102,13 @@ class frmMASSA(Ui_frmMASSA):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
                     print("Loading ...")
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -213,7 +214,7 @@ class frmMASSA(Ui_frmMASSA):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = SaveFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -333,8 +334,8 @@ class frmMASSA(Ui_frmMASSA):
 
 
         print("Loading ...")
-        InData = io.loadmat(InFile)
-        OutData["imgShape"] = InData["imgShape"]
+        InData = mainIO_load(InFile)
+        OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
 
         # Data
         if not len(ui.txtData.currentText()):
@@ -383,8 +384,7 @@ class frmMASSA(Ui_frmMASSA):
             OutData["condition"] = Cond
             labels = list()
             for con in Cond:
-                labels.append(con[1][0])
-            labels = np.array(labels)
+                labels.append(reshape_condition_cell(con[1]))
             OutData["labels"] = labels
 
         except:
@@ -414,7 +414,7 @@ class frmMASSA(Ui_frmMASSA):
                 msgBox.exec_()
                 return False
         try:
-            TaskTitle = InData[ui.txtTask.currentText()][0]
+            TaskTitle = np.array(InData[ui.txtTask.currentText()][0])
         except:
             msgBox.setText("Task variable name is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -646,11 +646,6 @@ class frmMASSA(Ui_frmMASSA):
 
         if ui.cbCov.isChecked():
             Cov = np.cov(Beta)
-            # OutData["Covariance"]       = Cov
-            # OutData["Covariance_min"]   = np.min(Cov)
-            # OutData["Covariance_max"]   = np.max(Cov)
-            # OutData["Covariance_std"]   = np.std(Cov)
-            # OutData["Covariance_mean"]  = np.mean(Cov)
             covClass = SimilarityMatrixBetweenClass(Cov)
             OutData["Covariance"]       = Cov
             OutData["Covariance_min"]   = covClass.min()
@@ -659,11 +654,6 @@ class frmMASSA(Ui_frmMASSA):
             OutData["Covariance_mean"]  = covClass.mean()
         if ui.cbCorr.isChecked():
             Corr = np.corrcoef(Beta)
-            # OutData["Correlation"]      = Corr
-            # OutData["Correlation_min"]  = np.min(Corr)
-            # OutData["Correlation_max"]  = np.max(Corr)
-            # OutData["Correlation_std"]  = np.std(Corr)
-            # OutData["Correlation_mean"] = np.mean(Corr)
             corClass = SimilarityMatrixBetweenClass(Corr)
             OutData["Correlation"]      = Corr
             OutData["Correlation_min"]  = corClass.min()
@@ -676,7 +666,7 @@ class frmMASSA(Ui_frmMASSA):
         print("Algorithm Runtime: ", OutData["AlgorithmRuntime"])
 
         print("Saving results ...")
-        io.savemat(OutFile, mdict=OutData, do_compression=True)
+        mainIO_save(OutData, OutFile)
         print("Output is saved.")
 
         if ui.cbDiagram.isChecked():
@@ -700,14 +690,14 @@ class frmMASSA(Ui_frmMASSA):
     def btnRedraw_click(self):
         msgBox = QMessageBox()
 
-        ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = LoadFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
 
         FontSize = ui.txtFontSize.value()
 
         if len(ofile):
             try:
-                Res = io.loadmat(ofile)
+                Res = mainIO_load(ofile)
             except:
                 print("Cannot load result file!")
                 msgBox.setText("Cannot load result file!")
@@ -718,7 +708,7 @@ class frmMASSA(Ui_frmMASSA):
 
             # Load Variables
             try:
-                labels  = Res["labels"]
+                labels  = list(Res["labels"])
                 Z       = Res["Linkage"]
                 if ui.cbCorr.isChecked():
                     Corr    = Res["Correlation"]
