@@ -259,7 +259,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         ui.cbFA.addItem("Kernel/SVD Hyperalignment (direct solution, with trans. matrix)", 10007)
         ui.cbFA.addItem("Kernel/SVD Hyperalignment (classical solution)", 10010)
         ui.cbFA.addItem("Principal Component Analysis (PCA) Functional Alignment", 10002)
-        ui.cbFA.addItem("MatLab: Independent Component Analysis (ICA) Functional Alignment", 10003)
+        ui.cbFA.addItem("Independent Component Analysis (ICA) Functional Alignment", 10003)
         ui.cbFA.addItem("MatLab: Linear Discriminant Analysis (LDA) Functional Alignment", 10004)
 
 
