@@ -246,7 +246,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         # Functional Alignment
         ui.cbFA.addItem("GPU Hyperalignment (GPUHA)", 10008)
-        ui.cbFA.addItem("MatLab: Supervised Hyperalignment (SHA)", 10011)
+        ui.cbFA.addItem("Supervised Hyperalignment (SHA)", 10011)
         ui.cbFA.addItem("MatLab: Deep Hyperalignment (DHA)", 10100)
         ui.cbFA.addItem("MatLab: Robust Deep Hyperalignment (RDHA)", 10101)
         ui.cbFA.addItem("MatLab: Regularized Hyperalignment (direct solution, without trans. matrix)", 10001)
