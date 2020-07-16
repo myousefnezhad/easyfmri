@@ -22,9 +22,8 @@ import os
 import sys
 
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
-
+from IO.mainIO import mainIO_load
 from sklearn import preprocessing
 
 # Python 3.8: Support both old and new joblib
@@ -123,13 +122,13 @@ class frmSKModelEditor(Ui_frmSKModelEditor):
 
 
     def btnInData_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                              os.path.dirname(ui.txtInData.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
                     print("Data is loading ...")
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Test Data
@@ -341,7 +340,7 @@ class frmSKModelEditor(Ui_frmSKModelEditor):
             return False
 
         try:
-            InData = io.loadmat(InDataFile)
+            InData = mainIO_load(InDataFile)
         except:
             print("cannot load data file!")
             msgBox.setText("cannot load data file!")
@@ -466,7 +465,7 @@ class frmSKModelEditor(Ui_frmSKModelEditor):
             return False
 
         try:
-            InData = io.loadmat(InDataFile)
+            InData = mainIO_load(InDataFile)
         except:
             print("cannot load data file!")
             msgBox.setText("cannot load data file!")
@@ -573,7 +572,7 @@ class frmSKModelEditor(Ui_frmSKModelEditor):
             return False
 
         try:
-            InData = io.loadmat(InDataFile)
+            InData = mainIO_load(InDataFile)
         except:
             print("cannot load data file!")
             msgBox.setText("cannot load data file!")

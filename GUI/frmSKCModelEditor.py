@@ -22,7 +22,6 @@ import os
 import sys
 
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
 
 from sklearn import preprocessing
@@ -32,9 +31,8 @@ try:
     from sklearn.externals import joblib
 except:
     import joblib
-
+from IO.mainIO import mainIO_load
 from sklearn.metrics import normalized_mutual_info_score, adjusted_mutual_info_score, adjusted_rand_score
-
 from Base.utility import getVersion, getBuild
 from Base.dialogs import LoadFile
 from GUI.frmSKCModelEditorGUI import *
@@ -86,12 +84,12 @@ class frmSKCModelEditor(Ui_frmSKCModelEditor):
 
 
     def btnInData_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                              os.path.dirname(ui.txtInData.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Test Data
@@ -299,7 +297,7 @@ class frmSKCModelEditor(Ui_frmSKCModelEditor):
             return False
 
         try:
-            InData = io.loadmat(InDataFile)
+            InData = mainIO_load(InDataFile)
         except:
             print("cannot load data file!")
             msgBox.setText("cannot load data file!")
