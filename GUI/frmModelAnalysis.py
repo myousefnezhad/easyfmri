@@ -84,7 +84,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("MatLab, Clustering: Spectral",10001)
 
         # Supervised
-        ui.cbMAS.addItem("MatLab, MVPA, PyTorch: GPU Support Vector Machine",10003)
+        ui.cbMAS.addItem("PyTorch (GPU) Support Vector Machine",10003)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: AdaBoost",80005)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Decision Tree",80001)
         ui.cbMAS.addItem("MatLab, MVPA, SK Classification: Gaussian Naive Bayes",80000)

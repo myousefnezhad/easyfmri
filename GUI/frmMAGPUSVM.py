@@ -23,14 +23,13 @@ import os
 import sys
 import time
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
 from MVPA.GPUSVM import GPUSVM
 from GUI.frmMAGPUSVMGUI import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
+from IO.mainIO import mainIO_load, mainIO_save
 from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
 
 # Plot
