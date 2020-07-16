@@ -20,20 +20,17 @@
 
 import os
 import sys
-
 import numpy as np
-import scipy.io as io
-
 import nibabel as nb
 import subprocess as sub
-
+from Base.afni import AFNI
 from PyQt5.QtWidgets import *
+from GUI.frmMatNITFGUI import *
+from Base.utility import strRange
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
-from Base.utility import strRange
-from Base.afni import AFNI
+from IO.mainIO import mainIO_load
 from Base.utility import getVersion, getBuild, getDirSpaceINI, getDirSpace
-from GUI.frmMatNITFGUI import *
 
 class frmMatNITF(Ui_frmMatNITF):
     ui = Ui_frmMatNITF()
@@ -139,12 +136,12 @@ class frmMatNITF(Ui_frmMatNITF):
     def btnInFile_click(self):
         msgBox = QMessageBox()
 
-        filename = LoadFile("Open MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     ui.lbMatrix.setText("Image Shape=" + str(data["imgShape"][0]))
@@ -354,7 +351,7 @@ class frmMatNITF(Ui_frmMatNITF):
             return
 
         try:
-            InData = io.loadmat(InFile)
+            InData = mainIO_load(InFile)
             Mat = InData[ui.txtMatrix.currentText()]
             Coord = InData[ui.txtCoord.currentText()]
             imgShape = InData["imgShape"][0]
