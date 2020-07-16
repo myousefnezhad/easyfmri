@@ -22,14 +22,13 @@ import os
 import sys
 
 import numpy as np
-import scipy.io as io
 from Base.Conditions import Conditions
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from sklearn.preprocessing import label_binarize
-from Base.dialogs import LoadFile, SaveFile, LoadMultiFile
+from Base.dialogs import SaveFile, LoadMultiFile
 from Base.utility import getVersion, getBuild
 from GUI.frmResultReportGUI import *
+from IO.mainIO import mainIO_load
 
 
 class frmResultReport(Ui_frmResultReport):
@@ -71,7 +70,7 @@ class frmResultReport(Ui_frmResultReport):
         dialog.close()
 
     def btnAdd_click(self):
-        files = LoadMultiFile("Select data/results files ...",['Data or Result Files (*.mat *.ezdata *.ezmat)', 'All files (*.*)'],'mat')
+        files = LoadMultiFile("Select data/results files ...",['Data or Result Files (*.ezx *.mat *.ezdata *.ezmat)', 'All files (*.*)'],'ezx')
         if len(files):
             for file in files:
                 item = QListWidgetItem()
@@ -118,7 +117,7 @@ class frmResultReport(Ui_frmResultReport):
         for itemIndx in range(ui.lvFile.count()):
             filename = ui.lvFile.item(itemIndx).text()
             print("Reading " + filename)
-            data = io.loadmat(filename)
+            data = mainIO_load(filename)
             dat1 = ""
 
             if   ui.rbAddress.isChecked():
