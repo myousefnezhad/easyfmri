@@ -24,17 +24,19 @@ import sys
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
+from GUI.frmMAMLPGUI import *
 from sklearn import preprocessing
+from Base.dialogs import LoadFile, SaveFile
+from Base.utility import getVersion, getBuild
+from IO.mainIO import mainIO_load, mainIO_save
 from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
+
 # Python 3.8: Support both old and new joblib
 try:
     from sklearn.externals import joblib
 except:
     import joblib
-from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
-from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild
-from GUI.frmMAMLPGUI import *
 
 
 class frmMAMLP(Ui_frmMAMLP):
@@ -122,7 +124,7 @@ class frmMAMLP(Ui_frmMAMLP):
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    InData = io.loadmat(filename)
+                    InData = mainIO_load(filename)
                     if ui.cbFilterTrID.isChecked():
                         try:
                             # Check Filter ID for training
@@ -185,12 +187,12 @@ class frmMAMLP(Ui_frmMAMLP):
         dialog.close()
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Train Filter
@@ -268,7 +270,7 @@ class frmMAMLP(Ui_frmMAMLP):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = SaveFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -528,7 +530,7 @@ class frmMAMLP(Ui_frmMAMLP):
                 msgBox.exec_()
                 return False
 
-            InData = io.loadmat(InFile)
+            InData = mainIO_load(InFile)
             # Data
             if not len(ui.txtITrData.currentText()):
                 msgBox.setText("Please enter Input Train Data variable name!")
@@ -848,7 +850,7 @@ class frmMAMLP(Ui_frmMAMLP):
         OutData["InputFiles"] = InFileList
 
         print("Saving ...")
-        io.savemat(OutFile, mdict=OutData)
+        mainIO_save(OutData, OutFile)
         print("DONE.")
         msgBox.setText("Multi-layer Perceptron Classifier is done.")
         msgBox.setIcon(QMessageBox.Information)
