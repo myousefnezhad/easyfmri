@@ -123,6 +123,7 @@ class easyX:
         return out
 
 if __name__=="__main__":
+    import time
     fname = "/tmp/a.ezx"
     d = {"a": np.array([[1, 2, 5, 8], [2., 4, 1, 6]]),
          "b": [[1], [2, 4]],
@@ -133,10 +134,12 @@ if __name__=="__main__":
          "data": np.random.rand(100, 1900)
         }
     print("Original data:\n", d)
+    t = time.time()
     ezx = easyX()
     ezx.save(d, fname=fname)
     kout = ezx.load_keys(fname=fname)
     print("Keys:\n", kout)
     out = ezx.load(fname=fname)
     print("Loaded data:\n", out)
+    print(time.time() - t)
 
