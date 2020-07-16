@@ -24,17 +24,16 @@ import sys
 import time
 import torch
 import numpy as np
-import scipy.io as io
-from PyQt5.QtWidgets import *
-from sklearn import preprocessing
-from sklearn.preprocessing import label_binarize
-from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
-from Base.draw import DrawRSA
-from GUI.frmMASSAGUI import *
 from RSA.SSA import SSA
-from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
+from Base.draw import DrawRSA
+from PyQt5.QtWidgets import *
+from GUI.frmMASSAGUI import *
+from sklearn import preprocessing
+from Base.dialogs import LoadFile, SaveFile
+from sklearn.preprocessing import label_binarize
 from Base.Conditions import reshape_condition_cell
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
+from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
 
 # Plot
 import matplotlib
