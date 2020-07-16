@@ -22,13 +22,13 @@ import os
 import sys
 
 import numpy as np
-import scipy.io as io
 from Base.Conditions import Conditions
 from PyQt5.QtWidgets import *
 from sklearn.preprocessing import label_binarize
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
 from GUI.frmCombineDataGUI import *
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 
 
 class frmCombineData(Ui_frmCombineData):
@@ -71,12 +71,12 @@ class frmCombineData(Ui_frmCombineData):
 
 
     def btnInFFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -191,12 +191,12 @@ class frmCombineData(Ui_frmCombineData):
 
 
     def btnInSFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInSFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -310,7 +310,7 @@ class frmCombineData(Ui_frmCombineData):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        ofile = SaveFile("Save data file ...",['Data files (*.ezx *.mat)'],'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -363,21 +363,9 @@ class frmCombineData(Ui_frmCombineData):
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
                 return False
-            # if not len(ui.txtSCondPre.text()):
-            #     msgBox.setText("Please enter the condition prefix!")
-            #     msgBox.setIcon(QMessageBox.Critical)
-            #     msgBox.setStandardButtons(QMessageBox.Ok)
-            #     msgBox.exec_()
-            #     return False
-            # if not len(ui.txtOCondPre.text()):
-            #     msgBox.setText("Please enter the condition prefix!")
-            #     msgBox.setIcon(QMessageBox.Critical)
-            #     msgBox.setStandardButtons(QMessageBox.Ok)
-            #     msgBox.exec_()
-            #     return False
 
-        InFData = io.loadmat(InFFile)
-        InSData = io.loadmat(InSFile)
+        InFData = mainIO_load(InFFile)
+        InSData = mainIO_load(InSFile)
         OutData = dict()
 
 
@@ -422,7 +410,7 @@ class frmCombineData(Ui_frmCombineData):
             print("Both data files must extract from the same size fMRI images!")
             return
 
-        OutData["imgShape"] = InFData["imgShape"]
+        OutData["imgShape"] = reshape_1Dvector(InFData["imgShape"])
 
         # Coordinate
         if ui.cbCol.isChecked():
@@ -494,7 +482,7 @@ class frmCombineData(Ui_frmCombineData):
             InFLUniq = np.unique(InFL)
             InSLUniq = np.unique(InSL)
             if not ui.cbRelabeling.isChecked():
-                OutData[ui.txtOLabel.text()] = np.concatenate((InFL, InSL), 1)[0]
+                OutData[ui.txtOLabel.text()] = reshape_1Dvector(np.concatenate((InFL, InSL), 1)[0])
                 InSLUniqNew = InSLUniq.copy()
             else:
 
@@ -504,7 +492,7 @@ class frmCombineData(Ui_frmCombineData):
                 for lblinx, lbl in enumerate(InSLUniq):
                     InSLNew[np.where(InSL == lbl)] = InSLUniqNew[lblinx]
 
-                OutData[ui.txtOLabel.text()] = np.concatenate((InFL, InSLNew), 1)[0]
+                OutData[ui.txtOLabel.text()] = reshape_1Dvector(np.concatenate((InFL, InSLNew), 1)[0])
 
         except:
             print("Cannot combine Labels!")
@@ -582,7 +570,7 @@ class frmCombineData(Ui_frmCombineData):
                 msgBox.exec_()
                 return False
             try:
-                OutData[ui.txtOSubject.text()] = np.concatenate((InFData[ui.txtFSubject.currentText()],InSData[ui.txtSSubject.currentText()]),1)[0]
+                OutData[ui.txtOSubject.text()] = reshape_1Dvector(np.concatenate((InFData[ui.txtFSubject.currentText()],InSData[ui.txtSSubject.currentText()]),1)[0])
             except:
                 print("Cannot combine Subject IDs!")
                 return
@@ -608,7 +596,7 @@ class frmCombineData(Ui_frmCombineData):
                 msgBox.exec_()
                 return False
             try:
-                OutData[ui.txtOTask.text()] = np.concatenate((InFData[ui.txtFTask.currentText()],InSData[ui.txtSTask.currentText()]),1)[0]
+                OutData[ui.txtOTask.text()] = reshape_1Dvector(np.concatenate((InFData[ui.txtFTask.currentText()],InSData[ui.txtSTask.currentText()]),1)[0])
             except:
                 print("Cannot combine Task IDs!")
                 return
@@ -634,7 +622,7 @@ class frmCombineData(Ui_frmCombineData):
                 msgBox.exec_()
                 return False
             try:
-                OutData[ui.txtORun.text()] = np.concatenate((InFData[ui.txtFRun.currentText()],InSData[ui.txtSRun.currentText()]),1)[0]
+                OutData[ui.txtORun.text()] = reshape_1Dvector(np.concatenate((InFData[ui.txtFRun.currentText()],InSData[ui.txtSRun.currentText()]),1)[0])
             except:
                 print("Cannot combine Run IDs!")
                 return
@@ -660,7 +648,7 @@ class frmCombineData(Ui_frmCombineData):
                 msgBox.exec_()
                 return False
             try:
-                OutData[ui.txtOCounter.text()] = np.concatenate((InFData[ui.txtFCounter.currentText()],InSData[ui.txtSCounter.currentText()]),1)[0]
+                OutData[ui.txtOCounter.text()] = reshape_1Dvector(np.concatenate((InFData[ui.txtFCounter.currentText()],InSData[ui.txtSCounter.currentText()]),1)[0])
             except:
                 print("Cannot combine Counter IDs!")
                 return
@@ -688,7 +676,7 @@ class frmCombineData(Ui_frmCombineData):
                 msgBox.exec_()
                 return False
         try:
-            OutData[ui.txtOScan.text()] = np.concatenate((InFData[ui.txtFScan.currentText()], InSData[ui.txtSScan.currentText()]), 1)[0]
+            OutData[ui.txtOScan.text()] = reshape_1Dvector(np.concatenate((InFData[ui.txtFScan.currentText()], InSData[ui.txtSScan.currentText()]), 1)[0])
         except:
             print("Cannot combine Counter IDs!")
             return
@@ -720,7 +708,7 @@ class frmCombineData(Ui_frmCombineData):
                 return
 
         print("Saving ...")
-        io.savemat(ui.txtOutFile.text(), mdict=OutData)
+        mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("Datasets are combined.")
         msgBox.setIcon(QMessageBox.Information)
