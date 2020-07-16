@@ -555,9 +555,9 @@ class frmFAHA(Ui_frmFAHA):
                     return False
                 try:
                     TrTask = np.asarray(InData[ui.txtITrTask.currentText()])
-                    OutData[ui.txtOTrTask.text()] = TrTask
+                    OutData[ui.txtOTrTask.text()] = reshape_1Dvector(TrTask)
                     TeTask = np.asarray(InData[ui.txtITeTask.currentText()])
-                    OutData[ui.txtOTeTask.text()] = TeTask
+                    OutData[ui.txtOTeTask.text()] = reshape_1Dvector(TeTask)
                     TrTaskIndex = TrTask.copy()
                     for tasindx, tas in enumerate(np.unique(TrTask)):
                         TrTaskIndex[TrTask == tas] = tasindx + 1
