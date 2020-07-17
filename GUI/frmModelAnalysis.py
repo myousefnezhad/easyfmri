@@ -73,7 +73,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("RSA (Group Level)", 20008)
         ui.cbMAU.addItem("Bayesian RSA (Group Level)", 20001)
         ui.cbMAU.addItem("Gradient RSA (Group Level)", 20003)
-        ui.cbMAU.addItem("MatLab, Encoding Analysis (Session Level)", 20007)
+        ui.cbMAU.addItem("Encoding Analysis (Session Level)", 20007)
         ui.cbMAU.addItem("Gradient Encoding Analysis (Session Level) ", 20002)
         ui.cbMAU.addItem("MatLab, Classic Network Analysis ", 40000)
         ui.cbMAU.addItem("MatLab, Classic Network Analysis (ROI-based)", 40001)
