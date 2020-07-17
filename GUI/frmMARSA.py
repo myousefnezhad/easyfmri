@@ -22,21 +22,24 @@
 import os
 import sys
 import time
+import matplotlib
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
+from GUI.frmMARSAGUI import *
 from sklearn import preprocessing
-from sklearn.metrics import mean_squared_error
 import sklearn.linear_model as linmdl
 from Base.dialogs import LoadFile, SaveFile
+from sklearn.metrics import mean_squared_error
+from Base.Conditions import reshape_condition_cell
+from scipy.cluster.hierarchy import dendrogram, linkage
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
-from GUI.frmMARSAGUI import *
+
 
 # Plot
-import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
-from scipy.cluster.hierarchy import dendrogram, linkage
 
 
 
@@ -98,13 +101,13 @@ class frmMARSA(Ui_frmMARSA):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
                     print("Loading ...")
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -208,7 +211,7 @@ class frmMARSA(Ui_frmMARSA):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = SaveFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -324,7 +327,7 @@ class frmMARSA(Ui_frmMARSA):
             msgBox.exec_()
             return False
         print("Loading ...")
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
 
         # Data
         if not len(ui.txtData.currentText()):
@@ -373,8 +376,7 @@ class frmMARSA(Ui_frmMARSA):
             OutData[ui.txtCond.currentText()] = Cond
             labels = list()
             for con in Cond:
-                labels.append(con[1][0])
-            labels = np.array(labels)
+                labels.append(reshape_condition_cell(con[1]))
 
         except:
             msgBox.setText("Condition value is wrong!")
@@ -405,7 +407,7 @@ class frmMARSA(Ui_frmMARSA):
                 msgBox.exec_()
                 return False
         try:
-            TaskTitle = InData[ui.txtTask.currentText()][0]
+            TaskTitle = np.array(InData[ui.txtTask.currentText()][0])
         except:
             msgBox.setText("Task variable name is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -681,7 +683,7 @@ class frmMARSA(Ui_frmMARSA):
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))
         print("Saving results ...")
-        io.savemat(OutFile,mdict=OutData,do_compression=True)
+        mainIO_save(OutData, OutFile)
         print("Output is saved.")
 
 
@@ -770,14 +772,14 @@ class frmMARSA(Ui_frmMARSA):
     def btnRedraw_click(self):
         msgBox = QMessageBox()
 
-        ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = LoadFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
 
         FontSize = ui.txtFontSize.value()
 
         if len(ofile):
             try:
-                Res     = io.loadmat(ofile)
+                Res     = mainIO_load(ofile)
             except:
                 print("Cannot load result file!")
                 msgBox.setText("Cannot load result file!")
@@ -813,8 +815,7 @@ class frmMARSA(Ui_frmMARSA):
 
             labels = list()
             for con in Cond:
-                labels.append(con[1][0])
-            labels = np.array(labels)
+                labels.append(reshape_condition_cell(con[1]))
 
 
 
