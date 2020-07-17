@@ -24,7 +24,6 @@ import time
 import torch
 import matplotlib
 import numpy as np
-import scipy.io as io
 from RSA.GrRSA import GrRSA
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing

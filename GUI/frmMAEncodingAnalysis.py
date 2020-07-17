@@ -22,19 +22,22 @@
 import os
 import sys
 import time
+import matplotlib
 import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
-from sklearn.metrics import mean_squared_error
 import sklearn.linear_model as linmdl
-from scipy.cluster.hierarchy import dendrogram, linkage
-from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
 from GUI.frmMAEncodingAnalysisGUI import *
+from Base.dialogs import LoadFile, SaveFile
+from sklearn.metrics import mean_squared_error
+from IO.mainIO import mainIO_load, mainIO_save
+from scipy.cluster.hierarchy import dendrogram, linkage
+from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
+
+
 
 # Plot
-import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 
