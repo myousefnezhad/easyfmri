@@ -31,12 +31,10 @@ import sklearn.linear_model as linmdl
 from GUI.frmMAEncodingAnalysisGUI import *
 from Base.dialogs import LoadFile, SaveFile
 from sklearn.metrics import mean_squared_error
-from IO.mainIO import mainIO_load, mainIO_save
+from Base.Conditions import reshape_condition_cell
 from scipy.cluster.hierarchy import dendrogram, linkage
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
-
-
-
 # Plot
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
@@ -102,13 +100,13 @@ class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
                     print("Loading ...")
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -205,7 +203,7 @@ class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
                         ui.txtTask.setCurrentText("task")
                         values = np.unique(data["task"])
                         for val in values:
-                            ui.txtTaskVal.addItem(str(val[0]))
+                            ui.txtTaskVal.addItem(str(reshape_condition_cell(val)))
 
 
                     # Condition
@@ -233,7 +231,7 @@ class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
                     # Data
                     ui.txtData.clear()
@@ -323,7 +321,7 @@ class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
                         ui.txtTask.setCurrentText("task")
                         values = np.unique(data["task"])
                         for val in values:
-                            ui.txtTaskVal.addItem(str(val[0]))
+                            ui.txtTaskVal.addItem(str(reshape_condition_cell(val)))
 
                     ui.txtInFile.setText(filename)
                 except Exception as e:
@@ -335,7 +333,7 @@ class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
 
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = SaveFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -451,7 +449,7 @@ class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
             msgBox.exec_()
             return False
         print("Loading ...")
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
 
         # Data
         if not len(ui.txtData.currentText()):
@@ -499,8 +497,7 @@ class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
             OutData[ui.txtCond.currentText()] = Cond
             labels = list()
             for con in Cond:
-                labels.append(con[1][0])
-            labels = np.array(labels)
+                labels.append(reshape_condition_cell(con[1]))
         except:
             msgBox.setText("Condition value is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -541,7 +538,7 @@ class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
             return False
 
         try:
-            TaskTitle = InData[ui.txtTask.currentText()][0]
+            TaskTitle = np.array(InData[ui.txtTask.currentText()][0])
         except:
             msgBox.setText("Task variable name is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -776,7 +773,7 @@ class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))
         print("Saving results ...")
-        io.savemat(OutFile,mdict=OutData,do_compression=True)
+        mainIO_save(OutData, OutFile)
         print("Output is saved.")
         FontSize = ui.txtFontSize.value()
 
@@ -867,19 +864,19 @@ class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
     def btnRedraw_click(self):
         msgBox = QMessageBox()
 
-        ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = LoadFile("Load result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
 
         FontSize = ui.txtFontSize.value()
         if len(ofile):
             try:
-                Res     = io.loadmat(ofile)
-                LUnique = Res["Label"][0]
+                Res     = mainIO_load(ofile)
+                LUnique = reshape_1Dvector(Res["Label"])[0]
                 LNum    = np.shape(LUnique)[0]
                 SubID   = Res["SubjectID"]
                 ConID   = Res["CounterID"]
                 RunID   = Res["RunID"]
-                TaskIDTitle = Res["Task"][0]
+                TaskIDTitle = reshape_condition_cell(Res["Task"])
             except:
                 print("Cannot load result file!")
                 msgBox.setText("Cannot load result file!")
@@ -915,9 +912,7 @@ class frmMAEncodingAnalysis(Ui_frmMAEncodingAnalysis):
 
             labels = list()
             for con in Cond:
-                labels.append(con[1][0])
-            labels = np.array(labels)
-
+                labels.append(reshape_condition_cell(con[1]))
 
             if ui.cbCorr.isChecked():
                 try:

@@ -936,7 +936,7 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
                 SubID   = Res["SubjectID"]
                 ConID   = Res["CounterID"]
                 RunID   = Res["RunID"]
-                TaskIDTitle = Res["Task"]
+                TaskIDTitle = reshape_condition_cell(Res["Task"])
             except:
                 print("Cannot load result file!")
                 msgBox.setText("Cannot load result file!")
