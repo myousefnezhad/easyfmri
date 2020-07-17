@@ -20,22 +20,22 @@
 
 import os
 import sys
-
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
+from GUI.frmMABirchGUI import *
 from sklearn import preprocessing
 from sklearn.cluster import Birch
+from sklearn.metrics import accuracy_score
+from Base.dialogs import LoadFile, SaveFile
+from Base.utility import getVersion, getBuild
+from IO.mainIO import mainIO_load, mainIO_save
+from sklearn.metrics import normalized_mutual_info_score, adjusted_mutual_info_score, adjusted_rand_score
 # Python 3.8: Support both old and new joblib
 try:
     from sklearn.externals import joblib
 except:
     import joblib
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import normalized_mutual_info_score, adjusted_mutual_info_score, adjusted_rand_score
-from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild
-from GUI.frmMABirchGUI import *
+
 
 
 class frmMABirch(Ui_frmMABirch):
@@ -75,12 +75,12 @@ class frmMABirch(Ui_frmMABirch):
         dialog.close()
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Train Data
@@ -119,7 +119,7 @@ class frmMABirch(Ui_frmMABirch):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = SaveFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -216,7 +216,7 @@ class frmMABirch(Ui_frmMABirch):
             msgBox.exec_()
             return False
 
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Input Train Data variable name!")
@@ -293,7 +293,7 @@ class frmMABirch(Ui_frmMABirch):
             print("Adjusted Mutual Information (AMI)   {:7.6f}".format(AMI))
 
         print("Saving ...")
-        io.savemat(OutFile, mdict=OutData)
+        mainIO_save(OutData, OutFile)
         print("DONE.")
         msgBox.setText("Birch Clustering is done.")
         msgBox.setIcon(QMessageBox.Information)
