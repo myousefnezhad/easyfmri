@@ -24,16 +24,15 @@ import sys
 import time
 import matplotlib
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
 from GUI.frmMARSAGUI import *
 from sklearn import preprocessing
 import sklearn.linear_model as linmdl
 from Base.dialogs import LoadFile, SaveFile
 from sklearn.metrics import mean_squared_error
+from IO.mainIO import mainIO_load, mainIO_save
 from Base.Conditions import reshape_condition_cell
 from scipy.cluster.hierarchy import dendrogram, linkage
-from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
 
 
