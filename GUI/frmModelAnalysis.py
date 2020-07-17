@@ -79,8 +79,8 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("Classic Network Analysis (ROI-based)", 40001)
         ui.cbMAU.addItem("Clustering: Agglomerative", 10002)
         ui.cbMAU.addItem("Clustering: Birch", 10003)
-        ui.cbMAU.addItem("MatLab, Clustering: Gaussian Mixture", 10004)
-        ui.cbMAU.addItem("MatLab, Clustering: KMeans", 10000)
+        ui.cbMAU.addItem("Clustering: Gaussian Mixture", 10004)
+        ui.cbMAU.addItem("Clustering: KMeans", 10000)
         ui.cbMAU.addItem("MatLab, Clustering: Spectral", 10001)
 
         # Supervised
