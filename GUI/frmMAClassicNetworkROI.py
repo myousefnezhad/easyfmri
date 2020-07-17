@@ -26,7 +26,6 @@ import logging
 import matplotlib
 import numpy as np
 import nibabel as nb
-import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from nilearn import plotting

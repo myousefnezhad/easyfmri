@@ -25,17 +25,20 @@ import numpy as np
 import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
+from GUI.frmMAAgglomerativeGUI import *
+from sklearn.metrics import accuracy_score
+from Base.dialogs import LoadFile, SaveFile
+from Base.utility import getVersion, getBuild
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import normalized_mutual_info_score, adjusted_mutual_info_score, adjusted_rand_score
+
+
 # Python 3.8: Support both old and new joblib
 try:
     from sklearn.externals import joblib
 except:
     import joblib
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import normalized_mutual_info_score, adjusted_mutual_info_score, adjusted_rand_score
-from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild
-from GUI.frmMAAgglomerativeGUI import *
+
 
 
 class frmMAAgglomerative(Ui_frmMAAgglomerative):
