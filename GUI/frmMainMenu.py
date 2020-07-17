@@ -71,6 +71,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         except:
             pass
         print(20*"#" + " Software Information " + 20*"#")
+        print(f"easy fMRI - V{getVersion()}B{getBuild()} ({getGitBranch()})")
         try:
             ezdir = str(os.environ['EASYFMRI'])
             if len(ezdir):
