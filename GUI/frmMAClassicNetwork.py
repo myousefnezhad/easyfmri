@@ -26,27 +26,22 @@ import logging
 import matplotlib
 import numpy as np
 import nibabel as nb
-import scipy.io as io
 from nilearn import plotting
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from GUI.frmMAClassicNetworkGUI import *
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-
+from IO.mainIO import mainIO_load, mainIO_save
 from Base.Conditions import reshape_condition_cell
 from Visualization.Connectome import PlotConnectome
-
-from scipy.cluster.hierarchy import dendrogram, linkage
 from Network.DistanceNetwork import ClassicNetworkAnalysis
-from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
-
-
 
 # Plot
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 
+# Code
 logging.basicConfig(level=logging.DEBUG)
 from pyqode.core import api
 from pyqode.core import modes
