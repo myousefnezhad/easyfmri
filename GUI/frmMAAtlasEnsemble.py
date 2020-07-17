@@ -153,6 +153,71 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
         ui.btnOutFile.clicked.connect(self.btnOutFile_click)
         ui.btnConvert.clicked.connect(self.btnConvert_click)
         ui.btnAtlas.clicked.connect(self.btnAtlas_click)
+        ui.btnShowFilterContent.clicked.connect(self.btnShowFilterContent_click)
+
+    def btnShowFilterContent_click(self):
+        msgBox = QMessageBox()
+        filename = ui.txtInFile.text()
+        if len(filename):
+            if os.path.isfile(filename):
+                try:
+                    InData = mainIO_load(filename)
+                    if ui.cbFilterTrID.isChecked():
+                        try:
+                            # Check Filter ID for training
+                            if not len(ui.txtFilterTrID.currentText()):
+                                msgBox.setText("Please enter variable name for training filter!")
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
+                                return False
+                            TrF = InData[ui.txtFilterTrID.currentText()][0]
+                            fstr = ""
+                            fconnect = ""
+                            for filter in np.unique(TrF):
+                                fstr += fconnect
+                                fstr += str(filter)
+                                fconnect = ", "
+                            print("Training Reference Content:", fstr)
+                        except:
+                            print("Reference filter for training is wrong!")
+                            msgBox.setText("Reference filter for training is wrong!")
+                            msgBox.setIcon(QMessageBox.Critical)
+                            msgBox.setStandardButtons(QMessageBox.Ok)
+                            msgBox.exec_()
+                            return
+
+                    # Ref Filter Test
+                    if ui.cbFilterTeID.isChecked():
+                        try:
+                            # Check Filter ID for testing
+                            if not len(ui.txtFilterTeID.currentText()):
+                                msgBox.setText("Please enter variable name for testing filter!")
+                                msgBox.setIcon(QMessageBox.Critical)
+                                msgBox.setStandardButtons(QMessageBox.Ok)
+                                msgBox.exec_()
+                                return False
+                            TeF = InData[ui.txtFilterTeID.currentText()][0]
+                            fstr = ""
+                            fconnect = ""
+                            for filter in np.unique(TeF):
+                                fstr += fconnect
+                                fstr += str(filter)
+                                fconnect = ", "
+                            print("Testing  Reference Content:", fstr)
+                        except:
+                            print("Reference filter for testing is wrong!")
+                            msgBox.setText("Reference filter for testing is wrong!")
+                            msgBox.setIcon(QMessageBox.Critical)
+                            msgBox.setStandardButtons(QMessageBox.Ok)
+                            msgBox.exec_()
+                            return
+                except Exception as e:
+                    print(e)
+                    print("Cannot load data file!")
+                    return
+            else:
+                print("File not found!")
 
 
     def btnClose_click(self):
