@@ -20,9 +20,8 @@
 
 
 import sys
-
-from GUI.frmModelAnalysisGUI import *
 from Base.tools import Tools
+from GUI.frmModelAnalysisGUI import *
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -81,7 +80,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("Clustering: Birch", 10003)
         ui.cbMAU.addItem("Clustering: Gaussian Mixture", 10004)
         ui.cbMAU.addItem("Clustering: KMeans", 10000)
-        ui.cbMAU.addItem("MatLab, Clustering: Spectral", 10001)
+        ui.cbMAU.addItem("Clustering: Spectral", 10001)
 
         # Supervised
         ui.cbMAS.addItem("PyTorch (GPU) Support Vector Machine",10003)
@@ -226,9 +225,6 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
             from GUI.frmMAAdaBoost import frmMAAdaBoost
             frmMAAdaBoost.show(frmMAAdaBoost)
             return
-
-
-
         if MAID == 99999:
             from GUI.frmMAAtlasEnsemble import frmMAAtlasEnsemble
             frmMAAtlasEnsemble.show(frmMAAtlasEnsemble)

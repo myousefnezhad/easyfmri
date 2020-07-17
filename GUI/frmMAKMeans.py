@@ -22,7 +22,6 @@
 import os
 import sys
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
 from GUI.frmMAKMeansGUI import *
 from sklearn import preprocessing
