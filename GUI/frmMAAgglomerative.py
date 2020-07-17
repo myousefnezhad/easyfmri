@@ -21,16 +21,14 @@
 import os
 import sys
 import numpy as np
-import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from GUI.frmMAAgglomerativeGUI import *
 from sklearn.metrics import accuracy_score
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from Base.Conditions import reshape_condition_cell
+from IO.mainIO import mainIO_load, mainIO_save
 from sklearn.cluster import AgglomerativeClustering
-from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 from sklearn.metrics import normalized_mutual_info_score, adjusted_mutual_info_score, adjusted_rand_score
 # Python 3.8: Support both old and new joblib
 try:
