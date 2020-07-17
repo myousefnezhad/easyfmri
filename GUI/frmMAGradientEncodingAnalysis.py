@@ -21,18 +21,22 @@
 import os
 import sys
 import time
+import torch
+import matplotlib
 import numpy as np
 import scipy.io as io
+from RSA.GrRSA import GrRSA
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
-from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
-import torch
-from RSA.GrRSA import GrRSA
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 from GUI.frmMAGradientEncodingAnalysisGUI import *
+from Base.Conditions import reshape_condition_cell
+from Base.utility import getVersion, getBuild, SimilarityMatrixBetweenClass
+
+
 
 # Plot
-import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import dendrogram, linkage
@@ -120,13 +124,13 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
                     print("Loading ...")
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -231,9 +235,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
                             HasDefualt = True
                     if HasDefualt:
                         ui.txtTask.setCurrentText("task")
-                        values = np.unique(data["task"])
+                        values = np.unique(np.asarray(data["task"]))
                         for val in values:
-                            ui.txtTaskVal.addItem(str(val[0]))
+                            ui.txtTaskVal.addItem(str(reshape_condition_cell(val)))
 
                     ui.txtInFile.setText(filename)
                     print("DONE.")
@@ -250,7 +254,7 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
         if len(filename):
             if os.path.isfile(filename):
                 try:
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
                     # Data
                     ui.txtData.clear()
@@ -350,7 +354,7 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
                         ui.txtTask.setCurrentText("task")
                         values = np.unique(data["task"])
                         for val in values:
-                            ui.txtTaskVal.addItem(str(val[0]))
+                            ui.txtTaskVal.addItem(str(reshape_condition_cell(val)))
 
                     ui.txtInFile.setText(filename)
                 except Exception as e:
@@ -362,7 +366,7 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
 
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = SaveFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -494,7 +498,7 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
             msgBox.exec_()
             return False
         print("Loading ...")
-        InData = io.loadmat(InFile)
+        InData = mainIO_load(InFile)
 
         # Data
         if not len(ui.txtData.currentText()):
@@ -542,8 +546,7 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
             OutData[ui.txtCond.currentText()] = Cond
             labels = list()
             for con in Cond:
-                labels.append(con[1][0])
-            labels = np.array(labels)
+                labels.append(reshape_condition_cell(con[1]))
         except:
             msgBox.setText("Condition value is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -586,7 +589,7 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
             return False
 
         try:
-            TaskTitle = InData[ui.txtTask.currentText()][0]
+            TaskTitle = np.array(InData[ui.txtTask.currentText()][0])
         except:
             msgBox.setText("Task variable name is wrong!")
             msgBox.setIcon(QMessageBox.Critical)
@@ -831,7 +834,7 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
         OutData["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (OutData["RunTime"]))
         print("Saving results ...")
-        io.savemat(OutFile,mdict=OutData,do_compression=True)
+        mainIO_save(OutData, OutFile)
         print("Output is saved.")
 
         if ui.cbDiagram.isChecked():
@@ -921,20 +924,20 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
     def btnRedraw_click(self):
         msgBox = QMessageBox()
 
-        ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = LoadFile("Load result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
 
         FontSize = ui.txtFontSize.value()
 
         if len(ofile):
             try:
-                Res     = io.loadmat(ofile)
-                LUnique = Res["Label"][0]
+                Res     = mainIO_load(ofile)
+                LUnique = reshape_1Dvector(Res["Label"])[0]
                 LNum    = np.shape(LUnique)[0]
                 SubID   = Res["SubjectID"]
                 ConID   = Res["CounterID"]
                 RunID   = Res["RunID"]
-                TaskIDTitle = Res["Task"][0]
+                TaskIDTitle = Res["Task"]
             except:
                 print("Cannot load result file!")
                 msgBox.setText("Cannot load result file!")
@@ -970,8 +973,7 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
 
             labels = list()
             for con in Cond:
-                labels.append(con[1][0])
-            labels = np.array(labels)
+                labels.append(reshape_condition_cell(con[1]))
 
 
             if ui.cbCorr.isChecked():
@@ -1068,70 +1070,70 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
                 plt.title('Gradient RSA: Similarity Analysis\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
             plt.show()
 
-    def btnRedraw_clickq(self):
-        msgBox = QMessageBox()
-
-        ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
-                             os.path.dirname(ui.txtOutFile.text()))
-        if len(ofile):
-            try:
-                Res     = io.loadmat(ofile)
-                LUnique = Res["Label"][0]
-                LNum    = np.shape(LUnique)[0]
-                SubID   = Res["SubjectID"]
-                ConID   = Res["CounterID"]
-                RunID   = Res["RunID"]
-                TaskIDTitle = Res["Task"][0]
-            except:
-                print("Cannot load result file!")
-                msgBox.setText("Cannot load result file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-
-            if ui.cbCorr.isChecked():
-                try:
-                    Corr = Res["Correlation"]
-                except:
-                    print("Cannot load Correlation variable!")
-                    msgBox.setText("Cannot load Correlation variable!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                    return False
-                fig1 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Corr, vmin=-0.1, vmax=1)
-                plt.xlim([0, LNum])
-                plt.ylim([0, LNum])
-                plt.colorbar()
-                ax = plt.gca()
-                ax.set_aspect(1)
-                plt.title('Correlation (' + MethodTitle(str(Res['Method']['Type'][0][0][0])) + \
-                          ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
-                plt.show()
-
-
-            if ui.cbCov.isChecked():
-                try:
-                    Cov = Res["Covariance"]
-                except:
-                    print("Cannot load Covariance variable!")
-                    msgBox.setText("Cannot load Covariance variable!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
-                    return False
-                fig2 = plt.figure(num=None, figsize=(5, 5), dpi=100)
-                plt.pcolor(Cov)
-                plt.xlim([0, LNum])
-                plt.ylim([0, LNum])
-                plt.colorbar()
-                ax = plt.gca()
-                ax.set_aspect(1)
-                plt.title('Covariance (' + MethodTitle(str(Res['Method']['Type'][0][0][0])) + \
-                          ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
-                plt.show()
+    # def btnRedraw_clickq(self):
+    #     msgBox = QMessageBox()
+    #
+    #     ofile = LoadFile("Load result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
+    #                          os.path.dirname(ui.txtOutFile.text()))
+    #     if len(ofile):
+    #         try:
+    #             Res     = mainIO_load(ofile)
+    #             LUnique = Res["Label"][0]
+    #             LNum    = np.shape(LUnique)[0]
+    #             SubID   = Res["SubjectID"]
+    #             ConID   = Res["CounterID"]
+    #             RunID   = Res["RunID"]
+    #             TaskIDTitle = Res["Task"][0]
+    #         except:
+    #             print("Cannot load result file!")
+    #             msgBox.setText("Cannot load result file!")
+    #             msgBox.setIcon(QMessageBox.Critical)
+    #             msgBox.setStandardButtons(QMessageBox.Ok)
+    #             msgBox.exec_()
+    #             return False
+    #
+    #         if ui.cbCorr.isChecked():
+    #             try:
+    #                 Corr = Res["Correlation"]
+    #             except:
+    #                 print("Cannot load Correlation variable!")
+    #                 msgBox.setText("Cannot load Correlation variable!")
+    #                 msgBox.setIcon(QMessageBox.Critical)
+    #                 msgBox.setStandardButtons(QMessageBox.Ok)
+    #                 msgBox.exec_()
+    #                 return False
+    #             fig1 = plt.figure(num=None, figsize=(5, 5), dpi=100)
+    #             plt.pcolor(Corr, vmin=-0.1, vmax=1)
+    #             plt.xlim([0, LNum])
+    #             plt.ylim([0, LNum])
+    #             plt.colorbar()
+    #             ax = plt.gca()
+    #             ax.set_aspect(1)
+    #             plt.title('Correlation (' + MethodTitle(str(Res['Method']['Type'][0][0][0])) + \
+    #                       ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+    #             plt.show()
+    #
+    #
+    #         if ui.cbCov.isChecked():
+    #             try:
+    #                 Cov = Res["Covariance"]
+    #             except:
+    #                 print("Cannot load Covariance variable!")
+    #                 msgBox.setText("Cannot load Covariance variable!")
+    #                 msgBox.setIcon(QMessageBox.Critical)
+    #                 msgBox.setStandardButtons(QMessageBox.Ok)
+    #                 msgBox.exec_()
+    #                 return False
+    #             fig2 = plt.figure(num=None, figsize=(5, 5), dpi=100)
+    #             plt.pcolor(Cov)
+    #             plt.xlim([0, LNum])
+    #             plt.ylim([0, LNum])
+    #             plt.colorbar()
+    #             ax = plt.gca()
+    #             ax.set_aspect(1)
+    #             plt.title('Covariance (' + MethodTitle(str(Res['Method']['Type'][0][0][0])) + \
+    #                       ')\nTask: %s\nSub: %d, Counter: %d, Run: %d' % (TaskIDTitle, SubID, ConID, RunID))
+    #             plt.show()
 
 
 if __name__ == '__main__':
