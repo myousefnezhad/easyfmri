@@ -77,7 +77,7 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
         ui.cbMAU.addItem("Gradient Encoding Analysis (Session Level) ", 20002)
         ui.cbMAU.addItem("Classic Network Analysis ", 40000)
         ui.cbMAU.addItem("Classic Network Analysis (ROI-based)", 40001)
-        ui.cbMAU.addItem("MatLab, Clustering: Agglomerative", 10002)
+        ui.cbMAU.addItem("Clustering: Agglomerative", 10002)
         ui.cbMAU.addItem("MatLab, Clustering: Birch", 10003)
         ui.cbMAU.addItem("MatLab, Clustering: Gaussian Mixture", 10004)
         ui.cbMAU.addItem("MatLab, Clustering: KMeans", 10000)
