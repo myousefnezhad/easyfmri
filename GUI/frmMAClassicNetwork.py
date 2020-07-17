@@ -154,7 +154,7 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
 
                 try:
                     ImgHDR = nb.load(roi_file)
-                    ImgDAT = ImgHDR.get_data()
+                    ImgDAT = np.asanyarray(ImgHDR.dataobj)
                     Area = np.unique(ImgDAT)
                     ui.lblRegion.setText(f"Number of regions: {len(Area)}")
                     for a in Area:

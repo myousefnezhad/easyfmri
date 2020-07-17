@@ -22,25 +22,27 @@
 import os
 import sys
 import time
+import logging
+import matplotlib
 import numpy as np
 import nibabel as nb
 import scipy.io as io
 from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from nilearn import plotting
+from GUI.frmMAClassicNetworkROIGUI import *
 from Base.dialogs import LoadFile, SaveFile
+from Base.utility import getVersion, getBuild
+from IO.mainIO import mainIO_load, mainIO_save
+from Base.Conditions import reshape_condition_cell
 from Visualization.Connectome import PlotConnectome
 from Network.DistanceNetwork import ClassicNetworkAnalysisROI
-from Base.utility import getVersion, getBuild
-from GUI.frmMAClassicNetworkROIGUI import *
 
 # Plot
-import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
-from scipy.cluster.hierarchy import dendrogram, linkage
 
-import logging
+# Code
 logging.basicConfig(level=logging.DEBUG)
 from pyqode.core import api
 from pyqode.core import modes
@@ -153,7 +155,7 @@ class frmMAClassicNetworkROI(Ui_frmMAClassicNetworkROI):
 
                 try:
                     ImgHDR = nb.load(roi_file)
-                    ImgDAT = ImgHDR.get_data()
+                    ImgDAT = np.asanyarray(ImgHDR.dataobj)
                     Area = np.unique(ImgDAT)
                     ui.lblRegion.setText(f"Number of regions: {len(Area)}")
                     for a in Area:
@@ -171,13 +173,13 @@ class frmMAClassicNetworkROI(Ui_frmMAClassicNetworkROI):
 
 
     def btnInFile_click(self):
-        filename = LoadFile("Load MatLab data file ...",['MatLab files (*.mat)'],'mat',\
+        filename = LoadFile("Load data file ...",['Data files (*.ezx *.mat *.ezdata)'],'ezx',\
                             os.path.dirname(ui.txtInFile.text()))
         if len(filename):
             if os.path.isfile(filename):
                 try:
                     print("Loading ...")
-                    data = io.loadmat(filename)
+                    data = mainIO_load(filename)
                     Keys = data.keys()
 
                     # Data
@@ -243,7 +245,7 @@ class frmMAClassicNetworkROI(Ui_frmMAClassicNetworkROI):
                 print("File not found!")
 
     def btnOutFile_click(self):
-        ofile = SaveFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = SaveFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                              os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             ui.txtOutFile.setText(ofile)
@@ -359,7 +361,7 @@ class frmMAClassicNetworkROI(Ui_frmMAClassicNetworkROI):
 
         try:
             AtlasHDR    = nb.load(AtlasFile)
-            AtlasImg    = np.asanyarray(AtlasHDR.dataobj) # AtlasHDR.get_data() #
+            AtlasImg    = np.asanyarray(AtlasHDR.dataobj)
             AtlasReg    = np.unique(AtlasImg)
             if not 0 in RegionFilter:
                 AtlasReg    = AtlasReg[np.where(AtlasReg != 0)[0]]
@@ -389,7 +391,7 @@ class frmMAClassicNetworkROI(Ui_frmMAClassicNetworkROI):
 
         try:
             print("Loading ...")
-            InData = io.loadmat(InFile)
+            InData = mainIO_load(InFile)
             imgShape = InData["imgShape"][0]
         except:
             print("Cannot load data!")
@@ -431,7 +433,7 @@ class frmMAClassicNetworkROI(Ui_frmMAClassicNetworkROI):
                 OutData[ui.txtCond.currentText()] = Cond
                 labels = list()
                 for con in Cond:
-                    labels.append(con[1][0])
+                    labels.append(reshape_condition_cell(con[1]))
                 labels = np.array(labels)
         except:
             msgBox.setText("Condition value is wrong!")
@@ -491,12 +493,12 @@ class frmMAClassicNetworkROI(Ui_frmMAClassicNetworkROI):
         Out["RunTime"] = time.time() - tStart
         print("Runtime (s): %f" % (Out["RunTime"]))
         print("Saving results ...")
-        io.savemat(OutFile, mdict=Out, do_compression=True)
+        mainIO_save(Out, OutFile)
         print("Output is saved.")
         if ui.cbDiagram.isChecked():
             for nnIndex, (nn, tnn) in enumerate(zip(Net, ThrNet)):
                 try:
-                    Title = f"Label: {Cond[nnIndex][1][0]}"
+                    Title = f"Label: {reshape_condition_cell(Cond[nnIndex][1])}"
                 except:
                     Title = f"Label: {nnIndex}"
                 PlotConnectome(tnn, ACoord, Title, EdgeThreshold)
@@ -526,12 +528,12 @@ class frmMAClassicNetworkROI(Ui_frmMAClassicNetworkROI):
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
             return False
-        ofile = LoadFile("Save result file ...",['Result files (*.mat)'],'mat',\
+        ofile = LoadFile("Save result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                          os.path.dirname(ui.txtOutFile.text()))
         if len(ofile):
             Out = {}
             try:
-                Out = io.loadmat(ofile)
+                Out = mainIO_load(ofile)
             except:
                 print("Cannot load result file!")
                 msgBox.setText("Cannot load result file!")
@@ -545,7 +547,7 @@ class frmMAClassicNetworkROI(Ui_frmMAClassicNetworkROI):
             for nnIndex, (nn, tnn) in enumerate(zip(Net, ThrNet)):
                 try:
                     Cond = Out["condition"]
-                    Title = f"Label: {Cond[nnIndex][1][0]}"
+                    Title = f"Label: {reshape_condition_cell(Cond[nnIndex][1])}"
                 except:
                     Title = f"Label: {nnIndex}"
                 PlotConnectome(tnn, ACoord, Title, EdgeThreshold)
