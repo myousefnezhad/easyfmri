@@ -77,7 +77,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             if len(ezdir):
                 ui.txtEZDIR.setText(ezdir)
                 assert os.path.isfile(ezdir + "/main.py")
-                print("Easy fMRI directory is " + ezdir)
+                print(f"Software directory: {ezdir}")
             else:
                 print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript or ~/.zstartupscript")
                 msgBox = QMessageBox()
