@@ -45,7 +45,7 @@ def getGitBranch(dir=None):
 
         out = check_output(["git", "branch"], cwd=dir).decode("utf8")
         current = next(line for line in out.split("\n") if line.startswith("*"))
-        print(current.strip("*").strip())
+        #print(current.strip("*").strip())
         branch = current.strip("*").strip()
         return branch
     except:
