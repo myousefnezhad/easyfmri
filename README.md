@@ -329,20 +329,20 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
 ## STEP D: Install Python 
 
-### Option 1: Install Python 3.8.x (via [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) and Python 3.7) [preferred]
+### Install Python 3.8.x via [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) [preferred]
 
-* Download [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) for Python **3.7**
+* Download [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) for Python **3.8**
 
     * Note: In Windows 10, you must install the linux version of Miniconda 3
 
 
-* Install Python 3.7
-    * For Linux:
+* Install Python 3.8
+    * For Linux ([download link](https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh)):
         ```
         sh Miniconda3-latest-Linux-<platform>.sh
         ```
     
-    * For Mac: click PKG file and continue installation.
+    * For Mac ([download link](https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.pkg)): click PKG file and continue installation.
         * Note: [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) will be installed in `/opt/miniconda3` by default in Mac.
 
 * Load environment variables: 
@@ -355,78 +355,12 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
         source ~/.zstartupscript # for zsh
         ```
 
-* Update Conda Components: 
+* Update Conda components and install easy fMRI required python packages by using: 
     ```
     conda update --all
-    ```
-
-
-* NOW UPDATE Python 3.7.x to Python 3.8.x:
-    ```
-    conda install python=3.8
-    conda update --all
-    ```
-
-* Install easy fMRI required python packages by using: 
-    ```
     conda install numpy scipy qt pyqt ipython matplotlib pandas seaborn psutil statsmodels
     conda install -c conda-forge mpi4py scikit-learn
     pip install -U future nibabel nitime nilearn pyqode.core pyqode.qt pydicom matplotlib h5py
-    ```
-
-* Install [PyTorch](https://pytorch.org/) package:
-    * In Linux (with [NVIDIA GPU](https://www.nvidia.com/en-us/)):
-        ```
-        conda install pytorch torchvision cudatoolkit=10.2 -c pytorch
-        ```
-    * In Linux (only CPU):
-        ```
-        conda install pytorch torchvision cpuonly -c pytorch
-        ```
-    * In Mac:
-        ```
-        conda install pytorch torchvision -c pytorch
-        ```
-
-
-### Option 2: Install Python 3.7.x (Anaconda) [just for old systems]
-
-* Download [Anaconda3](https://anaconda.org/) for Python 3.7
-    * Note: In Windows 10, you must install the linux version of Anaconda 3
-
-* Install Python 3.7
-    * For Linux:
-        ```
-        sh Anaconda3-<version>-Linux<platform>.sh
-        ```
-    * For Mac: click PKG file and continue installation.
-
-
-* Load environment variables: 
-
-    * You have to edit both `~/.startupscript` and `~/.zstartupscript` and set the [Anaconda3](https://anaconda.org/) path as `ANACON_PATH`. 
-    
-    * Then:
-        ```
-        source ~/.startupscript # for bash
-        source ~/.zstartupscript # for zsh
-        ```
-* Update Conda Components: 
-    ```
-    conda update --all
-    ```
-* Update `pip`: 
-    ```
-    pip install -U pip
-    ```
-* Install `mpi4py`:
-    ```
-    conda install -c conda-forge mpi4py
-    ```
-
-* Install easy fMRI required python packages by using: 
-    ```
-    pip install -U future nibabel nitime nilearn pyqode.core pyqode.qt pydicom h5py
     ```
 
 * Install [PyTorch](https://pytorch.org/) package:
