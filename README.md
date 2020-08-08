@@ -329,7 +329,7 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
 ## STEP D: Install Python 
 
-### Install Python 3.8.x via [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) [preferred]
+### Install Python 3.8.x via [Miniconda3](https://docs.conda.io/en/latest/miniconda.html)
 
 * Download [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) for Python **3.8**
 
