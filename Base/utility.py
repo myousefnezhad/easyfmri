@@ -34,19 +34,17 @@ def About():
 </center>
 <h4>Websites:</h4> 
 <center>
-<h4><a href=\"https://easyfmri.gitlab.io\">https://easyfmri.gitlab.io</a></h4>
-<h4><a href=\"https://easyfmri.github.io\">https://easyfmri.github.io</a></h4>
+<h4><a href=\"https://easyfmri.learningbymachine.com/\">https://easyfmri.learningbymachine.com/</a></h4>
 </center>
 
 <h4>Data repository:</h4>
 <center>
-<h4><a href=\"https://easydata.gitlab.io\">https://easydata.gitlab.io</a></h4>
-<h4><a href=\"https://easyfmridata.github.io\">https://easyfmridata.github.io</a></h4>
+<h4><a href=\"https://easydata.learningbymachine.com/\">https://easydata.learningbymachine.com/</a></h4>
 </center>
 
 <h4>Created by:</h4>
 <center>
-<h4><a href=\"https://myousefnezhad.gitlab.io\">Tony Muhammad Yousefnezhad</a>,</h4>
+<h4><a href=\"https://learningbymachine.com/\">Tony Muhammad Yousefnezhad</a>,</h4>
 <h4><a href=\"https://www.ualberta.ca/\">University of Alberta</a>, Canada.<h4>
 </center>
 """
