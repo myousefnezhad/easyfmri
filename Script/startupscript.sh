@@ -16,7 +16,13 @@ export EN_EZFMRI="1"
 # This sets python base direcotry based on $ANACON_PATH
 export EN_PYTHON="1"
 # This enables iPython by default when you run python in terminal
-export EN_PYTHON_ALIAS="1"
+export EN_PYTHON_ALIAS="0"
+# easy fMRI: Python/Conda environment
+export EV_EZFMRI="easyfmri"
+# Disable conda base environment by default
+export DI_CONDA_BASE="1"
+# Run Conda init at startup
+export EN_CONDA_INIT="1"
 # This sets julia base direcotry
 export EN_JULIA="1"
 # This sets AFNI base directory based on $AFNI_PATH
@@ -71,7 +77,7 @@ export INSTALL_DIR="$HOME"
 # Base directory of FSL
 export FSLDIR="/usr/local/fsl"  # for FSL 5.0.1x
 # Base directory of Anaconda (Python 3.7.x)
-export ANACON_PATH="$INSTALL_DIR/miniconda3/bin"
+export ANACON_PATH="$INSTALL_DIR/miniconda3"
 # Base directory of Julia
 export JULIA_PATH="$INSTALL_DIR/julia/bin"
 # Base direcory of AFNI
@@ -110,7 +116,23 @@ fi
 
 ######## Python
 if (( $EN_PYTHON != "0" )); then
-  export PATH="$ANACON_PATH:$PATH"
+  export PATH="$ANACON_PATH/bin:$PATH"
+  if (( $DI_CONDA_BASE != "0" )); then
+    conda config --set auto_activate_base false
+  fi
+  if (( $EN_CONDA_INIT != "0" )); then
+    __conda_setup="$('$ANACON_PATH/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+    if [ $? -eq 0 ]; then
+        eval "$__conda_setup"
+    else
+        if [ -f "$ANACON_PATH/etc/profile.d/conda.sh" ]; then
+            . "$ANACON_PATH/etc/profile.d/conda.sh"
+        else
+            export PATH="$ANACON_PATH/bin:$PATH"
+        fi
+    fi
+    unset __conda_setup
+  fi
 fi
 if (( $EN_PYTHON_ALIAS != "0" )); then
   alias python="python -m IPython"

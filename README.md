@@ -337,6 +337,12 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
 
 * Install Python 3.8
+    * Note: **DO NOT** add conda init to the startup, becuase you will handle conda via easy fMRI startup script. e.g., say no to this question:
+      ```
+      Do you wish the installer to initialize Miniconda3
+      by running conda init? [yes|no]
+      ```
+
     * For Linux ([download link](https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh)):
         ```
         sh Miniconda3-latest-Linux-<platform>.sh
@@ -354,9 +360,19 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
         source ~/.startupscript # for bash
         source ~/.zstartupscript # for zsh
         ```
+* Update Python in the base environment:
+    ```
+    conda update --all
+    ```
+
+* Creating the easy fMRI environment:
+    ```
+    conda create --name easyfmri python=3.8
+    ```
 
 * Update Conda components and install easy fMRI required python packages by using: 
     ```
+    conda activate easyfmri 
     conda update --all
     conda install numpy scipy qt pyqt ipython matplotlib pandas seaborn psutil statsmodels
     conda install -c conda-forge mpi4py scikit-learn

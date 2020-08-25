@@ -1,4 +1,5 @@
 #!/bin/bash
 source $HOME/.startupscript
+conda activate $EV_EZFMRI
 cd $EASYFMRI
 python main.py &
