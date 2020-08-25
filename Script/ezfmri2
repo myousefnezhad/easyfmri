@@ -1,4 +1,12 @@
 #!/bin/bash
-conda activate $EV_EZFMRI
+if grep -q "bash" <<< "$SHELL"; then
+        source $HOME/.startupscript
+        echo "Running from BASH"
+else
+        source $HOME/.zstartupscript
+        echo "Running from ZSH"
+fi
 cd $EASYFMRI
+source $ANACON_PATH/etc/profile.d/conda.sh
+conda activate $EV_EZFMRI
 python main.py

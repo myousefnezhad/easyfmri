@@ -1,7 +1,15 @@
 #!/bin/bash
+if grep -q "bash" <<< "$SHELL"; then
+        source $HOME/.startupscript
+        echo "Running from BASH"
+else
+        source $HOME/.zstartupscript
+        echo "Running from ZSH"
+fi
 export QT_SCALE_FACTOR=1
 export QT_AUTO_SCREEN_SCALE_FACTOR=0
 export QT_SCREEN_SCALE_FACTORS=$SCREEN_SCALE
-conda activate $EV_EZFMRI
 cd $EASYFMRI
+source $ANACON_PATH/etc/profile.d/conda.sh
+conda activate $EV_EZFMRI
 python main.py
