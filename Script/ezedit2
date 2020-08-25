@@ -1,7 +1,6 @@
 #!/bin/bash
 InputDataFile=$1
 CurrPath=$(pwd)
-source $HOME/.startupscript
 conda activate $EV_EZFMRI
 cd $EASYFMRI
 python ezedit.py $InputDataFile $CurrPath
