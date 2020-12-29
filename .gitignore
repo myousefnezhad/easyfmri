@@ -18,3 +18,4 @@ Script/.DS_Store
 Visualization/__pycache__/*
 history
 .DS_Store
+.vscode/*

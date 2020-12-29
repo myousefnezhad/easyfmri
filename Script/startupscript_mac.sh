@@ -15,6 +15,8 @@
 export EN_EZFMRI="1"
 # This sets python base direcotry based on $ANACON_PATH
 export EN_PYTHON="1"
+# This sets (the conda) python path as default --- not recommend if you need your OS python, e.g., Arch Linux
+export EN_PYTHON_PATH="0"
 # This enables iPython by default when you run python in terminal
 export EN_PYTHON_ALIAS="0"
 # easy fMRI: Python/Conda environment
@@ -116,9 +118,8 @@ fi
 
 ######## Python
 if (( $EN_PYTHON != "0" )); then
-  export PATH="$ANACON_PATH/bin:$PATH"
-  if (( $DI_CONDA_BASE != "0" )); then
-    conda config --set auto_activate_base false
+  if (( $EN_PYTHON_PATH != "0" )); then
+    export PATH="$ANACON_PATH/bin:$PATH"
   fi
   if (( $EN_CONDA_INIT != "0" )); then
     __conda_setup="$('$ANACON_PATH/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
@@ -132,6 +133,11 @@ if (( $EN_PYTHON != "0" )); then
         fi
     fi
     unset __conda_setup
+    if (( $DI_CONDA_BASE != "0" )); then
+      conda config --set auto_activate_base false
+    else
+      conda config --set auto_activate_base true
+    fi
   fi
 fi
 if (( $EN_PYTHON_ALIAS != "0" )); then
