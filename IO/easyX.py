@@ -1,4 +1,4 @@
-# Copyright (c) 2014--2020 Tony (Muhammad) Yousefnezhad
+# Copyright (c) 2020 Tony Muhammad Yousefnezhad
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,11 @@ class easyX:
         return codecs.encode(pickle.dumps(objdat), "base64").decode()
 
     def _binary_to_obj(self, bdata):
-        return pickle.loads(codecs.decode(str(bdata).encode(), "base64"))
+        return pickle.loads(codecs.decode(str(np.array(bdata, dtype=str)).encode(), "base64"))
+        # Althernatively:
+        #return pickle.loads(codecs.decode(str(np.array2string(bdata)[2:-1]).replace("\\n", "").encode(), "base64"))
+        # Failed
+        #return pickle.loads(codecs.decode(str(bdata).encode(), "base64"))
 
     def save(self, data, fname, verbose=True):
         binaryKeys = list()
@@ -123,23 +127,27 @@ class easyX:
         return out
 
 if __name__=="__main__":
-    import time
-    fname = "/tmp/a.ezx"
+    # Create a complex data structre
     d = {"a": np.array([[1, 2, 5, 8], [2., 4, 1, 6]]),
          "b": [[1], [2, 4]],
          "c": [[1, 20], [7, 4]],
          "d": "Hi There",
          "e": ["A", "B"],
          "f": [["a", "b"], ["c", "d"]],
-         "data": np.random.rand(100, 1900)
+         "data": np.random.rand(100, 1000)
         }
     print("Original data:\n", d)
-    t = time.time()
+    # Example 1: Save dict to a file
     ezx = easyX()
+    fname = "/tmp/a.ezx"
     ezx.save(d, fname=fname)
-    kout = ezx.load_keys(fname=fname)
+    # Example 2: Load a file to dict
+    ezx = easyX()
+    fname = "/tmp/a.ezx"
+    data = ezx.load(fname=fname)
+    print("Loaded data:\n", data)
+    # Example 3: Load only the keys in a file to a dict
+    ezx = easyX()
+    fname = "/tmp/a.ezx"
+    keys = ezx.load_keys(fname=fname)
     print("Keys:\n", kout)
-    out = ezx.load(fname=fname)
-    print("Loaded data:\n", out)
-    print(time.time() - t)
-
