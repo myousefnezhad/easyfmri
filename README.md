@@ -9,9 +9,7 @@ This project is developing by [Tony Yousefnezhad](https://myousefnezhad.gitlab.i
 
 * The project website: 
 
-    * [https://easyfmri.learningbymachine.com/](https://easyfmri.learningbymachine.com/) [preferred]
-
-
+    * [https://easyfmri.learningbymachine.com/](https://easyfmri.learningbymachine.com/) 
 
 * Data repository:
 
@@ -22,7 +20,6 @@ This project is developing by [Tony Yousefnezhad](https://myousefnezhad.gitlab.i
     * [https://gitlab.com/easyfmri/easyfmri](https://gitlab.com/easyfmri/easyfmri) [preferred]
 
     * [https://github.com/easyfmri/easyfmri](https://github.com/easyfmri/easyfmri)
-
 
 # Dependencies
 
