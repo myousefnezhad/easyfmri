@@ -7,18 +7,21 @@ Easy fMRI is an open source toolbox for the Human Brain Mapping and Decoding —
 This project is developing by [Tony Yousefnezhad](https://myousefnezhad.gitlab.io/), [University of Albera](https://www.ualberta.ca), Canada.
 
 
-* The project websites: 
+* The project website: 
 
-    * [https://easyfmri.gitlab.io/](https://easyfmri.gitlab.io/) [preferred]
-
-    * [https://easyfmri.github.io/](https://easyfmri.github.io/) 
+    * [https://easyfmri.learningbymachine.com/](https://easyfmri.learningbymachine.com/) [preferred]
 
 
-* Data repositories:
 
-    * [https://easydata.gitlab.io](https://easydata.gitlab.io) [preferred]
+* Data repository:
 
-    * [https://easyfmridata.github.io](https://easyfmridata.github.io)
+    * [https://easydata.learningbymachine.com/](https://easydata.learningbymachine.com/)
+
+* Codebase repositories:
+
+    * [https://gitlab.com/easyfmri/easyfmri](https://gitlab.com/easyfmri/easyfmri) [preferred]
+
+    * [https://github.com/easyfmri/easyfmri](https://github.com/easyfmri/easyfmri)
 
 
 # Dependencies
@@ -29,7 +32,7 @@ Easy fMRI needs following software:
   
     * Note: easy fMRI is natively developed on the last version of [Fedora](https://getfedora.org/) 
   
-  * [Python3](https://anaconda.org/anaconda/python) (version=3.8.x [preferred] or 3.7.x)
+  * [Python3](https://anaconda.org/anaconda/python) (version=3.9.x [preferred], 3.8.x or 3.7.x)
 
   * [FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki) (version=6.0.x [preferred] or 5.0.1x) for preprocessing steps
 
@@ -150,25 +153,25 @@ Easy fMRI needs following software:
 
 * Download `fslinstaller.py`
 
-* Run following for downloading installation file (e.g. In version 6.0.3, the file name is `fsl-6.0.3-macOS_64.tar.gz` for Mac or `fsl-6.0.3-centos7_64.tar.gz` for all Linux distribution)
+* Run following for downloading installation file (e.g. In version 6.0.4, the file name is `fsl-6.0.4-macOS_64.tar.gz` for Mac or `fsl-6.0.4-centos7_64.tar.gz` for all Linux distribution)
 
     * For Linux:
         ```
         python2 fslinstaller.py -o
-        md5sum fsl-6.0.3-centos7_64.tar.gz
+        md5sum fsl-6.0.4-centos7_64.tar.gz
         ```
     
     * For Mac:
         ```
         python2 fslinstaller.py -o
-        md5sum fsl-6.0.3-macOS_64.tar.gz
+        md5sum fsl-6.0.4-macOS_64.tar.gz
         ```
 
 * Install the downloaded file:
 
     * For Linux:
         ```
-        python2 fslinstaller.py -f fsl-6.0.3-centos7_64.tar.gz -M
+        python2 fslinstaller.py -f fsl-6.0.4-centos7_64.tar.gz -M
         export FSLDIR="/usr/local/fsl"
         cd $FSLDIR/etc/fslconf
         source fsl.sh
@@ -179,7 +182,7 @@ Easy fMRI needs following software:
 
     * For Mac:
         ```
-        python2 fslinstaller.py -f fsl-6.0.3-macOS_64.tar.gz -M
+        python2 fslinstaller.py -f fsl-6.0.4-macOS_64.tar.gz -M
         ```
 
 
@@ -329,31 +332,31 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
 ## STEP D: Install Python 
 
-### Install Python 3.8.x via [Miniconda3](https://docs.conda.io/en/latest/miniconda.html)
+### Install Python 3.9.x via [Miniconda3](https://docs.conda.io/en/latest/miniconda.html)
 
-* Download [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) for Python **3.8**
+* Download [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) for Python **3.9**
 
     * Note: In Windows 10, you must install the linux version of Miniconda 3
 
 
-* Install Python 3.8
+* Install Python 3.9
     * Note: **DO NOT** add conda init to the startup, becuase you will handle conda via easy fMRI startup script. e.g., say no to this question:
       ```
       Do you wish the installer to initialize Miniconda3
-      by running conda init? [yes|no]
+      by running conda init? [yes|no] no
       ```
 
-    * For Linux ([download link](https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh)):
+    * For Linux:
         ```
-        sh Miniconda3-latest-Linux-<platform>.sh
+        sh Miniconda3-<version>-Linux-<platform>.sh
         ```
     
-    * For Mac ([download link](https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.pkg)): click PKG file and continue installation.
+    * For Mac: click PKG file and continue installation.
         * Note: [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) will be installed in `/opt/miniconda3` by default in Mac.
 
 * Load environment variables: 
 
-    * You have to edit both `~/.startupscript` and `~/.zstartupscript` and set the [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) path as `ANACON_PATH`. Then:
+    * You have to edit both `~/.startupscript` and `~/.zstartupscript` and set the [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) path as `ANACON_PATH`.
 
     * Then:
         ```
@@ -367,7 +370,7 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
 * Creating the easy fMRI environment:
     ```
-    conda create --name easyfmri python=3.8
+    conda create --name easyfmri python=3.9
     ```
 
 * Update Conda components and install easy fMRI required python packages by using: 
@@ -382,15 +385,15 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 * Install [PyTorch](https://pytorch.org/) package:
     * In Linux (with [NVIDIA GPU](https://www.nvidia.com/en-us/)):
         ```
-        conda install pytorch torchvision cudatoolkit=10.2 -c pytorch
+        conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c conda-forge
         ```
     * In Linux (only CPU):
         ```
-        conda install pytorch torchvision cpuonly -c pytorch
+        conda install pytorch torchvision torchaudio cpuonly -c pytorch -c=conda-forge
         ```
     * In Mac:
         ```
-        conda install pytorch torchvision -c pytorch
+        conda install pytorch torchvision torchaudio -c pytorch -c=conda-forge
         ```
 
 ### Change main repository of `pip` [recommended for China]
