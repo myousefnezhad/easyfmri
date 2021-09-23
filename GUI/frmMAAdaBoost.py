@@ -50,9 +50,16 @@ def BaseAlgorithms():
 # Output name must be \'base\'
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC, LinearSVC, NuSVC
-        
+from sklearn.linear_model import LogisticRegression, RidgeClassifier
+
+# LogisticRegression
+base = LogisticRegression()
+
+# RidgeClassifier
+# base = RidgeClassifier()
+
 # Decision Tree
-base = DecisionTreeClassifier(criterion='gini', splitter='best', max_depth=None, min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features=None, random_state=None, max_leaf_nodes=None, min_impurity_decrease=0.0, min_impurity_split=None, class_weight=None, presort=False)
+#base = DecisionTreeClassifier(criterion='gini', splitter='best', max_depth=None, min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features=None, random_state=None, max_leaf_nodes=None, min_impurity_decrease=0.0, min_impurity_split=None, class_weight=None, presort=False)
     
 # SVC
 #base = SVC(C=1.0, kernel='rbf', degree=3, gamma='auto', coef0=0.0, shrinking=True, probability=False, tol=0.001, cache_size=200, class_weight=None, verbose=False, max_iter=-1, decision_function_shape='ovr', random_state=None)
@@ -99,8 +106,8 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
 
 
         # Kernels
-        ui.cbAlgorithm.addItem("SAMME.R")
         ui.cbAlgorithm.addItem("SAMME")
+        ui.cbAlgorithm.addItem("SAMME.R")
 
 
         # Precision Avg
@@ -643,7 +650,8 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                 print("FoldID = " + str(currFID) + " is testing ...")
                 PeL = clf.predict(TeX)
                 PrL = clf.predict(TrX)
-
+                
+                OutData["fold" + str(currFID) + "_testing_labels_vs_predictions"] = np.concatenate(([TeL], [PeL]), axis=0)
                 OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, np.unique(TeL))
                 OutData["fold" + str(currFID) + "_classification_report"] = classification_report(TeL, PeL)
                 print(OutData["fold" + str(currFID) + "_classification_report"])
