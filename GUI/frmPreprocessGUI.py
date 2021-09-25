@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'frmPreprocessGUI.ui'
+# Form implementation generated from reading ui file 'GUI/frmPreprocessGUI.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -476,6 +476,30 @@ class Ui_frmPreprocess(object):
         self.txtMNI = QtWidgets.QComboBox(self.tab_6)
         self.txtMNI.setGeometry(QtCore.QRect(140, 25, 510, 26))
         self.txtMNI.setObjectName("txtMNI")
+        self.txtfslcmd = QtWidgets.QLineEdit(self.tab_6)
+        self.txtfslcmd.setGeometry(QtCore.QRect(139, 280, 510, 21))
+        self.txtfslcmd.setToolTip("")
+        self.txtfslcmd.setToolTipDuration(-1)
+        self.txtfslcmd.setStatusTip("")
+        self.txtfslcmd.setObjectName("txtfslcmd")
+        self.label_45 = QtWidgets.QLabel(self.tab_6)
+        self.label_45.setGeometry(QtCore.QRect(20, 280, 121, 16))
+        self.label_45.setObjectName("label_45")
+        self.btnfsleyescmd = QtWidgets.QPushButton(self.tab_6)
+        self.btnfsleyescmd.setGeometry(QtCore.QRect(337, 460, 311, 32))
+        self.btnfsleyescmd.setObjectName("btnfsleyescmd")
+        self.txtfsleyescmd = QtWidgets.QLineEdit(self.tab_6)
+        self.txtfsleyescmd.setGeometry(QtCore.QRect(139, 330, 510, 21))
+        self.txtfsleyescmd.setToolTip("")
+        self.txtfsleyescmd.setToolTipDuration(-1)
+        self.txtfsleyescmd.setStatusTip("")
+        self.txtfsleyescmd.setObjectName("txtfsleyescmd")
+        self.label_46 = QtWidgets.QLabel(self.tab_6)
+        self.label_46.setGeometry(QtCore.QRect(20, 330, 121, 16))
+        self.label_46.setObjectName("label_46")
+        self.btnfslcmd = QtWidgets.QPushButton(self.tab_6)
+        self.btnfslcmd.setGeometry(QtCore.QRect(20, 460, 311, 32))
+        self.btnfslcmd.setObjectName("btnfslcmd")
         self.tabWidget.addTab(self.tab_6, "")
         self.tab_7 = QtWidgets.QWidget()
         self.tab_7.setObjectName("tab_7")
@@ -715,6 +739,12 @@ class Ui_frmPreprocess(object):
         self.txtFeat_gui.setText(_translate("frmPreprocess", "/bin/Feat_gui"))
         self.txtbetcmd.setText(_translate("frmPreprocess", "/bin/bet"))
         self.label_40.setText(_translate("frmPreprocess", "bet cmd:"))
+        self.txtfslcmd.setText(_translate("frmPreprocess", "/bin/fsl"))
+        self.label_45.setText(_translate("frmPreprocess", "fsl cmd:"))
+        self.btnfsleyescmd.setText(_translate("frmPreprocess", "FSL Eyes"))
+        self.txtfsleyescmd.setText(_translate("frmPreprocess", "/bin/fsleyes"))
+        self.label_46.setText(_translate("frmPreprocess", "fsleyes cmd:"))
+        self.btnfslcmd.setText(_translate("frmPreprocess", "FSL"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("frmPreprocess", "System"))
         self.btnEstimate.setText(_translate("frmPreprocess", "View Parameters (Feat_gui)"))
         self.btnReportViewer.setText(_translate("frmPreprocess", "View Generated Report"))

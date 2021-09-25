@@ -35,6 +35,8 @@ class FSL:
         self.bet        = None
         self.feat       = None
         self.FeatGUI    = None
+        self.fsl        = None
+        self.fsleyes    = None
         self.flirt      = None
         self.FlirtGUI   = None
         self.platform   = None
@@ -47,6 +49,8 @@ class FSL:
         self.bet        = None
         self.feat       = None
         self.FeatGUI    = None
+        self.fsl        = None
+        self.fsleyes    = None
         self.flirt      = None
         self.FlirtGUI   = None
         self.platform   = None
@@ -70,13 +74,17 @@ class FSL:
                         os.path.isfile(self.FSLDIR + config['DEFAULT']['feat']) and \
                         os.path.isfile(self.FSLDIR + config['DEFAULT']['featgui']) and \
                         os.path.isfile(self.FSLDIR + config['DEFAULT']['flirt']) and \
-                        os.path.isfile(self.FSLDIR + config['DEFAULT']['flirtgui'])):
+                        os.path.isfile(self.FSLDIR + config['DEFAULT']['flirtgui']) and \
+                        os.path.isfile(self.FSLDIR + config['DEFAULT']['fsl']) and \
+                        os.path.isfile(self.FSLDIR + config['DEFAULT']['fsleyes'])):
                         print("Cannot find FSL cmds!")
                         return
                     else:
                         self.bet        = config['DEFAULT']['bet']
                         self.feat       = config['DEFAULT']['feat']
                         self.FeatGUI    = config['DEFAULT']['featgui']
+                        self.fsl        = config['DEFAULT']['fsl']
+                        self.fsleyes    = config['DEFAULT']['fsleyes']
                         self.flirt      = config['DEFAULT']['flirt']
                         self.FlirtGUI   = config['DEFAULT']['flirtgui']
                         self.platform   = platform.system()
@@ -94,11 +102,13 @@ class FSL:
                 # Check for fix path of fsl-complete
                 if os.path.isfile("/usr/bin/fsl5.0-Feat") and os.path.isfile("/usr/bin/fsl5.0-feat") \
                     and os.path.isfile("/usr/bin/fsl5.0-flirt") and os.path.isfile("/usr/bin/fsl5.0-Flirt") \
-                    and os.path.isfile("/usr/bin/fsl5.0-bet"):
+                    and os.path.isfile("/usr/bin/fsl5.0-bet") and os.path.isfile("/usr/bin/fsl5.0-fsl"):
                     self.FSLDIR = "/usr/bin/"
                     self.bet = "fsl5.0-bet"
                     self.feat = "fsl5.0-feat"
                     self.FeatGUI = "fsl5.0-Feat"
+                    self.fsl = "fsl5.0-fsl"
+                    self.fsleyes = "fsl5.0-fsleyes"
                     self.flirt = "fsl5.0-flirt"
                     self.FlirtGUI = "fsl5.0-Flirt"
                     self.platform = "linux"
@@ -159,6 +169,38 @@ class FSL:
                     return
                 else:
                     self.FeatGUI = CMD
+
+                # Try to find fsl
+                if platform.system() == "Linux":
+                    p = sub.Popen(['which', 'fsl'], stdout=sub.PIPE, stderr=sub.PIPE)
+                else:
+                    p = sub.Popen(['which', 'fsl_gui'], stdout=sub.PIPE, stderr=sub.PIPE)
+                CMD, _ = p.communicate()
+                CMD = CMD.decode("utf-8").replace("\n", "")
+                if not len(CMD):
+                    print("Cannot find Feat from $PATH!")
+                    return
+                elif not os.path.isfile(CMD):
+                    print("Cannot find Feat from address!")
+                    return
+                else:
+                    self.fsl = CMD
+
+                # Try to find fsleyes
+                if platform.system() == "Linux":
+                    p = sub.Popen(['which', 'fsleyes'], stdout=sub.PIPE, stderr=sub.PIPE)
+                else:
+                    p = sub.Popen(['which', 'fsleyes_gui'], stdout=sub.PIPE, stderr=sub.PIPE)
+                CMD, _ = p.communicate()
+                CMD = CMD.decode("utf-8").replace("\n", "")
+                if not len(CMD):
+                    print("Cannot find FSL eyes from $PATH!")
+                    return
+                elif not os.path.isfile(CMD):
+                    print("Cannot find FSL eyes from address!")
+                    return
+                else:
+                    self.fsleyes = CMD
 
                 # Try to find flirt
                 p = sub.Popen(['which', 'flirt'], stdout=sub.PIPE, stderr=sub.PIPE)
@@ -226,6 +268,20 @@ class FSL:
                     self.FeatGUI = "/bin/Feat"
                 else:
                     print("$FSLDIR: Cannot find Feat cmd!")
+                    return
+
+                # fsl
+                if os.path.isfile(FSLDIR + "/bin/fsl"):
+                    self.fsl = "/bin/fsl"
+                else:
+                    print("$FSLDIR: Cannot find fsl cmd!")
+                    return
+
+                # fsleyes
+                if os.path.isfile(FSLDIR + "/bin/fsleyes"):
+                    self.fsleyes = "/bin/fsleyes"
+                else:
+                    print("$FSLDIR: Cannot find fsleyes cmd!")
                     return
 
                 # Flirt

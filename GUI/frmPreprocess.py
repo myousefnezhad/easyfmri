@@ -199,6 +199,7 @@ class frmPreprocess(Ui_frmPreprocess):
             ui.txtFeat.setText(fsl.feat)
             ui.txtFeat_gui.setText(fsl.FeatGUI)
             ui.txtbetcmd.setText(fsl.bet)
+            ui.txtfslcmd.setText(fsl.fsl)
 
 
 
@@ -233,6 +234,48 @@ class frmPreprocess(Ui_frmPreprocess):
         ui.btnDelete.clicked.connect(self.btnDelete_click)
         ui.btnTools.clicked.connect(self.btnTools_click)
         ui.cbMode.currentIndexChanged.connect(self.cbMode_change)
+        ui.btnfslcmd.clicked.connect(self.btnfslcmd_click)
+        ui.btnfsleyescmd.clicked.connect(self.btnfsleyescmd_click)
+
+# Open FSL GUI
+    def btnfslcmd_click(self):
+        try:
+            fsl = FSL()
+            fsl.setting()
+            if not fsl.Validate:
+                msgBox = QMessageBox()
+                msgBox.setText("Cannot find FSL setting!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+            else:
+                CMD = fsl.FSLDIR if len(fsl.FSLDIR) else ""            
+                CMD += fsl.fsl
+                if len(CMD):
+                    print(f"Running {CMD} ...")
+                    subprocess.Popen([CMD, ""])
+        except Exception as e:
+            print(e)
+
+# Open FSL Eyes GUI
+    def btnfsleyescmd_click(self):
+        try:
+            fsl = FSL()
+            fsl.setting()
+            if not fsl.Validate:
+                msgBox = QMessageBox()
+                msgBox.setText("Cannot find FSL setting!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+            else:
+                CMD = fsl.FSLDIR if len(fsl.FSLDIR) else ""            
+                CMD += fsl.fsleyes
+                if len(CMD):
+                    print(f"Running {CMD} ...")
+                    subprocess.Popen([CMD, ui.txtMNI.currentText()])
+        except Exception as e:
+            print(e)
 
 
 # Read history from file and visualized in the History tab

@@ -150,25 +150,25 @@ Easy fMRI needs following software:
 
 * Download `fslinstaller.py`
 
-* Run following for downloading installation file (e.g. In version 6.0.4, the file name is `fsl-6.0.4-macOS_64.tar.gz` for Mac or `fsl-6.0.4-centos7_64.tar.gz` for all Linux distribution)
+* Run following for downloading installation file (e.g. In version 6.0.5, the file name is `fsl-6.0.5-macOS_64.tar.gz` for Mac or `fsl-6.0.5-centos7_64.tar.gz` for all Linux distribution)
 
     * For Linux:
         ```
         python2 fslinstaller.py -o
-        md5sum fsl-6.0.4-centos7_64.tar.gz
+        md5sum fsl-6.0.5-centos7_64.tar.gz
         ```
     
     * For Mac:
         ```
         python2 fslinstaller.py -o
-        md5sum fsl-6.0.4-macOS_64.tar.gz
+        md5sum fsl-6.0.5-macOS_64.tar.gz
         ```
 
 * Install the downloaded file:
 
     * For Linux:
         ```
-        python2 fslinstaller.py -f fsl-6.0.4-centos7_64.tar.gz -M
+        python2 fslinstaller.py -f fsl-6.0.5-centos7_64.tar.gz -M
         export FSLDIR="/usr/local/fsl"
         cd $FSLDIR/etc/fslconf
         source fsl.sh
@@ -179,7 +179,7 @@ Easy fMRI needs following software:
 
     * For Mac:
         ```
-        python2 fslinstaller.py -f fsl-6.0.4-macOS_64.tar.gz -M
+        python2 fslinstaller.py -f fsl-6.0.5-macOS_64.tar.gz -M
         ```
 
 
@@ -331,9 +331,16 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
 ### Install Python 3.9.x via [Miniconda3](https://docs.conda.io/en/latest/miniconda.html)
 
-* Download [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) for Python **3.9**
-
-    * Note: In Windows 10, you must install the linux version of Miniconda 3
+* Download [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) 
+    * Note: In Windows 10, you must install the Linux version of Miniconda 3
+    * You can use wget for Linux:
+        ```
+        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+        ```
+  *  You can use wget for Mac:
+        ```
+        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.pkg
+        ```
 
 
 * Install Python 3.9
@@ -345,7 +352,7 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
     * For Linux:
         ```
-        sh Miniconda3-<version>-Linux-<platform>.sh
+        sh Miniconda3-latest-Linux-x86_64.sh
         ```
     
     * For Mac: click PKG file and continue installation.
@@ -382,15 +389,15 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 * Install [PyTorch](https://pytorch.org/) package:
     * In Linux (with [NVIDIA GPU](https://www.nvidia.com/en-us/)):
         ```
-        conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c conda-forge
+        conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
         ```
     * In Linux (only CPU):
         ```
-        conda install pytorch torchvision torchaudio cpuonly -c pytorch -c=conda-forge
+        conda install pytorch torchvision torchaudio cpuonly -c pytorch
         ```
     * In Mac:
         ```
-        conda install pytorch torchvision torchaudio -c pytorch -c=conda-forge
+        conda install pytorch torchvision torchaudio -c pytorch
         ```
 
 ### Change main repository of `pip` [recommended for China]

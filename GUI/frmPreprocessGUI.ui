@@ -1772,6 +1772,102 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
     </widget>
+    <widget class="QLineEdit" name="txtfslcmd">
+     <property name="geometry">
+      <rect>
+       <x>139</x>
+       <y>280</y>
+       <width>510</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string>/bin/fsl</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_45">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>280</y>
+       <width>121</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>fsl cmd:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnfsleyescmd">
+     <property name="geometry">
+      <rect>
+       <x>337</x>
+       <y>460</y>
+       <width>311</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>FSL Eyes</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtfsleyescmd">
+     <property name="geometry">
+      <rect>
+       <x>139</x>
+       <y>330</y>
+       <width>510</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string>/bin/fsleyes</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_46">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>330</y>
+       <width>121</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>fsleyes cmd:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnfslcmd">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>460</y>
+       <width>311</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>FSL</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_7">
     <attribute name="title">
