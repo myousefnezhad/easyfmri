@@ -434,23 +434,24 @@ class Setting:
             print("Validating files ...")
             for si, s in enumerate(SubRange):
                   for c in ConRange[si]:
-                        print("Analyzing Subject %d, Counter %d ..." % (s, c))
+                        print("Analyzing Subject %d, Counter %d ..." % (s, c))                        
                         # checking anat file
-                        addr =  setParameters3(ui.txtAnat.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), "",\
-                                               ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                        if os.path.isfile(addr):
-                            print(addr, " - OKAY.")
-                        else:
-                            print(addr, " - file not find!")
-                            return False
-                        if checkGeneratedFiles and ui.cbRegAnat.isChecked():
-                            # BET Files
-                            addr = setParameters3(ui.txtBET.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
+                        if ui.cbRegAnat.isChecked():
+                            addr =  setParameters3(ui.txtAnat.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), "",\
+                                                ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
                             if os.path.isfile(addr):
                                 print(addr, " - OKAY.")
                             else:
                                 print(addr, " - file not find!")
                                 return False
+                            if checkGeneratedFiles:
+                                # BET Files
+                                addr = setParameters3(ui.txtBET.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
+                                if os.path.isfile(addr):
+                                    print(addr, " - OKAY.")
+                                else:
+                                    print(addr, " - file not find!")
+                                    return False
 
                         for r in RunRange[si]:
 
