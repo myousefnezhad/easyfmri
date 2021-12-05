@@ -72,6 +72,9 @@ def EventCode():
 #
 # Input:
 # \tEvent[] includes each line of the event files in each iteration.
+# \tk shows line number in each event file --- starting from 0
+# \t\tYou may use k for indexing very large design matrix rather 
+# \t\tthat trial type, e.g., movie data 
 # Output:
 # \t1. RowStartID: denotes the first row of each files that is contained the information.
 # \t   It starts from 0, and the default value is 1 (the first row is considered as the header).
