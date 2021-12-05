@@ -111,8 +111,15 @@ def getVersion():
     return "1.8"
 
 
-def getBuild():
-    return "9000"
+def getBuild(hostname=True):
+    built = "9000"
+    if hostname:
+        try:
+            host = os.uname()[1]
+        except:
+            host = "localhost"
+        return f"{built} on {host}"
+    return built
 
 def getSettingVersion():
     return "2.0"
