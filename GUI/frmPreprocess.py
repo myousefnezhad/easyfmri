@@ -293,8 +293,8 @@ class frmPreprocess(Ui_frmPreprocess):
 
 # Exit function
     def btnClose_click(self):
-       global dialog, parent
-       dialog.close()
+        global dialog, parent
+        dialog.close()
 
     def btnTools_click(self):
         tools = Tools()
@@ -328,6 +328,7 @@ class frmPreprocess(Ui_frmPreprocess):
                 ui.txtTask.clear()
                 TaskFiles = glob.glob(directory + "/task-*.json")
 
+                combined = None
                 for file in TaskFiles:
                     task = str(file).replace(directory,"")
                     task = str(task).replace("/","")
@@ -337,7 +338,11 @@ class frmPreprocess(Ui_frmPreprocess):
                     task = str(task).replace("task","",1)
                     task = str(task).replace("json","")
                     task = str(task).replace("bold","")
-                    ui.txtTask.addItem(task)
+                    if len(task):
+                        ui.txtTask.addItem(task)
+                        combined = task if combined is None else combined + ", " + task                
+                if combined is not None:
+                    ui.txtTask.addItem(f"[{combined}]")
 
 
 # This function read the basic features from datasets, i.e. TR, Voxel size, etc.

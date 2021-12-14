@@ -110,15 +110,16 @@ def OpenReport(addr):
 def getVersion():
     return "1.8"
 
+def getHostname():
+    try:
+        return os.uname()[1]
+    except:
+        return "localhost"
 
 def getBuild(hostname=True):
     built = "9000"
     if hostname:
-        try:
-            host = os.uname()[1]
-        except:
-            host = "localhost"
-        return f"{built} on {host}"
+        return f"{built} on {getHostname()}"
     return built
 
 def getSettingVersion():

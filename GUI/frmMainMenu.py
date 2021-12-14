@@ -32,7 +32,7 @@ from GUI.frmPreprocess import *
 from GUI.frmVisualization import *
 from GUI.Login import Login
 from Base.tools import Tools
-from Base.utility import About
+from Base.utility import About, getHostname
 from Base.git import clone_git, has_git_branch, getGitBranch
 from Base.utility import MyMessageBox
 
@@ -55,6 +55,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         tools.combo(ui.cbTools)
         print()
         print(20*"#" + " Platform Information " + 20*"#")
+        # Hostname
+        print("Hostname:", getHostname())
         # Base Info
         print("Base:", os.name)
         # OS Info
