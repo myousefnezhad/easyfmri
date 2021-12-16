@@ -104,7 +104,9 @@ except:
     Duration = None
     Skip = 1
 
-Condition = Event[2]"""
+Condition = Event[2]
+# This is an example of labeling based on line number for complex stimuli
+#Condition = str(k%5 + 1)"""
 
 class MainWindow(QtWidgets.QMainWindow):
     parent = None

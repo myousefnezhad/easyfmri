@@ -25,10 +25,10 @@ import os
 import numpy as np
 import scipy.io as io
 import configparser as cp
+from Preprocess.BIDS import BIDS
 from PyQt5.QtWidgets import QMessageBox
-from Base.utility import fixstr, getTimeSliceID, setParameters3, decoding
-from Base.utility import getSettingVersion, strRange, strMultiRange, Str2Bool
-
+from Base.utility import getTimeSliceID, setParameters3, decoding
+from Base.utility import getSettingVersion, Str2Bool
 
 class Setting:
     def __init__(self):
@@ -76,6 +76,7 @@ class Setting:
         self.empty = True
         msgBox = QMessageBox()
 
+        # Check fMRI Images
         FSLDIR = ui.txtFSLDIR.text()
         if (os.path.isfile(ui.txtMNI.currentText()) == False):
             msgBox = QMessageBox()
@@ -99,6 +100,7 @@ class Setting:
             msgBox.exec_()
             return False
 
+
         mainDIR = ui.txtDIR.text()
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
@@ -114,99 +116,6 @@ class Setting:
             return False
         print("Main directory is okay.")
 
-
-        Task = ui.txtTask.currentText()
-        if not len(Task):
-            msgBox.setText("There is no task title")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-
-
-        try:
-            SubRange = strRange(ui.txtSubRange.text(),Unique=True)
-            if SubRange is None:
-                raise Exception
-            SubSize = len(SubRange)
-        except:
-            msgBox.setText("Subject Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Range of subjects is okay!")
-        try:
-            SubLen = np.int32(ui.txtSubLen.text())
-            1 / SubLen
-        except:
-            msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of subjects is okay!")
-
-
-        try:
-            ConRange = strMultiRange(ui.txtConRange.text(),SubSize)
-            if ConRange is None:
-                raise Exception
-            if not (len(ConRange) == SubSize):
-                msgBox.setText("Counter Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Counter Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter Range is okay!")
-        try:
-            ConLen = np.int32(ui.txtConLen.text())
-            1 / ConLen
-        except:
-            msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of Counter is okay!")
-
-
-        try:
-            RunRange = strMultiRange(ui.txtRunRange.text(),SubSize)
-            if RunRange is None:
-                raise Exception
-            if not (len(RunRange) == SubSize):
-                msgBox.setText("Run Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Run Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Run Range is okay!")
-        try:
-            RunLen = np.int32(ui.txtRunLen.value())
-            1 / RunLen
-        except:
-            msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of runs is valid")
-
-
-        # Check fMRI Images
         try:
             TR = np.double(ui.txtTR.text())
             1 / TR
@@ -430,69 +339,177 @@ class Setting:
             return False
         print("Event codes are okay")
 
+
+        # Task = ui.txtTask.currentText()
+        # if not len(Task):
+        #     msgBox.setText("There is no task title")
+        #     msgBox.setIcon(QMessageBox.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.Ok)
+        #     msgBox.exec_()
+        #     return False
+
+        # try:
+        #     SubRange = strRange(ui.txtSubRange.text(),Unique=True)
+        #     if SubRange is None:
+        #         raise Exception
+        #     SubSize = len(SubRange)
+        # except:
+        #     msgBox.setText("Subject Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.Ok)
+        #     msgBox.exec_()
+        #     return False
+        # print("Range of subjects is okay!")
+
+
+
+        # try:
+        #     ConRange = strMultiRange(ui.txtConRange.text(),SubSize)
+        #     if ConRange is None:
+        #         raise Exception
+        #     if not (len(ConRange) == SubSize):
+        #         msgBox.setText("Counter Size must be equal to Subject Size!")
+        #         msgBox.setIcon(QMessageBox.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.Ok)
+        #         msgBox.exec_()
+        #         return False
+        # except:
+        #     msgBox.setText("Counter Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.Ok)
+        #     msgBox.exec_()
+        #     return False
+        # print("Counter Range is okay!")
+
+
+
+        # try:
+        #     RunRange = strMultiRange(ui.txtRunRange.text(),SubSize)
+        #     if RunRange is None:
+        #         raise Exception
+        #     if not (len(RunRange) == SubSize):
+        #         msgBox.setText("Run Size must be equal to Subject Size!")
+        #         msgBox.setIcon(QMessageBox.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.Ok)
+        #         msgBox.exec_()
+        #         return False
+        # except:
+        #     msgBox.setText("Run Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.Ok)
+        #     msgBox.exec_()
+        #     return False
+        # print("Run Range is okay!")
+
+
+        # BIDS
+
+
+        try:
+            bids = BIDS(Tasks=ui.txtTask.currentText(),
+                        SubRange=ui.txtSubRange.text(), SubLen=ui.txtSubLen.text(), SubPrefix=ui.txtSubPer.text(),
+                        SesRange=ui.txtConRange.text(), SesLen=ui.txtConLen.text(), SesPrefix=ui.txtConPer.text(),
+                        RunRange=ui.txtRunRange.text(), RunLen=ui.txtRunLen.text(), RunPrefix=ui.txtRunPer.text())
+        except Exception as e:
+            msgBox.setText(str(e))
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+
+
+
         if checkFiles:
             print("Validating files ...")
-            for si, s in enumerate(SubRange):
-                  for c in ConRange[si]:
-                        print("Analyzing Subject %d, Counter %d ..." % (s, c))                        
-                        # checking anat file
-                        if ui.cbRegAnat.isChecked():
-                            addr =  setParameters3(ui.txtAnat.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), "",\
-                                                ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                            if os.path.isfile(addr):
-                                print(addr, " - OKAY.")
-                            else:
-                                print(addr, " - file not find!")
-                                return False
-                            if checkGeneratedFiles:
-                                # BET Files
-                                addr = setParameters3(ui.txtBET.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), "", ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                                if os.path.isfile(addr):
-                                    print(addr, " - OKAY.")
-                                else:
-                                    print(addr, " - file not find!")
-                                    return False
+            for (_, t, _, s, _, c, runs) in bids:
+                print(f"Analyzing Subject {s}, Counter {c}...")                        
+                # checking anat file
+                if ui.cbRegAnat.isChecked():
+                    addr =  setParameters3(ui.txtAnat.text(), mainDIR, s, "", t, c)
+                    if os.path.isfile(addr):
+                        print(addr, " - OKAY.")
+                    else:
+                        print(addr, " - file not find!")
+                        return False
+                    if checkGeneratedFiles:
+                        # BET Files
+                        addr = setParameters3(ui.txtBET.text(), mainDIR, s, "", t, c)
+                        if os.path.isfile(addr):
+                            print(addr, " - OKAY.")
+                        else:
+                            print(addr, " - file not find!")
+                            return False
+                for r in runs:
+                    # BOLD File Check
+                    addr = setParameters3(ui.txtBOLD.text(), mainDIR, s, r, t, c)
+                    if os.path.isfile(addr):
+                        print(addr, " - OKAY.")
+                    else:
+                        print(addr, " - file not find!")
+                        return False
 
-                        for r in RunRange[si]:
+                    # Event File Check
+                    if ui.cbMode.currentIndex() == 0:
+                        addr = setParameters3(ui.txtOnset.text(), mainDIR, s, r, t, c)
+                        if os.path.isfile(addr):
+                            print(addr, " - OKAY.")
+                        else:
+                            print(addr, " - file not find!")
+                            return False
 
-                            # BOLD File Check
-                            addr = setParameters3(ui.txtBOLD.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), \
-                                                     fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                            if os.path.isfile(addr):
-                                print(addr, " - OKAY.")
-                            else:
-                                print(addr, " - file not find!")
-                                return False
-
-                            # Event File Check
-                            if ui.cbMode.currentIndex() == 0:
-                                addr = setParameters3(ui.txtOnset.text(), mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), \
-                                                         fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                                if os.path.isfile(addr):
-                                    print(addr, " - OKAY.")
-                                else:
-                                    print(addr, " - file not find!")
-                                    return False
-
-                            if checkGeneratedFiles and ui.cbMode.currentIndex() == 0:
-                                addr = setParameters3(ui.txtEventDIR.text(),mainDIR, fixstr(s, SubLen, ui.txtSubPer.text()), \
-                                                     fixstr(r,RunLen,ui.txtRunPer.text()), ui.txtTask.currentText(),fixstr(c, ConLen, ui.txtConPer.text()))
-                                if os.path.isdir(addr):
-                                    print(addr, " - OKAY.")
-                                    try:
-                                        Cond = io.loadmat(addr + ui.txtCondPre.text() + ".mat")
-                                        for fileID in range(1,Cond["Cond"].shape[0]+1):
-                                            if os.path.isfile(addr + ui.txtCondPre.text() + "_" + str(fileID) + ".tab"):
-                                                print(addr + ui.txtCondPre.text() + "_" + str(fileID) + ".tab - OKAY.")
-                                            else:
-                                                print(addr + ui.txtCondPre.text() + "_" + str(fileID) + ".tab - file not find!")
-                                                return False
-                                    except:
-                                        print(addr + ui.txtCondPre.text() + ".mat - loading error!")
+                    if checkGeneratedFiles and ui.cbMode.currentIndex() == 0:
+                        addr = setParameters3(ui.txtEventDIR.text(), mainDIR, s, r, t, c)
+                        if os.path.isdir(addr):
+                            print(addr, " - OKAY.")
+                            try:
+                                Cond = io.loadmat(addr + ui.txtCondPre.text() + ".mat")
+                                for fileID in range(1,Cond["Cond"].shape[0]+1):
+                                    if os.path.isfile(addr + ui.txtCondPre.text() + "_" + str(fileID) + ".tab"):
+                                        print(addr + ui.txtCondPre.text() + "_" + str(fileID) + ".tab - OKAY.")
+                                    else:
+                                        print(addr + ui.txtCondPre.text() + "_" + str(fileID) + ".tab - file not find!")
                                         return False
-                                else:
-                                    print(addr + ui.txtCondPre.text() + ".mat - file not find!")
-                                    return False
+                            except:
+                                print(addr + ui.txtCondPre.text() + ".mat - loading error!")
+                                return False
+                        else:
+                            print(addr + ui.txtCondPre.text() + ".mat - file not find!")
+                            return False
+
+
+        try:
+            RunLen = np.int32(ui.txtRunLen.value())
+            1 / RunLen
+        except:
+            msgBox.setText("Length of runs must be an integer number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Length of runs is valid")
+
+        try:
+            ConLen = np.int32(ui.txtConLen.text())
+            1 / ConLen
+        except:
+            msgBox.setText("Length of counter must be an integer number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Length of Counter is okay!")
+
+        try:
+            SubLen = np.int32(ui.txtSubLen.text())
+            1 / SubLen
+        except:
+            msgBox.setText("Length of subjects must be an integer number")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return False
+        print("Length of subjects is okay!")
+
 
         self.Version        = getSettingVersion()
         self.Mode           = ui.cbMode.currentIndex()
@@ -504,7 +521,7 @@ class Setting:
         self.ConRange       = ui.txtConRange.text()
         self.ConLen         = ConLen
         self.ConPer         = ui.txtConPer.text()
-        self.Task           = str(Task)
+        self.Task           = ui.txtTask.currentText()
         self.RunRange       = ui.txtRunRange.text()
         self.RunLen         = str(RunLen)
         self.RunPer         = ui.txtRunPer.text()

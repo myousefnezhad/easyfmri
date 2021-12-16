@@ -240,14 +240,20 @@ def fitLine(interval):
         errors.append(err)
     return coeffs[np.argmin(errors)]
 
-def strRange(data,Unique=False):
+
+# New version of this fuction is moved to Preprocess.BIDS
+# Please use the new one
+def strRange(data, Unique=False):
     if not len(data):
         return None
     result = list()
     try:
         strData = data.replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()
         for D in strData:
-            reformD = D.replace("-"," ").split()
+            if CheckDash:
+                reformD = D.replace("-"," ").split()
+            else:
+                reformD = D.split()
             if len(reformD) == 1:
                 result.append(np.int(reformD[0]))
             elif len(reformD) == 2:
@@ -276,7 +282,8 @@ def strRange(data,Unique=False):
             return None
     return result
 
-
+# New version of this fuction is moved to Preprocess.BIDS
+# Please use the new one
 def strMultiRange(data,Len=None):
     if not len(data):
         return None
@@ -332,6 +339,8 @@ def strMultiRange(data,Len=None):
             print("Size of Range is wrong!")
             return None
     return result
+
+
 
 def encoding(Codes):
     Encode = None
