@@ -868,11 +868,9 @@ class frmPreprocess(Ui_frmPreprocess):
             else:
                 sSess = frmSelectSession(None,setting=setting)
                 if sSess.PASS:
-                    ScriptAdd = setParameters3(setting.Script,setting.mainDIR,fixstr(int(sSess.SubID),setting.SubLen,setting.SubPer),\
-                                               fixstr(int(sSess.RunID),int(setting.RunLen),setting.RunPer),setting.Task, \
-                                               fixstr(sSess.ConID, int(setting.ConLen), setting.ConPer))
+                    ScriptAdd = setParameters3(setting.Script,setting.mainDIR,sSess.SubID,sSess.RunID, sSess.TaskID, sSess.ConID)
                     subprocess.Popen([Feat_gui, ScriptAdd])
-    pass
+        return
 
 
     def btnEventExtractor_click(self):
