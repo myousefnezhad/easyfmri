@@ -241,3 +241,8 @@ def BIDS(Tasks, SubRange, SubLen, SubPrefix, SesRange, SesLen, SesPrefix, RunRan
             
         assert len(result), "The BIDS list is empty"
         return result
+
+def load_BIDS(settings):
+    return BIDS(settings.Task, settings.SubRange, settings.SubLen, settings.SubPer,\
+        settings.ConRange, settings.ConLen, settings.ConPer, \
+        settings.RunRange, settings.RunLen, settings.RunPer)
