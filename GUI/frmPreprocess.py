@@ -801,17 +801,19 @@ class frmPreprocess(Ui_frmPreprocess):
                 SubID=None
                 ConID=None
                 RunID=None
+                TaskID=None
                 if ui.cbJustRun.checkState():
                     sSess = frmSelectSession(None, setting=setting)
                     if sSess.PASS:
                         SubID = sSess.SubID
                         ConID = sSess.ConID
                         RunID = sSess.RunID
+                        TaskID= sSess.TaskID
                     else:
                         return
 
                 runPreprocess = RunPreprocess()
-                if not runPreprocess.Check(ui.txtSetting.text(),ui.cbJustRun.checkState(),SubID,RunID,ConID):
+                if not runPreprocess.Check(ui.txtSetting.text(),ui.cbJustRun.checkState(),SubID,RunID,ConID,TaskID):
                     msgBox = QMessageBox()
                     msgBox.setText("Script(s) are not found!")
                     msgBox.setIcon(QMessageBox.Critical)
@@ -821,7 +823,7 @@ class frmPreprocess(Ui_frmPreprocess):
                 else:
                     feat = ui.txtFSLDIR.text() + ui.txtFeat.text()
                     Status, Jobs = runPreprocess.Run(ui.txtSetting.text(),ui.cbJustRun.checkState(),\
-                                                     ui.cbRemoveOlds.checkState(),feat,SubID,RunID,ConID)
+                                                    ui.cbRemoveOlds.checkState(),feat,SubID,RunID,ConID,TaskID)
 
                     if (not Status) or (Jobs is None):
                         print("TASK FAILED!")
@@ -898,9 +900,7 @@ class frmPreprocess(Ui_frmPreprocess):
             else:
                 sSess = frmSelectSession(None, setting=setting)
                 if sSess.PASS:
-                    EventAddr = setParameters3(setting.Onset, setting.mainDIR, fixstr(sSess.SubID, int(setting.SubLen), setting.SubPer), \
-                                                fixstr(sSess.RunID, int(setting.RunLen), setting.RunPer), sSess.TaskID, \
-                                                fixstr(sSess.ConID, int(setting.ConLen), setting.ConPer))
+                    EventAddr = setParameters3(setting.Onset, setting.mainDIR, sSess.SubID, sSess.RunID, sSess.TaskID, sSess.ConID)
 
                     if not os.path.isfile(EventAddr):
                         print(EventAddr, " - file not find!")

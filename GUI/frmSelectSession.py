@@ -21,7 +21,7 @@
 #
 
 from PyQt5.QtWidgets import *
-from Preprocess.BIDS import strTaskList,strRange,strMultiRange,strMultiLineRuns
+from Preprocess.BIDS import BIDS
 import numpy as np
 
 
@@ -29,25 +29,34 @@ class frmSelectSession(QDialog):
     def __init__(self, parent=None,setting=None):
         super(frmSelectSession, self).__init__(parent)
         # inputs
-        self.Tasks          = strTaskList(setting.Task)
-        if self.Tasks is None:
-            print("Tasks cannot find!")
-            return
-        
-        self.SubRange       = strRange(setting.SubRange,Unique=True)
-        if self.SubRange is None:
-            print("Subject Range is wrong!")
-            return
-        self.SubSize        = len(self.SubRange)
-        self.ConRange       = strMultiRange(setting.ConRange, self.SubSize)
-        if self.ConRange is None:
-            print("Counter Range is wrong!")
+
+        try:
+            self.bids = BIDS(Tasks=setting.Task,
+                            SubRange=setting.SubRange, SubLen=setting.SubLen, SubPrefix=setting.SubPer,
+                            SesRange=setting.ConRange, SesLen=setting.ConLen, SesPrefix=setting.ConPer,
+                            RunRange=setting.RunRange, RunLen=setting.RunLen, RunPrefix=setting.RunPer)
+        except Exception as e:
+            print(str(e))
             return
 
-        self.RunRange       = strMultiLineRuns(setting.RunRange, self.SubRange, self.ConRange, setting.RunLen, setting.RunPer, False)
-        if self.RunRange is None:
-            print("Run Range is wrong!")
-            return
+        # self.Tasks          = strTaskList(setting.Task)
+        # if self.Tasks is None:
+        #     print("Tasks cannot find!")
+        #     return        
+        # self.SubRange       = strRange(setting.SubRange,Unique=True)
+        # if self.SubRange is None:
+        #     print("Subject Range is wrong!")
+        #     return
+        # self.SubSize        = len(self.SubRange)
+        # self.ConRange       = strMultiRange(setting.ConRange, self.SubSize)
+        # if self.ConRange is None:
+        #     print("Counter Range is wrong!")
+        #     return
+
+        # self.RunRange       = strMultiLineRuns(setting.RunRange, self.SubRange, self.ConRange, setting.RunLen, setting.RunPer, False)
+        # if self.RunRange is None:
+        #     print("Run Range is wrong!")
+        #     return
 
         # outputs
         self.TaskID  = None
@@ -61,15 +70,17 @@ class frmSelectSession(QDialog):
         self.lblTask = QLabel("Task: ")
         self.txtTask = QComboBox()
         self.txtTask.addItem("", None)
-        for taskindx, task in enumerate(self.Tasks):
-            self.txtTask.addItem(str(task), taskindx)
+
+        
+        for task in np.unique([b[1] for b in self.bids]):
+            self.txtTask.addItem(str(task))
         layout.addRow(self.lblTask, self.txtTask)
 
         self.lblSub = QLabel("Subject: ")
         self.txtSub = QComboBox()
         self.txtSub.addItem("",None)
-        for subindx, sub in enumerate(self.SubRange):
-            self.txtSub.addItem(str(sub),subindx)
+        for sub in np.unique([b[3] for b in self.bids]):
+            self.txtSub.addItem(str(sub))
         self.txtSub.currentIndexChanged.connect(self.txtSub_isChenged)
         layout.addRow(self.lblSub, self.txtSub)
 
@@ -96,28 +107,38 @@ class frmSelectSession(QDialog):
 
 
     def txtSub_isChenged(self):
-        subindx = self.txtSub.currentData()
+        sub = self.txtSub.currentText()
         self.txtRun.clear()
         self.txtCon.clear()
-        if subindx is not None:
+        if len(str(sub).strip()):
             self.txtCon.addItem("")
-            for conindx, con in enumerate(self.ConRange[subindx]):
-                self.txtCon.addItem(str(con), conindx)
+
+            condList = list() 
+            for b in self.bids:
+                if b[3] == sub:
+                    condList.append(b[5])
+            for con in np.unique(condList):
+                self.txtCon.addItem(str(con))
 
     def txtCon_isChanged(self):
-        subindx = self.txtSub.currentData()
-        conindx = self.txtCon.currentData()
+        sub = self.txtSub.currentText()
+        con = self.txtCon.currentText()
         self.txtRun.clear()
-        if (subindx is not None) and (conindx is not None):
+        if len(str(sub).strip()) and len(str(con).strip()):
             self.txtRun.addItem("")
-            for runindx, run in enumerate(self.RunRange[subindx][conindx]):
-                self.txtRun.addItem(str(run), runindx)
+            runList = list() 
+            for b in self.bids:
+                if b[3] == sub and b[5] == con:
+                    runList.append(np.reshape(b[6], -1))
+
+            for run in np.unique(runList):
+                self.txtRun.addItem(str(run))
 
 
     def btnOK_onclick(self):
         try:
             self.TaskID = self.txtTask.currentText()
-            if self.TaskID is None or not len(str(self.TaskID).strip()):
+            if not len(str(self.TaskID).strip()):
                 raise Exception
         except:
             msgBox = QMessageBox()
@@ -127,13 +148,8 @@ class frmSelectSession(QDialog):
             msgBox.exec_()
             return
         try:
-            self.SubID  = np.int32(self.txtSub.currentText())
-            SubIndex = None
-            for subinx,sub in enumerate(self.SubRange):
-                if sub == self.SubID:
-                    SubIndex = subinx
-                    break
-            if SubIndex is None:
+            self.SubID  = self.txtSub.currentText()
+            if not len(str(self.SubID).strip()):
                 raise Exception
         except:
             msgBox = QMessageBox()
@@ -143,15 +159,8 @@ class frmSelectSession(QDialog):
             msgBox.exec_()
             return
         try:
-            self.ConID = np.int32(self.txtCon.currentText())
-            find = False
-            CondIndex = None
-            for condindx, cond in enumerate(self.ConRange[SubIndex]):
-                if self.ConID == cond:
-                    CondIndex = condindx
-                    find = True
-                    break
-            if not find or CondIndex is None:
+            self.ConID = self.txtCon.currentText()
+            if not len(str(self.ConID).strip()):
                 raise Exception
         except:
             msgBox = QMessageBox()
@@ -163,13 +172,8 @@ class frmSelectSession(QDialog):
 
 
         try:
-            self.RunID = np.int32(self.txtRun.currentText())
-            find = False
-            for run in self.RunRange[SubIndex][CondIndex]:
-                if self.RunID == run:
-                    find = True
-                    break
-            if not find:
+            self.RunID = self.txtRun.currentText()
+            if not len(str(self.RunID).strip()):
                 raise Exception
         except:
             msgBox = QMessageBox()
