@@ -107,8 +107,8 @@ class BrainExtractorThread(threading.Thread):
 class BrainExtractor():
     def run(self,SettingFileName, betcmd=None):
         import os
-
-        from Base.utility import fixstr,setParameters3, strRange, strMultiRange
+        from Preprocess.BIDS import load_BIDS
+        from Base.utility import fixstr,setParameters3 #, strRange, strMultiRange
         from Base.Setting import Setting
 
         if betcmd is None:
@@ -129,41 +129,36 @@ class BrainExtractor():
             return False
         else:
 
-            Subjects = strRange(setting.SubRange,Unique=True)
-            if Subjects is None:
-                print("Cannot load Subject Range!")
-                return False
-            SubSize = len(Subjects)
+            # Subjects = strRange(setting.SubRange,Unique=True)
+            # if Subjects is None:
+            #     print("Cannot load Subject Range!")
+            #     return False
+            # SubSize = len(Subjects)
 
-            Counters = strMultiRange(setting.ConRange,SubSize)
-            if Counters is None:
-                print("Cannot load Counter Range!")
-                return False
+            # Counters = strMultiRange(setting.ConRange,SubSize)
+            # if Counters is None:
+            #     print("Cannot load Counter Range!")
+            #     return False
 
-            Runs = strMultiRange(setting.RunRange,SubSize)
-            if Runs is None:
-                print("Cannot load Run Range!")
-                return False
+            # Runs = strMultiRange(setting.RunRange,SubSize)
+            # if Runs is None:
+            #     print("Cannot load Run Range!")
+            #     return False
+            bids = load_BIDS(setting)
 
             Jobs = list()
-            for sindx, s in enumerate(Subjects):
-                  for cnt in Counters[sindx]:
-                        print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                        InAddr = setParameters3(setting.AnatDIR,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
-                                                   fixstr(cnt, setting.ConLen, setting.ConPer))
-                        InFile = setParameters3(setting.AnatDIR,"", fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
-                                                   fixstr(cnt, setting.ConLen, setting.ConPer))
-                        OutAddr = setParameters3(setting.BET,setting.mainDIR,fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
-                                                    fixstr(cnt, setting.ConLen, setting.ConPer))
-                        PDFAddr = setParameters3(setting.BETPDF,setting.mainDIR, fixstr(s, setting.SubLen, setting.SubPer),"", setting.Task,
-                                                    fixstr(cnt, setting.ConLen, setting.ConPer))
-                        if not os.path.isfile(InAddr):
-                            print(InAddr, " - file not find!")
-                            return False
-                        else:
-                            files = [OutAddr, PDFAddr]
-                            thread = BrainExtractorThread(bet=betcmd, InAddr=InAddr, OutAddr=OutAddr, PDFAddr=PDFAddr,\
-                                                          InFile=InFile, files=files)
-                            Jobs.append(["BrainExtractor", InFile, thread])
-                            print("Job: Anatomical Brain Extractor for Subject %d, Counter %d is created." % (s, cnt))
+            for (_, t, _, s, _, c, _) in bids:
+                print(f"Analyzing Subject {s}, Counter {c} ...")
+                InAddr = setParameters3(setting.AnatDIR, setting.mainDIR, s, "", t, c)
+                InFile = setParameters3(setting.AnatDIR, "", s, "", t, c)
+                OutAddr = setParameters3(setting.BET, setting.mainDIR, s, "", t, c)
+                PDFAddr = setParameters3(setting.BETPDF, setting.mainDIR, s,"", t, c)
+                if not os.path.isfile(InAddr):
+                    print(InAddr, " - file not find!")
+                    return False
+                else:
+                    files = [OutAddr, PDFAddr]
+                    thread = BrainExtractorThread(bet=betcmd, InAddr=InAddr, OutAddr=OutAddr, PDFAddr=PDFAddr, InFile=InFile, files=files)
+                    Jobs.append(["BrainExtractor", InFile, thread])
+                    print(f"Job: Anatomical Brain Extractor for Subject {s}, Counter {c} is created.")
             return True, Jobs
