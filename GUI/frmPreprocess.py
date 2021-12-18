@@ -1035,19 +1035,13 @@ class frmPreprocess(Ui_frmPreprocess):
                 else:
                     sSess = frmSelectSession(None, setting=setting)
                     if sSess.PASS:
-                        AnalysisFile = setParameters3(setting.Analysis, setting.mainDIR,
-                                                   fixstr(int(sSess.SubID), setting.SubLen, setting.SubPer), \
-                                                   fixstr(int(sSess.RunID), int(setting.RunLen), setting.RunPer),
-                                                   setting.Task,fixstr(int(sSess.ConID), int(setting.ConLen), setting.ConPer))
+                        AnalysisFile = setParameters3(setting.Analysis, setting.mainDIR, sSess.SubID, sSess.RunID, sSess.TaskID, sSess.ConID)
                         AnalysisAdd =  AnalysisFile + ".feat/report.html"
                         if not os.path.isfile(AnalysisAdd):
                             print(AnalysisAdd + " - not found!")
                         else:
                             webbrowser.open_new("file://" + AnalysisAdd)
-
                     return
-
-        pass
 
     def btnVerify_click(self):
         global ui
