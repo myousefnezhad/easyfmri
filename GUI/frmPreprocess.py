@@ -878,15 +878,15 @@ class frmPreprocess(Ui_frmPreprocess):
         setting = Setting()
         isChange = setting.checkGUI(ui, ui.txtSetting.text())
         if isChange == None:
-           msgBox = QMessageBox()
-           if len(ui.txtSetting.text()):
-               msgBox.setText("Please verify parameters")
-           else:
-               msgBox.setText("You must save setting first!")
-           msgBox.setIcon(QMessageBox.Critical)
-           msgBox.setStandardButtons(QMessageBox.Ok)
-           msgBox.exec_()
-           return
+            msgBox = QMessageBox()
+            if len(ui.txtSetting.text()):
+                msgBox.setText("Please verify parameters")
+            else:
+                msgBox.setText("You must save setting first!")
+            msgBox.setIcon(QMessageBox.Critical)
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.exec_()
+            return
         else:
             if isChange == True:
                 msgBox = QMessageBox()
@@ -898,9 +898,9 @@ class frmPreprocess(Ui_frmPreprocess):
             else:
                 sSess = frmSelectSession(None, setting=setting)
                 if sSess.PASS:
-                    EventAddr = setParameters3(setting.Onset, setting.mainDIR, fixstr(sSess.SubID, int(setting.SubLen), setting.SubPer) \
-                                                 , fixstr(sSess.RunID, int(setting.RunLen), setting.RunPer), setting.Task, \
-                                                  fixstr(sSess.ConID, int(setting.ConLen), setting.ConPer))
+                    EventAddr = setParameters3(setting.Onset, setting.mainDIR, fixstr(sSess.SubID, int(setting.SubLen), setting.SubPer), \
+                                                fixstr(sSess.RunID, int(setting.RunLen), setting.RunPer), sSess.TaskID, \
+                                                fixstr(sSess.ConID, int(setting.ConLen), setting.ConPer))
 
                     if not os.path.isfile(EventAddr):
                         print(EventAddr, " - file not find!")
@@ -937,7 +937,7 @@ class frmPreprocess(Ui_frmPreprocess):
                                 msgBox.exec_()
                                 return
                             try:
-                               Condition = allvars['Condition']
+                                Condition = allvars['Condition']
                             except:
                                 print("Cannot find Condition variable in event code")
                                 msgBox = QMessageBox()
@@ -982,7 +982,7 @@ class frmPreprocess(Ui_frmPreprocess):
                                 GenEvents.append([Onset,Duration,Condition])
 
                     EventViewer = frmEventViewer(Events=GenEvents,StartRow=RowStartID,SubID=sSess.SubID,\
-                                                RowID=sSess.RunID, Task=setting.Task)
+                                                RowID=sSess.RunID, Task=sSess.TaskID)
         pass
 
     def btnGroupRenameFile_click(self):

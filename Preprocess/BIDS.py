@@ -119,7 +119,7 @@ def strSplitX(strVal):
 
 
 # This function convert a string including ranges of runs to a 3D tensor of string runs
-def strMultiLineRuns(data, SubArr, SesMat, RunLen, RunPerfix):
+def strMultiLineRuns(data, SubArr, SesMat, RunLen, RunPerfix, AddPrefix=True):
     SubLen = len(SubArr)
     if SubLen < 1:
         print("Size of Subjects is less than 1")        
@@ -167,12 +167,15 @@ def strMultiLineRuns(data, SubArr, SesMat, RunLen, RunPerfix):
             rangeRes = strMultiRange(subRange, len(sesElement))
             if rangeRes is None:
                 print(f"Size of counter is not matched for Subject {subID}")            
-            runStr = list()
-            for rArr in rangeRes:
-                rOut = list()
-                for r in rArr:
-                    rOut.append(fixstr(r, RunLen, RunPerfix))
-                runStr.append(rOut)
+            if AddPrefix:
+                runStr = list()
+                for rArr in rangeRes:
+                    rOut = list()
+                    for r in rArr:
+                        rOut.append(fixstr(r, RunLen, RunPerfix))
+                    runStr.append(rOut)
+            else:
+                runStr = rangeRes
             result.append(runStr)
         if not len(result):
             return None
