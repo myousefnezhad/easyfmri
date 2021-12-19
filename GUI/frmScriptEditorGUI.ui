@@ -103,7 +103,7 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunRange: sequence of ranges, i.e. If all 12 subjects have runs from 2 to 5 then Range=[12*2-5]; If 3 subjects have runs from 1 to 4 and 2 subjects have runs from 5 to 7 then Range=[3*1-4, 2*5-7]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunRange is a 3D tensor --- defining as {ax[b*c-d];...}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;a is the number of subjects that [b*c-d] will be applied to them&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;b denotes the number of counters in &amp;quot;a&amp;quot; subjects with c-d runs&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;c-d is an interval of runs for the corresponding counters and subjects&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;; is the separator for subjects&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;, is the separator for counters&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;A single 1 coefficient can be interpreted as all subjects/counters as well&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;Example 1: If we have 12 subjects with 3 counters, each has runs from 5 to 10: {12x[3*5-10]}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;Example 2: If we have 6 subjects with 3 counters + 5 subjects with 2 counters, each has runs from 1 to 6: {6x[3*1-6];5x[2*1-6]}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;Example 3: If we have 2 subjects with 6 counters, where the first 3 counters have 1-8 runs and the second 2 counters have 4-9 runs, and the last counter only has run 7: {2x[3*1-8, 2*4-9, 7]}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string>[1*1-1]</string>
@@ -227,22 +227,25 @@
      <rect>
       <x>11</x>
       <y>69</y>
-      <width>81</width>
+      <width>101</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Task Name:</string>
+     <string>Task Name(s):</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="txtTask">
     <property name="geometry">
      <rect>
-      <x>100</x>
+      <x>120</x>
       <y>70</y>
-      <width>501</width>
+      <width>481</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;Task Names: a unique array of integers, i.e., [task1, task2, ...]&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;, is the separator&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="text">
      <string/>
@@ -273,14 +276,14 @@
     <property name="toolTip">
      <string/>
     </property>
-    <property name="toolTipDuration">
-     <number>-1</number>
-    </property>
     <property name="statusTip">
      <string/>
     </property>
     <property name="text">
      <string>Main Directory:</string>
+    </property>
+    <property name="toolTipDuration" stdset="0">
+     <number>-1</number>
     </property>
     <property name="setToolTip" stdset="0">
      <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
@@ -298,14 +301,14 @@
     <property name="toolTip">
      <string/>
     </property>
-    <property name="toolTipDuration">
-     <number>-1</number>
-    </property>
     <property name="statusTip">
      <string/>
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="toolTipDuration" stdset="0">
+     <number>-1</number>
     </property>
    </widget>
    <widget class="QLineEdit" name="txtScript">
@@ -485,14 +488,14 @@
     <property name="toolTip">
      <string/>
     </property>
-    <property name="toolTipDuration">
-     <number>-1</number>
-    </property>
     <property name="statusTip">
      <string/>
     </property>
     <property name="text">
      <string>Input Value:</string>
+    </property>
+    <property name="toolTipDuration" stdset="0">
+     <number>-1</number>
     </property>
     <property name="setToolTip" stdset="0">
      <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
@@ -510,14 +513,14 @@
     <property name="toolTip">
      <string/>
     </property>
-    <property name="toolTipDuration">
-     <number>-1</number>
-    </property>
     <property name="statusTip">
      <string/>
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="toolTipDuration" stdset="0">
+     <number>-1</number>
     </property>
    </widget>
    <widget class="QCheckBox" name="cbInDynamic">

@@ -989,9 +989,9 @@ class frmPreprocess(Ui_frmPreprocess):
     def btnGroupRenameFile_click(self):
         global ui
         frmRenameFile.show(frmRenameFile,SubRange=ui.txtSubRange.text(),SubLen=ui.txtSubLen.value(),\
-                           SubPer=ui.txtSubPer.text(),ConRange=ui.txtConRange.text(),ConLen=ui.txtConLen.value(),\
-                           ConPer=ui.txtConPer.text(),RunRange=ui.txtRunRange.text(),RunLen=ui.txtRunLen.value(),\
-                           RunPer=ui.txtRunPer.text(),Task=ui.txtTask.currentText(),DIR=ui.txtDIR.text())
+                            SubPer=ui.txtSubPer.text(),ConRange=ui.txtConRange.text(),ConLen=ui.txtConLen.value(),\
+                            ConPer=ui.txtConPer.text(),RunRange=ui.txtRunRange.text(),RunLen=ui.txtRunLen.value(),\
+                            RunPer=ui.txtRunPer.text(),Task=ui.txtTask.currentText(),DIR=ui.txtDIR.text())
 
     def btnGroupScriptEditor_click(self):
         global ui
