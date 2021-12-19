@@ -364,8 +364,14 @@ class frmPreprocess(Ui_frmPreprocess):
         setting             = Setting()
         setting.Task        = ui.txtTask.currentText()
         setting.SubRange    = ui.txtSubRange.text()
+        setting.SubLen      = ui.txtSubLen.text()
+        setting.SubPer      = ui.txtSubPer.text()
         setting.ConRange    = ui.txtConRange.text()
+        setting.ConLen      = ui.txtConLen.text()
+        setting.ConPer      = ui.txtConPer.text()
         setting.RunRange    = ui.txtRunRange.text()
+        setting.RunLen      = ui.txtRunLen.text()
+        setting.RunPer      = ui.txtRunPer.text()
 
         sSess = frmSelectSession(None, setting=setting)
         if not sSess.PASS:
@@ -374,10 +380,7 @@ class frmPreprocess(Ui_frmPreprocess):
         directory = ui.txtDIR.text()
         if len(directory):
             ui.txtDIR.setText(directory)
-            FirstFile =  setParameters3(ui.txtBOLD.text(),directory, fixstr(sSess.SubID, np.int32(ui.txtSubLen.text()),ui.txtSubPer.text()), \
-                                                  fixstr(sSess.RunID, np.int32(ui.txtRunLen.text()), \
-                                                  ui.txtRunPer.text()),ui.txtTask.currentText(), \
-                                                  fixstr(sSess.ConID, np.int32(ui.txtConLen.text()), ui.txtConPer.text()))
+            FirstFile =  setParameters3(ui.txtBOLD.text(),directory, sSess.SubID, sSess.RunID, sSess.TaskID, sSess.ConID)
             #print(FirstFile)
             if not os.path.isfile(FirstFile):
                 msgBox = QMessageBox()
@@ -393,10 +396,10 @@ class frmPreprocess(Ui_frmPreprocess):
                 ui.txtVoxel.setText("Voxel Size: " + str(Voxels))
 
                 msgBox = QMessageBox()
-                msgBox.setText("Basic information is read from the 1st BOLD file\n\nTR: " +\
-                               ui.txtTR.text() + "\nData Shape: " + str(BoldHDR.header.get_data_shape()) +\
-                               " \n" + ui.txtVoxel.text() +\
-                               "\n\n\nYou can manually change these parameters in the Basic tab!")
+                msgBox.setText(f"Basic information is read from BOLD file from:\nTask: {sSess.TaskID}\nSubject: {sSess.SubID}\nCounter {sSess.ConID}\nRun: {sSess.RunID}" + \
+                                "\n\nTR: " + ui.txtTR.text() + "\nData Shape: " + str(BoldHDR.header.get_data_shape()) +\
+                                " \n" + ui.txtVoxel.text() +\
+                                "\n\n\nYou can manually change these parameters in the Basic tab!")
                 msgBox.setIcon(QMessageBox.Information)
                 msgBox.setStandardButtons(QMessageBox.Ok)
                 msgBox.exec_()
