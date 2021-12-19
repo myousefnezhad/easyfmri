@@ -996,9 +996,9 @@ class frmPreprocess(Ui_frmPreprocess):
     def btnGroupScriptEditor_click(self):
         global ui
         frmScriptEditor.show(frmScriptEditor,SubRange=ui.txtSubRange.text(),SubLen=ui.txtSubLen.value(),\
-                           SubPer=ui.txtSubPer.text(),ConRange=ui.txtConRange.text(),ConLen=ui.txtConLen.value(),\
-                           ConPer=ui.txtConPer.text(),RunRange=ui.txtRunRange.text(),RunLen=ui.txtRunLen.value(),\
-                           RunPer=ui.txtRunPer.text(),Task=ui.txtTask.currentText(),DIR=ui.txtDIR.text())
+                            SubPer=ui.txtSubPer.text(),ConRange=ui.txtConRange.text(),ConLen=ui.txtConLen.value(),\
+                            ConPer=ui.txtConPer.text(),RunRange=ui.txtRunRange.text(),RunLen=ui.txtRunLen.value(),\
+                            RunPer=ui.txtRunPer.text(),Task=ui.txtTask.currentText(),DIR=ui.txtDIR.text())
 
 
     def btnReportViewer_onclick(self):

@@ -25,7 +25,7 @@ import sys
 
 import numpy as np
 from PyQt5.QtWidgets import *
-from Base.utility import fixstr, setParameters3
+from Base.utility import setParameters3
 from Base.dialogs import SelectDir
 from GUI.frmScriptEditorGUI import *
 from Preprocess.BIDS import BIDS
@@ -261,9 +261,8 @@ class frmScriptEditor(Ui_frmScriptEditor):
 
         RepCount = 0
 
+
         for (_, t, _, s, _, c, runs) in bids:
-        # for si, s in enumerate(SubRange):
-        #     for c in ConRange[si]:
                 for r in runs:
                     SFile   =  setParameters3(Script, DIR, s, r, t, c)
                     if ui.cbInDynamic.isChecked():
