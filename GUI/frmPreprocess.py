@@ -34,12 +34,15 @@ import scipy.io as io
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMessageBox
 
+
 from Base.Setting import Setting
 from Base.SettingHistory import History
 from Base.fsl import FSL
 from Base.tools import Tools
 from Base.utility import getTimeSliceText, fixstr, setParameters3, getSettingVersion, encoding, strRange, strMultiRange, OpenReport
 from Base.dialogs import SaveFile, LoadFile, SelectDir
+
+from Preprocess.BIDS import load_BIDS
 
 from GUI.frmEventConcatenator import frmEventConcatenator
 from GUI.frmEventViewer import frmEventViewer
@@ -1066,136 +1069,130 @@ class frmPreprocess(Ui_frmPreprocess):
             else:
                 ofile = SaveFile("Save log file",["Log file (*.txt)"],"txt")
                 if len(ofile):
-                    Subjects = strRange(setting.SubRange, Unique=True)
-                    if Subjects is None:
-                        print("Cannot load Subject Range!")
-                        return False
-                    SubSize = len(Subjects)
 
-                    Counters = strMultiRange(setting.ConRange, SubSize)
-                    if Counters is None:
-                        print("Cannot load Counter Range!")
-                        return False
+                    # Subjects = strRange(setting.SubRange, Unique=True)
+                    # if Subjects is None:
+                    #     print("Cannot load Subject Range!")
+                    #     return False
+                    # SubSize = len(Subjects)
 
-                    Runs = strMultiRange(setting.RunRange, SubSize)
-                    if Runs is None:
-                        print("Cannot load Run Range!")
-                        return False
+                    # Counters = strMultiRange(setting.ConRange, SubSize)
+                    # if Counters is None:
+                    #     print("Cannot load Counter Range!")
+                    #     return False
+
+                    # Runs = strMultiRange(setting.RunRange, SubSize)
+                    # if Runs is None:
+                    #     print("Cannot load Run Range!")
+                    #     return False
+
+                    bids = load_BIDS(setting)
                     Log = 20*"#" + " easy fMRI - Files Verification " + 20*"#" + "\n"
-                    for si, s in enumerate(Subjects):
-                        for cnt in Counters[si]:
-                            # Anatomical Files
-                            Log = Log + "\t" + 10*"#" + "\tSubject: " + str(s) + " Counter: " + str(cnt) + "\t" + 10*"#" + "\n"
-                            # MRI Files
-                            if ui.cbVMRI.isChecked():
-                                file = setParameters3(setting.AnatDIR, setting.mainDIR,
-                                                        fixstr(s, setting.SubLen, setting.SubPer), "", setting.Task,
-                                                        fixstr(cnt, setting.ConLen, setting.ConPer))
+
+                    for (_, t, _, s, _, c, runs) in bids:
+
+                    # for si, s in enumerate(Subjects):
+                    #     for cnt in Counters[si]:
+
+                        # Anatomical Files
+                        Log = Log + "\t" + 10*"#" + "\tSubject: " + s + " Counter: " + c + "\t" + 10*"#" + "\n"
+                        # MRI Files
+                        if ui.cbVMRI.isChecked():
+                            file = setParameters3(setting.AnatDIR, setting.mainDIR, s, "", t, c)
+
+                            if os.path.isfile(file):
+                                Log = Log + "OKAY: MRI FILE,\t" + file + "\n"
+                            else:
+                                Log = Log + "NOT FOUND: MRI FILE,\t" + file + "\n"
+
+                        if ui.cbVBet.isChecked():
+                            file = setParameters3(setting.BET, setting.mainDIR, s, "", t, c)
+
+                            if os.path.isfile(file):
+                                Log = Log + "OKAY: BET FILE,\t" + file + "\n"
+                            else:
+                                Log = Log + "NOT FOUND: BET FILE,\t" + file + "\n"
+
+                            file = setParameters3(setting.BETPDF, setting.mainDIR, s, "", t, c)
+
+                            if os.path.isfile(file):
+                                Log = Log + "OKAY: PDF FILE,\t" + file + "\n"
+                            else:
+                                Log = Log + "NOT FOUND: PDF FILE,\t" + file + "\n"
+                        # Check run based files
+                        for r in runs:
+                            Log = Log + "\t\t" + 5 * "#" + "\tSubject: " + s + " Counter: " + c + \
+                                    " Run: " + r + "\t" + 5 * "#" + "\n"
+
+                            # Image
+                            if ui.cbVImage.isChecked():
+                                file = setParameters3(setting.BOLD, setting.mainDIR, s, r, t, c)
+                                
                                 if os.path.isfile(file):
-                                    Log = Log + "OKAY: MRI FILE,\t" + file + "\n"
+                                    Log = Log + "OKAY: IMAGE FILE,\t" + file + "\n"
                                 else:
-                                    Log = Log + "NOT FOUND: MRI FILE,\t" + file + "\n"
+                                    Log = Log + "NOT FOUND: IMAGE FILE,\t" + file + "\n"
 
-                            if ui.cbVBet.isChecked():
-                                file = setParameters3(setting.BET, setting.mainDIR,
-                                                     fixstr(s, setting.SubLen, setting.SubPer), "", setting.Task,
-                                                     fixstr(cnt, setting.ConLen, setting.ConPer))
+
+                            # Event
+                            if ui.cbVImage.isChecked():
+                                file = setParameters3(setting.Onset,setting.mainDIR, s, r, t, c)
                                 if os.path.isfile(file):
-                                    Log = Log + "OKAY: BET FILE,\t" + file + "\n"
+                                    Log = Log + "OKAY: EVENT FILE,\t" + file + "\n"
                                 else:
-                                    Log = Log + "NOT FOUND: BET FILE,\t" + file + "\n"
+                                    Log = Log + "NOT FOUND: EVENT FILE,\t" + file + "\n"
 
-                                file = setParameters3(setting.BETPDF, setting.mainDIR,
-                                                     fixstr(s, setting.SubLen, setting.SubPer), "", setting.Task,
-                                                     fixstr(cnt, setting.ConLen, setting.ConPer))
+                            # ExEvent
+                            if ui.cbVExEvent.isChecked():
+                                dir = setParameters3(setting.EventFolder,setting.mainDIR, s, r, t, c)
+
+                                if os.path.isdir(dir):
+                                    Log = Log + "OKAY: EVENT DIR,\t" + dir + "\n"
+                                    file = dir + setting.CondPre + ".mat"
+                                    if os.path.isfile(file):
+                                        Log = Log + "OKAY: MAT FILE,\t" + file + "\n"
+                                        try:
+                                            cond = io.loadmat(file)["Cond"]
+                                            Log = Log + "\t\t" + 2 * "#" + "\tSubject: " + s + " Counter: " + c + " Run: " + r + \
+                                                    " Number of conditions: " + str(len(cond)) + "\t" + 5 * "#" + "\n"
+                                        except:
+                                            Log = Log + "NOT LOAD: MAT FILE,\t" + file + "\n"
+                                        for cnd in cond:
+                                            file = dir + cnd[0][0] + ".tab"
+                                            if os.path.isfile(file):
+                                                Log = Log + "OKAY: TAB FILE,\t" + file + "\n"
+                                            else:
+                                                Log = Log + "NOT FOUND: TAB FILE,\t" + file + "\n"
+                                    else:
+                                        Log = Log + "NOT FOUND: MAT FILE,\t" + file + "\n"
+
+                                else:
+                                    Log = Log + "NOT FOUND: EVENT DIR,\t" + dir + "\n"
+
+                            # Script
+                            if ui.cbVScript.isChecked():
+                                file = setParameters3(setting.Script, setting.mainDIR, s, r, t, c)
                                 if os.path.isfile(file):
-                                    Log = Log + "OKAY: PDF FILE,\t" + file + "\n"
+                                    Log = Log + "OKAY: SCRIPT,\t" + file + "\n"
                                 else:
-                                    Log = Log + "NOT FOUND: PDF FILE,\t" + file + "\n"
-                            # Check run based files
-                            for r in Runs[si]:
-                                Log = Log + "\t\t" + 5 * "#" + "\tSubject: " + str(s) + " Counter: " + str(cnt) + \
-                                      " Run: " + str(r) + "\t" + 5 * "#" + "\n"
+                                    Log = Log + "NOT FOUND: SCRIPT,\t" + file + "\n"
 
-                                # Image
-                                if ui.cbVImage.isChecked():
-                                    file = setParameters3(setting.BOLD,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
-                                                        fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
-                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
-                                    if os.path.isfile(file):
-                                        Log = Log + "OKAY: IMAGE FILE,\t" + file + "\n"
-                                    else:
-                                        Log = Log + "NOT FOUND: IMAGE FILE,\t" + file + "\n"
-
-
-                                # Event
-                                if ui.cbVImage.isChecked():
-                                    file = setParameters3(setting.Onset,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
-                                                        fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
-                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
-                                    if os.path.isfile(file):
-                                        Log = Log + "OKAY: EVENT FILE,\t" + file + "\n"
-                                    else:
-                                        Log = Log + "NOT FOUND: EVENT FILE,\t" + file + "\n"
-
-                                # ExEvent
-                                if ui.cbVExEvent.isChecked():
-                                    dir = setParameters3(setting.EventFolder,setting.mainDIR,\
-                                                          fixstr(s, np.int32(setting.SubLen), setting.SubPer)\
-                                                          ,fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,
-                                                          fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
-                                    if os.path.isdir(dir):
-                                        Log = Log + "OKAY: EVENT DIR,\t" + dir + "\n"
-                                        file = dir + setting.CondPre + ".mat"
-                                        if os.path.isfile(file):
-                                            Log = Log + "OKAY: MAT FILE,\t" + file + "\n"
-                                            try:
-                                                cond = io.loadmat(file)["Cond"]
-                                                Log = Log + "\t\t" + 2 * "#" + "\tSubject: " + str(s) + " Counter: " + \
-                                                      str(cnt) + " Run: " + str(r) + \
-                                                      " Number of conditions: " + str(len(cond)) + "\t" + 5 * "#" + "\n"
-                                            except:
-                                                Log = Log + "NOT LOAD: MAT FILE,\t" + file + "\n"
-                                            for cnd in cond:
-                                                file = dir + cnd[0][0] + ".tab"
-                                                if os.path.isfile(file):
-                                                    Log = Log + "OKAY: TAB FILE,\t" + file + "\n"
-                                                else:
-                                                    Log = Log + "NOT FOUND: TAB FILE,\t" + file + "\n"
-                                        else:
-                                            Log = Log + "NOT FOUND: MAT FILE,\t" + file + "\n"
-
-                                    else:
-                                        Log = Log + "NOT FOUND: EVENT DIR,\t" + dir + "\n"
-
-                                # Script
-                                if ui.cbVScript.isChecked():
-                                    file = setParameters3(setting.Script,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
-                                                               fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
-                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
-                                    if os.path.isfile(file):
-                                        Log = Log + "OKAY: SCRIPT,\t" + file + "\n"
-                                    else:
-                                        Log = Log + "NOT FOUND: SCRIPT,\t" + file + "\n"
-
-                                # Output
-                                if ui.cbVOutput.isChecked():
-                                    dir = setParameters3(setting.Analysis,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
-                                                               fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
-                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer)) + ".feat"
-                                    if os.path.isdir(dir):
-                                        Log = Log + "OKAY: ANALYZE,\t" + dir + "\n"
-                                        files = str(ui.txtVOutput.toPlainText()).split()
-                                        for file in files:
-                                            if len(file):
-                                                if os.path.isfile(dir + "/" + file):
-                                                    Log = Log + "OKAY: OUTPUT,\t" + dir +  "/" + file + "\n"
-                                                else:
-                                                    Log = Log + "NOT FOUND: OUTPUT,\t" + dir + "/" + file + "\n"
-                                    else:
-                                        Log = Log + "NOT FOUND: ANALYZE,\t" + dir + "\n"
-                                Log = Log + "\n"
-                            Log = Log + "\n\n\n\n"
+                            # Output
+                            if ui.cbVOutput.isChecked():
+                                dir = setParameters3(setting.Analysis, setting.mainDIR, s, r, t, c) + ".feat"
+                                if os.path.isdir(dir):
+                                    Log = Log + "OKAY: ANALYZE,\t" + dir + "\n"
+                                    files = str(ui.txtVOutput.toPlainText()).split()
+                                    for file in files:
+                                        if len(file):
+                                            if os.path.isfile(dir + "/" + file):
+                                                Log = Log + "OKAY: OUTPUT,\t" + dir +  "/" + file + "\n"
+                                            else:
+                                                Log = Log + "NOT FOUND: OUTPUT,\t" + dir + "/" + file + "\n"
+                                else:
+                                    Log = Log + "NOT FOUND: ANALYZE,\t" + dir + "\n"
+                            Log = Log + "\n"
+                        Log = Log + "\n\n\n\n"
                     fileHandle = open(ofile, "w")
                     fileHandle.write(Log)
                     fileHandle.close()
@@ -1226,99 +1223,76 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.exec_()
                 return
             else:
+                strDel = ""
+                if ui.cbDelSmoke.isChecked():
+                    strDel = "SMOKED::"
                 msgBox = QMessageBox()
-                reply = msgBox.question(msgBox, 'DELETING OUTPUT FILES ...', 'Do you want to DELETE output files?'
-                                                   , QMessageBox.Yes, QMessageBox.No)
+                reply = msgBox.question(msgBox, strDel + 'DELETING OUTPUT FILES ...', strDel + 'Do you want to DELETE output files?'
+                                        , QMessageBox.Yes, QMessageBox.No)
                 if reply == QMessageBox.Yes:
-                    Subjects = strRange(setting.SubRange, Unique=True)
-                    if Subjects is None:
-                        print("Cannot load Subject Range!")
-                        return False
-                    SubSize = len(Subjects)
-
-                    Counters = strMultiRange(setting.ConRange, SubSize)
-                    if Counters is None:
-                        print("Cannot load Counter Range!")
-                        return False
-
-                    Runs = strMultiRange(setting.RunRange, SubSize)
-                    if Runs is None:
-                        print("Cannot load Run Range!")
-                        return False
-
+                    bids = load_BIDS(setting)
                     print("Deleting Files ...")
-                    for si, s in enumerate(Subjects):
-                        for cnt in Counters[si]:
-                            # Anatomical Files
-                            if ui.cbVBet.isChecked():
-                                file = setParameters3(setting.BET, setting.mainDIR,
-                                                     fixstr(s, setting.SubLen, setting.SubPer), "", setting.Task,
-                                                     fixstr(cnt, setting.ConLen, setting.ConPer))
-                                if os.path.isfile(file):
-                                    try:
+                    for (_, t, _, s, _, c, runs) in bids:
+                        # Anatomical Files
+                        if ui.cbVBet.isChecked():
+                            file = setParameters3(setting.BET, setting.mainDIR, s, "", t, c)
+                            if os.path.isfile(file):
+                                try:
+                                    if not ui.cbDelSmoke.isChecked():
                                         os.remove(file)
-                                        print("DELETE: BET FILE,\t" + file)
-                                    except:
-                                        print("CANNOT DELETE: BET FILE,\t" + file)
-                                else:
-                                    print("NOT FOUND: BET FILE,\t" + file)
-
-                                file = setParameters3(setting.BETPDF, setting.mainDIR,
-                                                     fixstr(s, setting.SubLen, setting.SubPer), "", setting.Task,
-                                                     fixstr(cnt, setting.ConLen, setting.ConPer))
-                                if os.path.isfile(file):
-                                    try:
+                                    print(strDel + "DELETE: BET FILE,\t" + file)
+                                except:
+                                    print("CANNOT DELETE: BET FILE,\t" + file)
+                            else:
+                                print("NOT FOUND: BET FILE,\t" + file)
+                            file = setParameters3(setting.BETPDF, setting.mainDIR, s, "", t, c)
+                            if os.path.isfile(file):
+                                try:
+                                    if not ui.cbDelSmoke.isChecked():
                                         os.remove(file)
-                                        print("DELETE: PDF FILE,\t" + file)
-                                    except:
-                                        print("NOT DELETE: PDF FILE,\t" + file)
-                                else:
-                                    print("NOT FOUND: PDF FILE,\t" + file)
-                            # Check run based files
-                            for r in Runs[si]:
-                                # ExEvent
-                                if ui.cbVExEvent.isChecked():
-                                    dir = setParameters3(setting.EventFolder,setting.mainDIR,\
-                                                          fixstr(s, np.int32(setting.SubLen), setting.SubPer)\
-                                                          ,fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,
-                                                          fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
-                                    if os.path.isdir(dir):
-                                        try:
+                                    print(strDel + "DELETE: PDF FILE,\t" + file)
+                                except:
+                                    print("NOT DELETE: PDF FILE,\t" + file)
+                            else:
+                                print("NOT FOUND: PDF FILE,\t" + file)
+                        # Check run based files
+                        for r in runs:
+                            # ExEvent
+                            if ui.cbVExEvent.isChecked():
+                                dir = setParameters3(setting.EventFolder,setting.mainDIR, s, r, t, c)
+                                if os.path.isdir(dir):
+                                    try:
+                                        if not ui.cbDelSmoke.isChecked():
                                             shutil.rmtree(dir)
-                                            print("DELETE: EVENT DIR,\t" + dir)
-                                        except:
-                                            print("CANNOT DELETE: EVENT DIR,\t" + dir)
-                                    else:
-                                        print("NOT FOUND: EVENT DIR,\t" + dir)
-
-                                # Script
-                                if ui.cbVScript.isChecked():
-                                    file = setParameters3(setting.Script,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
-                                                               fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
-                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer))
-                                    if os.path.isfile(file):
-                                        try:
+                                        print(strDel + "DELETE: EVENT DIR,\t" + dir)
+                                    except:
+                                        print("CANNOT DELETE: EVENT DIR,\t" + dir)
+                                else:
+                                    print("NOT FOUND: EVENT DIR,\t" + dir)
+                            # Script
+                            if ui.cbVScript.isChecked():
+                                file = setParameters3(setting.Script,setting.mainDIR, s, r, t, c)
+                                if os.path.isfile(file):
+                                    try:
+                                        if not ui.cbDelSmoke.isChecked():
                                             os.remove(file)
-                                            print("DELETE: SCRIPT,\t" + file)
-                                        except:
-                                            print("CANNOT DELETE: SCRIPT,\t" + file)
-                                    else:
-                                        print("NOT FOUND: SCRIPT,\t" + file)
-
-                                # Output
-                                if ui.cbVOutput.isChecked():
-                                    dir = setParameters3(setting.Analysis,setting.mainDIR, fixstr(s, np.int32(setting.SubLen), setting.SubPer),\
-                                                               fixstr(r, np.int32(setting.RunLen), setting.RunPer), setting.Task,\
-                                                           fixstr(cnt, np.int32(setting.ConLen), setting.ConPer)) + ".feat"
-                                    if os.path.isdir(dir):
-                                        try:
+                                        print(strDel + "DELETE: SCRIPT,\t" + file)
+                                    except:
+                                        print("CANNOT DELETE: SCRIPT,\t" + file)
+                                else:
+                                    print("NOT FOUND: SCRIPT,\t" + file)
+                            # Output
+                            if ui.cbVOutput.isChecked():
+                                dir = setParameters3(setting.Analysis,setting.mainDIR, s, r, t, c) + ".feat"
+                                if os.path.isdir(dir):
+                                    try:
+                                        if not ui.cbDelSmoke.isChecked():
                                             shutil.rmtree(dir)
-                                            print("DELETE: ANALYZE DIR,\t" + dir)
-                                        except:
-                                            print("CANNOT DELETE: ANALYZE DIR,\t" + dir)
-                                    else:
-                                        print("NOT FOUND: ANALYZE DIR,\t" + dir)
-
+                                        print(strDel + "DELETE: ANALYZE DIR,\t" + dir)
+                                    except:
+                                        print("CANNOT DELETE: ANALYZE DIR,\t" + dir)
+                                else:
+                                    print("NOT FOUND: ANALYZE DIR,\t" + dir)
                     print("Task is done.")
                     msgBox.setText("All available output files are deleted!")
                     msgBox.setIcon(QMessageBox.Information)

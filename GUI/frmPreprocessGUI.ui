@@ -1518,12 +1518,34 @@ p, li { white-space: pre-wrap; }
        <rect>
         <x>20</x>
         <y>116</y>
-        <width>591</width>
+        <width>391</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
        <string>Verify following files in output folders (each file per line)</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbDelSmoke">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>60</y>
+        <width>181</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Delete Smoke Test</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
