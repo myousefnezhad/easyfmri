@@ -243,9 +243,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         # Temporal Alignment
+        ui.cbTA.addItem("Temporal Alignment with intersection strategy", 20001)
         ui.cbTA.addItem("Shape Alignment (Report)", 10001)
         ui.cbTA.addItem("Label Alignment (Report)", 10002)
-        ui.cbTA.addItem("Temporal Alignment with intersection strategy", 20001)
 
         # Functional Alignment
         ui.cbFA.addItem("GPU Hyperalignment (GPUHA)", 10008)
