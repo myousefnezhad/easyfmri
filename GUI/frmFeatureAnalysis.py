@@ -62,7 +62,7 @@ from Base.dialogs import LoadFile, SaveFile, SelectDir
 from Base.fsl import FSL
 from Base.tools import Tools
 
-from Preprocess.BIDS import BIDS
+from Preprocess.BIDS import BIDS, strTaskList
 
 class RegistrationThread(threading.Thread):
     def __init__(self, flirt=None, arg=None, InTitle=None, files=list()):
@@ -528,7 +528,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     ui.txtDIEventDIR.setText(setting.EventFolder)
                     ui.txtDIInFile.setCurrentText(setting.Analysis + ".feat/filtered_func_data.nii.gz")
                     ui.txtDIDM.setCurrentText(setting.Analysis + ".feat/design.mat")
-
+                    ui.txtDITR.setText(str(setting.TR))
+                    ui.txtDIOnset.setText(setting.Onset)
 
 
         else:
@@ -1010,93 +1011,97 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
 
+        # Extract Design Matrix Meta Information
+        if ui.cbDIDesignMatrixMeta.isChecked():
+            DMMDeaultValue = None
 
-        
-        
-        
-        # Task = ui.txtDITask.text()
-        # if not len(Task):
-        #     msgBox.setText("There is no task title")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
-        #     return False
-        # try:
-        #     SubRange = strRange(ui.txtDISubRange.text(),Unique=True)
-        #     if SubRange is None:
-        #         raise Exception
-        #     SubSize = len(SubRange)
-        # except:
-        #     msgBox.setText("Subject Range is wrong!")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
-        #     return False
-        # print("Range of subjects is okay!")
-        # try:
-        #     SubLen = np.int32(ui.txtDISubLen.text())
-        #     1 / SubLen
-        # except:
-        #     msgBox.setText("Length of subjects must be an integer number")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
-        #     return False
-        # print("Length of subjects is okay!")
-        # try:
-        #     ConRange = strMultiRange(ui.txtDIConRange.text(),SubSize)
-        #     if ConRange is None:
-        #         raise Exception
-        #     if not (len(ConRange) == SubSize):
-        #         msgBox.setText("Counter Size must be equal to Subject Size!")
-        #         msgBox.setIcon(QMessageBox.Critical)
-        #         msgBox.setStandardButtons(QMessageBox.Ok)
-        #         msgBox.exec_()
-        #         return False
-        # except:
-        #     msgBox.setText("Counter Range is wrong!")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
-        #     return False
-        # print("Counter Range is okay!")
-        # try:
-        #     ConLen = np.int32(ui.txtDIConLen.text())
-        #     1 / ConLen
-        # except:
-        #     msgBox.setText("Length of counter must be an integer number")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
-        #     return False
-        # print("Length of Counter is okay!")
-        # try:
-        #     RunRange = strMultiRange(ui.txtDIRunRange.text(),SubSize)
-        #     if RunRange is None:
-        #         raise Exception
-        #     if not (len(RunRange) == SubSize):
-        #         msgBox.setText("Run Size must be equal to Subject Size!")
-        #         msgBox.setIcon(QMessageBox.Critical)
-        #         msgBox.setStandardButtons(QMessageBox.Ok)
-        #         msgBox.exec_()
-        #         return False
-        # except:
-        #     msgBox.setText("Run Range is wrong!")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
-        #     return False
-        # print("Run Range is okay!")
-        # try:
-        #     RunLen = np.int32(ui.txtDIRunLen.value())
-        #     1 / RunLen
-        # except:
-        #     msgBox.setText("Length of runs must be an integer number")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
-        #     return False
-        # print("Length of runs is valid")
+            DMMDIOnset = ui.txtDIOnset.text()
+            if not len(DMMDIOnset):
+                msgBox.setText("You must enter Event Files section to import Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            try:
+                DMMHeaderOffset = np.int32(ui.txtDIHeaderOffset.text())
+                if DMMHeaderOffset < 0:
+                    raise Exception
+            except:
+                msgBox.setText("Header offset is wrong for Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            try:
+                DMMOnsetID = np.int32(ui.txtDIOnsetID.text())
+                if DMMOnsetID < 0:
+                    raise Exception
+            except:
+                msgBox.setText("Onset Column ID is wrong for Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            try:
+                DMMDurationID = np.int32(ui.txtDIDurID.text())
+                if DMMDurationID < 0:
+                    raise Exception
+            except:
+                msgBox.setText("Duration Column ID is wrong for Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            try:
+                DMMTR = np.float32(ui.txtDITR.text())
+                if DMMTR <= 0:
+                    raise Exception
+            except:
+                msgBox.setText("TR is wrong for Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            ColStrs = strTaskList(ui.txtDIColumnIDs.text())
+            if ColStrs is None:
+                msgBox.setText("Wrong format for Column IDs in Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+            DMMColumns = list()
+            for strCol in ColStrs:
+                try:
+                    DMMColumns.append(np.int32(strCol))
+                except:
+                    msgBox.setText(f"Wrong format for value '{strCol}' at Column IDs in Design Matrix Meta Information!")
+                    msgBox.setIcon(QMessageBox.Critical)
+                    msgBox.setStandardButtons(QMessageBox.Ok)
+                    msgBox.exec_()
+                    return False
+
+            DMMVars = strTaskList(ui.txtDIVariableNames.text())
+            if DMMVars is None:
+                msgBox.setText("Wrong format for Variable Names in Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+            
+            if len(DMMColumns) != len(DMMVars):
+                msgBox.setText("Number of Column IDs and Variable Names in Design Matrix Meta Information are not matched!")
+                msgBox.setIcon(QMessageBox.Critical)
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.exec_()
+                return False
+
+
 
         bids = BIDS(ui.txtDITask.text(), ui.txtDISubRange.text(), ui.txtDISubLen.text(), ui.txtDISubPer.text(),
                                         ui.txtDIConRange.text(), ui.txtDIConLen.text(), ui.txtDIConPer.text(),
@@ -1120,6 +1125,16 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 else:
                     print(CondFile + " - not found!")
                     return
+
+                # Extract Design Matrix Meta Information
+                if ui.cbDIDesignMatrixMeta.isChecked():
+                    EventOnsetFile  = setParameters3(DMMDIOnset, mainDIR, s, r, t, c)
+                    if os.path.isfile(EventOnsetFile):
+                        print(EventOnsetFile + " - is OKAY.")
+                    else:
+                        print(EventOnsetFile + " - not found!")
+                        return
+
 
                 if ui.rbDIDynamic.isChecked() or ui.cbDIDM.isChecked():
 
@@ -1152,6 +1167,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         NumberOFExtract = 0
         NumberOFALL = 0
         BatchFiles = list()
+
+        DMMContent = dict()
+        for var in DMMVars:
+            DMMContent[var] = list()
 
         # RUNNING ...
         if outType > 2:
@@ -1259,11 +1278,85 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     print("Number of conditions is okay. Conditions: ", np.max(Y_Sess))
                 else:
                     print("WARNING: some class labels are not found!", np.max(Y_Sess))
+                
 
+                # Import Session Design Matrix
+                if ui.cbDIDesignMatrixMeta.isChecked():
+                    try:
+                        EventOnsetFileName  = setParameters3(DMMDIOnset, mainDIR, s, r, t, c)
+                        EventOnsetLines = open(EventOnsetFileName, "r").readlines()
+                    except:
+                        print(f"Cannot read onset file: {EventOnsetFileName}")
+                        msgBox.setText(f"Cannot read onset file: {EventOnsetFileName}")
+                        msgBox.setIcon(QMessageBox.Critical)
+                        msgBox.setStandardButtons(QMessageBox.Ok)
+                        msgBox.exec_()
+                        return False
+                    EventOnsetList = list()
+                    EventOnsetTimeList = list()
+                    EventOnsetDurationList = list()
+                    try:
+                        for eventLinesIndex, eventLines in enumerate(EventOnsetLines):
+                            if eventLinesIndex >= DMMHeaderOffset:
+                                eventLineArray = str(eventLines).rsplit()
+                                EventOnsetList.append([eventLineArray[k] for k in DMMColumns])
+                                EventOnsetTimeList.append(np.float32(eventLineArray[DMMOnsetID]))
+                                EventOnsetDurationList.append(np.float32(eventLineArray[DMMDurationID]))
+                        EventOnsetTimeList = np.array(EventOnsetTimeList)
+                        EventOnsetDurationList = np.array(EventOnsetDurationList)
+                    except:
+                        print(f"Cannot read columns in onset file: {EventOnsetFileName}")
+                        msgBox.setText(f"Cannot read columns in onset file: {EventOnsetFileName}")
+                        msgBox.setIcon(QMessageBox.Critical)
+                        msgBox.setStandardButtons(QMessageBox.Ok)
+                        msgBox.exec_()
+                        return False
+
+                currentTR = 0
                 for instID, yID in enumerate(Y_Sess):
                     NumberOFALL = NumberOFALL + 1
+
                     if not ui.cbDIRemoveRest.isChecked() or yID != 0:
-                        NumberOFExtract = NumberOFExtract + 1
+                        NumberOFExtract = NumberOFExtract + 1                        
+                        # DM Meta Information
+                        if ui.cbDIDesignMatrixMeta.isChecked():
+                            if yID == 0:
+                                for varname in DMMVars:
+                                    DMMContent[varname].append(DMMDeaultValue)
+                            else:
+                                selectedOnsetIndex = np.where(np.logical_and(np.greater_equal(EventOnsetTimeList, currentTR), np.less(EventOnsetTimeList, currentTR + DMMTR)))[0]
+                                
+                                if not len(selectedOnsetIndex):
+                                    currentEventOnset = None                                
+                                else:
+                                    champainedOnsetIndex = None
+                                    for selIndex in selectedOnsetIndex:
+                                        if EventOnsetTimeList[selIndex] <= currentTR + EventOnsetDurationList[selIndex]:
+                                            champainedOnsetIndex = selIndex
+                                            break
+                                    if champainedOnsetIndex is None:
+                                        champainedOnsetIndex = selectedOnsetIndex[-1]
+                                    
+                                    try:
+                                        currentEventOnset = EventOnsetList[champainedOnsetIndex]
+                                    except:
+                                        currentEventOnset = None
+                                        print(f"WARNING: Task {t}, Subject {s}, Counter {c}, Run {r}, Label index {instID}, DesignMatrix Meta Information cannot found in index {currentEvenOnsetIndex}.\n\tIt is replaced by {str(DMMDeaultValue)}")
+
+                                try:
+                                    for varindex, varname in enumerate(DMMVars):
+                                        if currentEventOnset is None:
+                                            DMMContent[varname].append(DMMDeaultValue)
+                                        else:
+                                            DMMContent[varname].append(currentEventOnset[varindex])
+                                except:
+                                    print(f"Error in importing Design Matrix Meta Information.\nTask {t}\nSubject {s}\nCounter {c}\nRun {r}\nLabel index {instID}")
+                                    msgBox.setText(f"Error in importing Design Matrix Meta Information.\nTask {t}\nSubject {s}\nCounter {c}\nRun {r}\nLabel index {instID}")
+                                    msgBox.setIcon(QMessageBox.Critical)
+                                    msgBox.setStandardButtons(QMessageBox.Ok)
+                                    msgBox.exec_()
+                                    return False
+
                         # NScan
                         if ui.cbDINScanID.isChecked():
                             NScanID.append(instID)
@@ -1323,6 +1416,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                         if ui.cbDIDM.isChecked():
                             DesignID.append(DesginValues[instID])
 
+                    currentTR += DMMTR
                 # Data Files
                 if ui.cbDIDataID.isChecked():
                     if outType > 2:
@@ -1422,6 +1516,11 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         else:
             Integration["OutFile"] = ui.txtDIOutFile.text()
         OutData["Integration"]   = Integration
+
+        # Desgin Matrix Meta Information
+        if ui.cbDIDesignMatrixMeta.isChecked():
+            for varname in DMMContent:
+                OutData[varname] = DMMContent[varname]
 
         # NScan
         if ui.cbDINScanID.isChecked():

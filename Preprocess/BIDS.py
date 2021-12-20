@@ -3,7 +3,7 @@ from Base.utility import fixstr
 
 # This Function convert a string including list of tasks to an array based on , separators
 def strTaskList(data):
-    if not len(data):
+    if not len(str(data).strip()):
         return None
     result = list()
     try:
