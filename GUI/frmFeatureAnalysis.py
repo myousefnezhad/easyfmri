@@ -62,6 +62,7 @@ from Base.dialogs import LoadFile, SaveFile, SelectDir
 from Base.fsl import FSL
 from Base.tools import Tools
 
+from Preprocess.BIDS import BIDS
 
 class RegistrationThread(threading.Thread):
     def __init__(self, flirt=None, arg=None, InTitle=None, files=list()):
@@ -567,8 +568,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             return False
 
         mainDIR = ui.txtSSDIR.text()
-        Task = ui.txtSSTask.text()
-        # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
             msgBox.setIcon(QMessageBox.Critical)
@@ -582,94 +581,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.exec_()
             return False
         print("Main directory is okay.")
-        if not len(Task):
-            msgBox.setText("There is no task title")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-
-        try:
-            SubRange = strRange(ui.txtSSSubRange.text(),Unique=True)
-            if SubRange is None:
-                raise Exception
-            SubSize = len(SubRange)
-        except:
-            msgBox.setText("Subject Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Range of subjects is okay!")
-        try:
-            SubLen = np.int32(ui.txtSSSubLen.text())
-            1 / SubLen
-        except:
-            msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of subjects is okay!")
-
-
-        try:
-            ConRange = strMultiRange(ui.txtSSConRange.text(),SubSize)
-            if ConRange is None:
-                raise Exception
-            if not (len(ConRange) == SubSize):
-                msgBox.setText("Counter Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Counter Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter Range is okay!")
-        try:
-            ConLen = np.int32(ui.txtSSConLen.text())
-            1 / ConLen
-        except:
-            msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of Counter is okay!")
-
-
-        try:
-            RunRange = strMultiRange(ui.txtSSRunRange.text(),SubSize)
-            if RunRange is None:
-                raise Exception
-            if not (len(RunRange) == SubSize):
-                msgBox.setText("Run Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Run Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Run Range is okay!")
-        try:
-            RunLen = np.int32(ui.txtSSRunLen.value())
-            1 / RunLen
-        except:
-            msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of runs is valid")
-
 
         Mat = ui.txtSSMatFile.text()
         if not len(Mat):
@@ -712,71 +623,51 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.exec_()
             return
 
+        bids = BIDS(ui.txtSSTask.text(), ui.txtSSSubRange.text(), ui.txtSSSubLen.text(), ui.txtSSSubPer.text(),
+                                        ui.txtSSConRange.text(), ui.txtSSConLen.text(), ui.txtSSConPer.text(),
+                                        ui.txtSSRunRange.text(), ui.txtSSRunLen.text(), ui.txtSSRunPer.text())
+
         print("Checking files ...")
-        for si, s in enumerate(SubRange):
-            for cnt in ConRange[si]:
-                print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                for r in RunRange[si]:
-                    MatFile = setParameters3(Mat, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                             fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                             fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-                    if os.path.isfile(MatFile):
-                        print(MatFile + " - is OKAY.")
-                    else:
-                        print(MatFile + " - not found!")
-                        return
+        for (_, t, _, s, _, c, runs) in bids:
+            print(f"Analyzing Subject {s}, Counter {c} ...")
+            for r in runs:
+                MatFile = setParameters3(Mat, mainDIR, s, r, t, c)
+                if os.path.isfile(MatFile):
+                    print(MatFile + " - is OKAY.")
+                else:
+                    print(MatFile + " - not found!")
+                    return
 
-                    SpaceFile = setParameters3(Space, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                               fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                               fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-                    if os.path.isfile(SpaceFile):
-                        print(SpaceFile + " - is OKAY.")
-                    else:
-                        print(SpaceFile + " - not found!")
-                        return
+                SpaceFile = setParameters3(Space, mainDIR, s, r, t, c)
+                if os.path.isfile(SpaceFile):
+                    print(SpaceFile + " - is OKAY.")
+                else:
+                    print(SpaceFile + " - not found!")
+                    return
 
-                    InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-                    if os.path.isfile(InFile):
-                        print(InFile + " - is OKAY.")
-                    else:
-                        print(InFile + " - not found!")
-                        return
+                InFile = setParameters3(In, mainDIR, s, r, t, c)
+                if os.path.isfile(InFile):
+                    print(InFile + " - is OKAY.")
+                else:
+                    print(InFile + " - not found!")
+                    return
 
         Jobs = list()
         print("Registration ...")
-        for si, s in enumerate(SubRange):
-            for cnt in ConRange[si]:
-                print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                for r in RunRange[si]:
-                    MatFile = setParameters3(Mat, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                             fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                             fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-
-                    SpaceFile = setParameters3(Space, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                               fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                               fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-
-                    InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-                    InTitle = setParameters3(In, "", fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-
-                    OutFile = setParameters3(Out, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                             fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                             fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-
-
+        for (_, t, _, s, _, c, runs) in bids:
+                print(f"Analyzing Subject {s}, Counter {c} ...")
+                for r in runs:
+                    MatFile = setParameters3(Mat, mainDIR, s, r, t, c)
+                    SpaceFile = setParameters3(Space, mainDIR, s, r, t, c)
+                    InFile = setParameters3(In, mainDIR, s, r, t, c)
+                    InTitle = setParameters3(In, "", s, r, t, c)
+                    OutFile = setParameters3(Out, mainDIR, s, r, t, c)
                     files  = [OutFile]
                     arg    = " -in " + InFile + " -applyxfm -init " + MatFile + " -out " + OutFile + \
                                 " -paddingsize 0.0 -interp " + ui.cbSSInter.currentData() + " -ref " + SpaceFile
                     thread = RegistrationThread(flirt=Flirt, arg=arg, files=files, InTitle=InTitle)
                     Jobs.append(["Registration", InTitle, thread])
                     print("Job: Registration for " + InTitle + " - is created.")
-
         if not len(Jobs):
             print("TASK FAILED!")
         else:
@@ -846,7 +737,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         global ui
         msgBox = QMessageBox()
         mainDIR = ui.txtDIDIR.text()
-        Task = ui.txtDITask.text()
 
         outType = 3
         if ui.rbDIezxType.isChecked():
@@ -897,89 +787,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.exec_()
             return False
         print("Main directory is okay.")
-        if not len(Task):
-            msgBox.setText("There is no task title")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        try:
-            SubRange = strRange(ui.txtDISubRange.text(),Unique=True)
-            if SubRange is None:
-                raise Exception
-            SubSize = len(SubRange)
-        except:
-            msgBox.setText("Subject Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Range of subjects is okay!")
-        try:
-            SubLen = np.int32(ui.txtDISubLen.text())
-            1 / SubLen
-        except:
-            msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of subjects is okay!")
-        try:
-            ConRange = strMultiRange(ui.txtDIConRange.text(),SubSize)
-            if ConRange is None:
-                raise Exception
-            if not (len(ConRange) == SubSize):
-                msgBox.setText("Counter Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Counter Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter Range is okay!")
-        try:
-            ConLen = np.int32(ui.txtDIConLen.text())
-            1 / ConLen
-        except:
-            msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of Counter is okay!")
-        try:
-            RunRange = strMultiRange(ui.txtDIRunRange.text(),SubSize)
-            if RunRange is None:
-                raise Exception
-            if not (len(RunRange) == SubSize):
-                msgBox.setText("Run Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Run Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Run Range is okay!")
-        try:
-            RunLen = np.int32(ui.txtDIRunLen.value())
-            1 / RunLen
-        except:
-            msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of runs is valid")
-
 
         if outType < 3:
             OutFileName = ui.txtDIOutFile.text()
@@ -997,9 +804,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 if str(OutFileName[-3:]).lower() != "mat":
                     OutFileName += "mat"
 
-
-
-
         else:
             OutDIR = ui.txtDIOutDIR.text()
             if not len(OutDIR):
@@ -1011,7 +815,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             OutDIR = OutDIR.replace("$MAINDIR$", mainDIR)
 
             OutHDR = ui.txtDIOutHDR.text()
-            OutHDR = OutHDR.replace("$TASK$", Task)
+            OutHDR = OutHDR.replace("$TASK$", ui.txtDITask.text())
             if not len(OutHDR):
                 msgBox.setText("Please enter output header file!")
                 msgBox.setIcon(QMessageBox.Critical)
@@ -1204,50 +1008,134 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 return False
 
 
+
+
+
+        
+        
+        
+        # Task = ui.txtDITask.text()
+        # if not len(Task):
+        #     msgBox.setText("There is no task title")
+        #     msgBox.setIcon(QMessageBox.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.Ok)
+        #     msgBox.exec_()
+        #     return False
+        # try:
+        #     SubRange = strRange(ui.txtDISubRange.text(),Unique=True)
+        #     if SubRange is None:
+        #         raise Exception
+        #     SubSize = len(SubRange)
+        # except:
+        #     msgBox.setText("Subject Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.Ok)
+        #     msgBox.exec_()
+        #     return False
+        # print("Range of subjects is okay!")
+        # try:
+        #     SubLen = np.int32(ui.txtDISubLen.text())
+        #     1 / SubLen
+        # except:
+        #     msgBox.setText("Length of subjects must be an integer number")
+        #     msgBox.setIcon(QMessageBox.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.Ok)
+        #     msgBox.exec_()
+        #     return False
+        # print("Length of subjects is okay!")
+        # try:
+        #     ConRange = strMultiRange(ui.txtDIConRange.text(),SubSize)
+        #     if ConRange is None:
+        #         raise Exception
+        #     if not (len(ConRange) == SubSize):
+        #         msgBox.setText("Counter Size must be equal to Subject Size!")
+        #         msgBox.setIcon(QMessageBox.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.Ok)
+        #         msgBox.exec_()
+        #         return False
+        # except:
+        #     msgBox.setText("Counter Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.Ok)
+        #     msgBox.exec_()
+        #     return False
+        # print("Counter Range is okay!")
+        # try:
+        #     ConLen = np.int32(ui.txtDIConLen.text())
+        #     1 / ConLen
+        # except:
+        #     msgBox.setText("Length of counter must be an integer number")
+        #     msgBox.setIcon(QMessageBox.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.Ok)
+        #     msgBox.exec_()
+        #     return False
+        # print("Length of Counter is okay!")
+        # try:
+        #     RunRange = strMultiRange(ui.txtDIRunRange.text(),SubSize)
+        #     if RunRange is None:
+        #         raise Exception
+        #     if not (len(RunRange) == SubSize):
+        #         msgBox.setText("Run Size must be equal to Subject Size!")
+        #         msgBox.setIcon(QMessageBox.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.Ok)
+        #         msgBox.exec_()
+        #         return False
+        # except:
+        #     msgBox.setText("Run Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.Ok)
+        #     msgBox.exec_()
+        #     return False
+        # print("Run Range is okay!")
+        # try:
+        #     RunLen = np.int32(ui.txtDIRunLen.value())
+        #     1 / RunLen
+        # except:
+        #     msgBox.setText("Length of runs must be an integer number")
+        #     msgBox.setIcon(QMessageBox.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.Ok)
+        #     msgBox.exec_()
+        #     return False
+        # print("Length of runs is valid")
+
+        bids = BIDS(ui.txtDITask.text(), ui.txtDISubRange.text(), ui.txtDISubLen.text(), ui.txtDISubPer.text(),
+                                        ui.txtDIConRange.text(), ui.txtDIConLen.text(), ui.txtDIConPer.text(),
+                                        ui.txtDIRunRange.text(), ui.txtDIRunLen.text(), ui.txtDIRunPer.text())
+
         print("Checking files ...")
-        for si, s in enumerate(SubRange):
-            for cnt in ConRange[si]:
-                print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                for r in RunRange[si]:
-                    InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                    if os.path.isfile(InFile):
-                        print(InFile + " - is OKAY.")
+        for (_, t, _, s, _, c, runs) in bids:
+            print(f"Analyzing Subject {s}, Counter {c} ...")
+            for r in runs:
+                InFile = setParameters3(In, mainDIR, s, r, t, c)
+                if os.path.isfile(InFile):
+                    print(InFile + " - is OKAY.")
+                else:
+                    print(InFile + " - not found!")
+                    return
+
+                EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR, s, r, t, c)
+                CondFile = EventFolder + ui.txtDICondPre.text() + ".mat"
+                if os.path.isfile(CondFile):
+                    print(CondFile + " - is OKAY.")
+                else:
+                    print(CondFile + " - not found!")
+                    return
+
+                if ui.rbDIDynamic.isChecked() or ui.cbDIDM.isChecked():
+
+                    DMFile = setParameters3(DM, mainDIR, s, r, t, c)
+                    if os.path.isfile(DMFile):
+                        print(DMFile + " - is OKAY.")
                     else:
-                        print(InFile + " - not found!")
+                        print(DMFile + " - not found!")
                         return
-
-                    EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR,
-                                                 fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                                 fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                                 fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                    CondFile = EventFolder + ui.txtDICondPre.text() + ".mat"
-                    if os.path.isfile(CondFile):
-                        print(CondFile + " - is OKAY.")
+                else:
+                    LBFile = setParameters3(LB, mainDIR, s, r, t, c)
+                    if os.path.isfile(LBFile):
+                        print(LBFile + " - is OKAY.")
                     else:
-                        print(CondFile + " - not found!")
+                        print(LBFile + " - not found!")
                         return
-
-                    if ui.rbDIDynamic.isChecked() or ui.cbDIDM.isChecked():
-
-                        DMFile = setParameters3(DM, mainDIR, fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                        if os.path.isfile(DMFile):
-                            print(DMFile + " - is OKAY.")
-                        else:
-                            print(DMFile + " - not found!")
-                            return
-                    else:
-                        LBFile = setParameters3(LB, mainDIR, fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                        if os.path.isfile(LBFile):
-                            print(LBFile + " - is OKAY.")
-                        else:
-                            print(LBFile + " - not found!")
-                            return
 
         fMRISize    = None
 
@@ -1274,187 +1162,186 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         print("Extraction ...")
-        for si, s in enumerate(SubRange):
-            for cnt in ConRange[si]:
-                print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                for r in RunRange[si]:
-                    try:
-                        InFile = setParameters3(In, mainDIR,
-                                    fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                    fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                    fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                        InHDR = None # Free Mem
-                        InHDR = nb.load(InFile)
-                        InIMG = np.asanyarray(InHDR.dataobj)
-                        #InIMG = InHDR.get_data()
-                        if fMRISize is None:
-                            fMRISize = np.shape(InIMG)[0:3]
-                            if roiSize != fMRISize:
-                                print("ROI and fMRI images must be in the same size!")
-                                msgBox.setText("ROI and fMRI images must be in the same size!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
-                                return
+        for (_, t, _, s, _, c, runs) in bids:
+            print(f"Analyzing Subject {s}, Counter {c} ...")
+            for r in runs:
+                try:
+                    InFile = setParameters3(In, mainDIR, s, r, t, c)
+                    InHDR = None # Free Mem
+                    InHDR = nb.load(InFile)
+                    InIMG = np.asanyarray(InHDR.dataobj)
+                    if fMRISize is None:
+                        fMRISize = np.shape(InIMG)[0:3]
+                        if roiSize != fMRISize:
+                            print("ROI and fMRI images must be in the same size!")
+                            msgBox.setText("ROI and fMRI images must be in the same size!")
+                            msgBox.setIcon(QMessageBox.Critical)
+                            msgBox.setStandardButtons(QMessageBox.Ok)
+                            msgBox.exec_()
+                            return
+                    else:
+                        if fMRISize != np.shape(InIMG)[0:3]:
+                            print("Image size is not matched!")
+                            msgBox.setText("Image size is not matched!")
+                            msgBox.setIcon(QMessageBox.Critical)
+                            msgBox.setStandardButtons(QMessageBox.Ok)
+                            msgBox.exec_()
+                            return
+                    NScan = np.shape(InIMG)[3]
+                except:
+                    print(InFile + " - cannot load image file!")
+                    return
+                print(InFile + " - is loaded.")
+                print("Number of scans: ", NScan)
+                try:
+                    EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR, s, r, t, c)
+                    CondFile = EventFolder + ui.txtDICondPre.text() + ".mat"
+                    CondTitle = io.loadmat(CondFile)["Cond"]
+                    CondSize = len(CondTitle)
+                    for condindx in range(0, CondSize):
+                        CondID.add_cond(CondTitle[condindx][0][0],CondTitle[condindx][1][0])
+                except:
+                    print(CondFile + " - cannot load file!")
+                    return
 
+                print("Number of conditions: ", CondSize)
+                if ui.rbDIDynamic.isChecked() or ui.cbDIDM.isChecked():
+                    try:
+                        DMFile = setParameters3(DM, mainDIR, s, r, t, c)
+                        DesginValues = convertDesignMatrix(DMFile, CondSize)
+                        DMval = np.transpose(DesginValues)
+                        print("Desing Matrix is recovered.")
+                    except:
+                        print(DMFile + " - cannot load file!")
+                        return
+
+
+                # Session Class Labels
+                Y_Sess = list()
+
+                if ui.rbDIDynamic.isChecked():
+                    print("Estimating class labels ...")
+                    DMNew = list()
+                    DMCoeff     = list()
+                    for valinx in range(0, len(DMval)):
+                        val = DMval[valinx]
+                        val = val - np.min(val)
+                        val = val / np.max(val)
+                        coeff = fitLine(val)
+                        val = val - coeff
+                        DMCoeff.append(coeff)
+                        DMNew.append(val)
+                    DMNew = np.transpose(DMNew)
+
+                    for DMLineIndx, DMLine in enumerate(DMNew):
+                        MaxValIndx = np.argmax(DMLine)
+                        if DMLine[MaxValIndx] < Threshold:
+                            Y_Sess.append(0)
                         else:
-                            if fMRISize != np.shape(InIMG)[0:3]:
-                                print("Image size is not matched!")
-                                msgBox.setText("Image size is not matched!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
-                                return
-                        NScan = np.shape(InIMG)[3]
-                    except:
-                        print(InFile + " - cannot load image file!")
-                        return
-
-                    print(InFile + " - is loaded.")
-                    print("Number of scans: ", NScan)
-
+                            Y_Sess.append(MaxValIndx + 1)
+                    Y_Sess = np.int32(Y_Sess)
+                else:
+                    print("Loading class labels ...")
                     try:
-                        EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR,
-                                                     fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                                     fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                                     fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                        CondFile = EventFolder + ui.txtDICondPre.text() + ".mat"
-                        CondTitle = io.loadmat(CondFile)["Cond"]
-                        CondSize = len(CondTitle)
-                        for condindx in range(0, CondSize):
-                            CondID.add_cond(CondTitle[condindx][0][0],CondTitle[condindx][1][0])
-
+                        LBFile = setParameters3(LB, mainDIR, s, r, t, c)
+                        Y_Sess = np.int32(open(LBFile).read().rsplit())
                     except:
-                        print(CondFile + " - cannot load file!")
+                        print("Cannot read label file!")
                         return
 
-                    print("Number of conditions: ", CondSize)
+                if len(Y_Sess) == NScan:
+                    print("Number of class labels is okay. Class labels: ", len(Y_Sess))
+                else:
+                    print("Number of class labels must be equal to number of scans! Class labels: ", len(Y_Sess))
+                    return
 
-                    if ui.rbDIDynamic.isChecked() or ui.cbDIDM.isChecked():
-                        try:
-                            DMFile = setParameters3(DM, mainDIR, fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                                fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                                fixstr(cnt, ConLen, ui.txtDIConPer.text()))
+                if np.max(Y_Sess) >= CondSize:
+                    print("Number of conditions is okay. Conditions: ", np.max(Y_Sess))
+                else:
+                    print("WARNING: some class labels are not found!", np.max(Y_Sess))
 
-                            DesginValues = convertDesignMatrix(DMFile, CondSize)
-                            DMval = np.transpose(DesginValues)
-                            print("Desing Matrix is recovered.")
-                        except:
-                            print(DMFile + " - cannot load file!")
-                            return
+                for instID, yID in enumerate(Y_Sess):
+                    NumberOFALL = NumberOFALL + 1
+                    if not ui.cbDIRemoveRest.isChecked() or yID != 0:
+                        NumberOFExtract = NumberOFExtract + 1
+                        # NScan
+                        if ui.cbDINScanID.isChecked():
+                            NScanID.append(instID)
 
-
-                    # Session Class Labels
-                    Y_Sess = list()
-
-                    if ui.rbDIDynamic.isChecked():
-                        print("Estimating class labels ...")
-                        DMNew = list()
-                        DMCoeff     = list()
-                        for valinx in range(0, len(DMval)):
-                            val = DMval[valinx]
-                            val = val - np.min(val)
-                            val = val / np.max(val)
-                            coeff = fitLine(val)
-                            val = val - coeff
-                            DMCoeff.append(coeff)
-                            DMNew.append(val)
-                        DMNew = np.transpose(DMNew)
-
-                        for DMLineIndx, DMLine in enumerate(DMNew):
-                            MaxValIndx = np.argmax(DMLine)
-                            if DMLine[MaxValIndx] < Threshold:
-                                Y_Sess.append(0)
-                            else:
-                                Y_Sess.append(MaxValIndx + 1)
-                        Y_Sess = np.int32(Y_Sess)
-                    else:
-                        print("Loading class labels ...")
-                        try:
-                            LBFile = setParameters3(LB, mainDIR, fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-
-                            Y_Sess = np.int32(open(LBFile).read().rsplit())
-                        except:
-                            print("Cannot read label file!")
-                            return
-
-                    if len(Y_Sess) == NScan:
-                        print("Number of class labels is okay. Class labels: ", len(Y_Sess))
-                    else:
-                        print("Number of class labels must be equal to number of scans! Class labels: ", len(Y_Sess))
-                        return
-
-                    if np.max(Y_Sess) >= CondSize:
-                        print("Number of conditions is okay. Conditions: ", np.max(Y_Sess))
-                    else:
-                        print("WARNING: some class labels are not found!", np.max(Y_Sess))
-
-                    for instID, yID in enumerate(Y_Sess):
-                        NumberOFALL = NumberOFALL + 1
-                        if not ui.cbDIRemoveRest.isChecked() or yID != 0:
-                            NumberOFExtract = NumberOFExtract + 1
-                            # NScan
-                            if ui.cbDINScanID.isChecked():
-                                NScanID.append(instID)
-
-                            # Subject
-                            if ui.cbDISubjectID.isChecked():
+                        # Subject
+                        if ui.cbDISubjectID.isChecked():
+                            try:
+                                if not ui.cbDIConvertSN.isChecked():
+                                    SubjectID.append(s)
+                                else:
+                                    SubjectID.append(np.int32(s))
+                            except:
                                 SubjectID.append(s)
 
-                            # Task
-                            if ui.cbDITaskID.isChecked():
-                                TaskID.append(ui.txtDITask.text())
+                        # Task
+                        if ui.cbDITaskID.isChecked():
+                            TaskID.append(t)
 
-                            # Run
-                            if ui.cbDIRunID.isChecked():
+                        # Run
+                        if ui.cbDIRunID.isChecked():
+                            try:
+                                if not ui.cbDIConvertSN.isChecked():
+                                    RunID.append(r)
+                                else:
+                                    RunID.append(np.int32(r))
+                            except:
                                 RunID.append(r)
 
-                            # Counter
-                            if ui.cbDICounterID.isChecked():
-                                CounterID.append(cnt)
+                        # Counter
+                        if ui.cbDICounterID.isChecked():
+                            try:
+                                if not ui.cbDIConvertSN.isChecked():
+                                    CounterID.append(c)
+                                else:
+                                    CounterID.append(np.int32(c))
+                            except:
+                                CounterID.append(c)
 
-                            # Label
-                            if ui.cbDILabelID.isChecked():
-                                Y.append(yID)
+                        # Label
+                        if ui.cbDILabelID.isChecked():
+                            Y.append(yID)
 
-                            # Data
-                            if ui.cbDIDataID.isChecked():
-                                Snapshot = InIMG[:, :, :, instID]
-                                if ui.rb2DShape.isChecked():
-                                    X.append(Snapshot[roiIND])
-                                elif ui.rb4DShape.isChecked():
-                                    x3d = np.zeros(roiSize)
-                                    x3d[roiIND] = Snapshot[roiIND]
-                                    X.append(x3d)
-                                elif ui.rb4DShape2.isChecked():
-                                    x3d = np.zeros(vroiSize)
-                                    x3d[vroiIND] = Snapshot[roiIND]
-                                    X.append(x3d)
+                        # Data
+                        if ui.cbDIDataID.isChecked():
+                            Snapshot = InIMG[:, :, :, instID]
+                            if ui.rb2DShape.isChecked():
+                                X.append(Snapshot[roiIND])
+                            elif ui.rb4DShape.isChecked():
+                                x3d = np.zeros(roiSize)
+                                x3d[roiIND] = Snapshot[roiIND]
+                                X.append(x3d)
+                            elif ui.rb4DShape2.isChecked():
+                                x3d = np.zeros(vroiSize)
+                                x3d[vroiIND] = Snapshot[roiIND]
+                                X.append(x3d)
 
-                            if ui.cbDIDM.isChecked():
-                                DesignID.append(DesginValues[instID])
+                        if ui.cbDIDM.isChecked():
+                            DesignID.append(DesginValues[instID])
 
-                    # Data Files
-                    if ui.cbDIDataID.isChecked():
-                        if outType > 2:
-                            if ui.rbMatFile.isChecked():
-                                OutDataFile = setParameters3(OutDAT, "", str(s), str(r), ui.txtDITask.text(), str(cnt)) + ".ezmat"
-                            else:
-                                OutDataFile = setParameters3(OutDAT, "", str(s), str(r), ui.txtDITask.text(), str(cnt)) + ".nii.gz"
+                # Data Files
+                if ui.cbDIDataID.isChecked():
+                    if outType > 2:
+                        if ui.rbMatFile.isChecked():
+                            OutDataFile = setParameters3(OutDAT, "", s, r, t, c) + ".ezmat"
+                        else:
+                            OutDataFile = setParameters3(OutDAT, "", s, r, t, c) + ".nii.gz"
 
-                            BatchFiles.append([s, r, cnt, ui.txtDITask.text(), OutDataFile])
-                            print("Saving data " + OutDataFile + "... ")
-                            DataFiles.append(OutDataFile)
+                        BatchFiles.append([s, r, c, t, OutDataFile])
+                        print("Saving data " + OutDataFile + "... ")
+                        DataFiles.append(OutDataFile)
 
-                            if ui.rbMatFile.isChecked():
-                                io.savemat(OutDIR + '/' + OutDataFile, mdict={ui.txtDIDataID.text(): X},appendmat=False, do_compression=do_compress)
-                            else:
-                                convertedXtoIMG = nb.Nifti1Image(np.asarray(X).T, np.eye(4))
-                                nb.save(convertedXtoIMG, OutDIR + '/' + OutDataFile)
-                            print("Data " + OutDataFile + " is saved!")
-                            X = list()
+                        if ui.rbMatFile.isChecked():
+                            io.savemat(OutDIR + '/' + OutDataFile, mdict={ui.txtDIDataID.text(): X},appendmat=False, do_compression=do_compress)
+                        else:
+                            convertedXtoIMG = nb.Nifti1Image(np.asarray(X).T, np.eye(4))
+                            nb.save(convertedXtoIMG, OutDIR + '/' + OutDataFile)
+                        print("Data " + OutDataFile + " is saved!")
+                        X = list()
 
         if outType < 3:
             print(f"Saving data: {OutFileName} ...")
@@ -1471,11 +1358,11 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         Integration = dict()
-        Integration["SubLen"]    = SubLen
+        Integration["SubLen"]    = ui.txtDISubLen.text()
         Integration["SubPer"]    = ui.txtDISubPer.text()
-        Integration["RunLen"]    = RunLen
+        Integration["RunLen"]    = ui.txtDIRunLen.text()
         Integration["RunPer"]    = ui.txtDIRunPer.text()
-        Integration["ConLen"]    = ConLen
+        Integration["ConLen"]    = ui.txtDIConLen.text()
         Integration["ConPer"]    = ui.txtDIConPer.text()
         if ui.cbDISetting.isChecked():
             # Save Preprocessing Setting
@@ -1518,8 +1405,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             Preprocess["CTPT"]          = setting.CTPT
             Preprocess["TimeSlice"]     = setting.TimeSlice
             Preprocess["EventCodes"]    = setting.EventCodes
-            OutData["setting_" + Task]  = Preprocess
-            Integration["Preprocess"].append("Setting_" + Task)
+            OutData["setting_" + ui.txtDITask.text()]  = Preprocess
+            Integration["Preprocess"].append("Setting_" + ui.txtDITask.text())
         if outType > 2:
             OutData["BatchFiles"]    = BatchFiles
             Integration["OutHeader"] = ui.txtDIOutHDR.text()
