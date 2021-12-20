@@ -700,7 +700,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
     def btnDIOutFile_click(self):
         msgBox = QMessageBox()
         ofile = SaveFile("Save data file ...", ['easyX files (*.ezx)', 'MatLab files (*.mat)'],'ezx',\
-                             os.path.dirname(ui.txtDIOutFile.text()))
+                            os.path.dirname(ui.txtDIOutFile.text()))
         if len(ofile):
             if ui.rbDImatType.isChecked():
                 if ofile[-3:] != "mat":
