@@ -28,8 +28,11 @@ import numpy as np
 from PyQt5.QtWidgets import *
 from Base.Setting import *
 from Base.SettingHistory import History
-from Base.utility import getVersion, getBuild, setParameters3, fixstr, getSettingVersion, strRange, strMultiRange
+from Base.utility import getVersion, getBuild, setParameters3, getSettingVersion
 from Base.dialogs import LoadFile, SaveFile
+
+from Preprocess.BIDS import BIDS
+
 from GUI.frmWholeBrainROIGUI import *
 
 
@@ -211,7 +214,6 @@ class frmWholeBrainROI(Ui_frmWholeBrainROI):
         msgBox = QMessageBox()
 
         mainDIR = ui.txtSSDIR.text()
-        Task = ui.txtSSTask.text()
         # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
@@ -226,92 +228,6 @@ class frmWholeBrainROI(Ui_frmWholeBrainROI):
             msgBox.exec_()
             return False
         print("Main directory is okay.")
-        if not len(Task):
-            msgBox.setText("There is no task title")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        try:
-            SubRange = strRange(ui.txtSSSubRange.text(),Unique=True)
-            if SubRange is None:
-                raise Exception
-            SubSize = len(SubRange)
-        except:
-            msgBox.setText("Subject Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Range of subjects is okay!")
-        try:
-            SubLen = np.int32(ui.txtSSSubLen.text())
-            1 / SubLen
-        except:
-            msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of subjects is okay!")
-
-
-        try:
-            ConRange = strMultiRange(ui.txtSSConRange.text(),SubSize)
-            if ConRange is None:
-                raise Exception
-            if not (len(ConRange) == SubSize):
-                msgBox.setText("Counter Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Counter Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter Range is okay!")
-        try:
-            ConLen = np.int32(ui.txtSSConLen.text())
-            1 / ConLen
-        except:
-            msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of Counter is okay!")
-
-
-        try:
-            RunRange = strMultiRange(ui.txtSSRunRange.text(),SubSize)
-            if RunRange is None:
-                raise Exception
-            if not (len(RunRange) == SubSize):
-                msgBox.setText("Run Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Run Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Run Range is okay!")
-        try:
-            RunLen = np.int32(ui.txtSSRunLen.value())
-            1 / RunLen
-        except:
-            msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of runs is valid")
 
         Space = ui.txtSSSpace.currentText()
         if not len(Space):
@@ -347,65 +263,54 @@ class frmWholeBrainROI(Ui_frmWholeBrainROI):
             msgBox.exec_()
             return False
 
+        bids = BIDS(ui.txtSSTask.text(), ui.txtSSSubRange.text(), ui.txtSSSubLen.text(), ui.txtSSSubPer.text(),
+                                        ui.txtSSConRange.text(), ui.txtSSConLen.text(), ui.txtSSConPer.text(),
+                                        ui.txtSSRunRange.text(), ui.txtSSRunLen.text(), ui.txtSSRunPer.text())
 
         print("Checking files ...")
-        for si, s in enumerate(SubRange):
-            for cnt in ConRange[si]:
-                print("Analyzing Subject %d, Counter %d ..." % (s,cnt))
-                for r in RunRange[si]:
-
-                    InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()),\
-                                    fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(),\
-                                    fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-                    if os.path.isfile(InFile):
-                        print(InFile + " - is OKAY.")
-                    else:
-                        print(InFile + " - not found!")
-                        return
-
+        for (_, t, _, s, _, c, runs) in bids:
+            print(f"Analyzing Subject {s}, Counter {c} ...")
+            for r in runs:
+                InFile = setParameters3(In, mainDIR, s, r, t, c)
+                if os.path.isfile(InFile):
+                    print(InFile + " - is OKAY.")
+                else:
+                    print(InFile + " - not found!")
+                    return
         if ui.cbMetric.currentData() == "inter":
             print("Calculating ROI ...")
-
-
             ROIData = None
-            for si, s in enumerate(SubRange):
-                for cnt in ConRange[si]:
-                    print("Analyzing Subject %d, Counter %d ..." % (s,cnt))
-                    for r in RunRange[si]:
-                        InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                                fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                                fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-
-                        MaskHDR = nb.load(InFile)
-                        MaskData = MaskHDR.get_data()
-                        MaskData[np.where(MaskData != 0)] = 1
-                        if ROIData is None:
-                            if Space == DefaultSpace():
-                                affineHDR = nb.load(InFile)
-                            else:
-                                affineHDR = nb.load(Space)
-
-                            ROIData = MaskData.copy()
+            for (_, t, _, s, _, c, runs) in bids:
+                print(f"Analyzing Subject {s}, Counter {c} ...")
+                for r in runs:
+                    InFile = setParameters3(In, mainDIR, s, r, t, c)
+                    MaskHDR = nb.load(InFile)
+                    MaskData = MaskHDR.get_data()
+                    MaskData[np.where(MaskData != 0)] = 1
+                    if ROIData is None:
+                        if Space == DefaultSpace():
+                            affineHDR = nb.load(InFile)
                         else:
-                            if not np.shape(ROIData) == np.shape(MaskData):
-                                print("All mask must include the same size data (tensor)")
-                                return
-                            else:
-                                ROIData = ROIData * MaskData
-                        print(InFile + " - is calculated!")
+                            affineHDR = nb.load(Space)
+                        ROIData = MaskData.copy()
+                    else:
+                        if not np.shape(ROIData) == np.shape(MaskData):
+                            print("All mask must include the same size data (tensor)")
+                            return
+                        else:
+                            ROIData = ROIData * MaskData
+                    print(InFile + " - is calculated!")
 
             ROIHDR = nb.Nifti1Image(ROIData, affineHDR.affine)
             nb.save(ROIHDR,Out)
-
             NumVoxels = np.shape(ROIData)
             NumVoxels = NumVoxels[0] * NumVoxels[1] * NumVoxels[2]
             print("Number of all voxels: %d " % NumVoxels)
             NumROIVoxel = len(ROIData[np.where(ROIData != 0)])
             print("Number of selected voxles in ROI: %d" % NumROIVoxel)
             print("ROI is generated!")
-
             msgBox.setText("ROI is generated!\nNumber of all voxels: " + str(NumVoxels) + \
-                           "\nNumber of selected voxles in ROI: " + str(NumROIVoxel))
+                            "\nNumber of selected voxles in ROI: " + str(NumROIVoxel))
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.exec_()
