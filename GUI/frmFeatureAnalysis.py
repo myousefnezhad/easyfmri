@@ -53,8 +53,8 @@ from GUI.frmFELabelAlign import frmFELabelAlign
 from GUI.frmTAIntersec import frmTAIntersec
 from GUI.frmFASHA import frmFASHA
 
-from Base.utility import fixstr, getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
-from Base.utility import strRange, strMultiRange, getSettingVersion
+from Base.utility import getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
+from Base.utility import getSettingVersion
 from Base.Setting import Setting
 from Base.SettingHistory import History
 from Base.Conditions import Conditions
@@ -1489,7 +1489,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         global ui
         msgBox = QMessageBox()
         mainDIR = ui.txtDIDIR.text()
-        Task = ui.txtDITask.text()
         # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
@@ -1504,89 +1503,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.exec_()
             return False
         print("Main directory is okay.")
-        if not len(Task):
-            msgBox.setText("There is no task title")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        try:
-            SubRange = strRange(ui.txtDISubRange.text(),Unique=True)
-            if SubRange is None:
-                raise Exception
-            SubSize = len(SubRange)
-        except:
-            msgBox.setText("Subject Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Range of subjects is okay!")
-        try:
-            SubLen = np.int32(ui.txtDISubLen.text())
-            1 / SubLen
-        except:
-            msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of subjects is okay!")
-        try:
-            ConRange = strMultiRange(ui.txtDIConRange.text(),SubSize)
-            if ConRange is None:
-                raise Exception
-            if not (len(ConRange) == SubSize):
-                msgBox.setText("Counter Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Counter Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter Range is okay!")
-        try:
-            ConLen = np.int32(ui.txtDIConLen.text())
-            1 / ConLen
-        except:
-            msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of Counter is okay!")
-        try:
-            RunRange = strMultiRange(ui.txtDIRunRange.text(),SubSize)
-            if RunRange is None:
-                raise Exception
-            if not (len(RunRange) == SubSize):
-                msgBox.setText("Run Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Run Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Run Range is okay!")
-        try:
-            RunLen = np.int32(ui.txtDIRunLen.value())
-            1 / RunLen
-        except:
-            msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of runs is valid")
-
 
         if not ui.rbDIDynamic.isChecked():
             msgBox.setText("Please select dynamic method first")
@@ -1621,27 +1537,20 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             return False
 
         setting = Setting()
-        setting.Task = Task
-
+        setting.Task        = ui.txtDITask.text()
         setting.SubRange    = ui.txtDISubRange.text()
-        setting.SubLen      = SubLen
+        setting.SubLen      = ui.txtDISubLen.text()
         setting.SubPer      = ui.txtDISubPer.text()
-
         setting.RunRange    = ui.txtDIRunRange.text()
-        setting.RunLen      = RunLen
+        setting.RunLen      = ui.txtDIRunLen.text()
         setting.RunPer      = ui.txtDIRunPer.text()
-
-
-        setting.ConRange     = ui.txtDIConRange.text()
-        setting.ConLen      = ConLen
+        setting.ConRange    = ui.txtDIConRange.text()
+        setting.ConLen      = ui.txtDIConLen.text()
         setting.ConPer      = ui.txtDIConPer.text()
         sSess = frmSelectSession(None, setting=setting)
 
         try:
-            EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR,
-                                         fixstr(sSess.SubID, SubLen, ui.txtDISubPer.text()), \
-                                         fixstr(sSess.RunID, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                         fixstr(sSess.ConID, ConLen, ui.txtDIConPer.text()))
+            EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR, sSess.SubID, sSess.RunID, sSess.TaskID, sSess.ConID)
             CondFile = EventFolder + ui.txtDICondPre.text() + ".mat"
             CondTitle = io.loadmat(CondFile)["Cond"]
             CondSize = len(CondTitle)
@@ -1650,10 +1559,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             return
 
         try:
-            DMFile = setParameters3(DM, mainDIR, fixstr(sSess.SubID, SubLen, ui.txtDISubPer.text()), \
-                                    fixstr(sSess.RunID, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                    fixstr(sSess.ConID, ConLen, ui.txtDIConPer.text()))
-
+            DMFile = setParameters3(DM, mainDIR, sSess.SubID, sSess.RunID, sSess.TaskID, sSess.ConID)
             DesginValues = convertDesignMatrix(DMFile, CondSize)
             DMval = np.transpose(DesginValues)
             print("Desing Matrix is recovered.")
