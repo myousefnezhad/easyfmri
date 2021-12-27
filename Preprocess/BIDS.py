@@ -54,43 +54,51 @@ def strMultiRange(data, Len=None):
         return None
     result = list()
     try:
-        strData = data.replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()
+        # , is a separator for each term 
+        strData = data.replace("\'", " ").replace("[", "").replace("]","").split(",")
+
+        # * is a separator for multiple
         for D in strData:
-            # Calculate Repate
-            multiply = D.replace("*"," ").split()
+            multiply = D.split("*")
             if len(multiply) == 1:
                 Mul = 1
-                Str = D
+                componentStr = D
             elif len(multiply) == 2:
                 Mul = np.int32(multiply[0])
-                Str = multiply[1]
+                componentStr = multiply[1]
             else:
                 print("Wrong Format, Symbol = *")
                 return None
-            # Calculate Range
-            res = list()
-            reformD = Str.replace("-"," ").split()
-            if len(reformD) == 1:
-                res.append(np.int(reformD[0]))
-            elif len(reformD) == 2:
-                LoBand = np.int(reformD[0])
-                HiBand = np.int(reformD[1])
-                if LoBand == HiBand:
-                    res.append(np.int(reformD[0]))
-                elif LoBand < HiBand:
-                    ren = np.arange(LoBand, HiBand + 1, 1)
-                    for x in ren:
-                        res.append(x)
-                elif LoBand > HiBand:
-                    ren = np.arange(LoBand, HiBand - 1, -1)
-                    for x in ren:
-                        res.append(x)
-            else:
-                print("Wrong Format, Symbol: -")
-                return None
+            
+            # / is a separator for each component    
+            res = set()
+            components = componentStr.split("/")
+            for comp in components:
+                # - is a separator for range
+                if comp.count("-") > 1:
+                    print(f"Wrong Format. {comp} has more than one -")
+                reformD = comp.split("-")
+                if len(reformD) == 1:
+                    res.add(np.int32(reformD[0]))
+                elif len(reformD) == 2:
+                    LoBand = np.int32(reformD[0])
+                    HiBand = np.int32(reformD[1])
+                    if LoBand == HiBand:
+                        res.add(np.int32(reformD[0]))
+                    elif LoBand < HiBand:
+                        ren = np.arange(LoBand, HiBand + 1, 1)
+                        for x in ren:
+                            res.add(x)
+                    elif LoBand > HiBand:
+                        ren = np.arange(LoBand, HiBand - 1, -1)
+                        for x in ren:
+                            res.add(x)
+                else:
+                    print("Wrong Format, Symbol: -")
+                    return None
             # Apply Repeat
             for _ in range(0, Mul):
-                result.append(res)
+                result.append(list(res))
     except:
         print("Wrong Format!")
         return None
@@ -99,7 +107,7 @@ def strMultiRange(data, Len=None):
             res = result[0]
             result = list()
             for _ in range(0,Len):
-                result.append(res)
+                result.append(list(res))
         elif not len(result) == Len:
             print("Size of Range is wrong!")
             return None
@@ -246,3 +254,10 @@ def load_BIDS(settings):
     return BIDS(settings.Task, settings.SubRange, settings.SubLen, settings.SubPer,\
         settings.ConRange, settings.ConLen, settings.ConPer, \
         settings.RunRange, settings.RunLen, settings.RunPer)
+
+
+
+if __name__ == '__main__':
+    s = '[1]'
+
+    print(strMultiRange(s, 7))
