@@ -1168,9 +1168,10 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         NumberOFALL = 0
         BatchFiles = list()
 
-        DMMContent = dict()
-        for var in DMMVars:
-            DMMContent[var] = list()
+        if ui.cbDIDesignMatrixMeta.isChecked():
+            DMMContent = dict()
+            for var in DMMVars:
+                DMMContent[var] = list()
 
         # RUNNING ...
         if outType > 2:

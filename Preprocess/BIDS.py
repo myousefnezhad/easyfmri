@@ -254,3 +254,9 @@ def load_BIDS(settings):
     return BIDS(settings.Task, settings.SubRange, settings.SubLen, settings.SubPer,\
         settings.ConRange, settings.ConLen, settings.ConPer, \
         settings.RunRange, settings.RunLen, settings.RunPer)
+
+
+
+if __name__ == "__main__":
+    s = '[[4/6/8/9/11-14],[2/6-10/13/15],[2/4/8-10/12-14],[2/3/5-8]]'
+    print(strMultiRange(s, 4))
