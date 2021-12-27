@@ -76,7 +76,7 @@ def strMultiRange(data, Len=None):
             for comp in components:
                 # - is a separator for range
                 if comp.count("-") > 1:
-                    print(f"Wrong Format. {comp} has more than one -")
+                    print(f"Wrong Format. {comp} has more than -")
                 reformD = comp.split("-")
                 if len(reformD) == 1:
                     res.add(np.int32(reformD[0]))
@@ -254,10 +254,3 @@ def load_BIDS(settings):
     return BIDS(settings.Task, settings.SubRange, settings.SubLen, settings.SubPer,\
         settings.ConRange, settings.ConLen, settings.ConPer, \
         settings.RunRange, settings.RunLen, settings.RunPer)
-
-
-
-if __name__ == '__main__':
-    s = '[1]'
-
-    print(strMultiRange(s, 7))
