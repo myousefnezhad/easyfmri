@@ -1417,7 +1417,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                         if ui.cbDIDM.isChecked():
                             DesignID.append(DesginValues[instID])
 
-                    currentTR += DMMTR
+                    if ui.cbDIDesignMatrixMeta.isChecked():
+                        currentTR += DMMTR
                 # Data Files
                 if ui.cbDIDataID.isChecked():
                     if outType > 2:
