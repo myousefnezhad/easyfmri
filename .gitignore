@@ -19,3 +19,7 @@ Visualization/__pycache__/*
 history
 .DS_Store
 .vscode/*
+._.DS_Store
+Script/._.DS_Store
+Script/._cp_script_mac
+Script/ezfmri.app/Contents/Resources/Scripts/._main.scpt
