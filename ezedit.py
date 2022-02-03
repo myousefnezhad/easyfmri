@@ -21,7 +21,7 @@
 #
 
 import sys
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmDataEditor import frmDataEditor
 
 if __name__ == '__main__':

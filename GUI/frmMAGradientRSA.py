@@ -27,7 +27,7 @@ import torch
 import matplotlib
 import numpy as np
 from RSA.GrRSA import GrRSA
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmMAGradientRSAGUI import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile

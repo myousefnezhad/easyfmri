@@ -26,7 +26,7 @@ import time
 import torch
 import numpy as np
 from Network.CNN import CNN
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmFECNNGUI import *
 from Base.utility import Str2Bool
 from sklearn import preprocessing

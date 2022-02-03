@@ -23,7 +23,7 @@
 import logging
 import os
 
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 
 from Base.utility import getVersion, getBuild
 from Base.dialogs import SaveFile, LoadFile

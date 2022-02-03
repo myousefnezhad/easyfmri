@@ -27,7 +27,7 @@ import numpy as np
 from sklearn import preprocessing
 from IO.mainIO import mainIO_load, mainIO_save, can_do_compression
 from dir import getDIR
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.utility import getVersion, getBuild
 from Base.dialogs import LoadFile, SaveFile
 from GUI.frmDataEditorGUI import *

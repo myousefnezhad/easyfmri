@@ -28,7 +28,7 @@ import logging
 import matplotlib
 import numpy as np
 import nibabel as nb
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn import preprocessing
 from nilearn import plotting
 from GUI.frmMAClassicNetworkROIGUI import *

@@ -23,7 +23,7 @@
 import os
 import sys
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmFEPCAGUI import *
 from sklearn import preprocessing
 from sklearn.decomposition import PCA

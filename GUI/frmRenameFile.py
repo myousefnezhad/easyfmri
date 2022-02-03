@@ -24,7 +24,7 @@ import os
 import sys
 
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.utility import fixstr, setParameters3
 from Base.dialogs import SelectDir
 from GUI.frmRenameFileGUI import *

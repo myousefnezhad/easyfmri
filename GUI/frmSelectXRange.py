@@ -20,7 +20,7 @@
 #
 #
 
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 import numpy as np
 import sys
 

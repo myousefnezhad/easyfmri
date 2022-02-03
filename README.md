@@ -230,7 +230,7 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 * Fedora (>= 32): The essential system setup
     ```
     sudo yum install -y tcsh libXp openmotif gsl xorg-x11-fonts-misc       \
-                        PyQt5 R-devel netpbm-progs gnome-tweak-tool ed     \
+                        PyQt6 R-devel netpbm-progs gnome-tweak-tool ed     \
                         xorg-x11-server-Xvfb git
     sudo yum update -y
     ```

@@ -24,7 +24,7 @@
 import os
 import icon_rc
 import subprocess
-import PyQt5.QtWidgets as QtWidgets
+import PyQt6.QtWidgets as QtWidgets
 from GUI.frmMainMenuGUI import *
 from GUI.frmFeatureAnalysis import *
 from GUI.frmModelAnalysis import *

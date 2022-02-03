@@ -29,7 +29,7 @@ import scipy.io as io
 import nibabel as nb
 import subprocess as sub
 
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import strRange

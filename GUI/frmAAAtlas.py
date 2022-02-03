@@ -25,7 +25,7 @@ import sys
 import logging
 import numpy as np
 import nibabel as nb
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmAAAtlasGUI import *
 from sklearn import preprocessing
 from sklearn.svm import LinearSVC

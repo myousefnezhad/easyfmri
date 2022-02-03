@@ -26,7 +26,7 @@ import sys
 import nibabel as nb
 import numpy as np
 import scipy.io as io
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.SettingHistory import History
 from Base.utility import getVersion, getBuild, getSettingVersion, strMultiRange, strRange, fixstr, setParameters3
 from Base.dialogs import LoadFile, SaveFile

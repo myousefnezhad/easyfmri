@@ -26,7 +26,7 @@ import time
 import numpy as np
 import scipy.linalg as lg
 from Base.AR import AR
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
