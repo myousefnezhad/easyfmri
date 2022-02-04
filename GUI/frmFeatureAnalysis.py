@@ -24,14 +24,14 @@ import os
 import platform
 import sys
 
-import PyQt5.QtWidgets as QtWidgets
+import PyQt6.QtWidgets as QtWidgets
 import matplotlib
 import nibabel as nb
 import numpy as np
 from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 import scipy.io as io
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QMessageBox
 from sklearn.preprocessing import label_binarize
 import threading
 

@@ -25,7 +25,7 @@ import sys
 import seaborn as sns
 import numpy as np
 from IO.mainIO import mainIO_load
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.utility import getVersion, getBuild, fixstr
 from Base.dialogs import LoadFile
 from GUI.frmFELabelAlignGUI import *

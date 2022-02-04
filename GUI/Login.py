@@ -20,8 +20,8 @@
 #
 #
 
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import *
+from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import *
 
 class Login(QtWidgets.QDialog):
     def __init__(self, parent=None):

@@ -26,7 +26,7 @@ import sys
 import time
 import matplotlib
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmMARSAGUI import *
 from sklearn import preprocessing
 import sklearn.linear_model as linmdl

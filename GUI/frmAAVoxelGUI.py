@@ -2,11 +2,11 @@
 
 # Form implementation generated from reading ui file 'frmAAVoxelGUI.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.1
+# Created by: PyQt6 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
 
 class Ui_frmAAVoxel(object):
     def setupUi(self, frmAAVoxel):

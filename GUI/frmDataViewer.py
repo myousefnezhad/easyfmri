@@ -20,8 +20,8 @@
 #
 #
 
-from PyQt5.QtWidgets import *
-import PyQt5.QtCore as QtCore
+from PyQt6.QtWidgets import *
+import PyQt6.QtCore as QtCore
 
 import numpy as np
 

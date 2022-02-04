@@ -31,8 +31,8 @@ import numpy as np
 import scipy.io as io
 
 
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QMessageBox
 
 
 from Base.Setting import Setting

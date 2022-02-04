@@ -28,7 +28,7 @@ import subprocess as sub
 
 import nibabel as nb
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 
 from Base.utility import RunCMD
 from Base.afni import AFNI

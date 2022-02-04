@@ -2,11 +2,11 @@
 
 # Form implementation generated from reading ui file 'frmMAKMeansGUI.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt6 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
 
 class Ui_frmMAKMeans(object):
     def setupUi(self, frmMAKMeans):

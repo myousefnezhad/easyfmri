@@ -22,8 +22,8 @@
 
 
 def SaveFile(Title="Save ...", Filters=['All files (*.*)'], Suffix=None, currentDirectory=None, currentFile=None):
-    from PyQt5.QtWidgets import QDialog, QFileDialog
-    import PyQt5.QtCore as QtCore
+    from PyQt6.QtWidgets import QDialog, QFileDialog
+    import PyQt6.QtCore as QtCore
     dialog = QFileDialog()
     dialog.setOption(QFileDialog.DontUseNativeDialog)
     dialog.setFilter(dialog.filter() | QtCore.QDir.Hidden)
@@ -43,8 +43,8 @@ def SaveFile(Title="Save ...", Filters=['All files (*.*)'], Suffix=None, current
 
 
 def LoadFile(Title="Load ...", Filters=['All files (*.*)'], Suffix=None, currentDirectory=None, currentFile=None):
-    from PyQt5.QtWidgets import QDialog, QFileDialog
-    import PyQt5.QtCore as QtCore
+    from PyQt6.QtWidgets import QDialog, QFileDialog
+    import PyQt6.QtCore as QtCore
     dialog = QFileDialog()
     dialog.setWindowTitle(Title)
     if currentDirectory is not None:
@@ -64,8 +64,8 @@ def LoadFile(Title="Load ...", Filters=['All files (*.*)'], Suffix=None, current
 
 
 def LoadMultiFile(Title="Load ...", Filters=['All files (*.*)'], Suffix=None, currentDirectory=None, currentFile=None):
-    from PyQt5.QtWidgets import QDialog, QFileDialog
-    import PyQt5.QtCore as QtCore
+    from PyQt6.QtWidgets import QDialog, QFileDialog
+    import PyQt6.QtCore as QtCore
     dialog = QFileDialog()
     dialog.setWindowTitle(Title)
     if currentDirectory is not None:
@@ -87,7 +87,7 @@ def LoadMultiFile(Title="Load ...", Filters=['All files (*.*)'], Suffix=None, cu
 
 
 def SelectDir(Title="Select a direcory", currentDirectory=None):
-    from PyQt5.QtWidgets import QFileDialog
+    from PyQt6.QtWidgets import QFileDialog
     import os
     flags = QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly | QFileDialog.DontUseNativeDialog
     if currentDirectory is not None:

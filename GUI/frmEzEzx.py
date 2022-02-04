@@ -25,7 +25,7 @@ import sys
 from IO.easyX import easyX
 import numpy as np
 import scipy.io as io
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.utility import getVersion, getBuild
 from IO.EasyData import LoadEzData
 from Base.dialogs import LoadFile, SaveFile
