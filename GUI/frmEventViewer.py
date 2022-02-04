@@ -20,8 +20,8 @@
 #
 #
 
-from PyQt6.QtWidgets import *
-import PyQt6.QtCore as QtCore
+from PyQt5.QtWidgets import *
+import PyQt5.QtCore as QtCore
 
 class frmEventViewer(QDialog):
     def __init__(self, Events=None, StartRow=None, SubID=None, RowID=None, Task=None):

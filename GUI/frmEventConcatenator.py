@@ -24,7 +24,7 @@
 import os
 import sys
 
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 
 from GUI.frmEventConcatenatorGUI import *
 from Base.dialogs import SaveFile, LoadFile

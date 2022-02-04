@@ -24,7 +24,7 @@ import os
 import sys
 import nibabel as nb
 import numpy as np
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from Base.utility import getVersion, getBuild
 from Base.dialogs import LoadFile
 from GUI.frmImageInfoGUI import *

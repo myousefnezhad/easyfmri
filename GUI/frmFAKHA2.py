@@ -25,7 +25,7 @@ import sys
 import time
 import numpy as np
 import scipy.io as io
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild

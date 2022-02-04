@@ -25,7 +25,7 @@ import sys
 import time
 import numpy as np
 import nibabel as nb
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild

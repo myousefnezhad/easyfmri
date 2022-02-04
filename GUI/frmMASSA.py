@@ -28,7 +28,7 @@ import torch
 import numpy as np
 from RSA.SSA import SSA
 from Base.draw import DrawRSA
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from GUI.frmMASSAGUI import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile

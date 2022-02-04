@@ -24,7 +24,7 @@
 import os
 import sys
 import numpy as np
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from GUI.frmMAGNBGUI import *
 from sklearn import preprocessing
 from sklearn.naive_bayes import GaussianNB

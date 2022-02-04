@@ -20,7 +20,7 @@
 #
 #
 
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 import numpy as np
 
 class frmSelectRange(QDialog):

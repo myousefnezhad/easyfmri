@@ -24,8 +24,8 @@ import os
 import sys
 import time
 import numpy as np
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import QThread
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QThread
 from Base.utility import getVersion, getBuild, OpenReport
 from Base.dialogs import SaveFile
 from GUI.frmJobsGUI import *

@@ -20,7 +20,7 @@
 #
 #
 
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from Preprocess.BIDS import BIDS
 import numpy as np
 

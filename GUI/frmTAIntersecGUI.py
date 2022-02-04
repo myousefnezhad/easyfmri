@@ -2,11 +2,11 @@
 
 # Form implementation generated from reading ui file 'frmTAIntersecGUI.ui'
 #
-# Created by: PyQt6 UI code generator 5.9.2
+# Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_frmTAInterSec(object):
     def setupUi(self, frmTAInterSec):

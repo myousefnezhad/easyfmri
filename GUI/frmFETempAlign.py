@@ -24,7 +24,7 @@ import os
 import sys
 import logging
 import numpy as np
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from IO.mainIO import mainIO_load
 from GUI.frmFETempAlignGUI import *
 from Base.utility import getVersion, getBuild, fixstr

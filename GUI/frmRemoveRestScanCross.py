@@ -25,7 +25,7 @@ import sys
 
 import numpy as np
 from Base.Conditions import Conditions, reshape_condition_cell
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from sklearn.preprocessing import label_binarize
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild

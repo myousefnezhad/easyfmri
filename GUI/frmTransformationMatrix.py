@@ -24,7 +24,7 @@ import os
 import platform
 import subprocess
 import sys
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from GUI.frmTransformationMatrixGUI import *
 from Base.fsl import FSL
 from Base.dialogs import LoadFile, SaveFile

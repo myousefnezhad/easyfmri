@@ -25,7 +25,7 @@ import sys
 
 import numpy as np
 #import scipy.io as io
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from GUI.frmFECrossValidationGUI import *
 from Base.dialogs import LoadFile, SelectDir
 from Base.utility import getVersion, getBuild

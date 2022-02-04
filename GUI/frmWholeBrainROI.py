@@ -25,7 +25,7 @@ import sys
 
 import nibabel as nb
 import numpy as np
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from Base.Setting import *
 from Base.SettingHistory import History
 from Base.utility import getVersion, getBuild, setParameters3, getSettingVersion

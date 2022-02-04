@@ -26,7 +26,7 @@ import numpy as np
 import scipy.io as io
 import configparser as cp
 from Preprocess.BIDS import BIDS
-from PyQt6.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox
 from Base.utility import getTimeSliceID, setParameters3, decoding
 from Base.utility import getSettingVersion, Str2Bool
 

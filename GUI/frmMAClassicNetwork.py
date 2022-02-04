@@ -29,7 +29,7 @@ import matplotlib
 import numpy as np
 import nibabel as nb
 from nilearn import plotting
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from GUI.frmMAClassicNetworkGUI import *
 from Base.dialogs import LoadFile, SaveFile

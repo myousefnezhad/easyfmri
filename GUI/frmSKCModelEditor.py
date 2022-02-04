@@ -24,7 +24,7 @@ import os
 import sys
 
 import numpy as np
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 
 from sklearn import preprocessing
 from sklearn.metrics import accuracy_score

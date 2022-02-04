@@ -25,7 +25,7 @@ import os
 import sys
 import time
 import numpy as np
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from MVPA.GPUSVM import GPUSVM
 from GUI.frmMAGPUSVMGUI import *
 from sklearn import preprocessing

@@ -25,8 +25,8 @@ import sys
 
 import numpy as np
 from Base.Conditions import Conditions
-from PyQt6.QtWidgets import *
-from PyQt6.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 from Base.dialogs import SaveFile, LoadMultiFile
 from Base.utility import getVersion, getBuild
 from GUI.frmResultReportGUI import *

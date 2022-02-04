@@ -25,7 +25,7 @@ import sys
 
 import nibabel as nb
 import numpy as np
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 
 from Base.utility import getDirFSLAtlas, getVersion, getBuild
 from Base.dialogs import LoadFile, SaveFile, LoadMultiFile

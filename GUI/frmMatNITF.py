@@ -26,7 +26,7 @@ import numpy as np
 import nibabel as nb
 import subprocess as sub
 from Base.afni import AFNI
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from GUI.frmMatNITFGUI import *
 from Base.utility import strRange
 from sklearn import preprocessing

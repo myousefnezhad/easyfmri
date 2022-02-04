@@ -25,7 +25,7 @@ import sys
 
 import numpy as np
 import nibabel as nb
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score

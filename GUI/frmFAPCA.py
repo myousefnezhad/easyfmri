@@ -24,7 +24,7 @@ import os
 import sys
 import time
 import numpy as np
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from sklearn.decomposition import KernelPCA, PCA, IncrementalPCA
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile

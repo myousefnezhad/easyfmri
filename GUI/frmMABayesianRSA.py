@@ -27,7 +27,7 @@ import time
 import logging
 import numpy as np
 import scipy.io as io
-from PyQt6.QtWidgets import *
+from PyQt5.QtWidgets import *
 from sklearn import preprocessing
 from GUI.frmMABayesianRSAGUI import *
 from Base.dialogs import LoadFile, SaveFile

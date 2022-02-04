@@ -2,11 +2,11 @@
 
 # Form implementation generated from reading ui file 'frmFESPCAGUI.ui'
 #
-# Created by: PyQt6 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_frmFESPCA(object):
     def setupUi(self, frmFESPCA):

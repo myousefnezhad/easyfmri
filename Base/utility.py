@@ -20,7 +20,7 @@
 #
 #
 
-from PyQt6.QtWidgets import QMessageBox, QSizePolicy, QTextEdit
+from PyQt5.QtWidgets import QMessageBox, QSizePolicy, QTextEdit
 
 import numpy as np
 import os
