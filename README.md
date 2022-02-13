@@ -344,17 +344,20 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
 
 ### Install Python 3.9
-After you have downloaded the related Miniconda or Miniforge on your computer, you must open a terminal and use `cd` commends to go to the directory that your file is there. As an example, you may download the file in the Downloads folder, so you need to run `cd ~/Downloads`
+After you have downloaded the related Miniconda or Miniforge on your computer, you must open a terminal and use `cd` commends to go to the directory that your file is there. As an example, you may download the file in the Downloads folder, so you need to run: 
+```
+cd ~/Downloads
+```
 
 You can use `ls` command to check the content of the current directory in terminal.
 
 Then, you can use `sh <FILE NAME>` to run the setup, where `<FILE NAME>` is the name of file you have downloaded in the previous section and can be listed in your terminal when you used `ls` command. 
 
 * Note: **DO NOT** add conda init to the startup, becuase you will handle conda via easy fMRI startup script. e.g., say no to this question:
-      ```
+    ```
       Do you wish the installer to initialize Miniconda3
       by running conda init? [yes|no] no
-      ```
+    ```
 
 
 * The setup should run using the following command for Linux (X86):
