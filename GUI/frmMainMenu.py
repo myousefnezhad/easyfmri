@@ -72,6 +72,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             print("Python:", pythonInfo[0])
             print("C Compiler:", pythonInfo[1])
             print("Python Architecture:", platform.machine())
+            print("PyQt: 6.x")
 
         except:
             pass
