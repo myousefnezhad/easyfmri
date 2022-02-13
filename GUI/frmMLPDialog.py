@@ -21,8 +21,8 @@
 #
 
 import sys
-from PyQt5.QtWidgets import *
-import PyQt5.QtCore as QtCore
+from PyQt6.QtWidgets import *
+import PyQt6.QtCore as QtCore
 
 
 class frmLayer(QDialog):
@@ -67,7 +67,7 @@ class frmLayer(QDialog):
         self.layout.addWidget(self.btnAdd)
         self.layout.addWidget(self.btnExit)
         self.setLayout(self.layout)
-        self.exec_()
+        self.exec()
 
     def btnExit_onclick(self):
         self.close()

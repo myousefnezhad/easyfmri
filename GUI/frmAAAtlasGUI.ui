@@ -391,6 +391,16 @@
     <attribute name="title">
      <string>Model</string>
     </attribute>
+    <widget class="QWidget" name="Code" native="true">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>681</width>
+       <height>201</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QLineEdit" name="txtAtlas">

@@ -24,7 +24,7 @@
 import os
 import sys
 
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 
 from GUI.frmEventConcatenatorGUI import *
 from Base.dialogs import SaveFile, LoadFile
@@ -49,8 +49,8 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
         ui.lwFiles.setHeaderLabels(['Offset','File'])
 
 
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -84,9 +84,9 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
         if not len(ui.lwFiles.selectedItems()):
             msgBox = QMessageBox()
             msgBox.setText("Please select a item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         ui.lwFiles.takeTopLevelItem(ui.lwFiles.indexOfTopLevelItem(ui.lwFiles.selectedItems()[0]))
 
@@ -101,17 +101,17 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
         if ui.lwFiles.topLevelItemCount() < 1:
             msgBox = QMessageBox()
             msgBox.setText("There is no input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if ui.lwFiles.topLevelItemCount() < 2:
             msgBox = QMessageBox()
             msgBox.setText("You must select at least two files!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         files = []
@@ -130,9 +130,9 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
             print("Please enter Output File!")
             msgBox = QMessageBox()
             msgBox.setText("Please enter Output File!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         print("Generating Output File ...")
 
@@ -151,13 +151,13 @@ class frmEventConcatenator(Ui_frmEventConcatenator):
         print("Output is generated!")
         msgBox = QMessageBox()
         msgBox.setText("Output is generated!")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
         return
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmEventConcatenator.show(frmEventConcatenator)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

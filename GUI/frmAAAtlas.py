@@ -22,10 +22,9 @@
 
 import os
 import sys
-import logging
 import numpy as np
 import nibabel as nb
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmAAAtlasGUI import *
 from sklearn import preprocessing
 from sklearn.svm import LinearSVC
@@ -34,11 +33,7 @@ from Base.utility import getVersion, getBuild
 from sklearn.linear_model import LogisticRegression
 from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 from sklearn.metrics import accuracy_score, classification_report, precision_score, recall_score, roc_auc_score, f1_score, confusion_matrix
-logging.basicConfig(level=logging.DEBUG)
-from pyqode.core import api
-from pyqode.core import modes
-from pyqode.core import panels
-from pyqode.qt import QtWidgets as pyWidgets
+from Base.codeEditor import codeEditor
 
 
 
@@ -66,27 +61,34 @@ class frmAAAtlas(Ui_frmAAAtlas):
         ui.setupUi(dialog)
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
+        
+        # New Code Editor Library
+        cEditor = codeEditor(ui)
+        ui.txtEvents = cEditor.Obj
+        cEditor.setObjectName("txtEvents")
+        cEditor.setText(EventCode())
+        layout = QHBoxLayout(ui.Code)
+        layout.addWidget(cEditor.Obj)
 
-
-        ui.txtEvents = api.CodeEdit(ui.tab_2)
-        ui.txtEvents.setGeometry(QtCore.QRect(10, 10, 641, 200))
-        ui.txtEvents.setObjectName("txtEvents")
-        ui.txtEvents.backend.start('backend/server.py')
-        ui.txtEvents.modes.append(modes.CodeCompletionMode())
-        ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())
-        ui.txtEvents.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
-        ui.txtEvents.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        ui.txtEvents.setFont(font)
-        ui.txtEvents.setPlainText(EventCode(),"","")
+        # ui.txtEvents = api.CodeEdit(ui.tab_2)
+        # ui.txtEvents.setGeometry(QtCore.QRect(10, 10, 641, 200))
+        # ui.txtEvents.setObjectName("txtEvents")
+        # ui.txtEvents.backend.start('backend/server.py')
+        # ui.txtEvents.modes.append(modes.CodeCompletionMode())
+        # ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())
+        # ui.txtEvents.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
+        # ui.txtEvents.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
+        # font = QtGui.QFont()
+        # font.setBold(True)
+        # font.setWeight(75)
+        # ui.txtEvents.setFont(font)
+        # ui.txtEvents.setPlainText(EventCode(),"","")
 
 
 
         dialog.setWindowTitle("easy fMRI Atlas based analysis - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -249,23 +251,23 @@ class frmAAAtlas(Ui_frmAAAtlas):
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         # Atlas
         InAtlas = ui.txtAtlas.text()
         if not len(InAtlas):
             msgBox.setText("Please enter atlas file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InAtlas):
             msgBox.setText("Atlas file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             AtlasHdr = nb.load(InAtlas)
@@ -274,15 +276,15 @@ class frmAAAtlas(Ui_frmAAAtlas):
             AtlasShape = np.shape(AtlasImg)
             if np.shape(AtlasShape)[0] != 3:
                 msgBox.setText("Atlas must be 3D image")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         except:
             msgBox.setText("Cannot load atlas file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         OutData = dict()
         MappingVectorRegion = None
@@ -293,16 +295,16 @@ class frmAAAtlas(Ui_frmAAAtlas):
             InFile = ui.txtInFile.text()
             if not len(InFile):
                 msgBox.setText(f"FOLD {fold}: Please enter input file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             InFile = InFile.replace("$FOLD$", str(fold))
             if not os.path.isfile(InFile):
                 msgBox.setText(f"FOLD {fold}: Input file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             # Load InData
             try:
@@ -313,9 +315,9 @@ class frmAAAtlas(Ui_frmAAAtlas):
             # Train data
             if not len(ui.txtData.currentText()):
                 msgBox.setText(f"FOLD {fold}: Please enter train data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 Xtr = InData[ui.txtData.currentText()]
@@ -325,17 +327,17 @@ class frmAAAtlas(Ui_frmAAAtlas):
             except:
                 print(f"FOLD {fold}: Cannot load train data")
                 msgBox.setText(f"FOLD {fold}: Cannot load train data!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             # Test data
             if not len(ui.txtTeData.currentText()):
                 msgBox.setText(f"FOLD {fold}: Please enter test data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 Xte = InData[ui.txtTeData.currentText()]
@@ -345,17 +347,17 @@ class frmAAAtlas(Ui_frmAAAtlas):
             except:
                 print(f"FOLD {fold}: Cannot load test data")
                 msgBox.setText(f"FOLD {fold}: Cannot load train data!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             # Train Label
             if not len(ui.txtLabel.currentText()):
                     msgBox.setText(f"FOLD {fold}: Please enter Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             try:
                 Ytr = InData[ui.txtLabel.currentText()][0]
@@ -366,9 +368,9 @@ class frmAAAtlas(Ui_frmAAAtlas):
             # Test Label
             if not len(ui.txtTeLabel.currentText()):
                     msgBox.setText(f"FOLD {fold}: Please enter test Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             try:
                 Yte = InData[ui.txtTeLabel.currentText()][0]
@@ -380,9 +382,9 @@ class frmAAAtlas(Ui_frmAAAtlas):
                 # Coordinate
                 if not len(ui.txtCol.currentText()):
                     msgBox.setText("Please enter Condition variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     Coord = np.transpose(InData[ui.txtCol.currentText()])
@@ -392,9 +394,9 @@ class frmAAAtlas(Ui_frmAAAtlas):
                 # imgShape
                 if not len(ui.txtImg.currentText()):
                     msgBox.setText("Please enter Image Shape variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     DataShape = tuple(InData[ui.txtImg.currentText()][0])
@@ -406,9 +408,9 @@ class frmAAAtlas(Ui_frmAAAtlas):
                 if AtlasShape[0] != DataShape[0] or AtlasShape[1] != DataShape[1] or AtlasShape[2] != DataShape[2]:
                     print(f'Atlas and data must have the same shape.\nAtlas: {AtlasShape} vs. Data: {DataShape}')
                     msgBox.setText(f'Atlas and data must have the same shape.\nAtlas: {AtlasShape} vs. Data: {DataShape}')
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
                 print("Mapping 2D vector space to 3D region area...")
@@ -447,9 +449,9 @@ class frmAAAtlas(Ui_frmAAAtlas):
                 except Exception as e:
                     print(f'Cannot generate model\n{e}')
                     msgBox.setText(f'Cannot generate model\n{e}')
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
                 try:
@@ -497,9 +499,9 @@ class frmAAAtlas(Ui_frmAAAtlas):
         mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("Wise area analysis: Atlas is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 
@@ -507,4 +509,4 @@ class frmAAAtlas(Ui_frmAAAtlas):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmAAAtlas.show(frmAAAtlas)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

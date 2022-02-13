@@ -26,7 +26,7 @@ import time
 import torch
 import numpy as np
 from Network.CNN import CNN
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmFECNNGUI import *
 from Base.utility import Str2Bool
 from sklearn import preprocessing
@@ -80,7 +80,7 @@ class frmFECNN(Ui_frmFECNN):
 
         ui.tbModel.setRowCount(0)
         ui.tbModel.setColumnCount(8)
-        ui.tbModel.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
+        ui.tbModel.setEditTriggers(QtWidgets.QTableWidget.EditTrigger.NoEditTriggers)
 
         ui.tbModel.setHorizontalHeaderLabels(['Type', 'Out', 'Kernel', 'Stride', 'Padding', 'Dilation', 'Groups', 'Bias'])
         ui.tbModel.setColumnWidth(0, 80)
@@ -93,8 +93,8 @@ class frmFECNN(Ui_frmFECNN):
         ui.tbModel.setColumnWidth(8, 80)
 
         dialog.setWindowTitle("easy fMRI Convolutional Neural Network (CNN) - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -257,8 +257,8 @@ class frmFECNN(Ui_frmFECNN):
                         msgBox = QMessageBox()
                         msgBox.setText("This method just supports 4D datasets!")
                         msgBox.setIcon(QMessageBox.Warning)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                     else:
                         print("Data shape is okay.")
 
@@ -282,60 +282,60 @@ class frmFECNN(Ui_frmFECNN):
             Threshold = np.float64(ui.txtThreshold.text())
         except:
             msgBox.setText("Standard deviation threshold value is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             net_model = createModel(ui.tbModel)
         except Exception as e:
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if net_model is None:
             msgBox.setText("Please create a network model!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if ui.rbScale.isChecked() == True and ui.rbALScale.isChecked() == False:
             msgBox.setText("Subject Level Normalization is just available for Subject Level Analysis!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         InData = mainIO_load(InFile)
         OutData = dict()
         OutData["imgShape"] = reshape_1Dvector(InData["imgShape"])
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             X = InData[ui.txtData.currentText()]
@@ -350,9 +350,9 @@ class frmFECNN(Ui_frmFECNN):
         # Subject
         if not len(ui.txtSubject.currentText()):
             msgBox.setText("Please enter Subject variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Subject = InData[ui.txtSubject.currentText()]
@@ -363,81 +363,81 @@ class frmFECNN(Ui_frmFECNN):
         # Label
         if not len(ui.txtLabel.currentText()):
                 msgBox.setText("Please enter Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         OutData[ui.txtOLabel.text()] = reshape_1Dvector(InData[ui.txtLabel.currentText()])
         # Task
         if ui.cbTask.isChecked():
             if not len(ui.txtTask.currentText()):
                 msgBox.setText("Please enter Task variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtOTask.text()] = reshape_1Dvector(InData[ui.txtTask.currentText()])
         # Run
         if ui.cbRun.isChecked():
             if not len(ui.txtRun.currentText()):
                 msgBox.setText("Please enter Run variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtORun.text()] = reshape_1Dvector(InData[ui.txtRun.currentText()])
         # Counter
         if ui.cbCounter.isChecked():
             if not len(ui.txtCounter.currentText()):
                 msgBox.setText("Please enter Counter variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtOCounter.text()] = reshape_1Dvector(InData[ui.txtCounter.currentText()])
         # Matrix Label
         if ui.cbmLabel.isChecked():
             if not len(ui.txtmLabel.currentText()):
                 msgBox.setText("Please enter Matrix Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtOmLabel.text()] = InData[ui.txtmLabel.currentText()]
         # Design
         if ui.cbDM.isChecked():
             if not len(ui.txtDM.currentText()):
                 msgBox.setText("Please enter Design Matrix variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtODM.text()] = InData[ui.txtDM.currentText()]
         # Coordinate
         if ui.cbCol.isChecked():
             if not len(ui.txtCol.currentText()):
                 msgBox.setText("Please enter Coordinator variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtOCol.text()] = InData[ui.txtCol.currentText()]
         # Condition
         if ui.cbCond.isChecked():
             if not len(ui.txtCond.currentText()):
                 msgBox.setText("Please enter Condition variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtOCond.text()] = InData[ui.txtCond.currentText()]
         # Number of Scan
         if ui.cbNScan.isChecked():
             if not len(ui.txtScan.currentText()):
                 msgBox.setText("Please enter Number of Scan variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtOScan.text()] = reshape_1Dvector(InData[ui.txtScan.currentText()])
         if ui.rbALScale.isChecked():
@@ -517,9 +517,9 @@ class frmFECNN(Ui_frmFECNN):
         mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("CNN is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
     def btnAddPool_click(self):
@@ -528,10 +528,10 @@ class frmFECNN(Ui_frmFECNN):
             id = ui.tbModel.rowCount()
             ui.tbModel.insertRow(id)
             typeItm = QTableWidgetItem(frmpool.pool)
-            typeItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            typeItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 0, typeItm)
             keneItm = QTableWidgetItem(str(frmpool.kernel))
-            keneItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            keneItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 2, keneItm)
 
     def btnAddAF_click(self):
@@ -540,10 +540,10 @@ class frmFECNN(Ui_frmFECNN):
             id = ui.tbModel.rowCount()
             ui.tbModel.insertRow(id)
             typeItm = QTableWidgetItem("afun")
-            typeItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            typeItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 0, typeItm)
             FunItm = QTableWidgetItem(frmaf.func)
-            FunItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            FunItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 2, FunItm)
 
 
@@ -553,35 +553,35 @@ class frmFECNN(Ui_frmFECNN):
             id = ui.tbModel.rowCount()
             ui.tbModel.insertRow(id)
             typeItm = QTableWidgetItem("conv3")
-            typeItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            typeItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 0, typeItm)
 
             OutItm = QTableWidgetItem(str(frmconv.Channel))
-            typeItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            typeItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 1, OutItm)
 
             KerItm = QTableWidgetItem(frmconv.Kernel)
-            KerItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            KerItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 2, KerItm)
 
             StrItm = QTableWidgetItem(str(frmconv.Stride))
-            StrItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            StrItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 3, StrItm)
 
             PadItm = QTableWidgetItem(str(frmconv.Padding))
-            PadItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            PadItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 4, PadItm)
 
             DilItm = QTableWidgetItem(str(frmconv.Dilation))
-            DilItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            DilItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 5, DilItm)
 
             GrpItm = QTableWidgetItem(str(frmconv.Groups))
-            GrpItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            GrpItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 6, GrpItm)
 
             BiaItm = QTableWidgetItem(str(frmconv.Bias))
-            BiaItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            BiaItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             ui.tbModel.setItem(id, 7, BiaItm)
 
     def btnDelete_click(self):
@@ -617,16 +617,16 @@ class frmFECNN(Ui_frmFECNN):
             net_model = createModel(ui.tbModel)
         except Exception as e:
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if net_model is None:
             msgBox.setText("Please create a network model!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -637,9 +637,9 @@ class frmFECNN(Ui_frmFECNN):
                 print("Model is saved!")
         except Exception as e:
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -673,56 +673,56 @@ class frmFECNN(Ui_frmFECNN):
                         id = ui.tbModel.rowCount()
                         ui.tbModel.insertRow(id)
                         typeItm = QTableWidgetItem(module[0])
-                        typeItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        typeItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 0, typeItm)
 
                         OutItm = QTableWidgetItem(str(module[1]))
-                        typeItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        typeItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 1, OutItm)
 
                         KerItm = QTableWidgetItem(str(module[2]))
-                        KerItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        KerItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 2, KerItm)
 
                         StrItm = QTableWidgetItem(str(module[3]))
-                        StrItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        StrItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 3, StrItm)
 
                         PadItm = QTableWidgetItem(str(module[4]))
-                        PadItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        PadItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 4, PadItm)
 
                         DilItm = QTableWidgetItem(str(module[5]))
-                        DilItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        DilItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 5, DilItm)
 
                         GrpItm = QTableWidgetItem(str(module[6]))
-                        GrpItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        GrpItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 6, GrpItm)
 
 
                         BiaItm = QTableWidgetItem(str(bool(module[7])))
-                        BiaItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        BiaItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 7, BiaItm)
 
                     elif module[0] == "afun":
                         id = ui.tbModel.rowCount()
                         ui.tbModel.insertRow(id)
                         typeItm = QTableWidgetItem(module[0])
-                        typeItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        typeItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 0, typeItm)
                         FunItm = QTableWidgetItem(module[1])
-                        FunItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        FunItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 2, FunItm)
 
                     elif module[0] == "max3" or module[0] == "avg3":
                         id = ui.tbModel.rowCount()
                         ui.tbModel.insertRow(id)
                         typeItm = QTableWidgetItem(module[0])
-                        typeItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        typeItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 0, typeItm)
                         keneItm = QTableWidgetItem(str(module[1]))
-                        keneItm.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                        keneItm.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                         ui.tbModel.setItem(id, 2, keneItm)
 
                     else:
@@ -731,9 +731,9 @@ class frmFECNN(Ui_frmFECNN):
                 msgBox = QMessageBox()
                 print(str(e))
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
 
@@ -742,4 +742,4 @@ class frmFECNN(Ui_frmFECNN):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmFECNN.show(frmFECNN)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

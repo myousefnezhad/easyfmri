@@ -24,14 +24,14 @@ import os
 import platform
 import sys
 
-import PyQt5.QtWidgets as QtWidgets
+import PyQt6.QtWidgets as QtWidgets
 import matplotlib
 import nibabel as nb
 import numpy as np
 from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 import scipy.io as io
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QMessageBox
 from sklearn.preprocessing import label_binarize
 import threading
 
@@ -200,9 +200,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         except:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find MNI files!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
 
         fsl = FSL()
@@ -210,9 +210,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         if not fsl.Validate:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find FSL setting!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
         else:
             ui.txtFSLDIR.setText(fsl.FSLDIR)
             ui.txtFlirt.setText(fsl.flirt)
@@ -267,8 +267,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         dialog.setWindowTitle("easy fMRI feature analysis - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -374,9 +374,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             if not os.path.isfile(filename):
                 msgBox = QMessageBox()
                 msgBox.setText("Setting file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             setting = Setting()
@@ -386,9 +386,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 print("WARNING: You are using different version of Easy fMRI!!!")
                 msgBox = QMessageBox()
                 msgBox.setText("This version of setting is not supported!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             if not setting.empty:
@@ -421,9 +421,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             if not os.path.isfile(filename):
                 msgBox = QMessageBox()
                 msgBox.setText("Setting file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             setting = Setting()
@@ -433,9 +433,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 print("WARNING: You are using different version of Easy fMRI!!!")
                 msgBox = QMessageBox()
                 msgBox.setText("This version of setting is not supported!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             if not setting.empty:
@@ -468,9 +468,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     print("WARNING: You are using different version of Easy fMRI!!!")
                     msgBox = QMessageBox()
                     msgBox.setText("This version of setting is not supported!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
                 if not setting.empty:
@@ -506,9 +506,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     print("WARNING: You are using different version of Easy fMRI!!!")
                     msgBox = QMessageBox()
                     msgBox.setText("This version of setting is not supported!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
                 if not setting.empty:
@@ -563,65 +563,65 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         if (os.path.isfile(FSLDIR + ui.txtFlirt.text()) == False):
             msgBox.setText("Cannot find feat cmd!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         mainDIR = ui.txtSSDIR.text()
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isdir(mainDIR):
             msgBox.setText("Main directory doesn't exist")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Main directory is okay.")
 
         Mat = ui.txtSSMatFile.text()
         if not len(Mat):
             msgBox.setText("Please enter transformation matrix!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         Space = ui.txtSSSpace.currentText()
         if not len(Space):
             msgBox.setText("Please enter standard space!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         In = ui.txtSSInFile.currentText()
         if not len(In):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         Out = ui.txtSSOutFile.currentText()
         if not len(Out):
             msgBox.setText("Please enter output file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         Flirt = ui.txtFSLDIR.text() + ui.txtFlirt.text()
         if not os.path.isfile(Flirt):
             msgBox = QMessageBox()
             msgBox.setText("Cannot find flirt cmd!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         bids = BIDS(ui.txtSSTask.text(), ui.txtSSSubRange.text(), ui.txtSSSubLen.text(), ui.txtSSSubPer.text(),
@@ -747,21 +747,21 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         do_compress = False
         if outType > 1:
-            reply = QMessageBox.question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.Yes, QMessageBox.No)
-            do_compress = True if reply == QMessageBox.Yes else False
+            reply = QMessageBox.Icon.Question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
+            do_compress = True if reply == QMessageBox.StandardButton.Yes else False
 
         if not(ui.txtDISetting.currentText()):
             msgBox.setText("In order to save setting, you must load setting file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if not os.path.isfile(ui.txtDISetting.currentText()):
             msgBox.setText("Setting file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         setting = Setting()
@@ -769,23 +769,23 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             setting.Load(ui.txtDISetting.currentText())
             if setting.empty:
                 msgBox.setText("Cannot load setting file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isdir(mainDIR):
             msgBox.setText("Main directory doesn't exist")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Main directory is okay.")
 
@@ -793,9 +793,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             OutFileName = ui.txtDIOutFile.text()
             if not len(OutFileName):
                 msgBox.setText("Please enter output file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutFileName = OutFileName.replace("$MAINDIR$", mainDIR)
             if ui.rbDIezxType.isChecked():
@@ -809,9 +809,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             OutDIR = ui.txtDIOutDIR.text()
             if not len(OutDIR):
                 msgBox.setText("Please enter output file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutDIR = OutDIR.replace("$MAINDIR$", mainDIR)
 
@@ -819,32 +819,32 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             OutHDR = OutHDR.replace("$TASK$", ui.txtDITask.text())
             if not len(OutHDR):
                 msgBox.setText("Please enter output header file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             OutDAT = ui.txtDIOutDAT.text()
             if not len(OutDAT):
                 msgBox.setText("Please enter output data file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         ROIFile = ui.txtDIROIFile.text()
         if not len(ROIFile):
             msgBox.setText("Please enter ROI file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if not os.path.isfile(ROIFile):
             msgBox.setText("Cannot find ROI File!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -857,9 +857,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 vroiIND  = (roiIND[0] - np.min(roiIND,axis=1)[0], roiIND[1] - np.min(roiIND,axis=1)[1], roiIND[2] - np.min(roiIND,axis=1)[2])
         except:
             msgBox.setText("Cannot load ROI File!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         print("Number of feature: ", np.shape(roiIND)[1])
@@ -867,9 +867,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         In = ui.txtDIInFile.currentText()
         if not len(In):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -877,25 +877,25 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             DM = ui.txtDIDM.currentText()
             if not len(DM):
                 msgBox.setText("Please enter desgin matrix!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             try:
                 Threshold = np.float(ui.txtDIThreshold.text())
             except:
                 msgBox.setText("Threshold must be a number")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             if (Threshold < 0) or (Threshold > 1):
                 msgBox.setText("Threshold must be between 0 to 1")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             print("Threshold is valid")
@@ -904,108 +904,108 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             LB = ui.txtDILabels.text()
             if not len(LB):
                 msgBox.setText("Please enter label files!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Subject
         if ui.cbDISubjectID.isChecked():
             if not len(ui.txtDISubjectID.text()):
                 msgBox.setText("Please enter Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Task
         if ui.cbDITaskID.isChecked():
             if not len(ui.txtDITaskID.text()):
                 msgBox.setText("Please enter Task variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Run
         if ui.cbDIRunID.isChecked():
             if not len(ui.txtDIRunID.text()):
                 msgBox.setText("Please enter Run variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Counter
         if ui.cbDICounterID.isChecked():
             if not len(ui.txtDICounterID.text()):
                 msgBox.setText("Please enter Counter variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Label
         if ui.cbDILabelID.isChecked():
             if not len(ui.txtDILabelID.text()):
                 msgBox.setText("Please enter Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Matrix Label
         if ui.cbDImLabelID.isChecked():
             if not len(ui.txtDImLabelID.text()):
                 msgBox.setText("Please enter Matrix Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Data
         if ui.cbDIDataID.isChecked():
             if not len(ui.txtDIDataID.text()):
                 msgBox.setText("Please enter Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Design
         if ui.cbDIDM.isChecked():
             if not len(ui.txtDIDMID.text()):
                 msgBox.setText("Please enter Design Matrix variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Coordinate
         if ui.cbDICoID.isChecked():
             if not len(ui.txtDICoID.text()):
                 msgBox.setText("Please enter Coordinator variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Condition
         if ui.cbDICondID.isChecked():
             if not len(ui.txtDICoundID.text()):
                 msgBox.setText("Please enter Condition variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Number of Scan
         if ui.cbDINScanID.isChecked():
             if not len(ui.txtDINScanID.text()):
                 msgBox.setText("Please enter Number of Scan variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
 
@@ -1018,9 +1018,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             DMMDIOnset = ui.txtDIOnset.text()
             if not len(DMMDIOnset):
                 msgBox.setText("You must enter Event Files section to import Design Matrix Meta Information!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             try:
@@ -1029,9 +1029,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     raise Exception
             except:
                 msgBox.setText("Header offset is wrong for Design Matrix Meta Information!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             try:
@@ -1040,9 +1040,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     raise Exception
             except:
                 msgBox.setText("Onset Column ID is wrong for Design Matrix Meta Information!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             try:
@@ -1051,9 +1051,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     raise Exception
             except:
                 msgBox.setText("Duration Column ID is wrong for Design Matrix Meta Information!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             try:
@@ -1062,17 +1062,17 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     raise Exception
             except:
                 msgBox.setText("TR is wrong for Design Matrix Meta Information!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             ColStrs = strTaskList(ui.txtDIColumnIDs.text())
             if ColStrs is None:
                 msgBox.setText("Wrong format for Column IDs in Design Matrix Meta Information!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             DMMColumns = list()
@@ -1081,24 +1081,24 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     DMMColumns.append(np.int32(strCol))
                 except:
                     msgBox.setText(f"Wrong format for value '{strCol}' at Column IDs in Design Matrix Meta Information!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
             DMMVars = strTaskList(ui.txtDIVariableNames.text())
             if DMMVars is None:
                 msgBox.setText("Wrong format for Variable Names in Design Matrix Meta Information!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             
             if len(DMMColumns) != len(DMMVars):
                 msgBox.setText("Number of Column IDs and Variable Names in Design Matrix Meta Information are not matched!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
 
@@ -1195,17 +1195,17 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                         if roiSize != fMRISize:
                             print("ROI and fMRI images must be in the same size!")
                             msgBox.setText("ROI and fMRI images must be in the same size!")
-                            msgBox.setIcon(QMessageBox.Critical)
-                            msgBox.setStandardButtons(QMessageBox.Ok)
-                            msgBox.exec_()
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
                             return
                     else:
                         if fMRISize != np.shape(InIMG)[0:3]:
                             print("Image size is not matched!")
                             msgBox.setText("Image size is not matched!")
-                            msgBox.setIcon(QMessageBox.Critical)
-                            msgBox.setStandardButtons(QMessageBox.Ok)
-                            msgBox.exec_()
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
                             return
                     NScan = np.shape(InIMG)[3]
                 except:
@@ -1289,9 +1289,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     except:
                         print(f"Cannot read onset file: {EventOnsetFileName}")
                         msgBox.setText(f"Cannot read onset file: {EventOnsetFileName}")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return False
                     EventOnsetList = list()
                     EventOnsetTimeList = list()
@@ -1308,9 +1308,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     except:
                         print(f"Cannot read columns in onset file: {EventOnsetFileName}")
                         msgBox.setText(f"Cannot read columns in onset file: {EventOnsetFileName}")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return False
 
                 currentTR = 0
@@ -1353,9 +1353,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                                 except:
                                     print(f"Error in importing Design Matrix Meta Information.\nTask {t}\nSubject {s}\nCounter {c}\nRun {r}\nLabel index {instID}")
                                     msgBox.setText(f"Error in importing Design Matrix Meta Information.\nTask {t}\nSubject {s}\nCounter {c}\nRun {r}\nLabel index {instID}")
-                                    msgBox.setIcon(QMessageBox.Critical)
-                                    msgBox.setStandardButtons(QMessageBox.Ok)
-                                    msgBox.exec_()
+                                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                    msgBox.exec()
                                     return False
 
                         # NScan
@@ -1582,9 +1582,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         print("Number of features: ", ShapeROIind)
         print("DONE.")
         msgBox.setText("Data Integration is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
     def btnDIDraw_click(self):
         global ui
@@ -1593,38 +1593,38 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isdir(mainDIR):
             msgBox.setText("Main directory doesn't exist")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Main directory is okay.")
 
         if not ui.rbDIDynamic.isChecked():
             msgBox.setText("Please select dynamic method first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Threshold = np.float(ui.txtDIThreshold.text())
         except:
             msgBox.setText("Threshold must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if (Threshold < 0) or (Threshold > 1):
             msgBox.setText("Threshold must be between 0 to 1")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         print("Threshold is valid")
@@ -1632,9 +1632,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         DM = ui.txtDIDM.currentText()
         if not len(DM):
             msgBox.setText("Please enter desgin matrix!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         setting = Setting()
@@ -1897,4 +1897,4 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     frmFeatureAnalysis.show(frmFeatureAnalysis)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

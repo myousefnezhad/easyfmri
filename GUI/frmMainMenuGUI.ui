@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../icon.qrc">
-    <normaloff>:/icons/Icons/icons8-brain-128.png</normaloff>:/icons/Icons/icons8-brain-128.png</iconset>
+    <normaloff>./icons/icons8-brain-128.png</normaloff>./icons/icons8-brain-128.png</iconset>
   </property>
   <widget class="QLabel" name="label">
    <property name="geometry">
@@ -68,7 +68,7 @@
      </property>
      <property name="icon">
       <iconset resource="../icon.qrc">
-       <normaloff>:/icons/Icons/402612-200.png</normaloff>:/icons/Icons/402612-200.png</iconset>
+       <normaloff>./icons/402612-200.png</normaloff>./icons/402612-200.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -94,7 +94,7 @@
      </property>
      <property name="icon">
       <iconset resource="../icon.qrc">
-       <normaloff>:/icons/Icons/icons8-scatter-plot-filled-64.png</normaloff>:/icons/Icons/icons8-scatter-plot-filled-64.png</iconset>
+       <normaloff>./icons/icons8-scatter-plot-filled-64.png</normaloff>./icons/icons8-scatter-plot-filled-64.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -120,7 +120,7 @@
      </property>
      <property name="icon">
       <iconset resource="../icon.qrc">
-       <normaloff>:/icons/Icons/noun_mind_1705433.png</normaloff>:/icons/Icons/noun_mind_1705433.png</iconset>
+       <normaloff>./icons/noun_mind_1705433.png</normaloff>./icons/noun_mind_1705433.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -146,7 +146,7 @@
      </property>
      <property name="icon">
       <iconset resource="../icon.qrc">
-       <normaloff>:/icons/Icons/noun_Brain_7784.png</normaloff>:/icons/Icons/noun_Brain_7784.png</iconset>
+       <normaloff>./icons/noun_Brain_7784.png</normaloff>./icons/noun_Brain_7784.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -200,7 +200,7 @@
      </property>
      <property name="icon">
       <iconset resource="../icon.qrc">
-       <normaloff>:/icons/Icons/icons8-play-100.png</normaloff>:/icons/Icons/icons8-play-100.png</iconset>
+       <normaloff>./icons/icons8-play-100.png</normaloff>./icons/icons8-play-100.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -257,7 +257,7 @@
      </property>
      <property name="icon">
       <iconset resource="../icon.qrc">
-       <normaloff>:/icons/Icons/icons8-administrative-tools-100.png</normaloff>:/icons/Icons/icons8-administrative-tools-100.png</iconset>
+       <normaloff>./icons/icons8-administrative-tools-100.png</normaloff>./icons/icons8-administrative-tools-100.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -283,7 +283,7 @@
      </property>
      <property name="icon">
       <iconset resource="../icon.qrc">
-       <normaloff>:/icons/Icons/icons8-settings-100.png</normaloff>:/icons/Icons/icons8-settings-100.png</iconset>
+       <normaloff>./icons/icons8-settings-100.png</normaloff>./icons/icons8-settings-100.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -337,7 +337,7 @@
      </property>
      <property name="icon">
       <iconset resource="../icon.qrc">
-       <normaloff>:/icons/Icons/icons8-installing-updates-100.png</normaloff>:/icons/Icons/icons8-installing-updates-100.png</iconset>
+       <normaloff>./icons/icons8-installing-updates-100.png</normaloff>./icons/icons8-installing-updates-100.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -367,7 +367,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="../icon.qrc">:/icons/Icons/icons8-brain-128.png</pixmap>
+    <pixmap resource="../icon.qrc">./icons/icons8-brain-128.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>
@@ -387,7 +387,7 @@
    </property>
    <property name="icon">
     <iconset resource="../icon.qrc">
-     <normaloff>:/icons/Icons/icons8-shutdown-100.png</normaloff>:/icons/Icons/icons8-shutdown-100.png</iconset>
+     <normaloff>./icons/icons8-shutdown-100.png</normaloff>./icons/icons8-shutdown-100.png</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -416,7 +416,7 @@
    </property>
    <property name="icon">
     <iconset resource="../icon.qrc">
-     <normaloff>:/icons/Icons/icons8-whatsapp-100.png</normaloff>:/icons/Icons/icons8-whatsapp-100.png</iconset>
+     <normaloff>./icons/icons8-whatsapp-100.png</normaloff>./icons/icons8-whatsapp-100.png</iconset>
    </property>
    <property name="iconSize">
     <size>

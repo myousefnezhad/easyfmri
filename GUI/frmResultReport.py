@@ -25,8 +25,8 @@ import sys
 
 import numpy as np
 from Base.Conditions import Conditions
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtGui import *
 from Base.dialogs import SaveFile, LoadMultiFile
 from Base.utility import getVersion, getBuild
 from GUI.frmResultReportGUI import *
@@ -51,8 +51,8 @@ class frmResultReport(Ui_frmResultReport):
 
 
         dialog.setWindowTitle("easy fMRI report from multi-file results - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -92,16 +92,16 @@ class frmResultReport(Ui_frmResultReport):
         Vars = str(ui.txtVars.text()).replace(","," ").split()
         if not len(Vars):
             msgBox.setText("Please enter variables!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if ui.lvFile.count() <= 0:
             msgBox.setText("Please enter files!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if ui.cbClear.isChecked():
@@ -156,4 +156,4 @@ class frmResultReport(Ui_frmResultReport):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmResultReport.show(frmResultReport)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

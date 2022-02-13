@@ -20,7 +20,7 @@
 #
 #
 
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Preprocess.BIDS import BIDS
 import numpy as np
 
@@ -103,7 +103,7 @@ class frmSelectSession(QDialog):
 
         self.setLayout(layout)
         self.setWindowTitle("Session Selector")
-        self.exec_()
+        self.exec()
 
 
     def txtSub_isChenged(self):
@@ -143,9 +143,9 @@ class frmSelectSession(QDialog):
         except:
             msgBox = QMessageBox()
             msgBox.setText("Task is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         try:
             self.SubID  = self.txtSub.currentText()
@@ -154,9 +154,9 @@ class frmSelectSession(QDialog):
         except:
             msgBox = QMessageBox()
             msgBox.setText("Subject is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         try:
             self.ConID = self.txtCon.currentText()
@@ -165,9 +165,9 @@ class frmSelectSession(QDialog):
         except:
             msgBox = QMessageBox()
             msgBox.setText("Counter is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
 
@@ -178,9 +178,9 @@ class frmSelectSession(QDialog):
         except:
             msgBox = QMessageBox()
             msgBox.setText("Run is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
 

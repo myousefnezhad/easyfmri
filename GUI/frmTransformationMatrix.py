@@ -24,7 +24,7 @@ import os
 import platform
 import subprocess
 import sys
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmTransformationMatrixGUI import *
 from Base.fsl import FSL
 from Base.dialogs import LoadFile, SaveFile
@@ -51,9 +51,9 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
         if not fsl.Validate:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find FSL setting!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
         else:
             ui.txtFSLDIR.setText(fsl.FSLDIR)
             ui.txtFlirt.setText(fsl.flirt)
@@ -61,8 +61,8 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
 
 
 
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -81,9 +81,9 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
         except:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find MNI files!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
         # Search items
         ui.cbSearch.clear()
@@ -218,9 +218,9 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
         if not os.path.isfile(FlirtGUI):
             msgBox = QMessageBox()
             msgBox.setText("Cannot find Flirt_gui cmd!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         subprocess.Popen([FlirtGUI])
 
@@ -230,17 +230,17 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
         if not len(ui.txtImgFile.text()):
             msgBox = QMessageBox()
             msgBox.setText("Please select an original image file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if not os.path.isfile(ui.txtImgFile.text()):
             msgBox = QMessageBox()
             msgBox.setText("Original image file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         ImgFile = ui.txtImgFile.text()
@@ -248,17 +248,17 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
         if not len(ui.txtSpace.currentText()):
             msgBox = QMessageBox()
             msgBox.setText("Please select a standard space file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if not os.path.isfile(ui.txtSpace.currentText()):
             msgBox = QMessageBox()
             msgBox.setText("Standard space file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         Space = ui.txtSpace.currentText()
@@ -266,9 +266,9 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
         if not len(ui.txtMatFile.text()):
             msgBox = QMessageBox()
             msgBox.setText("Please enter an address for the transformation matrix output!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         MatFile = ui.txtMatFile.text()
@@ -282,9 +282,9 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
         if not os.path.isfile(Flirt):
             msgBox = QMessageBox()
             msgBox.setText("Cannot find flirt cmd!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         RunScript = Flirt + " -in " + ImgFile + " -ref " + Space + ExaFile + " -omat " + MatFile + " -bins " +\
@@ -296,11 +296,11 @@ class frmTansformationMatrix(Ui_frmTansformationMatrix):
         os.system(RunScript)
         msgBox = QMessageBox()
         msgBox.setText("Transformation matrix is created!")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmTansformationMatrix.show(frmTansformationMatrix)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

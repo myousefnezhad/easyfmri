@@ -99,8 +99,8 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
 
 
         dialog.setWindowTitle("easy fMRI model analysis - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -237,4 +237,4 @@ class frmModelAnalysis(Ui_frmModelAnalysis):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     frmModelAnalysis.show(frmModelAnalysis)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

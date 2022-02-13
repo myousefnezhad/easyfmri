@@ -20,8 +20,8 @@
 #
 #
 
-from PyQt5.QtWidgets import *
-import PyQt5.QtCore as QtCore
+from PyQt6.QtWidgets import *
+import PyQt6.QtCore as QtCore
 
 import numpy as np
 
@@ -60,7 +60,7 @@ class frmDataViewer(QDialog):
             self.txtData.setColumnWidth(0,500)
             self.txtData.setHorizontalHeaderLabels(['string'])
             item = QTableWidgetItem(Data)
-            item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            item.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             self.txtData.setItem(0, 0, item)
             self.txtData.move(0, 0)
         elif VarType == "str_arr":
@@ -70,7 +70,7 @@ class frmDataViewer(QDialog):
             self.txtData.setHorizontalHeaderLabels(['string'])
             for le in range(0, np.shape(Data)[0]):
                 item = QTableWidgetItem(Data[le])
-                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                item.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                 self.txtData.setItem(le, 0, item)
             self.txtData.move(0, 0)
         elif VarType == "num":
@@ -79,7 +79,7 @@ class frmDataViewer(QDialog):
             self.txtData.setColumnWidth(0,500)
             self.txtData.setHorizontalHeaderLabels(['value'])
             item = QTableWidgetItem(Data)
-            item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            item.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             self.txtData.setItem(0, 0, item)
             self.txtData.move(0, 0)
         elif VarType == "d1":
@@ -88,7 +88,7 @@ class frmDataViewer(QDialog):
             self.txtData.setHorizontalHeaderLabels(['value'])
             for inxDD, inx in enumerate(range(D1From, D1To)):
                 item = QTableWidgetItem(str(Data[inx]))
-                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                item.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                 self.txtData.setItem(inxDD, 0, item)
             self.txtData.move(0, 0)
         elif VarType == "d2":
@@ -97,7 +97,7 @@ class frmDataViewer(QDialog):
             for inxD1DD, inxD1 in enumerate(range(D1From, D1To)):
                 for inxD2DD, inxD2 in enumerate(range(D2From, D2To)):
                     item = QTableWidgetItem(str(Data[inxD1][inxD2]))
-                    item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                    item.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                     self.txtData.setItem(inxD1DD, inxD2DD, item)
             self.txtData.move(0, 0)
 
@@ -107,9 +107,9 @@ class frmDataViewer(QDialog):
         self.layout.addWidget(self.txtData)
         self.layout.addWidget(self.btnExit)
         self.setLayout(self.layout)
-        self.setWindowFlags(self.windowFlags() & QtCore.Qt.WindowMaximizeButtonHint)
-        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowMinimizeButtonHint)
-        self.exec_()
+        # self.setWindowFlags(self.windowFlags() & QtCore.Qt.WindowMaximizeButtonHint)
+        # self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowMinimizeButtonHint)
+        self.exec()
         pass
 
     def btnExit_onclick(self):
@@ -122,6 +122,6 @@ class frmDataViewer(QDialog):
         value = self.txtData.item(rowID,colID).text()
         print("current value: " + value)
         msgBox.setText("current value: " + value)
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()

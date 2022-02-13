@@ -26,7 +26,7 @@ import numpy as np
 import scipy.io as io
 import configparser as cp
 from Preprocess.BIDS import BIDS
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QMessageBox
 from Base.utility import getTimeSliceID, setParameters3, decoding
 from Base.utility import getSettingVersion, Str2Bool
 
@@ -81,38 +81,38 @@ class Setting:
         if (os.path.isfile(ui.txtMNI.currentText()) == False):
             msgBox = QMessageBox()
             msgBox.setText("Cannot find MNI file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if (os.path.isfile(FSLDIR + ui.txtFeat.text()) == False):
             msgBox = QMessageBox()
             msgBox.setText("Cannot find feat cmd!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if (os.path.isfile(FSLDIR + ui.txtFeat_gui.text()) == False):
             msgBox = QMessageBox()
             msgBox.setText("Cannot find Feat_gui cmd!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
         mainDIR = ui.txtDIR.text()
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isdir(mainDIR):
             msgBox.setText("Main directory doesn't exist")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Main directory is okay.")
 
@@ -121,15 +121,15 @@ class Setting:
             1 / TR
         except:
             msgBox.setText("TR must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if TR <= 0:
             msgBox.setText("TR must be a positive number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("TR is okay")
 
@@ -139,15 +139,15 @@ class Setting:
             1 / FWHM
         except:
             msgBox.setText("FWHM must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if FWHM <= 0:
             msgBox.setText("FWHM must be a positive number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("FWHM is okay")
 
@@ -156,15 +156,15 @@ class Setting:
             TotalVol = np.int32(ui.txtTotalVol.value())
         except:
             msgBox.setText("Total Volumn must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if TotalVol < 0:
             msgBox.setText("Total Volumn must be a positive number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Total Volumn is okay")
 
@@ -173,15 +173,15 @@ class Setting:
             DeleteVol = np.int32(ui.txtDeleteVol.value())
         except:
             msgBox.setText("Delete Volumn must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if DeleteVol < 0:
             msgBox.setText("Delete Volumn must be a positive number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Delete Volumn is okay")
 
@@ -190,15 +190,15 @@ class Setting:
             HighPass = np.double(ui.txtHighPass.text())
         except:
             msgBox.setText("High Pass cutoff must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if HighPass <= 0:
             msgBox.setText("High Pass cutoff must be a positive number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("High Pass cutoff is okay")
 
@@ -207,9 +207,9 @@ class Setting:
             DENL = np.double(ui.txtDENL.text())
         except:
             msgBox.setText("Noise level must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Noise level is okay")
 
@@ -218,9 +218,9 @@ class Setting:
             DETS = np.double(ui.txtDETS.text())
         except:
             msgBox.setText("Temporal smoothness must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Temporal smoothness is okay")
 
@@ -229,9 +229,9 @@ class Setting:
             DEZT = np.double(ui.txtDEZT.text())
         except:
             msgBox.setText("Z threshold in the design efficiency must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Z threshold in the design efficiency is okay")
 
@@ -240,9 +240,9 @@ class Setting:
             CTZT = np.double(ui.txtCTZT.text())
         except:
             msgBox.setText("Z threshold in the clustering must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Z threshold in the clustering is okay")
 
@@ -251,91 +251,91 @@ class Setting:
             CTPT = np.double(ui.txtCTPT.text())
         except:
             msgBox.setText("Clustering P threshold must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Clustering P threshold is okay")
 
 
         if ui.txtBOLD.text() == "":
             msgBox.setText("Structure of the BOLD files is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
         if ui.txtScript.text() == "":
             msgBox.setText("Structure of the script files is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
         if ui.txtAnat.text() == "":
             msgBox.setText("Structure of the Anatomical files is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
         if ui.txtOnset.text() == "":
             msgBox.setText("Structure of the BOLD files is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
         if ui.txtBET.text() == "":
             msgBox.setText("Structure of the BET files is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
         if ui.txtBETPDF.text() == "":
             msgBox.setText("Structure of the BET report (PDF) is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
         if ui.txtAnalysis.text() == "":
             msgBox.setText("Structure of the analysis folder is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
         if ui.txtEventDIR.text() == "":
             msgBox.setText("Structure of the event folders is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
         if ui.txtCondPre.text() == "":
             msgBox.setText("The prefix of condition files is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
         ECodes = ui.txtEvents.toPlainText()
         if ECodes == "":
             msgBox.setText("Event code is empty")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Event codes are okay")
 
@@ -343,9 +343,9 @@ class Setting:
         # Task = ui.txtTask.currentText()
         # if not len(Task):
         #     msgBox.setText("There is no task title")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
         #     return False
 
         # try:
@@ -355,9 +355,9 @@ class Setting:
         #     SubSize = len(SubRange)
         # except:
         #     msgBox.setText("Subject Range is wrong!")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
         #     return False
         # print("Range of subjects is okay!")
 
@@ -369,15 +369,15 @@ class Setting:
         #         raise Exception
         #     if not (len(ConRange) == SubSize):
         #         msgBox.setText("Counter Size must be equal to Subject Size!")
-        #         msgBox.setIcon(QMessageBox.Critical)
-        #         msgBox.setStandardButtons(QMessageBox.Ok)
-        #         msgBox.exec_()
+        #         msgBox.setIcon(QMessageBox.Icon.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #         msgBox.exec()
         #         return False
         # except:
         #     msgBox.setText("Counter Range is wrong!")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
         #     return False
         # print("Counter Range is okay!")
 
@@ -389,15 +389,15 @@ class Setting:
         #         raise Exception
         #     if not (len(RunRange) == SubSize):
         #         msgBox.setText("Run Size must be equal to Subject Size!")
-        #         msgBox.setIcon(QMessageBox.Critical)
-        #         msgBox.setStandardButtons(QMessageBox.Ok)
-        #         msgBox.exec_()
+        #         msgBox.setIcon(QMessageBox.Icon.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #         msgBox.exec()
         #         return False
         # except:
         #     msgBox.setText("Run Range is wrong!")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
         #     return False
         # print("Run Range is okay!")
 
@@ -412,9 +412,9 @@ class Setting:
                         RunRange=ui.txtRunRange.text(), RunLen=ui.txtRunLen.text(), RunPrefix=ui.txtRunPer.text())
         except Exception as e:
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -482,9 +482,9 @@ class Setting:
             1 / RunLen
         except:
             msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Length of runs is valid")
 
@@ -493,9 +493,9 @@ class Setting:
             1 / ConLen
         except:
             msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Length of Counter is okay!")
 
@@ -504,9 +504,9 @@ class Setting:
             1 / SubLen
         except:
             msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Length of subjects is okay!")
 

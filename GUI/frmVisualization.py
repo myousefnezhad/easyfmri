@@ -28,7 +28,7 @@ import subprocess as sub
 
 import nibabel as nb
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 
 from Base.utility import RunCMD
 from Base.afni import AFNI
@@ -87,9 +87,9 @@ class frmVisalization(Ui_frmVisalization):
         if not afni.Validate:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find AFNI setting!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
         else:
             ui.txtFAFNI.setText(afni.AFNI)
             ui.txtFSUMA.setText(afni.SUMA)
@@ -100,8 +100,8 @@ class frmVisalization(Ui_frmVisalization):
             ui.txtRSUMA.setText(afni.Right)
 
         dialog.setWindowTitle("easy fMRI visualization - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -157,9 +157,9 @@ class frmVisalization(Ui_frmVisalization):
         afniCMD = ui.txtFAFNI.text()
         if not os.path.isfile(afniCMD):
             msgBox.setText("Cannot find afni binary file")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         directory = ui.txtWork.text()
@@ -172,17 +172,17 @@ class frmVisalization(Ui_frmVisalization):
         sumaCMD = ui.txtFSUMA.text()
         if not os.path.isfile(sumaCMD):
             msgBox.setText("Cannot find SUMA binary file")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         sumaDIR = ui.txtDSUMA.text()
         if not os.path.isdir(sumaDIR):
             msgBox.setText("Cannot find SUMA directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         sumaSpect = None
@@ -195,16 +195,16 @@ class frmVisalization(Ui_frmVisalization):
 
         if sumaSpect is None:
             msgBox.setText("Cannot find SUMA Hemisphere!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if not len(ui.txtSUMAMNI.text()):
             msgBox.setText("Cannot find SUMA MNI File!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         sumaMNI = sumaDIR + ui.txtSUMAMNI.text()
@@ -214,4 +214,4 @@ class frmVisalization(Ui_frmVisalization):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmVisalization.show(frmVisalization)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

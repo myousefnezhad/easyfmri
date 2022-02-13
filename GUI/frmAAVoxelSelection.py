@@ -25,7 +25,7 @@ import sys
 import time
 import numpy as np
 import nibabel as nb
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
@@ -64,8 +64,8 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.vwSele.setColumnWidth(1, 100)
         ui.vwSele.setHorizontalHeaderLabels(['Coordinate', 'Accuracy'])
         ui.vwSele.setSortingEnabled(True)
-        ui.vwSele.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
-        ui.vwSele.setSelectionBehavior(QAbstractItemView.SelectRows)
+        ui.vwSele.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
+        ui.vwSele.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
 
         ui.vwAvai.clear()
         ui.vwAvai.setColumnCount(2)
@@ -74,14 +74,14 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.vwAvai.setColumnWidth(1, 100)
         ui.vwAvai.setHorizontalHeaderLabels(['Coordinate', 'Accuracy'])
         ui.vwAvai.setSortingEnabled(True)
-        ui.vwAvai.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
-        ui.vwAvai.setSelectionBehavior(QAbstractItemView.SelectRows)
+        ui.vwAvai.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
+        ui.vwAvai.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
 
         data = None
 
         dialog.setWindowTitle("easy fMRI Voxel-based analysis: Voxel Selection - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -138,16 +138,16 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if data is None:
             print("Please load dataset first")
             msgBox.setText("Please load dataset first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         # Coordinate
         if not len(ui.txtCol.currentText()):
             msgBox.setText("Please enter Coordinator variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Coord = np.transpose(data[ui.txtCol.currentText()])
@@ -162,8 +162,8 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.vwSele.setColumnWidth(1, 100)
         ui.vwSele.setHorizontalHeaderLabels(['Coordinate', 'Accuracy'])
         ui.vwSele.setSortingEnabled(True)
-        ui.vwSele.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
-        ui.vwSele.setSelectionBehavior(QAbstractItemView.SelectRows)
+        ui.vwSele.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
+        ui.vwSele.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         ui.vwAvai.clear()
         ui.vwAvai.setColumnCount(2)
         ui.vwSele.setRowCount(0)
@@ -171,18 +171,18 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.vwAvai.setColumnWidth(1, 100)
         ui.vwAvai.setHorizontalHeaderLabels(['Coordinate', 'Accuracy'])
         ui.vwAvai.setSortingEnabled(True)
-        ui.vwAvai.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
-        ui.vwAvai.setSelectionBehavior(QAbstractItemView.SelectRows)
+        ui.vwAvai.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
+        ui.vwAvai.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         # Draw
         ui.vwAvai.setRowCount(np.shape(Coord)[0])
         ui.vwAvai.setRowCount(np.shape(Coord)[0])
         for rowId, coo in enumerate(Coord):
             try:
                 item = QTableWidgetItem('{:5};{:5};{:5}'.format(coo[0], coo[1], coo[2]))
-                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                item.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                 ui.vwAvai.setItem(rowId, 0, item)
                 item = QTableWidgetItem('None')
-                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                item.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                 ui.vwAvai.setItem(rowId, 1, item)
             except:
                 print(f'Item: {rowId} cannot add to the list --- format error')
@@ -197,37 +197,37 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.vwAvai.rowCount() == 0:
             print("Please load voxel analysis first")
             msgBox.setText("Please load voxel analysis first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if data is None:
             print("Please load dataset first")
             msgBox.setText("Please load dataset first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if len(ui.vwAvai.selectionModel().selectedRows()) < 1:
             print("You have to select at least an item first")
             msgBox.setText("You have to select at least an item first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if len(ui.vwAvai.selectionModel().selectedRows()) > 9:
             print("You have to select at most 9 items")
             msgBox.setText("You have to select at most 9 items")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             X = data[ui.txtData.currentText()]
@@ -237,9 +237,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         # Coordinate
         if not len(ui.txtCol.currentText()):
             msgBox.setText("Please enter Coordinator variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Coord = data[ui.txtCol.currentText()]
@@ -280,37 +280,37 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.vwSele.rowCount() == 0:
             print("Please load voxel analysis first")
             msgBox.setText("Please load voxel analysis first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if data is None:
             print("Please load dataset first")
             msgBox.setText("Please load dataset first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if len(ui.vwSele.selectionModel().selectedRows()) < 1:
             print("You have to select at least an item first")
             msgBox.setText("You have to select at least an item first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if len(ui.vwSele.selectionModel().selectedRows()) > 9:
             print("You have to select at most 9 items")
             msgBox.setText("You have to select at most 9 items")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             X = data[ui.txtData.currentText()]
@@ -320,9 +320,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         # Coordinate
         if not len(ui.txtCol.currentText()):
             msgBox.setText("Please enter Coordinator variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Coord = data[ui.txtCol.currentText()]
@@ -364,30 +364,30 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.vwAvai.rowCount() == 0:
             print("Please load voxel analysis first")
             msgBox.setText("Please load voxel analysis first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if data is None:
             print("Please load dataset first")
             msgBox.setText("Please load dataset first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if len(ui.vwAvai.selectionModel().selectedRows()) != 2:
             print("You have to select only 2 rows for correlation analysis")
             msgBox.setText("You have to select only 2 rows for correlation analysis")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -398,9 +398,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         # Coordinate
         if not len(ui.txtCol.currentText()):
             msgBox.setText("Please enter Coordinator variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Coord = data[ui.txtCol.currentText()]
@@ -439,30 +439,30 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.vwSele.rowCount() == 0:
             print("Please load voxel analysis first")
             msgBox.setText("Please load voxel analysis first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if data is None:
             print("Please load dataset first")
             msgBox.setText("Please load dataset first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if len(ui.vwSele.selectionModel().selectedRows()) != 2:
             print("You have to select only 2 rows for correlation analysis")
             msgBox.setText("You have to select only 2 rows for correlation analysis")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -473,9 +473,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         # Coordinate
         if not len(ui.txtCol.currentText()):
             msgBox.setText("Please enter Coordinator variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Coord = data[ui.txtCol.currentText()]
@@ -666,8 +666,8 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.vwSele.setColumnWidth(1, 100)
         ui.vwSele.setHorizontalHeaderLabels(['Coordinate', 'Accuracy'])
         ui.vwSele.setSortingEnabled(True)
-        ui.vwSele.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
-        ui.vwSele.setSelectionBehavior(QAbstractItemView.SelectRows)
+        ui.vwSele.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
+        ui.vwSele.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         ui.vwAvai.clear()
         ui.vwAvai.setColumnCount(2)
         ui.vwSele.setRowCount(0)
@@ -675,18 +675,18 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         ui.vwAvai.setColumnWidth(1, 100)
         ui.vwAvai.setHorizontalHeaderLabels(['Coordinate', 'Accuracy'])
         ui.vwAvai.setSortingEnabled(True)
-        ui.vwAvai.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
-        ui.vwAvai.setSelectionBehavior(QAbstractItemView.SelectRows)
+        ui.vwAvai.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
+        ui.vwAvai.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         # Draw
         ui.vwAvai.setRowCount(np.shape(results)[0])
         ui.vwAvai.setRowCount(np.shape(results)[0])
         for rowId, (coo, acc) in enumerate(results):
             try:
                 item = QTableWidgetItem('{:5};{:5};{:5}'.format(coo[0][0], coo[0][1], coo[0][2]))
-                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                item.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                 ui.vwAvai.setItem(rowId, 0, item)
                 item = QTableWidgetItem('{:8f}'.format(acc[0][0] * 100))
-                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                item.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                 ui.vwAvai.setItem(rowId, 1, item)
             except:
                 print(f'Item: {rowId} cannot add to the list --- format error')
@@ -703,9 +703,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.vwAvai.rowCount() == 0:
             print("Please load voxel analysis first")
             msgBox.setText("Please load voxel analysis first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         rowList = list()
         for selectID in sorted(ui.vwAvai.selectionModel().selectedRows()):
@@ -727,9 +727,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.vwSele.rowCount() == 0:
             print("Please select some voxel first")
             msgBox.setText("Please select some voxel first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         rowList = list()
         for selectID in sorted(ui.vwSele.selectionModel().selectedRows()):
@@ -751,9 +751,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.vwAvai.rowCount() == 0:
             print("Please load voxel analysis first")
             msgBox.setText("Please load voxel analysis first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         roi_file = LoadFile('Select Atlas image file ...',['ROI image (*.nii.gz)','All files (*.*)'], 'nii.gz', "")
         if not len(roi_file) or not os.path.isfile(roi_file):
@@ -765,9 +765,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         except:
             print("Cannot load image file!")
             msgBox.setText("Cannot load image file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         rowList = list()
         for rowID in range(ui.vwAvai.rowCount()):
@@ -796,25 +796,25 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.vwAvai.rowCount() == 0:
             print("Please load voxel analysis first")
             msgBox.setText("Please load voxel analysis first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         try:
             T = np.float(ui.txtAcc.text())
         except:
             print("Accuracy rate must be a number")
             msgBox.setText("Accuracy rate must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if T <= 0 or T > 100:
             print("Accuracy rate must be between 0 and 100")
             msgBox.setText("Accuracy rate must be between 0 and 100")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         rowList = list()
@@ -843,31 +843,31 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.vwSele.rowCount() == 0:
             print("Please select some voxel first")
             msgBox.setText("Please select some voxel first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Loading...")
         InData = mainIO_load(InFile)
@@ -876,9 +876,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         # Label
         if not len(ui.txtLabel.currentText()):
                 msgBox.setText("Please enter Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
         try:
             OutData[ui.txtOLabel.text()] = reshape_1Dvector(InData[ui.txtLabel.currentText()])
@@ -889,9 +889,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.cbSubject.isChecked():
             if not len(ui.txtSubject.currentText()):
                 msgBox.setText("Please enter Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtOSubject.text()] = reshape_1Dvector(InData[ui.txtSubject.currentText()])
@@ -902,9 +902,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.cbTask.isChecked():
             if not len(ui.txtTask.currentText()):
                 msgBox.setText("Please enter Task variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtOTask.text()] = reshape_1Dvector(InData[ui.txtTask.currentText()])
@@ -915,9 +915,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.cbRun.isChecked():
             if not len(ui.txtRun.currentText()):
                 msgBox.setText("Please enter Run variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtORun.text()] = reshape_1Dvector(InData[ui.txtRun.currentText()])
@@ -928,9 +928,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.cbCounter.isChecked():
             if not len(ui.txtCounter.currentText()):
                 msgBox.setText("Please enter Counter variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtOCounter.text()] = reshape_1Dvector(InData[ui.txtCounter.currentText()])
@@ -941,9 +941,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.cbmLabel.isChecked():
             if not len(ui.txtmLabel.currentText()):
                 msgBox.setText("Please enter Matrix Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtOmLabel.text()] = InData[ui.txtmLabel.currentText()]
@@ -954,9 +954,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.cbDM.isChecked():
             if not len(ui.txtDM.currentText()):
                 msgBox.setText("Please enter Design Matrix variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtODM.text()] = InData[ui.txtDM.currentText()]
@@ -967,9 +967,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.cbCond.isChecked():
             if not len(ui.txtCond.currentText()):
                 msgBox.setText("Please enter Condition variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtOCond.text()] = InData[ui.txtCond.currentText()]
@@ -980,9 +980,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         if ui.cbNScan.isChecked():
             if not len(ui.txtScan.currentText()):
                 msgBox.setText("Please enter Number of Scan variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtOScan.text()] = reshape_1Dvector(InData[ui.txtScan.currentText()])
@@ -992,9 +992,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -1005,9 +1005,9 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         # Coordinate
         if not len(ui.txtCol.currentText()):
             msgBox.setText("Please enter Coordinator variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Coord = InData[ui.txtCol.currentText()]
@@ -1036,13 +1036,13 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
         mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("Data with new ROI is created.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmAAVoxelSelection.show(frmAAVoxelSelection)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

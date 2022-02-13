@@ -24,7 +24,7 @@ import os
 import sys
 
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.utility import fixstr, setParameters3
 from Base.dialogs import SelectDir
 from GUI.frmRenameFileGUI import *
@@ -50,8 +50,8 @@ class frmRenameFile(Ui_frmRenameFile):
         self.set_value(self=self,SubRange=SubRange, SubLen=SubLen, SubPer=SubPer, ConRange=ConRange, ConLen=ConLen,\
                         ConPer=ConPer, RunRange=RunRange, RunLen=RunLen, RunPer=RunPer, Task=Task, DIR=DIR)
 
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -145,9 +145,9 @@ class frmRenameFile(Ui_frmRenameFile):
                                             ui.txtRunRange.text(), ui.txtRunLen.text(), ui.txtRunPer.text())
         except Exception as e:
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -158,9 +158,9 @@ class frmRenameFile(Ui_frmRenameFile):
         #     SubSize = len(SubRange)
         # except:
         #     msgBox.setText("Subject Range is wrong!")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
         #     return False
         # print("Range of subjects is okay!")
         # try:
@@ -168,9 +168,9 @@ class frmRenameFile(Ui_frmRenameFile):
         #     1 / SubLen
         # except:
         #     msgBox.setText("Length of subjects must be an integer number")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
         #     return False
         # print("Length of subjects is okay!")
 
@@ -181,15 +181,15 @@ class frmRenameFile(Ui_frmRenameFile):
         #         raise Exception
         #     if not (len(ConRange) == SubSize):
         #         msgBox.setText("Counter Size must be equal to Subject Size!")
-        #         msgBox.setIcon(QMessageBox.Critical)
-        #         msgBox.setStandardButtons(QMessageBox.Ok)
-        #         msgBox.exec_()
+        #         msgBox.setIcon(QMessageBox.Icon.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #         msgBox.exec()
         #         return False
         # except:
         #     msgBox.setText("Counter Range is wrong!")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
         #     return False
         # print("Counter Range is okay!")
         # try:
@@ -197,9 +197,9 @@ class frmRenameFile(Ui_frmRenameFile):
         #     1 / ConLen
         # except:
         #     msgBox.setText("Length of counter must be an integer number")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
         #     return False
         # print("Length of Counter is okay!")
 
@@ -210,15 +210,15 @@ class frmRenameFile(Ui_frmRenameFile):
         #         raise Exception
         #     if not (len(RunRange) == SubSize):
         #         msgBox.setText("Run Size must be equal to Subject Size!")
-        #         msgBox.setIcon(QMessageBox.Critical)
-        #         msgBox.setStandardButtons(QMessageBox.Ok)
-        #         msgBox.exec_()
+        #         msgBox.setIcon(QMessageBox.Icon.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #         msgBox.exec()
         #         return False
         # except:
         #     msgBox.setText("Run Range is wrong!")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
         #     return False
         # print("Run Range is okay!")
         # try:
@@ -226,52 +226,52 @@ class frmRenameFile(Ui_frmRenameFile):
         #     1 / RunLen
         # except:
         #     msgBox.setText("Length of runs must be an integer number")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
         #     return False
         # print("Length of runs is valid")
 
         # if Task == "":
         #     msgBox = QMessageBox()
         #     msgBox.setText("There is no Task name")
-        #     msgBox.setIcon(QMessageBox.Critical)
-        #     msgBox.setStandardButtons(QMessageBox.Ok)
-        #     msgBox.exec_()
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
         #     return
 
 
         if Input == "":
             msgBox = QMessageBox()
             msgBox.setText("There is no input structure")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if Output == "":
             msgBox = QMessageBox()
             msgBox.setText("There is no output structure")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
 
         if DIR == "":
             msgBox = QMessageBox()
             msgBox.setText("Please select the main directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if not os.path.isdir(DIR):
             msgBox = QMessageBox()
             msgBox.setText("Cannot find the main directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
 
@@ -293,4 +293,4 @@ class frmRenameFile(Ui_frmRenameFile):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmRenameFile.show(frmRenameFile)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

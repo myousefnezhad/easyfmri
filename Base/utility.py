@@ -19,14 +19,12 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-
-from PyQt5.QtWidgets import QMessageBox, QSizePolicy, QTextEdit
-
-import numpy as np
 import os
-from dir import getDIR
-
+import platform
 import threading
+import numpy as np
+from dir import getDIR
+from PyQt6.QtWidgets import QMessageBox, QSizePolicy, QTextEdit
 
 def About():
     return """
@@ -63,7 +61,7 @@ class MyMessageBox(QMessageBox):
         self.setMaximumHeight(16777215)
         self.setMinimumWidth(550)
         self.setMaximumWidth(16777215)
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         textEdit = self.findChild(QTextEdit)
         if textEdit != None :
@@ -119,7 +117,7 @@ def getHostname():
 def getBuild(hostname=True):
     built = "9000"
     if hostname:
-        return f"{built} on {getHostname()}"
+        return f"{built} on {getHostname()}::{platform.machine()}"
     return built
 
 def getSettingVersion():

@@ -19,22 +19,16 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-
-import logging
 import os
-
-from PyQt5.QtWidgets import *
+import sys
+from PyQt6.QtWidgets import *
+from torch import layout
 
 from Base.utility import getVersion, getBuild
 from Base.dialogs import SaveFile, LoadFile
 from GUI.frmManuallyDesignROIGUI import *
 
-logging.basicConfig(level=logging.DEBUG)
-import sys
-from pyqode.core import api
-from pyqode.core import modes
-from pyqode.core import panels
-
+from Base.codeEditor import codeEditor
 
 def DefaultCode():
     return """# This is a template for writing any code in Python 3 style!
@@ -47,8 +41,6 @@ import scipy as sp
 # Write Your Code Here
 print("Hello World!")    
 """
-
-
 
 class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
     ui = Ui_frmManuallyDesignROI()
@@ -69,24 +61,12 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
         ui.stb.showMessage("New File")
         currentFile = None
 
-        ui.txtCode = api.CodeEdit(ui.Code)
-        #ui.txtCode.setGeometry(QtCore.QRect(10, 10, 641, 451))
-        ui.gridLayout.addWidget(ui.txtCode, 0, 0, 1, 1)
-        ui.txtCode.setObjectName("txtCode")
-
-        ui.txtCode.backend.start('backend/server.py')
-
-        ui.txtCode.modes.append(modes.CodeCompletionMode())
-        ui.txtCode.modes.append(modes.CaretLineHighlighterMode())
-        ui.txtCode.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtCode.document()))
-        #ui.txtCode.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
-        ui.txtCode.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        ui.txtCode.setFont(font)
-        ui.txtCode.setPlainText(DefaultCode(),"","")
+        # New Code Editor Library
+        cEditor = codeEditor(ui)
+        ui.txtCode = cEditor.Obj
+        cEditor.setObjectName("txtCode")
+        cEditor.setText(DefaultCode())
+        ui.Code.layout().addWidget(cEditor.Obj)
 
         dialog.setWindowTitle("easy fMRI manually design ROI - V" + getVersion() + "B" + getBuild())
         dialog.show()
@@ -114,9 +94,9 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
             print(e)
             msgBox = QMessageBox()
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
 
 
@@ -133,9 +113,9 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
         if MustSave:
             msgBox = QMessageBox()
             msgBox.setText("Do you want to save current code?")
-            msgBox.setIcon(QMessageBox.Question)
-            msgBox.setStandardButtons(QMessageBox.No| QMessageBox.Yes)
-            if (msgBox.exec_() == QMessageBox.Yes):
+            msgBox.setIcon(QMessageBox.Icon.Question)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.No| QMessageBox.StandardButton.Yes)
+            if (msgBox.exec() == QMessageBox.StandardButton.Yes):
                 if (currentFile != None):
                     filename = currentFile
                 else:
@@ -163,9 +143,9 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
         if MustSave:
             msgBox = QMessageBox()
             msgBox.setText("Do you want to save current code?")
-            msgBox.setIcon(QMessageBox.Question)
-            msgBox.setStandardButtons(QMessageBox.No | QMessageBox.Yes)
-            if (msgBox.exec_() == QMessageBox.Yes):
+            msgBox.setIcon(QMessageBox.Icon.Question)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.No | QMessageBox.StandardButton.Yes)
+            if (msgBox.exec() == QMessageBox.StandardButton.Yes):
                 if (currentFile != None):
                     filename = currentFile
                 else:
@@ -198,4 +178,4 @@ class frmManuallyDesignROI(Ui_frmManuallyDesignROI):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmManuallyDesignROI.show(frmManuallyDesignROI)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

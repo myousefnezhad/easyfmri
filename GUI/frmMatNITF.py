@@ -26,7 +26,7 @@ import numpy as np
 import nibabel as nb
 import subprocess as sub
 from Base.afni import AFNI
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmMatNITFGUI import *
 from Base.utility import strRange
 from sklearn import preprocessing
@@ -60,18 +60,18 @@ class frmMatNITF(Ui_frmMatNITF):
         except:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find MNI files!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
         afni = AFNI()
         afni.setting()
         if not afni.Validate:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find AFNI setting!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
         else:
             ui.txtFAFNI.setText(afni.COPY)
             ui.txtFSUMA.setText(afni.REFIT)
@@ -84,8 +84,8 @@ class frmMatNITF(Ui_frmMatNITF):
         ui.cbThType.addItem("Extremum Thresholding", "ext")
 
         dialog.setWindowTitle("easy fMRI Convert Matrix to Nifti1 - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -176,9 +176,9 @@ class frmMatNITF(Ui_frmMatNITF):
                     if not cooShape == dataShape[1]:
                         print("WARNING: Coordinate size is not matched by data size!")
                         msgBox.setText("Coordinate size is not matched by data size!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
 
                     if cooShape is None:
                         print("WARNING: Cannot find coordinate!")
@@ -227,9 +227,9 @@ class frmMatNITF(Ui_frmMatNITF):
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         ThresholdType = ui.cbThType.currentData()
@@ -241,9 +241,9 @@ class frmMatNITF(Ui_frmMatNITF):
                     MinTh = np.double(ui.txtThMin.text())
                 except:
                     msgBox.setText("Min Threshold must be a number")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 print("Min Threshold is valid")
 
@@ -252,9 +252,9 @@ class frmMatNITF(Ui_frmMatNITF):
                     MaxTh = np.double(ui.txtThMax.text())
                 except:
                     msgBox.setText("Max Threshold must be a number")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 print("Max Threshold is valid")
 
@@ -266,29 +266,29 @@ class frmMatNITF(Ui_frmMatNITF):
             CopyFile = ui.txtFAFNI.text()
             if not len(CopyFile):
                 msgBox.setText("Please select 3dcopy command!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             if not os.path.isfile(CopyFile):
                 msgBox.setText("Please select 3dcopy command!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             RefitFile = ui.txtFSUMA.text()
             if not len(RefitFile):
                 msgBox.setText("Please select 3drefit command!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             if not os.path.isfile(RefitFile):
                 msgBox.setText("Please select 3drefit command!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
 
@@ -296,50 +296,50 @@ class frmMatNITF(Ui_frmMatNITF):
         InFile = ui.txtInFile.text()
         if not len(InFile):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if not len(ui.txtMatrix.currentText()):
             msgBox.setText("Matrix name not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if not len(ui.txtCoord.currentText()):
             msgBox.setText("Coordinate name not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if not len(ui.txtTime.text()):
             msgBox.setText("Time points not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         AffineFile = ui.txtSSSpace.currentText()
         if not len(AffineFile):
             msgBox.setText("Please enter affine reference!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if not os.path.isfile(AffineFile):
             msgBox.setText("Affine reference not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         AffineHDR = nb.load(AffineFile)
         Affine = AffineHDR.affine
@@ -347,9 +347,9 @@ class frmMatNITF(Ui_frmMatNITF):
         Time = strRange(ui.txtTime.text())
         if Time is None:
             msgBox.setText("Time points is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         try:
@@ -361,9 +361,9 @@ class frmMatNITF(Ui_frmMatNITF):
         except:
             print("Cannot load data!")
             msgBox.setText("Cannot load data!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         ImgData = None
@@ -401,12 +401,12 @@ class frmMatNITF(Ui_frmMatNITF):
             os.system(cmd)
         print("DONE!")
         msgBox.setText("Image file is generated.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmMatNITF.show(frmMatNITF)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

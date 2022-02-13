@@ -26,8 +26,7 @@ import queue
 import numpy as np
 from sklearn import preprocessing
 from IO.mainIO import mainIO_load, mainIO_save, can_do_compression
-from dir import getDIR
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.utility import getVersion, getBuild
 from Base.dialogs import LoadFile, SaveFile
 from GUI.frmDataEditorGUI import *
@@ -35,13 +34,7 @@ from GUI.frmDataViewer import frmDataViewer
 from GUI.frmSelectRange import frmSelectRange
 from GUI.frmSelectXRange import frmSelectXRange
 
-import logging
-logging.basicConfig(level=logging.DEBUG)
-from pyqode.core import api
-from pyqode.core import modes
-from pyqode.core import panels
-
-
+from Base.codeEditor import codeEditor
 
 def DefaultCode():
     return """# This is a template for writing any code in Python 3 style
@@ -88,26 +81,17 @@ class frmDataEditor(Ui_frmDataEditor):
         dialog.setWindowTitle("easy fMRI Data Editor - V" + getVersion() + "B" + getBuild())
         ui.tabWidget.setCurrentIndex(0)
         ui.tabWidget2.setCurrentIndex(0)
+        
+        # New Code Editor Library
+        cEditor = codeEditor(ui)
+        ui.txtCode = cEditor.Obj
+        cEditor.setObjectName("txtCode")
+        cEditor.setText(DefaultCode())
         layout = QHBoxLayout(ui.Code)
-        ui.txtCode = api.CodeEdit(ui.Code)
-        layout.addWidget(ui.txtCode)
-        ui.txtCode.setObjectName("txtCode")
-        ui.txtCode.backend.start(getDIR() + '/backend/server.py')
-
-        ui.txtCode.modes.append(modes.CodeCompletionMode())
-        ui.txtCode.modes.append(modes.CaretLineHighlighterMode())
-        ui.txtCode.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtCode.document()))
-        #ui.txtCode.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
-        ui.txtCode.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
+        layout.addWidget(cEditor.Obj)
 
         ui.lblCodeFile.setText("New File")
         currentFile = None
-
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        ui.txtCode.setFont(font)
-        ui.txtCode.setPlainText(DefaultCode(),"","")
 
         root = queue.Queue()
         data = None
@@ -309,15 +293,15 @@ class frmDataEditor(Ui_frmDataEditor):
         if len(ui.txtInFile.text()):
             do_compress = False
             if can_do_compression(ui.txtInFile.text()):
-                reply = QMessageBox.question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.Yes, QMessageBox.No)
-                do_compress = True if reply == QMessageBox.Yes else False
+                reply = QMessageBox.Icon.Question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
+                do_compress = True if reply == QMessageBox.StandardButton.Yes else False
             mainIO_save(data, ui.txtInFile.text(), do_compression=do_compress)
             ui.btnSave.setEnabled(False)
             print("Data is saved in: ", ui.txtInFile.text())
             msgBox.setText("Data is saved")
-            msgBox.setIcon(QMessageBox.Information)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Information)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
 
     def btnSaveAs_click(self):
@@ -331,17 +315,17 @@ class frmDataEditor(Ui_frmDataEditor):
             if len(ui.txtInFile.text()):
                 do_compress = False
                 if can_do_compression(ofile):
-                    reply = QMessageBox.question(None, 'Data Compress', "Do you like to compress data?",
-                                                 QMessageBox.Yes, QMessageBox.No)
-                    do_compress = True if reply == QMessageBox.Yes else False
+                    reply = QMessageBox.Icon.Question(None, 'Data Compress', "Do you like to compress data?",
+                                                 QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
+                    do_compress = True if reply == QMessageBox.StandardButton.Yes else False
                 mainIO_save(data, ofile, do_compression=do_compress)
                 ui.btnSave.setEnabled(False)
                 ui.txtInFile.setText(ofile)
                 print("Data is saved in: ", ui.txtInFile.text())
                 msgBox.setText("Data is saved")
-                msgBox.setIcon(QMessageBox.Information)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Information)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
 
 
     def btnBack_click(self):
@@ -397,9 +381,9 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -498,16 +482,16 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not len(filename):
             msgBox.setText("There is no opened file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if not os.path.isfile(filename):
             msgBox.setText("Cannot find data file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         frmDataEditor.OpenFile(self, filename)
 
@@ -517,15 +501,15 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not root.empty():
             msgBox.setText("This item only works on variables located in root!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -540,9 +524,9 @@ class frmDataEditor(Ui_frmDataEditor):
         except Exception as e:
             print(str(e))
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
     def btnRemove_click(self):
@@ -551,16 +535,16 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not root.empty():
             msgBox.setText("This item only works on variables located in root!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -576,9 +560,9 @@ class frmDataEditor(Ui_frmDataEditor):
         except Exception as e:
             print(str(e))
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
     def btnRename_click(self):
@@ -587,15 +571,15 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not root.empty():
             msgBox.setText("This item only works on variables located in root!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -611,9 +595,9 @@ class frmDataEditor(Ui_frmDataEditor):
             except Exception as e:
                 print(str(e))
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
     def btnScale_click(self):
@@ -622,15 +606,15 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not root.empty():
             msgBox.setText("This item only works on variables located in root!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -646,9 +630,9 @@ class frmDataEditor(Ui_frmDataEditor):
             except Exception as e:
                 print(str(e))
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
     def btnClone_click(self):
@@ -657,9 +641,9 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -674,9 +658,9 @@ class frmDataEditor(Ui_frmDataEditor):
         except Exception as e:
             print(str(e))
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -687,15 +671,15 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not root.empty():
             msgBox.setText("This item only works on variables located in root!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -708,9 +692,9 @@ class frmDataEditor(Ui_frmDataEditor):
                 if ok:
                     if np.prod(shape) != np.prod(np.shape(dat[varName])):
                         msgBox.setText("Shape is wrong!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return False
                     dat[varName] = np.reshape(dat[varName], shape)
                     frmDataEditor.DrawData(self)
@@ -718,9 +702,9 @@ class frmDataEditor(Ui_frmDataEditor):
             except Exception as e:
                 print(str(e))
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
 
@@ -730,15 +714,15 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not root.empty():
             msgBox.setText("This item only works on variables located in root!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -756,9 +740,9 @@ class frmDataEditor(Ui_frmDataEditor):
             except Exception as e:
                 print(str(e))
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
     def btnVConcat_click(self):
@@ -767,15 +751,15 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not root.empty():
             msgBox.setText("This item only works on variables located in root!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -794,9 +778,9 @@ class frmDataEditor(Ui_frmDataEditor):
             except Exception as e:
                 print(str(e))
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
     def btnHConcat_click(self):
@@ -805,15 +789,15 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not root.empty():
             msgBox.setText("This item only works on variables located in root!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -832,9 +816,9 @@ class frmDataEditor(Ui_frmDataEditor):
             except Exception as e:
                 print(str(e))
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
     def btnCConcat_click(self):
@@ -844,15 +828,15 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not root.empty():
             msgBox.setText("This item only works on variables located in root!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -872,9 +856,9 @@ class frmDataEditor(Ui_frmDataEditor):
             except Exception as e:
                 print(str(e))
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
     def btnConcat_click(self):
@@ -883,15 +867,15 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not root.empty():
             msgBox.setText("This item only works on variables located in root!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -912,9 +896,9 @@ class frmDataEditor(Ui_frmDataEditor):
             except Exception as e:
                 print(str(e))
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
     def btnIn_click(self):
@@ -923,9 +907,9 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -940,9 +924,9 @@ class frmDataEditor(Ui_frmDataEditor):
                 raise Exception
         except:
             msgBox.setText("Cannot find variable with current index!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         root.put([varName, ui.txtInside.value()])
         frmDataEditor.DrawData(self)
@@ -953,23 +937,24 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
 
         Codes = ui.txtCode.toPlainText()
+
         try:
             allvars = dict(locals(), **globals())
             exec(Codes, allvars, allvars)
             ui.btnSave.setEnabled(True)
             frmDataEditor.DrawData(self)
             msgBox.setText("Run without error")
-            msgBox.setIcon(QMessageBox.Information)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Information)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
 
         except Exception as e:
             print(e)
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
     def btnSaveCode_click(self):
         global currentFile
@@ -997,9 +982,9 @@ class frmDataEditor(Ui_frmDataEditor):
         if MustSave:
             msgBox = QMessageBox()
             msgBox.setText("Do you want to save current code?")
-            msgBox.setIcon(QMessageBox.Question)
-            msgBox.setStandardButtons(QMessageBox.No | QMessageBox.Yes)
-            if (msgBox.exec_() == QMessageBox.Yes):
+            msgBox.setIcon(QMessageBox.Icon.Question)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.No | QMessageBox.StandardButton.Yes)
+            if (msgBox.exec() == QMessageBox.StandardButton.Yes):
                 if (currentFile != None):
                     filename = currentFile
                 else:
@@ -1029,9 +1014,9 @@ class frmDataEditor(Ui_frmDataEditor):
         if MustSave:
             msgBox = QMessageBox()
             msgBox.setText("Do you want to save current code?")
-            msgBox.setIcon(QMessageBox.Question)
-            msgBox.setStandardButtons(QMessageBox.No| QMessageBox.Yes)
-            if (msgBox.exec_() == QMessageBox.Yes):
+            msgBox.setIcon(QMessageBox.Icon.Question)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.No| QMessageBox.StandardButton.Yes)
+            if (msgBox.exec() == QMessageBox.StandardButton.Yes):
                 if (currentFile != None):
                     filename = currentFile
                 else:
@@ -1056,4 +1041,4 @@ if __name__ == '__main__':
         frmDataEditor.show(frmDataEditor, sys.argv[1])
     else:
         frmDataEditor.show(frmDataEditor)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

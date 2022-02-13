@@ -121,6 +121,9 @@ class Ui_frmMAAdaBoost(object):
         self.tabWidget.addTab(self.tab_2, "")
         self.tab_6 = QtWidgets.QWidget()
         self.tab_6.setObjectName("tab_6")
+        self.Code = QtWidgets.QWidget(self.tab_6)
+        self.Code.setGeometry(QtCore.QRect(10, 10, 781, 501))
+        self.Code.setObjectName("Code")
         self.tabWidget.addTab(self.tab_6, "")
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
@@ -255,7 +258,7 @@ class Ui_frmMAAdaBoost(object):
         self.txtOutModel.setObjectName("txtOutModel")
 
         self.retranslateUi(frmMAAdaBoost)
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(frmMAAdaBoost)
         frmMAAdaBoost.setTabOrder(self.txtInFile, self.btnInFile)
         frmMAAdaBoost.setTabOrder(self.btnInFile, self.txtOutFile)

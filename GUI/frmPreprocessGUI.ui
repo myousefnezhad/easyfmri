@@ -222,14 +222,14 @@
       <property name="toolTip">
        <string/>
       </property>
+      <property name="toolTipDuration">
+       <number>-1</number>
+      </property>
       <property name="statusTip">
        <string/>
       </property>
       <property name="text">
        <string>Main Directory:</string>
-      </property>
-      <property name="toolTipDuration" stdset="0">
-       <number>-1</number>
       </property>
       <property name="setToolTip" stdset="0">
        <string>Please enter the main directory of the fMRI dataset. Format of directory must be based on BIDS structure.</string>
@@ -474,9 +474,7 @@
        </property>
        <property name="font">
         <font>
-         <family>Arial</family>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -556,9 +554,7 @@ It's case sensitive.</string>
        </property>
        <property name="font">
         <font>
-         <family>Arial</family>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -667,9 +663,7 @@ It's case sensitive.</string>
        </property>
        <property name="font">
         <font>
-         <family>Arial</family>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -838,9 +832,7 @@ It's case sensitive.</string>
      </property>
      <property name="font">
       <font>
-       <family>Arial</family>
        <pointsize>11</pointsize>
-       <weight>50</weight>
        <bold>false</bold>
       </font>
      </property>
@@ -1235,14 +1227,20 @@ the preprocessing parameters. It's case sensitive.</string>
       <string>Extract Events</string>
      </property>
     </widget>
-    <widget class="QTextEdit" name="txtEvents">
+    <widget class="QWidget" name="Code" native="true">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>641</width>
+       <width>651</width>
        <height>451</height>
       </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
     </widget>
    </widget>
@@ -1509,11 +1507,11 @@ the preprocessing parameters. It's case sensitive.</string>
       </property>
       <property name="html">
        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Cantarell'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:13pt;&quot;&gt;filtered_func_data.nii.gz&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:13pt;&quot;&gt;mask.nii.gz&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text';&quot;&gt;filtered_func_data.nii.gz&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text';&quot;&gt;mask.nii.gz&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_17">
@@ -1540,7 +1538,6 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="font">
        <font>
-        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -1675,11 +1672,11 @@ p, li { white-space: pre-wrap; }
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
     <widget class="QLineEdit" name="txtFeat">
@@ -1694,14 +1691,14 @@ p, li { white-space: pre-wrap; }
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/feat</string>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_24">
@@ -1742,14 +1739,14 @@ p, li { white-space: pre-wrap; }
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/Feat_gui</string>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
     <widget class="QLineEdit" name="txtbetcmd">
@@ -1764,14 +1761,14 @@ p, li { white-space: pre-wrap; }
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/bet</string>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_40">
@@ -1809,14 +1806,14 @@ p, li { white-space: pre-wrap; }
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/fsl</string>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_45">
@@ -1857,14 +1854,14 @@ p, li { white-space: pre-wrap; }
      <property name="toolTip">
       <string/>
      </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="text">
       <string>/bin/fsleyes</string>
-     </property>
-     <property name="toolTipDuration" stdset="0">
-      <number>-1</number>
      </property>
     </widget>
     <widget class="QLabel" name="label_46">
@@ -2121,7 +2118,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>btnTest</tabstop>
   <tabstop>btnClose</tabstop>
   <tabstop>txtSetting</tabstop>
-  <tabstop>txtEvents</tabstop>
   <tabstop>txtAnalysis</tabstop>
   <tabstop>txtScript</tabstop>
   <tabstop>txtConPer</tabstop>

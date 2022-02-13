@@ -21,6 +21,7 @@
 #
 
 import configparser as cp
+from glob import glob
 import os
 import platform
 import subprocess
@@ -30,10 +31,7 @@ import nibabel as nb
 import numpy as np
 import scipy.io as io
 
-
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QMessageBox
-
+from PyQt6.QtWidgets import QMessageBox, QHBoxLayout
 
 from Base.Setting import Setting
 from Base.SettingHistory import History
@@ -60,11 +58,7 @@ from Preprocess.RunPreprocess import RunPreprocess
 from Preprocess.ScriptGenerator import ScriptGenerator
 
 
-logging.basicConfig(level=logging.DEBUG)
-from pyqode.core import api
-from pyqode.core import modes
-from pyqode.core import panels
-from pyqode.qt import QtWidgets as pyWidgets
+from Base.codeEditor import codeEditor
 
 
 def EventCode():
@@ -149,34 +143,23 @@ class frmPreprocess(Ui_frmPreprocess):
         tools = Tools()
         tools.combo(ui.cbTools)
 
+        # New Code Editor Library
+        cEditor = codeEditor(ui)
+        ui.txtEvents = cEditor.Obj
+        cEditor.setObjectName("txtEvents")
+        cEditor.setText(EventCode())
+        layout = QHBoxLayout(ui.Code)
+        layout.addWidget(cEditor.Obj)
+
         ui.cbMode.addItem("Full Analysis")
         ui.cbMode.addItem("Only Preprocessing")
 
-        ui.txtEvents.setText(EventCode())
         ui.tabWidget.setCurrentIndex(0)
         ui.tabWidget_2.setCurrentIndex(0)
         ui.cbSliceTime.addItem("None")
         ui.cbSliceTime.addItem("Regular up (1, 2, ..., n)")
         ui.cbSliceTime.addItem("Regular down (n, n-1, ..., 1)")
         ui.cbSliceTime.addItem("Interleaved (2, 4, 6, ...), (1, 3, 5, ...)")
-
-        ui.txtEvents = api.CodeEdit(ui.tab_3)
-        ui.txtEvents.setGeometry(QtCore.QRect(10, 10, 641, 451))
-        ui.txtEvents.setObjectName("txtEvents")
-
-        ui.txtEvents.backend.start('backend/server.py')
-
-        ui.txtEvents.modes.append(modes.CodeCompletionMode())
-        ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())
-        ui.txtEvents.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
-        #ui.txtEvents.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
-        ui.txtEvents.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        ui.txtEvents.setFont(font)
-        ui.txtEvents.setPlainText(EventCode(),"","")
 
         try:
             spaceINI = str.rsplit(open(getDirSpaceINI()).read(),"\n")
@@ -189,9 +172,9 @@ class frmPreprocess(Ui_frmPreprocess):
         except:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find MNI files!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
 
         fsl = FSL()
@@ -199,9 +182,9 @@ class frmPreprocess(Ui_frmPreprocess):
         if not fsl.Validate:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find FSL setting!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
         else:
             ui.txtFSLDIR.setText(fsl.FSLDIR)
             ui.txtFeat.setText(fsl.feat)
@@ -212,8 +195,8 @@ class frmPreprocess(Ui_frmPreprocess):
 
 
         dialog.setWindowTitle("easy fMRI preprocessing - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -253,9 +236,9 @@ class frmPreprocess(Ui_frmPreprocess):
             if not fsl.Validate:
                 msgBox = QMessageBox()
                 msgBox.setText("Cannot find FSL setting!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
             else:
                 CMD = fsl.FSLDIR if len(fsl.FSLDIR) else ""            
                 CMD += fsl.fsl
@@ -273,9 +256,9 @@ class frmPreprocess(Ui_frmPreprocess):
             if not fsl.Validate:
                 msgBox = QMessageBox()
                 msgBox.setText("Cannot find FSL setting!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
             else:
                 CMD = fsl.FSLDIR if len(fsl.FSLDIR) else ""            
                 CMD += fsl.fsleyes
@@ -356,9 +339,9 @@ class frmPreprocess(Ui_frmPreprocess):
         if ui.txtTask.currentText() == "":
             msgBox = QMessageBox()
             msgBox.setText("Please enter the task name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         setting             = Setting()
@@ -385,9 +368,9 @@ class frmPreprocess(Ui_frmPreprocess):
             if not os.path.isfile(FirstFile):
                 msgBox = QMessageBox()
                 msgBox.setText("Cannot find the BOLD data for the first subject, please check the parameters")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             try:
                 BoldHDR = nb.load(FirstFile)
@@ -400,15 +383,15 @@ class frmPreprocess(Ui_frmPreprocess):
                                 "\n\nTR: " + ui.txtTR.text() + "\nData Shape: " + str(BoldHDR.header.get_data_shape()) +\
                                 " \n" + ui.txtVoxel.text() +\
                                 "\n\n\nYou can manually change these parameters in the Basic tab!")
-                msgBox.setIcon(QMessageBox.Information)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Information)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
             except:
                 msgBox = QMessageBox()
                 msgBox.setText("Cannot read file. Please check parameters!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 pass
 
     def btnTest_click(self):
@@ -417,9 +400,9 @@ class frmPreprocess(Ui_frmPreprocess):
         if setting.checkValue(ui):
             msgBox = QMessageBox()
             msgBox.setText("It is okay")
-            msgBox.setIcon(QMessageBox.Information)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Information)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
     def btnSave_click(self):
         global ui
@@ -436,8 +419,8 @@ class frmPreprocess(Ui_frmPreprocess):
             else:
                 msgBox = QMessageBox()
                 reply = msgBox.question(msgBox, 'Save as ...', 'Do you want to save settting in the same file?'
-                                                   , QMessageBox.Yes, QMessageBox.No)
-                if reply == QMessageBox.No:
+                                                   , QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
+                if reply == QMessageBox.StandardButton.No:
                     OpenDialog = True
 
 
@@ -524,9 +507,9 @@ class frmPreprocess(Ui_frmPreprocess):
                     print("WARNING: You are using different version of Easy fMRI!!!")
                     msgBox = QMessageBox()
                     msgBox.setText("This version of setting is not supported!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
             if not setting.empty:
@@ -598,9 +581,9 @@ class frmPreprocess(Ui_frmPreprocess):
                     print("WARNING: You are using different version of Easy fMRI!!!")
                     msgBox = QMessageBox()
                     msgBox.setText("This version of setting is not supported!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
                 if not setting.empty:
@@ -685,17 +668,17 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.setText("Please verify parameters")
             else:
                 msgBox.setText("You must save setting first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         else:
             if isChange == True:
                 msgBox = QMessageBox()
                 msgBox.setText("Parameters are changed. Please save them first!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             else:
                 brainExtractor = BrainExtractor()
@@ -719,17 +702,17 @@ class frmPreprocess(Ui_frmPreprocess):
                     msgBox.setText("Please verify parameters")
                 else:
                     msgBox.setText("You must save setting first!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             else:
                 if isChange == True:
                     msgBox = QMessageBox()
                     msgBox.setText("Parameters are changed. Please save them first!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
                 else:
                     eventGenerator = EventGenerator()
@@ -738,9 +721,9 @@ class frmPreprocess(Ui_frmPreprocess):
                     print("TASK FINISHED!")
                     msgBox = QMessageBox()
                     msgBox.setText("All events are generated!")
-                    msgBox.setIcon(QMessageBox.Information)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Information)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
     def btnPreprocessingScript_click(self):
@@ -753,17 +736,17 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.setText("Please verify parameters")
             else:
                 msgBox.setText("You must save setting first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         else:
             if isChange == True:
                 msgBox = QMessageBox()
                 msgBox.setText("Parameters are changed. Please save them first!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             else:
                 scriptGenerator = ScriptGenerator()
@@ -774,9 +757,9 @@ class frmPreprocess(Ui_frmPreprocess):
                 print("TASK FINISHED!")
                 msgBox = QMessageBox()
                 msgBox.setText("All Script are generated!")
-                msgBox.setIcon(QMessageBox.Information)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Information)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
         pass
 
@@ -791,17 +774,17 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.setText("Please verify parameters")
             else:
                 msgBox.setText("You must save setting first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         else:
             if isChange == True:
                 msgBox = QMessageBox()
                 msgBox.setText("Parameters are changed. Please save them first!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             else:
                 SubID=None
@@ -822,9 +805,9 @@ class frmPreprocess(Ui_frmPreprocess):
                 if not runPreprocess.Check(ui.txtSetting.text(),ui.cbJustRun.checkState(),SubID,RunID,ConID,TaskID):
                     msgBox = QMessageBox()
                     msgBox.setText("Script(s) are not found!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
                 else:
                     feat = ui.txtFSLDIR.text() + ui.txtFeat.text()
@@ -846,9 +829,9 @@ class frmPreprocess(Ui_frmPreprocess):
         if not os.path.isfile(Feat_gui):
             msgBox = QMessageBox()
             msgBox.setText("Cannot find Feat_gui cmd!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         setting = Setting()
@@ -859,17 +842,17 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.setText("Please verify parameters")
             else:
                 msgBox.setText("You must save setting first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         else:
             if isChange == True:
                 msgBox = QMessageBox()
                 msgBox.setText("Parameters are changed. Please save them first!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             else:
                 sSess = frmSelectSession(None,setting=setting)
@@ -889,17 +872,17 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.setText("Please verify parameters")
             else:
                 msgBox.setText("You must save setting first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         else:
             if isChange == True:
                 msgBox = QMessageBox()
                 msgBox.setText("Parameters are changed. Please save them first!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             else:
                 sSess = frmSelectSession(None, setting=setting)
@@ -926,9 +909,9 @@ class frmPreprocess(Ui_frmPreprocess):
                                 print(e)
                                 msgBox = QMessageBox()
                                 msgBox.setText(str(e))
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return
                             try:
                                 RowStartID = allvars['RowStartID']
@@ -936,9 +919,9 @@ class frmPreprocess(Ui_frmPreprocess):
                                 print("Cannot find RowStartID variable in event code")
                                 msgBox = QMessageBox()
                                 msgBox.setText("Cannot find RowStartID variable in event code")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return
                             try:
                                 Condition = allvars['Condition']
@@ -946,9 +929,9 @@ class frmPreprocess(Ui_frmPreprocess):
                                 print("Cannot find Condition variable in event code")
                                 msgBox = QMessageBox()
                                 msgBox.setText("Cannot find Condition variable in event code")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return
                             try:
                                 Onset = allvars['Onset']
@@ -956,9 +939,9 @@ class frmPreprocess(Ui_frmPreprocess):
                                 print("Cannot find Onset variable in event code")
                                 msgBox = QMessageBox()
                                 msgBox.setText("Cannot find Onset variable in event code")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return
                             try:
                                 Duration = allvars['Duration']
@@ -966,9 +949,9 @@ class frmPreprocess(Ui_frmPreprocess):
                                 print("Cannot find Duration variable in event code")
                                 msgBox = QMessageBox()
                                 msgBox.setText("Cannot find Duration variable in event code")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return
 
                             try:
@@ -977,9 +960,9 @@ class frmPreprocess(Ui_frmPreprocess):
                                 print("Cannot find Skip variable in event code")
                                 msgBox = QMessageBox()
                                 msgBox.setText("Cannot find Skip variable in event code")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return
 
                             if RowStartID <= k and Skip == 0:
@@ -1015,26 +998,26 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.setText("Please verify parameters")
             else:
                 msgBox.setText("You must save setting first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         else:
             if isChange == True:
                 msgBox = QMessageBox()
                 msgBox.setText("Parameters are changed. Please save them first!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             else:
                 runPreprocess = RunPreprocess()
                 if not runPreprocess.Check(ui.txtSetting.text(),False):
                     msgBox = QMessageBox()
                     msgBox.setText("Script(s) are not found!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
                 else:
                     sSess = frmSelectSession(None, setting=setting)
@@ -1057,17 +1040,17 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.setText("Please verify parameters")
             else:
                 msgBox.setText("You must save setting first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         else:
             if isChange == True:
                 msgBox = QMessageBox()
                 msgBox.setText("Parameters are changed. Please save them first!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             else:
                 ofile = SaveFile("Save log file",["Log file (*.txt)"],"txt")
@@ -1213,17 +1196,17 @@ class frmPreprocess(Ui_frmPreprocess):
                 msgBox.setText("Please verify parameters")
             else:
                 msgBox.setText("You must save setting first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         else:
             if isChange == True:
                 msgBox = QMessageBox()
                 msgBox.setText("Parameters are changed. Please save them first!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             else:
                 strDel = ""
@@ -1231,8 +1214,8 @@ class frmPreprocess(Ui_frmPreprocess):
                     strDel = "SMOKED::"
                 msgBox = QMessageBox()
                 reply = msgBox.question(msgBox, strDel + 'DELETING OUTPUT FILES ...', strDel + 'Do you want to DELETE output files?'
-                                        , QMessageBox.Yes, QMessageBox.No)
-                if reply == QMessageBox.Yes:
+                                        , QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
+                if reply == QMessageBox.StandardButton.Yes:
                     bids = load_BIDS(setting)
                     print("Deleting Files ...")
                     for (_, t, _, s, _, c, runs) in bids:
@@ -1298,13 +1281,13 @@ class frmPreprocess(Ui_frmPreprocess):
                                     print("NOT FOUND: ANALYZE DIR,\t" + dir)
                     print("Task is done.")
                     msgBox.setText("All available output files are deleted!")
-                    msgBox.setIcon(QMessageBox.Information)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Information)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
 
 
 # Auto Run
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     frmPreprocess.show(frmPreprocess)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

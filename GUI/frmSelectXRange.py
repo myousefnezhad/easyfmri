@@ -20,7 +20,7 @@
 #
 #
 
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 import numpy as np
 import sys
 
@@ -64,7 +64,7 @@ class frmSelectXRange(QDialog):
 
         self.setLayout(layout)
         self.setWindowTitle("Session Selector")
-        self.exec_()
+        self.exec()
 
 
     def btnOK_onclick(self):
@@ -88,4 +88,4 @@ if __name__ == '__main__':
     frm = frmSelectXRange((4, 5, 7))
     if frm.PASS:
         print(frm.From, frm.To)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
