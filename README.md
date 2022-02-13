@@ -329,38 +329,54 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
 ## STEP D: Install Python 
 
-### Install Python 3.9.x via [Miniconda3](https://docs.conda.io/en/latest/miniconda.html)
+### Download Conda for Python 3.9.x  
 
-* Download [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) 
-    * Note: In Windows 10, you must install the Linux version of Miniconda 3
-    * You can use wget for Linux:
-        ```
-        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-        ```
-  *  You can use wget for Mac:
-        ```
-        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.pkg
-        ```
+* Download [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) (for X86 architecture) or [Miniforge](https://github.com/conda-forge/miniforge) (for ARM architecture, e.g. Apple Silicon)
+
+* Note: In Windows 10, you must install the Linux version of Miniconda 3
+
+* The last version of Miniconda for Linux (X86) can be download from [https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh](https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh)
 
 
-* Install Python 3.9
-    * Note: **DO NOT** add conda init to the startup, becuase you will handle conda via easy fMRI startup script. e.g., say no to this question:
+*  The last version of Miniconda for Mac (Intel X86) can be download from [https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh](https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh)
+
+*  The last version of **Miniforge** for Mac (Apple Silicon) can be download from [https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh)
+
+
+### Install Python 3.9
+After you have downloaded the related Miniconda or Miniforge on your computer, you must open a terminal and use `cd` commends to go to the directory that your file is there. As an example, you may download the file in the Downloads folder, so you need to run `cd ~/Downloads`
+
+You can use `ls` command to check the content of the current directory in terminal.
+
+Then, you can use `sh <FILE NAME>` to run the setup, where `<FILE NAME>` is the name of file you have downloaded in the previous section and can be listed in your terminal when you used `ls` command. 
+
+* Note: **DO NOT** add conda init to the startup, becuase you will handle conda via easy fMRI startup script. e.g., say no to this question:
       ```
       Do you wish the installer to initialize Miniconda3
       by running conda init? [yes|no] no
       ```
 
-    * For Linux:
-        ```
-        sh Miniconda3-latest-Linux-x86_64.sh
-        ```
+
+* The setup should run using the following command for Linux (X86):
+    ```
+    sh Miniconda3-latest-Linux-x86_64.sh
+    ```
     
-    * For Mac: click PKG file and continue installation.
-        * Note: [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) will be installed in `/opt/miniconda3` by default in Mac.
+* The setup should run using the following command for Mac (Intel X86):
+    ```
+    sh Miniconda3-latest-MacOSX-x86_64.sh
+    ```
+
+* The setup should run using the following command for Mac (Apple Silicon):
+    ```
+    sh Miniforge3-MacOSX-arm64.sh
+    ```
+
+### Setup Conda Environment
 
 * Load environment variables: 
 
-    * You have to edit both `~/.startupscript` and `~/.zstartupscript` and set the [Miniconda3](https://docs.conda.io/en/latest/miniconda.html) path as `ANACON_PATH`.
+    * You have to edit both `~/.startupscript` and `~/.zstartupscript` and set the conda path as `ANACON_PATH`.
 
     * Then:
         ```
@@ -379,27 +395,32 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 
 * Update Conda components and install easy fMRI required python packages by using: 
     ```
-    conda activate easyfmri 
+    conda activate easyfmri
     conda update --all
-    conda install numpy scipy qt pyqt ipython matplotlib pandas seaborn psutil statsmodels
+    conda install numpy scipy ipython matplotlib pandas seaborn psutil statsmodels h5py
     conda install -c conda-forge mpi4py scikit-learn
-    pip install -U future nibabel nitime nilearn pyqode.core pyqode.qt pydicom matplotlib h5py
+    pip install -U future nibabel nitime nilearn pydicom matplotlib
+    pip install PyQt6 PyQt6-QScintilla
     ```
 
 * Install [PyTorch](https://pytorch.org/) package:
-    * In Linux (with [NVIDIA GPU](https://www.nvidia.com/en-us/)):
+    * In Linux (X86 with [NVIDIA GPU](https://www.nvidia.com/en-us/)):
         ```
-        conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
+        conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
         ```
-    * In Linux (only CPU):
+    * In Linux (only X86 CPU):
         ```
         conda install pytorch torchvision torchaudio cpuonly -c pytorch
         ```
-    * In Mac:
+    * In Mac (Intel X86):
         ```
         conda install pytorch torchvision torchaudio -c pytorch
         ```
 
+    * In Mac (Apple Silicon):
+        ```
+        conda install pytorch torchvision -c pytorch
+        ```
 ### Change main repository of `pip` [recommended for China]
 
 For changing the main repository of `pip`:
