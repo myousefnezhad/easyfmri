@@ -922,7 +922,7 @@ class frmFASHA(Ui_frmFASHA):
                     dat = preprocessing.scale(dat)
                     print("Data belong to View " + str(foldindx + 1) + " is scaled X~N(0,1).")
                 TrX.append(dat)
-                TrY.append(label_binarize(lbl,np.unique(YTr)))
+                TrY.append(label_binarize(lbl, classes=np.unique(YTr)))
                 if TrShape is None:
                     TrShape = np.shape(dat)
                 else:
@@ -945,7 +945,7 @@ class frmFASHA(Ui_frmFASHA):
                     dat = preprocessing.scale(dat)
                     print("Data belong to View " + str(foldindx + 1) + " is scaled X~N(0,1).")
                 TeX.append(dat)
-                TeY.append(label_binarize(lbl,np.unique(YTe)))
+                TeY.append(label_binarize(lbl, classes=np.unique(YTe)))
                 if TeShape is None:
                     TeShape = np.shape(dat)
                 else:

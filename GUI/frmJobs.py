@@ -235,7 +235,7 @@ class frmJobs(Ui_frmJobs):
                 item.setText(2, job[2].status)
                 item.setText(3, job[1])
                 ui.lvJobs.addTopLevelItem(item)
-        ui.lvJobs.sortByColumn(3, QtCore.Qt.AscendingOrder)
+        ui.lvJobs.sortByColumn(3, QtCore.Qt.SortOrder.AscendingOrder)
         ui.stb.showMessage("Number of jobs: %d " % (ui.lvJobs.topLevelItemCount()))
 
 

@@ -481,7 +481,7 @@ class frmRemoveRestScan(Ui_frmRemoveRestScan):
         # Matrix Label
         if ui.cbmLabel.isChecked():
             try:
-                OutData[ui.txtmLabel.currentText()] = label_binarize(New_Y,np.unique(New_Y))
+                OutData[ui.txtmLabel.currentText()] = label_binarize(New_Y, classes=np.unique(New_Y))
             except:
                 print("Cannot load Matrix Label ID!")
                 return

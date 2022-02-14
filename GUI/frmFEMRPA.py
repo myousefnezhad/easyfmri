@@ -343,7 +343,7 @@ class frmFEMRPA(Ui_frmFEMRPA):
                 msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
                 msgBox.exec()
                 return False
-            OutData[ui.txtOmLabel.text()] = label_binarize(AllLabels,np.unique(AllLabels))
+            OutData[ui.txtOmLabel.text()] = label_binarize(AllLabels, classes=np.unique(AllLabels))
         # Coordinate
         if ui.cbCol.isChecked():
             if not len(ui.txtCol.currentText()):

@@ -564,8 +564,8 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
 
             # m Label
             if ui.cbmLabel.isChecked():
-                OutData[ui.txtTrain.text() + ui.txtOmLabel.text()] = label_binarize(TrainLabel[0], np.unique(TrainLabel))
-                OutData[ui.txtTest.text()  + ui.txtOmLabel.text()] = label_binarize(TestLabel[0], np.unique(TestLabel))
+                OutData[ui.txtTrain.text() + ui.txtOmLabel.text()] = label_binarize(TrainLabel[0], classes=np.unique(TrainLabel))
+                OutData[ui.txtTest.text()  + ui.txtOmLabel.text()] = label_binarize(TestLabel[0], classes=np.unique(TestLabel))
 
             # DM
             if ui.cbDM.isChecked():

@@ -55,7 +55,7 @@ def LoadFile(Title="Load ...", Filters=['All files (*.*)'], Suffix=None, current
     if Suffix is not None:
         dialog.setDefaultSuffix(Suffix)
     dialog.setOption(QFileDialog.Option.DontUseNativeDialog)
-    dialog.setFilter(dialog.filter()) #  | QtCore.QDir.Hidden
+    dialog.setFilter(dialog.filter()) #  | QtCore.QDir.Filter.Hidden
     dialog.setNameFilters(Filters)
     dialog.setAcceptMode(QFileDialog.AcceptMode.AcceptOpen)
     if dialog.exec():
@@ -75,8 +75,8 @@ def LoadMultiFile(Title="Load ...", Filters=['All files (*.*)'], Suffix=None, cu
         dialog.selectFile(currentFile)
     if Suffix is not None:
         dialog.setDefaultSuffix(Suffix)
-    dialog.setOption(QFileDialog.DontUseNativeDialog)
-    dialog.setFilter(dialog.filter() | QtCore.QDir.Hidden)
+    dialog.setOption(QFileDialog.Option.DontUseNativeDialog)
+    dialog.setFilter(dialog.filter() | QtCore.QDir.Filter.Hidden)
     dialog.setNameFilters(Filters)
     dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
     dialog.setAcceptMode(QFileDialog.AcceptMode.AcceptOpen)

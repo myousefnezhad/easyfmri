@@ -122,7 +122,7 @@ class GPUSVM:
 
         # Convert data to Tensor
         X = torch.Tensor(X)
-        Y = torch.Tensor(label_binarize(Y, np.unique(Y)))
+        Y = torch.Tensor(label_binarize(Y, classes=np.unique(Y)))
 
         if torch.cuda.is_available():
             X = X.cuda()
@@ -220,7 +220,7 @@ class GPUSVM:
         # Convert data to Tensor
         self.TestDataShape = np.shape(X)
         X = torch.Tensor(X)
-        Y = torch.Tensor(label_binarize(Y, np.unique(Y)))
+        Y = torch.Tensor(label_binarize(Y, classes=np.unique(Y)))
 
         # Send data to GPU
         if torch.cuda.is_available():

@@ -508,7 +508,7 @@ class frmCombineData(Ui_frmCombineData):
                 msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
                 msgBox.exec()
                 return False
-            OutData[ui.txtOmLabel.text()] = label_binarize(OutData[ui.txtOLabel.text()],np.unique(OutData[ui.txtOLabel.text()]))
+            OutData[ui.txtOmLabel.text()] = label_binarize(OutData[ui.txtOLabel.text()], classes=np.unique(OutData[ui.txtOLabel.text()]))
 
 
 

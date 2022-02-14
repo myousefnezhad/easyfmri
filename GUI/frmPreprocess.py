@@ -791,7 +791,7 @@ class frmPreprocess(Ui_frmPreprocess):
                 ConID=None
                 RunID=None
                 TaskID=None
-                if ui.cbJustRun.checkState():
+                if ui.cbJustRun.isChecked():
                     sSess = frmSelectSession(None, setting=setting)
                     if sSess.PASS:
                         SubID = sSess.SubID
@@ -802,7 +802,7 @@ class frmPreprocess(Ui_frmPreprocess):
                         return
 
                 runPreprocess = RunPreprocess()
-                if not runPreprocess.Check(ui.txtSetting.text(),ui.cbJustRun.checkState(),SubID,RunID,ConID,TaskID):
+                if not runPreprocess.Check(ui.txtSetting.text(),ui.cbJustRun.isChecked(),SubID,RunID,ConID,TaskID):
                     msgBox = QMessageBox()
                     msgBox.setText("Script(s) are not found!")
                     msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -811,8 +811,8 @@ class frmPreprocess(Ui_frmPreprocess):
                     return
                 else:
                     feat = ui.txtFSLDIR.text() + ui.txtFeat.text()
-                    Status, Jobs = runPreprocess.Run(ui.txtSetting.text(),ui.cbJustRun.checkState(),\
-                                                    ui.cbRemoveOlds.checkState(),feat,SubID,RunID,ConID,TaskID)
+                    Status, Jobs = runPreprocess.Run(ui.txtSetting.text(),ui.cbJustRun.isChecked(),\
+                                                    ui.cbRemoveOlds.isChecked(),feat,SubID,RunID,ConID,TaskID)
 
                     if (not Status) or (Jobs is None):
                         print("TASK FAILED!")

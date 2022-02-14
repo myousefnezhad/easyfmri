@@ -1546,7 +1546,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             del CounterID
         # Matrix Label
         if ui.cbDImLabelID.isChecked():
-            OutData[ui.txtDImLabelID.text()] = label_binarize(Y,np.unique(Y))
+            OutData[ui.txtDImLabelID.text()] = label_binarize(Y, classes=np.unique(Y))
         # Label
         if ui.cbDILabelID.isChecked():
             OutData[ui.txtDILabelID.text()] = reshape_1Dvector(Y)

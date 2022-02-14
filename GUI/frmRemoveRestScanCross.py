@@ -702,8 +702,8 @@ class frmRemoveRestScanCross(Ui_frmRemoveRestScanCross):
         # Matrix Label
         if ui.cbmLabel.isChecked():
             try:
-                OutData[ui.txtmLabel.currentText()] = label_binarize(New_Y,np.unique(New_Y))
-                OutData[ui.txtTmLabel.currentText()] = label_binarize(New_YT,np.unique(New_YT))
+                OutData[ui.txtmLabel.currentText()] = label_binarize(New_Y, classes=np.unique(New_Y))
+                OutData[ui.txtTmLabel.currentText()] = label_binarize(New_YT, classes=np.unique(New_YT))
             except:
                 print("Cannot load Matrix Label ID!")
                 return

@@ -596,7 +596,7 @@ class frmMASSA(Ui_frmMASSA):
                 Index = [Index[1]]
 
             Xi.append(X[Index])
-            yyi = label_binarize(L[Index], np.unique(L))
+            yyi = label_binarize(L[Index], classes=np.unique(L))
 
             # Adopt it for binary labels (just two class SSA comparison)
             if np.shape(yyi)[1] == 1:
