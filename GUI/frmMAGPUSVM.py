@@ -710,7 +710,7 @@ class frmMASVM(Ui_frmMAGPUSVM):
                 clf.test(X=TeX, Y=TeL, verbose=verbose)
                 PeL = clf.TestPredict
 
-                OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, np.unique(TeL))
+                OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, labels=np.unique(TeL))
                 OutData["fold" + str(currFID) + "_classification_report"] = classification_report(TeL, PeL)
                 print(OutData["fold" + str(currFID) + "_classification_report"])
 

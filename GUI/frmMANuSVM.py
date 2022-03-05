@@ -634,7 +634,7 @@ class frmMANuSVM(Ui_frmMANuSVM):
                 PeL = clf.predict(TeX)
                 PrL = clf.predict(TrX)
 
-                OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, np.unique(TeL))
+                OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, labels=np.unique(TeL))
                 OutData["fold" + str(currFID) + "_classification_report"] = classification_report(TeL, PeL)
                 print(OutData["fold" + str(currFID) + "_classification_report"])
 
