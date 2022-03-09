@@ -47,10 +47,12 @@ import numpy as np
 import nibabel as nb
 import scipy as sp
 
+# Note: please use "pprint()" rather that "print()" to append the output in the Output section
+
 # Example 1: Print Variable Names
-#print([key for key in data.keys()])
+#pprint([key for key in data.keys()])
 # Example 2: Print Current Location
-#print(list(root.queue)) 
+#pprint(list(root.queue)) 
 """
 
 
@@ -81,6 +83,7 @@ class frmDataEditor(Ui_frmDataEditor):
         dialog.setWindowTitle("easy fMRI Data Editor - V" + getVersion() + "B" + getBuild())
         ui.tabWidget.setCurrentIndex(0)
         ui.tabWidget2.setCurrentIndex(0)
+        ui.tabWidgetCode.setCurrentIndex(0)
         
         # New Code Editor Library
         cEditor = codeEditor(ui)
@@ -937,12 +940,19 @@ class frmDataEditor(Ui_frmDataEditor):
         msgBox = QMessageBox()
 
         Codes = ui.txtCode.toPlainText()
-
+        def pprint(data = ""):
+            try:
+                ui.txtCodeOut.append(str(data))
+                print(data)
+            except Exception as e:
+                ui.txtCodeOut.append(str(e))
+                print(e)
         try:
             allvars = dict(locals(), **globals())
             exec(Codes, allvars, allvars)
             ui.btnSave.setEnabled(True)
             frmDataEditor.DrawData(self)
+            ui.tabWidgetCode.setCurrentIndex(1)
             msgBox.setText("Run without error")
             msgBox.setIcon(QMessageBox.Icon.Information)
             msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)

@@ -15,10 +15,10 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>./icons/icons8-database-64.png</normaloff>./icons/icons8-database-64.png</iconset>
+    <normaloff>icons/icons8-database-64.png</normaloff>icons/icons8-database-64.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_6">
+   <layout class="QVBoxLayout" name="verticalLayout_5">
     <item>
      <widget class="QTabWidget" name="tabWidget2">
       <property name="currentIndex">
@@ -63,7 +63,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-opened-folder-96.png</normaloff>../icons/icons8-opened-folder-96.png</iconset>
+                  <normaloff>icons/icons8-opened-folder-96.png</normaloff>icons/icons8-opened-folder-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -89,7 +89,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-add-folder-96.png</normaloff>./icons/icons8-add-folder-96.png</iconset>
+                  <normaloff>icons/icons8-add-folder-96.png</normaloff>icons/icons8-add-folder-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -118,7 +118,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-save-close-96.png</normaloff>./icons/icons8-save-close-96.png</iconset>
+                  <normaloff>icons/icons8-save-close-96.png</normaloff>icons/icons8-save-close-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -144,7 +144,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-save-all-96.png</normaloff>./icons/icons8-save-all-96.png</iconset>
+                  <normaloff>icons/icons8-save-all-96.png</normaloff>icons/icons8-save-all-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -164,7 +164,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-refresh.svg</normaloff>./icons/icons8-refresh.svg</iconset>
+                  <normaloff>icons/icons8-refresh.svg</normaloff>icons/icons8-refresh.svg</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -190,7 +190,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-eye-96.png</normaloff>./icons/icons8-eye-96.png</iconset>
+                  <normaloff>icons/icons8-eye-96.png</normaloff>icons/icons8-eye-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -216,7 +216,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-forward-96.png</normaloff>./icons/icons8-forward-96.png</iconset>
+                  <normaloff>icons/icons8-forward-96.png</normaloff>icons/icons8-forward-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -270,7 +270,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-back-96.png</normaloff>./icons/icons8-back-96.png</iconset>
+                  <normaloff>icons/icons8-back-96.png</normaloff>icons/icons8-back-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -320,7 +320,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-rename-96.png</normaloff>./icons/icons8-rename-96.png</iconset>
+                  <normaloff>icons/icons8-rename-96.png</normaloff>icons/icons8-rename-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -346,7 +346,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-delete.svg</normaloff>./icons/icons8-delete.svg</iconset>
+                  <normaloff>icons/icons8-delete.svg</normaloff>icons/icons8-delete.svg</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -372,7 +372,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-rotate-left-96.png</normaloff>./icons/icons8-rotate-left-96.png</iconset>
+                  <normaloff>icons/icons8-rotate-left-96.png</normaloff>icons/icons8-rotate-left-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -398,7 +398,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-normal-distribution-histogram-96.png</normaloff>./icons/icons8-normal-distribution-histogram-96.png</iconset>
+                  <normaloff>icons/icons8-normal-distribution-histogram-96.png</normaloff>icons/icons8-normal-distribution-histogram-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -424,7 +424,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-clone-96.png</normaloff>./icons/icons8-clone-96.png</iconset>
+                  <normaloff>icons/icons8-clone-96.png</normaloff>icons/icons8-clone-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -466,7 +466,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-3d-object-96.png</normaloff>./icons/icons8-3d-object-96.png</iconset>
+                  <normaloff>icons/icons8-3d-object-96.png</normaloff>icons/icons8-3d-object-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -492,7 +492,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-3d-model-96.png</normaloff>./icons/icons8-3d-model-96.png</iconset>
+                  <normaloff>icons/icons8-3d-model-96.png</normaloff>icons/icons8-3d-model-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -534,7 +534,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-select-row-96.png</normaloff>./icons/icons8-select-row-96.png</iconset>
+                  <normaloff>icons/icons8-select-row-96.png</normaloff>icons/icons8-select-row-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -560,7 +560,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-select-column-96.png</normaloff>./icons/icons8-select-column-96.png</iconset>
+                  <normaloff>icons/icons8-select-column-96.png</normaloff>icons/icons8-select-column-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -586,7 +586,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-select-cell-96.png</normaloff>./icons/icons8-select-cell-96.png</iconset>
+                  <normaloff>icons/icons8-select-cell-96.png</normaloff>icons/icons8-select-cell-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -612,7 +612,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>./icons/icons8-table-96.png</normaloff>./icons/icons8-table-96.png</iconset>
+                  <normaloff>icons/icons8-table-96.png</normaloff>icons/icons8-table-96.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -709,7 +709,7 @@
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>./icons/icons8-play-96.png</normaloff>./icons/icons8-play-96.png</iconset>
+                <normaloff>icons/icons8-play-96.png</normaloff>icons/icons8-play-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -748,7 +748,7 @@
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>./icons/icons8-file.svg</normaloff>./icons/icons8-file.svg</iconset>
+                <normaloff>icons/icons8-file.svg</normaloff>icons/icons8-file.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -774,7 +774,7 @@
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>./icons/icons8-opened-folder-96.png</normaloff>./icons/icons8-opened-folder-96.png</iconset>
+                <normaloff>icons/icons8-opened-folder-96.png</normaloff>icons/icons8-opened-folder-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -800,7 +800,7 @@
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>./icons/icons8-save-96.png</normaloff>./icons/icons8-save-96.png</iconset>
+                <normaloff>icons/icons8-save-96.png</normaloff>icons/icons8-save-96.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -826,13 +826,39 @@
            </layout>
           </item>
           <item>
-           <widget class="QWidget" name="Code" native="true">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+           <widget class="QTabWidget" name="tabWidgetCode">
+            <property name="currentIndex">
+             <number>0</number>
             </property>
+            <widget class="QWidget" name="tab_5">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <attribute name="title">
+              <string>Code</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <item>
+               <widget class="QWidget" name="Code" native="true"/>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="tab_6">
+             <property name="locale">
+              <locale language="Geez" country="Ethiopia"/>
+             </property>
+             <attribute name="title">
+              <string>Output</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <item>
+               <widget class="QTextEdit" name="txtCodeOut"/>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </item>
           <item>
