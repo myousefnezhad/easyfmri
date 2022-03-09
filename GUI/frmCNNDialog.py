@@ -20,8 +20,8 @@
 #
 #
 
-from PyQt5.QtWidgets import *
-import PyQt5.QtCore as QtCore
+from PyQt6.QtWidgets import *
+import PyQt6.QtCore as QtCore
 
 
 class frmPool(QDialog):
@@ -62,7 +62,7 @@ class frmPool(QDialog):
         self.layout.addWidget(self.btnAdd)
         self.layout.addWidget(self.btnExit)
         self.setLayout(self.layout)
-        self.exec_()
+        self.exec()
 
     def btnExit_onclick(self):
         self.close()
@@ -106,7 +106,7 @@ class frmAF(QDialog):
         self.layout.addWidget(self.btnAdd)
         self.layout.addWidget(self.btnExit)
         self.setLayout(self.layout)
-        self.exec_()
+        self.exec()
 
     def btnExit_onclick(self):
         self.close()
@@ -208,7 +208,7 @@ class frmConv(QDialog):
         self.layout.addWidget(self.btnAdd)
         self.layout.addWidget(self.btnExit)
         self.setLayout(self.layout)
-        self.exec_()
+        self.exec()
 
     def btnExit_onclick(self):
         self.close()

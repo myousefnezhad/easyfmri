@@ -26,7 +26,7 @@ import sys
 import nibabel as nb
 import numpy as np
 import scipy.io as io
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.Setting import *
 from Base.SettingHistory import History
 from Base.dialogs import SaveFile, LoadFile
@@ -34,6 +34,8 @@ from Base.utility import getVersion, getBuild, setParameters3, fixstr, getSettin
 from GUI.frmSelectSession import frmSelectSession
 from GUI.frmProbabilisticROIGUI import *
 from dir import getDIR
+
+from Preprocess.BIDS import BIDS
 
 def DefaultSpace():
     return "Consider the first mask as affine file"
@@ -89,13 +91,13 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
         except:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find MNI files!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
         dialog.setWindowTitle("easy fMRI probabilistic ROI - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -145,9 +147,9 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
             if not os.path.isfile(filename):
                 msgBox = QMessageBox()
                 msgBox.setText("Setting file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             setting = Setting()
@@ -157,9 +159,9 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
                 print("WARNING: You are using different version of Easy fMRI!!!")
                 msgBox = QMessageBox()
                 msgBox.setText("This version of setting is not supported!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             if not setting.empty:
@@ -190,9 +192,9 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
                         print("WARNING: You are using different version of Easy fMRI!!!")
                         msgBox = QMessageBox()
                         msgBox.setText("This version of setting is not supported!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
 
                     if not setting.empty:
@@ -236,131 +238,132 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
         msgBox = QMessageBox()
 
         mainDIR = ui.txtSSDIR.text()
-        Task = ui.txtSSTask.text()
         # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isdir(mainDIR):
             msgBox.setText("Main directory doesn't exist")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Main directory is okay.")
-        if not len(Task):
-            msgBox.setText("There is no task title")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        try:
-            SubRange = strRange(ui.txtSSSubRange.text(),Unique=True)
-            if SubRange is None:
-                raise Exception
-            SubSize = len(SubRange)
-        except:
-            msgBox.setText("Subject Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Range of subjects is okay!")
-        try:
-            SubLen = np.int32(ui.txtSSSubLen.text())
-            1 / SubLen
-        except:
-            msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of subjects is okay!")
+
+        # Task = ui.txtSSTask.text()
+        # if not len(Task):
+        #     msgBox.setText("There is no task title")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # try:
+        #     SubRange = strRange(ui.txtSSSubRange.text(),Unique=True)
+        #     if SubRange is None:
+        #         raise Exception
+        #     SubSize = len(SubRange)
+        # except:
+        #     msgBox.setText("Subject Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Range of subjects is okay!")
+        # try:
+        #     SubLen = np.int32(ui.txtSSSubLen.text())
+        #     1 / SubLen
+        # except:
+        #     msgBox.setText("Length of subjects must be an integer number")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Length of subjects is okay!")
 
 
-        try:
-            ConRange = strMultiRange(ui.txtSSConRange.text(),SubSize)
-            if ConRange is None:
-                raise Exception
-            if not (len(ConRange) == SubSize):
-                msgBox.setText("Counter Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Counter Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter Range is okay!")
-        try:
-            ConLen = np.int32(ui.txtSSConLen.text())
-            1 / ConLen
-        except:
-            msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of Counter is okay!")
+        # try:
+        #     ConRange = strMultiRange(ui.txtSSConRange.text(),SubSize)
+        #     if ConRange is None:
+        #         raise Exception
+        #     if not (len(ConRange) == SubSize):
+        #         msgBox.setText("Counter Size must be equal to Subject Size!")
+        #         msgBox.setIcon(QMessageBox.Icon.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #         msgBox.exec()
+        #         return False
+        # except:
+        #     msgBox.setText("Counter Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Counter Range is okay!")
+        # try:
+        #     ConLen = np.int32(ui.txtSSConLen.text())
+        #     1 / ConLen
+        # except:
+        #     msgBox.setText("Length of counter must be an integer number")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Length of Counter is okay!")
 
 
-        try:
-            RunRange = strMultiRange(ui.txtSSRunRange.text(),SubSize)
-            if RunRange is None:
-                raise Exception
-            if not (len(RunRange) == SubSize):
-                msgBox.setText("Run Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Run Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Run Range is okay!")
-        try:
-            RunLen = np.int32(ui.txtSSRunLen.value())
-            1 / RunLen
-        except:
-            msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of runs is valid")
+        # try:
+        #     RunRange = strMultiRange(ui.txtSSRunRange.text(),SubSize)
+        #     if RunRange is None:
+        #         raise Exception
+        #     if not (len(RunRange) == SubSize):
+        #         msgBox.setText("Run Size must be equal to Subject Size!")
+        #         msgBox.setIcon(QMessageBox.Icon.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #         msgBox.exec()
+        #         return False
+        # except:
+        #     msgBox.setText("Run Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Run Range is okay!")
+        # try:
+        #     RunLen = np.int32(ui.txtSSRunLen.value())
+        #     1 / RunLen
+        # except:
+        #     msgBox.setText("Length of runs must be an integer number")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Length of runs is valid")
 
         try:
             CondFrom = np.int32(ui.txtSSCondFrom.value())
             1 / CondFrom
         except:
             msgBox.setText("Condition From must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             CondTo = np.int32(ui.txtSSCondTo.value())
             1 / CondTo
         except:
             msgBox.setText("Condition To must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if CondTo < CondFrom:
             msgBox.setText("Condition To is smaller then Subject From!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Counter is valid")
         try:
@@ -368,9 +371,9 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
             1 / CondLen
         except:
             msgBox.setText("Length of condition must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Length of condition is valid")
 
@@ -378,35 +381,35 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
         Space = ui.txtSSSpace.currentText()
         if not len(Space):
             msgBox.setText("Please enter a affine file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if not Space == DefaultSpace():
             if not os.path.isfile(Space):
                 msgBox = QMessageBox()
                 msgBox.setText("Affine file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
         print("Affine file is okay.")
 
         In = ui.txtSSInFile.currentText()
         if not len(In):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         Out = ui.txtOutROI.text()
         if not len(Out):
             msgBox.setText("Please enter output file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         ThresholdType = ui.cbThType.currentData()
@@ -416,9 +419,9 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
                     MinTh = np.double(ui.txtThMin.text())
                 except:
                     msgBox.setText("Min Threshold must be a number")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 print("Min Threshold is valid")
 
@@ -427,42 +430,37 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
                     MaxTh = np.double(ui.txtThMax.text())
                 except:
                     msgBox.setText("Max Threshold must be a number")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 print("Max Threshold is valid")
 
-        print("Checking files ...")
-        for si, s in enumerate(SubRange):
-            for cnt in ConRange[si]:
-                print("Analyzing Subject %d, Counter %d ..." % (s,cnt))
-                # SubDIR = setting.mainDIR + "/" + "sub-" + fixstr(s, SubLen, setting.SubPer)
-                for r in RunRange[si]:
-                    for cnd in range(CondFrom, CondTo + 1):
+        bids = BIDS(ui.txtSSTask.text(), ui.txtSSSubRange.text(), ui.txtSSSubLen.text(), ui.txtSSSubPer.text(),
+                                        ui.txtSSConRange.text(), ui.txtSSConLen.text(), ui.txtSSConPer.text(),
+                                        ui.txtSSRunRange.text(), ui.txtSSRunLen.text(), ui.txtSSRunPer.text())
 
-                        InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()),\
-                                    fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(),\
-                                    fixstr(cnt, ConLen, ui.txtSSConPer.text()), fixstr(cnd, CondLen, ui.txtSSCondPer.text()))
-                        if os.path.isfile(InFile):
-                            print(InFile + " - is OKAY.")
-                        else:
-                            print(InFile + " - not found!")
-                            return
+        print("Checking files ...")
+        for (_, t, _, s, _, c, runs) in bids:
+            print(f"Analyzing Subject {s}, Counter {c} ...")
+            for r in runs:
+                for cnd in range(CondFrom, CondTo + 1):
+                    InFile = setParameters3(In, mainDIR, s, r, t, c, fixstr(cnd, CondLen, ui.txtSSCondPer.text()))
+                    if os.path.isfile(InFile):
+                        print(InFile + " - is OKAY.")
+                    else:
+                        print(InFile + " - not found!")
+                        return
 
         if ui.cbMetric.currentData() == "inter":
             print("Calculating ROI ...")
 
             ROIData = None
-            for si, s in enumerate(SubRange):
-                for cnt in ConRange[si]:
-                    print("Analyzing Subject %d, Counter %d ..." % (s,cnt))
-                    for r in RunRange[si]:
+            for (_, t, _, s, _, c, runs) in bids:
+                    print(f"Analyzing Subject {s}, Counter {c} ...")
+                    for r in runs:
                         for cnd in range(CondFrom, CondTo + 1):
-                            InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                                    fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                                    fixstr(cnt, ConLen, ui.txtSSConPer.text()),
-                                                    fixstr(cnd, CondLen, ui.txtSSCondPer.text()))
+                            InFile = setParameters3(In, mainDIR, s, r, t, c, fixstr(cnd, CondLen, ui.txtSSCondPer.text()))
 
                             MaskHDR = nb.load(InFile)
                             MaskData = MaskHDR.get_data()
@@ -505,10 +503,10 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
             print("ROI is generated!")
 
             msgBox.setText("ROI is generated!\nNumber of all voxels: " + str(NumVoxels) + \
-                           "\nNumber of selected voxles in ROI: " + str(NumROIVoxel))
-            msgBox.setIcon(QMessageBox.Information)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+                            "\nNumber of selected voxles in ROI: " + str(NumROIVoxel))
+            msgBox.setIcon(QMessageBox.Icon.Information)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
     def btnLoadEvent_click(self):
         global ui, dialog
@@ -516,147 +514,144 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
         msgBox = QMessageBox()
 
         mainDIR = ui.txtSSDIR.text()
-        Task = ui.txtSSTask.text()
         # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isdir(mainDIR):
             msgBox.setText("Main directory doesn't exist")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Main directory is okay.")
-        if not len(Task):
-            msgBox.setText("There is no task title")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        try:
-            SubRange = strRange(ui.txtSSSubRange.text(),Unique=True)
-            if SubRange is None:
-                raise Exception
-            SubSize = len(SubRange)
-        except:
-            msgBox.setText("Subject Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Range of subjects is okay!")
-        try:
-            SubLen = np.int32(ui.txtSSSubLen.text())
-            1 / SubLen
-        except:
-            msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of subjects is okay!")
+        
+        # Task = ui.txtSSTask.text()
+        # if not len(Task):
+        #     msgBox.setText("There is no task title")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # try:
+        #     SubRange = strRange(ui.txtSSSubRange.text(),Unique=True)
+        #     if SubRange is None:
+        #         raise Exception
+        #     SubSize = len(SubRange)
+        # except:
+        #     msgBox.setText("Subject Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Range of subjects is okay!")
+        # try:
+        #     SubLen = np.int32(ui.txtSSSubLen.text())
+        #     1 / SubLen
+        # except:
+        #     msgBox.setText("Length of subjects must be an integer number")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Length of subjects is okay!")
 
 
-        try:
-            ConRange = strMultiRange(ui.txtSSConRange.text(),SubSize)
-            if ConRange is None:
-                raise Exception
-            if not (len(ConRange) == SubSize):
-                msgBox.setText("Counter Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Counter Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter Range is okay!")
-        try:
-            ConLen = np.int32(ui.txtSSConLen.text())
-            1 / ConLen
-        except:
-            msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of Counter is okay!")
+        # try:
+        #     ConRange = strMultiRange(ui.txtSSConRange.text(),SubSize)
+        #     if ConRange is None:
+        #         raise Exception
+        #     if not (len(ConRange) == SubSize):
+        #         msgBox.setText("Counter Size must be equal to Subject Size!")
+        #         msgBox.setIcon(QMessageBox.Icon.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #         msgBox.exec()
+        #         return False
+        # except:
+        #     msgBox.setText("Counter Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Counter Range is okay!")
+        # try:
+        #     ConLen = np.int32(ui.txtSSConLen.text())
+        #     1 / ConLen
+        # except:
+        #     msgBox.setText("Length of counter must be an integer number")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Length of Counter is okay!")
 
 
-        try:
-            RunRange = strMultiRange(ui.txtSSRunRange.text(),SubSize)
-            if RunRange is None:
-                raise Exception
-            if not (len(RunRange) == SubSize):
-                msgBox.setText("Run Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Run Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Run Range is okay!")
-        try:
-            RunLen = np.int32(ui.txtSSRunLen.value())
-            1 / RunLen
-        except:
-            msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of runs is valid")
+        # try:
+        #     RunRange = strMultiRange(ui.txtSSRunRange.text(),SubSize)
+        #     if RunRange is None:
+        #         raise Exception
+        #     if not (len(RunRange) == SubSize):
+        #         msgBox.setText("Run Size must be equal to Subject Size!")
+        #         msgBox.setIcon(QMessageBox.Icon.Critical)
+        #         msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #         msgBox.exec()
+        #         return False
+        # except:
+        #     msgBox.setText("Run Range is wrong!")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Run Range is okay!")
+        # try:
+        #     RunLen = np.int32(ui.txtSSRunLen.value())
+        #     1 / RunLen
+        # except:
+        #     msgBox.setText("Length of runs must be an integer number")
+        #     msgBox.setIcon(QMessageBox.Icon.Critical)
+        #     msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        #     msgBox.exec()
+        #     return False
+        # print("Length of runs is valid")
 
 
         if ui.txtEventDIR.text() == "":
             msgBox.setText("Structure of the event folders is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if ui.txtCondPre.text() == "":
             msgBox.setText("The prefix of condition files is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         setting         = Setting()
 
         setting.mainDIR = mainDIR
-        setting.Task    = Task
+        setting.Task    = ui.txtSSTask.text()
 
         setting.SubRange= ui.txtSSSubRange.text()
-        setting.SubLen  = np.int32(SubLen)
+        setting.SubLen  = ui.txtSSSubLen.text()
         setting.SubPer  = ui.txtSSSubPer.text()
-
         setting.ConRange= ui.txtSSConRange.text()
-        setting.ConLen  = np.int32(ConLen)
+        setting.ConLen  = ui.txtSSConLen.text()
         setting.ConPer  = ui.txtSSConPer.text()
-
         setting.RunRange= ui.txtSSRunRange.text()
-        setting.RunLen  = np.int32(RunLen)
+        setting.RunLen  = ui.txtSSRunLen.text()
         setting.RunPer  = ui.txtSSRunPer.text()
 
         sSess = frmSelectSession(None, setting=setting)
         if not sSess.PASS:
             return
 
-        EventFolder = setParameters3(ui.txtEventDIR.text(), mainDIR, fixstr(int(sSess.SubID), setting.SubLen, setting.SubPer), \
-                                               fixstr(int(sSess.RunID), int(setting.RunLen), setting.RunPer), setting.Task, \
-                                               fixstr(sSess.ConID, int(setting.ConLen), setting.ConPer))
+        EventFolder = setParameters3(ui.txtEventDIR.text(), mainDIR, sSess.SubID, sSess.RunID, sSess.TaskID, sSess.ConID)
 
         CondFile = EventFolder + ui.txtCondPre.text() + ".mat"
 
@@ -674,8 +669,9 @@ class frmProbabilisticROI(Ui_frmProbabilisticROI):
         ui.txtSSCondTo.setValue(NumCond)
         ui.txtSSCondLen.setValue(len(str(NumCond)))
         ui.txtSSCondPer.setText("")
+        print(f"Condition -> From 1 to {NumCond}, Len: {len(str(NumCond))}")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmProbabilisticROI.show(frmProbabilisticROI)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

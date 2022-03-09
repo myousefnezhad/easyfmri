@@ -24,7 +24,7 @@ import os
 import sys
 import time
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmFAHAGUI import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
@@ -49,8 +49,8 @@ class frmFAHA(Ui_frmFAHA):
         ui.tabWidget.setCurrentIndex(0)
 
         dialog.setWindowTitle("easy fMRI GPU Hyperalignment - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -366,9 +366,9 @@ class frmFAHA(Ui_frmFAHA):
                 Regularization = np.float(ui.txtRegularization.text())
             except:
                 msgBox.setText("Regularization value is wrong!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             # OutFile
@@ -376,9 +376,9 @@ class frmFAHA(Ui_frmFAHA):
             OutFile = OutFile.replace("$FOLD$", str(fold_all))
             if not len(OutFile):
                 msgBox.setText("Please enter out file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             # InFile
@@ -386,15 +386,15 @@ class frmFAHA(Ui_frmFAHA):
             InFile = InFile.replace("$FOLD$", str(fold_all))
             if not len(InFile):
                 msgBox.setText("Please enter input file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not os.path.isfile(InFile):
                 msgBox.setText("Input file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             InData = mainIO_load(InFile)
@@ -404,27 +404,27 @@ class frmFAHA(Ui_frmFAHA):
             # Data
             if not len(ui.txtITrData.currentText()):
                 msgBox.setText("Please enter Input Train Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtITeData.currentText()):
                 msgBox.setText("Please enter Input Test Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtOTrData.text()):
                 msgBox.setText("Please enter Output Train Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtOTeData.text()):
                 msgBox.setText("Please enter Output Test Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             try:
@@ -444,21 +444,21 @@ class frmFAHA(Ui_frmFAHA):
                 NumFea = np.int32(ui.txtNumFea.text())
             except:
                 msgBox.setText("Number of features is wrong!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if NumFea < 0:
                 msgBox.setText("Number of features must be greater than zero!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if NumFea > np.shape(XTr)[1]:
                 msgBox.setText("Number of features is wrong!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             if NumFea == 0:
@@ -467,27 +467,27 @@ class frmFAHA(Ui_frmFAHA):
             # Label
             if not len(ui.txtITrLabel.currentText()):
                     msgBox.setText("Please enter Train Input Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             if not len(ui.txtITeLabel.currentText()):
                     msgBox.setText("Please enter Test Input Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             if not len(ui.txtOTrLabel.text()):
                     msgBox.setText("Please enter Train Output Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             if not len(ui.txtOTeLabel.text()):
                     msgBox.setText("Please enter Test Output Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             try:
                 OutData[ui.txtOTrLabel.text()] = reshape_1Dvector(InData[ui.txtITrLabel.currentText()])
@@ -498,27 +498,27 @@ class frmFAHA(Ui_frmFAHA):
             # Subject
             if not len(ui.txtITrSubject.currentText()):
                 msgBox.setText("Please enter Train Input Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtITeSubject.currentText()):
                 msgBox.setText("Please enter Test Input Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtOTrSubject.text()):
                 msgBox.setText("Please enter Train Output Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtOTeSubject.text()):
                 msgBox.setText("Please enter Test Output Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 TrSubject = InData[ui.txtITrSubject.currentText()]
@@ -533,27 +533,27 @@ class frmFAHA(Ui_frmFAHA):
             if ui.cbTask.isChecked():
                 if not len(ui.txtITrTask.currentText()):
                     msgBox.setText("Please enter Input Train Task variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtITeTask.currentText()):
                     msgBox.setText("Please enter Input Test Task variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTrTask.text()):
                     msgBox.setText("Please enter Output Train Task variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTeTask.text()):
                     msgBox.setText("Please enter Output Test Task variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     TrTask = np.asarray(InData[ui.txtITrTask.currentText()])
@@ -574,27 +574,27 @@ class frmFAHA(Ui_frmFAHA):
             if ui.cbRun.isChecked():
                 if not len(ui.txtITrRun.currentText()):
                     msgBox.setText("Please enter Train Input Run variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtITeRun.currentText()):
                     msgBox.setText("Please enter Test Input Run variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTrRun.text()):
                     msgBox.setText("Please enter Train Output Run variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTeRun.text()):
                     msgBox.setText("Please enter Test Output Run variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     TrRun = InData[ui.txtITrRun.currentText()]
@@ -609,27 +609,27 @@ class frmFAHA(Ui_frmFAHA):
             if ui.cbCounter.isChecked():
                 if not len(ui.txtITrCounter.currentText()):
                     msgBox.setText("Please enter Train Input Counter variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtITeCounter.currentText()):
                     msgBox.setText("Please enter Test Input Counter variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTrCounter.text()):
                     msgBox.setText("Please enter Train Output Counter variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTeCounter.text()):
                     msgBox.setText("Please enter Test Output Counter variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     TrCounter = InData[ui.txtITrCounter.currentText()]
@@ -644,27 +644,27 @@ class frmFAHA(Ui_frmFAHA):
             if ui.cbmLabel.isChecked():
                 if not len(ui.txtITrmLabel.currentText()):
                     msgBox.setText("Please enter Train Input Matrix Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtITemLabel.currentText()):
                     msgBox.setText("Please enter Test Input Matrix Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTrmLabel.text()):
                     msgBox.setText("Please enter Train Output Matrix Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTemLabel.text()):
                     msgBox.setText("Please enter Test Output Matrix Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     OutData[ui.txtOTrmLabel.text()] = InData[ui.txtITrmLabel.currentText()]
@@ -677,27 +677,27 @@ class frmFAHA(Ui_frmFAHA):
             if ui.cbDM.isChecked():
                 if not len(ui.txtITrDM.currentText()):
                     msgBox.setText("Please enter Train Input Design Matrix variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtITeDM.currentText()):
                     msgBox.setText("Please enter Test Input Design Matrix variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTrDM.text()):
                     msgBox.setText("Please enter Train Output Design Matrix variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTeDM.text()):
                     msgBox.setText("Please enter Test Output Design Matrix variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     OutData[ui.txtOTrDM.text()] = InData[ui.txtITrDM.currentText()]
@@ -710,15 +710,15 @@ class frmFAHA(Ui_frmFAHA):
             if ui.cbCol.isChecked():
                 if not len(ui.txtCol.currentText()):
                     msgBox.setText("Please enter Coordinator variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOCol.text()):
                     msgBox.setText("Please enter Coordinator variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     OutData[ui.txtOCol.text()] = InData[ui.txtCol.currentText()]
@@ -730,15 +730,15 @@ class frmFAHA(Ui_frmFAHA):
             if ui.cbCond.isChecked():
                 if not len(ui.txtCond.currentText()):
                     msgBox.setText("Please enter Condition variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOCond.text()):
                     msgBox.setText("Please enter Condition variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     OutData[ui.txtOCond.text()] = InData[ui.txtCond.currentText()]
@@ -750,15 +750,15 @@ class frmFAHA(Ui_frmFAHA):
             if ui.cbFoldID.isChecked():
                 if not len(ui.txtFoldID.currentText()):
                     msgBox.setText("Please enter FoldID variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOFoldID.text()):
                     msgBox.setText("Please enter FoldID variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     OutData[ui.txtOFoldID.text()] = reshape_1Dvector(InData[ui.txtFoldID.currentText()])
@@ -770,15 +770,15 @@ class frmFAHA(Ui_frmFAHA):
             if ui.cbFoldInfo.isChecked():
                 if not len(ui.txtFoldInfo.currentText()):
                     msgBox.setText("Please enter FoldInfo variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOFoldInfo.text()):
                     msgBox.setText("Please enter FoldInfo variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     OutData[ui.txtOFoldInfo.text()] = InData[ui.txtFoldInfo.currentText()]
@@ -791,27 +791,27 @@ class frmFAHA(Ui_frmFAHA):
             if ui.cbNScan.isChecked():
                 if not len(ui.txtITrScan.currentText()):
                     msgBox.setText("Please enter Number of Scan variable name for Input Train!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtITeScan.currentText()):
                     msgBox.setText("Please enter Number of Scan variable name for Input Test!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTrScan.text()):
                     msgBox.setText("Please enter Number of Scan variable name for Output Train!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if not len(ui.txtOTeScan.text()):
                     msgBox.setText("Please enter Number of Scan variable name for Output Test!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     OutData[ui.txtOTrScan.text()] = reshape_1Dvector(InData[ui.txtITrScan.currentText()])
@@ -978,12 +978,12 @@ class frmFAHA(Ui_frmFAHA):
         print("Runtime: ", totalTime)
         print("GPU Hyperalignment is done.")
         msgBox.setText("GPU Hyperalignment is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmFAHA.show(frmFAHA)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

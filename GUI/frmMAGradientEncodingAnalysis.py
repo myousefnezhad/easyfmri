@@ -27,7 +27,7 @@ import torch
 import matplotlib
 import numpy as np
 from RSA.GrRSA import GrRSA
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
 from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
@@ -102,8 +102,8 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
 
 
         dialog.setWindowTitle("easy fMRI Gradient Encoding Analysis (Session Level) - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -384,45 +384,45 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
             Epoch = np.int32(ui.txtIter.text())
         except:
             msgBox.setText("Number of iteration is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
             BatchSize = np.int32(ui.txtBatch.text())
         except:
             msgBox.setText("Number of batch is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
             ReportStep = np.int32(ui.txtReportStep.text())
         except:
             msgBox.setText("Number of Report Step is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
             LearningRate = np.float32(ui.txtRate.text())
         except:
             msgBox.setText("Number of Report Step is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
             LassoAlpha = np.float32(ui.txtLParam.text())
         except:
             msgBox.setText("Number of Lasso Parameter is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -430,35 +430,35 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
             ElasticLambda1 = np.float32(ui.txtEL1.text())
         except:
             msgBox.setText("Number of Elastic Lambda 1 is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
             ElasticAlpha = np.float32(ui.txtEL2.text())
         except:
             msgBox.setText("Number of Elastic Lambda 2 is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
             RidgeReg = np.float32(ui.txtRRP.text())
         except:
             msgBox.setText("Number of Ridge Regression Parameter is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
         if not ui.cbCov.isChecked() and not ui.cbCorr.isChecked():
             msgBox.setText("At least, you must select one metric!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Filter
@@ -477,9 +477,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         OutData = dict()
@@ -488,15 +488,15 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
         InFile = ui.txtInFile.text()
         if not len(InFile):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Loading ...")
         InData = mainIO_load(InFile)
@@ -504,42 +504,42 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Input Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Label
         if not len(ui.txtLabel.currentText()):
                 msgBox.setText("Please enter Train Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Design
         if not len(ui.txtDesign.currentText()):
             msgBox.setText("Please enter Input Design variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
             Design = InData[ui.txtDesign.currentText()]
         except:
             msgBox.setText("Design value is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Condition
         if not len(ui.txtCond.currentText()):
             msgBox.setText("Please enter Condition variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -550,9 +550,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
                 labels.append(reshape_condition_cell(con[1]))
         except:
             msgBox.setText("Condition value is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         FontSize = ui.txtFontSize.value()
@@ -568,34 +568,34 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
         # Task
         if not len(ui.txtTask.currentText()):
                 msgBox.setText("Please enter Task variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         # Task Val
         if not len(ui.txtTaskVal.currentText()):
                 msgBox.setText("Please enter Task value!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         try:
             TaskIDTitle = ui.txtTaskVal.currentText()
         except:
             msgBox.setText("Task value is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
             TaskTitle = np.array(InData[ui.txtTask.currentText()][0])
         except:
             msgBox.setText("Task variable name is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         TaskTitleUnique = np.unique(TaskTitle)
@@ -617,96 +617,96 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
         # Subject
         if not len(ui.txtSubject.currentText()):
             msgBox.setText("Please enter Subject variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         # Subject Val
         if not len(ui.txtSubjectVal.currentText()):
             msgBox.setText("Please enter Subject value!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             SubID = np.int32(ui.txtSubjectVal.currentText())
         except:
             msgBox.setText("Subject value is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Sub = InData[ui.txtSubject.currentText()][0]
         except:
             msgBox.setText("Subject variable name is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         OutData["SubjectID"] = SubID
 
         # Run
         if not len(ui.txtRun.currentText()):
             msgBox.setText("Please enter Run variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         # Run Val
         if not len(ui.txtRunVal.currentText()):
             msgBox.setText("Please enter Run value!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             RunID = np.int32(ui.txtRunVal.currentText())
         except:
             msgBox.setText("Run value is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Run = InData[ui.txtRun.currentText()][0]
         except:
             msgBox.setText("Run variable name is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         OutData["RunID"] = RunID
 
         # Counter
         if not len(ui.txtCounter.currentText()):
             msgBox.setText("Please enter Counter variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         # Counter Val
         if not len(ui.txtCounterVal.currentText()):
             msgBox.setText("Please enter Counter value!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             ConID = np.int32(ui.txtCounterVal.currentText())
         except:
             msgBox.setText("Counter value is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Con = InData[ui.txtCounter.currentText()][0]
         except:
             msgBox.setText("Counter variable name is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         OutData["CounterID"] = ConID
 
@@ -758,9 +758,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
 
         if np.shape(X)[0] == 0:
             msgBox.setText("The selected data is empty!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if ui.cbScale.isChecked():
@@ -917,9 +917,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
 
         print("DONE.")
         msgBox.setText("Gradient Representational Similarity Analysis (RSA) is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
     def btnRedraw_click(self):
@@ -942,9 +942,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
             except:
                 print("Cannot load result file!")
                 msgBox.setText("Cannot load result file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
 
@@ -956,9 +956,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
                     HasDefaultCond = True
                 except:
                     msgBox.setText("Please enter Condition variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
             if not HasDefaultCond:
@@ -966,9 +966,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
                     Cond = Res[ui.txtCond.currentText()]
                 except:
                     msgBox.setText("Condition value is wrong!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
 
@@ -983,9 +983,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
                 except:
                     print("Cannot load Correlation variable!")
                     msgBox.setText("Cannot load Correlation variable!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
 
@@ -1027,9 +1027,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
                 except:
                     print("Cannot load Covariance variable!")
                     msgBox.setText("Cannot load Covariance variable!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
 
@@ -1088,9 +1088,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
     #         except:
     #             print("Cannot load result file!")
     #             msgBox.setText("Cannot load result file!")
-    #             msgBox.setIcon(QMessageBox.Critical)
-    #             msgBox.setStandardButtons(QMessageBox.Ok)
-    #             msgBox.exec_()
+    #             msgBox.setIcon(QMessageBox.Icon.Critical)
+    #             msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+    #             msgBox.exec()
     #             return False
     #
     #         if ui.cbCorr.isChecked():
@@ -1099,9 +1099,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
     #             except:
     #                 print("Cannot load Correlation variable!")
     #                 msgBox.setText("Cannot load Correlation variable!")
-    #                 msgBox.setIcon(QMessageBox.Critical)
-    #                 msgBox.setStandardButtons(QMessageBox.Ok)
-    #                 msgBox.exec_()
+    #                 msgBox.setIcon(QMessageBox.Icon.Critical)
+    #                 msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+    #                 msgBox.exec()
     #                 return False
     #             fig1 = plt.figure(num=None, figsize=(5, 5), dpi=100)
     #             plt.pcolor(Corr, vmin=-0.1, vmax=1)
@@ -1121,9 +1121,9 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
     #             except:
     #                 print("Cannot load Covariance variable!")
     #                 msgBox.setText("Cannot load Covariance variable!")
-    #                 msgBox.setIcon(QMessageBox.Critical)
-    #                 msgBox.setStandardButtons(QMessageBox.Ok)
-    #                 msgBox.exec_()
+    #                 msgBox.setIcon(QMessageBox.Icon.Critical)
+    #                 msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+    #                 msgBox.exec()
     #                 return False
     #             fig2 = plt.figure(num=None, figsize=(5, 5), dpi=100)
     #             plt.pcolor(Cov)
@@ -1140,4 +1140,4 @@ class frmMAGradientEncodingAnalysis(Ui_frmMAGradientEncodingAnalysis):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmMAGradientEncodingAnalysis.show(frmMAGradientEncodingAnalysis)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -20,7 +20,7 @@
 #
 #
 
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 import numpy as np
 
 class frmSelectRange(QDialog):
@@ -66,7 +66,7 @@ class frmSelectRange(QDialog):
 
         self.setLayout(layout)
         self.setWindowTitle("Session Selector")
-        self.exec_()
+        self.exec()
 
 
     def btnOK_onclick(self):
@@ -75,25 +75,25 @@ class frmSelectRange(QDialog):
         except:
             msgBox = QMessageBox()
             msgBox.setText("Row -> From is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         try:
             self.D1To = np.int32(self.txtD1To.text())
         except:
             msgBox = QMessageBox()
             msgBox.setText("Row -> To is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if self.D1To < self.D1From:
             msgBox = QMessageBox()
             msgBox.setText("Row -> To is smaller then Row -> From!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if self.Mode == "d2":
             try:
@@ -101,25 +101,25 @@ class frmSelectRange(QDialog):
             except:
                 msgBox = QMessageBox()
                 msgBox.setText("Column -> From is wrong!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             try:
                 self.D2To = np.int32(self.txtD2To.text())
             except:
                 msgBox = QMessageBox()
                 msgBox.setText("Column -> To is wrong!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             if self.D2To < self.D2From:
                 msgBox = QMessageBox()
                 msgBox.setText("Column -> To is smaller then Column -> From!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
         self.PASS = True

@@ -26,7 +26,7 @@ import sys
 import nibabel as nb
 import numpy as np
 import scipy.io as io
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.SettingHistory import History
 from Base.utility import getVersion, getBuild, getSettingVersion, strMultiRange, strRange, fixstr, setParameters3
 from Base.dialogs import LoadFile, SaveFile
@@ -53,8 +53,8 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
 
 
         dialog.setWindowTitle("easy fMRI Cross Validation on EzData - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -201,9 +201,9 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         filename = ui.txtInFile.text()
         if not len(filename):
             msgBox.setText("ROI and fMRI images must be in the same size!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if os.path.isfile(filename):
@@ -226,17 +226,17 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         if not len(DataFiles):
             print("WARNING: Please load data files!")
             msgBox.setText("Please load data files!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         OutDataFormat = ui.txtDIOutDAT.text()
         if not len(OutDataFormat):
             msgBox.setText("Please enter output data format!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         try:
@@ -244,9 +244,9 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
             1 / SubLen
         except:
             msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Length of subjects is okay!")
         try:
@@ -254,9 +254,9 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
             1 / ConLen
         except:
             msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Length of Counter is okay!")
         try:
@@ -264,9 +264,9 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
             1 / RunLen
         except:
             msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Length of runs is valid")
 
@@ -274,55 +274,55 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
             if not ui.cbFTask.isChecked():
                 if not ui.cbFCounter.isChecked():
                     msgBox.setText("You must at least select one Fold Level!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
         # Label
         if not len(ui.txtLabel.currentText()):
             msgBox.setText("Please enter Label variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         TrainVal = ui.txtTrain.text()
         if not len(TrainVal):
             msgBox.setText("Please enter train perfix!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         TestVal = ui.txtTest.text()
         if not len(TestVal):
             msgBox.setText("Please enter test perfix!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -330,9 +330,9 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         except:
             print("Cannot load data file!")
             msgBox.setText("Cannot load data file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         try:
@@ -340,17 +340,17 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         except:
             print("Cannot load data files!")
             msgBox.setText("Cannot load data files!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         # Subject
         if not len(ui.txtSubject.currentText()):
             msgBox.setText("Please enter Subject variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Subject = InData[ui.txtSubject.currentText()]
@@ -361,9 +361,9 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         # Task
         if not len(ui.txtTask.currentText()):
             msgBox.setText("Please enter Task variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -380,9 +380,9 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         # Run
         if not len(ui.txtRun.currentText()):
             msgBox.setText("Please enter Run variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -394,9 +394,9 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         # Counter
         if not len(ui.txtCounter.currentText()):
             msgBox.setText("Please enter Counter variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -409,16 +409,16 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
             Unit = np.int32(ui.txtUnit.text())
         except:
             msgBox.setText("Unit for the test set must be a number!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if Unit < 1:
             msgBox.setText("Unit for the test set must be greater than zero!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         print("Checking data files ...")
@@ -444,9 +444,9 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
             else:
                 print(dfile + " is not found!")
                 msgBox.setText(dfile + " is not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
         print("Calculating Folds ...")
@@ -477,16 +477,16 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
 
         if len(UniqFold) <= Unit:
             msgBox.setText("Unit for the test set must be smaller than all possible folds! Number of all folds is: " + str(len(UniqFold)))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if np.mod(len(UniqFold),Unit):
             msgBox.setText("Unit for the test set must be divorceable to all possible folds! Number of all folds is: " + str(len(UniqFold)))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         FoldIDs = np.arange(len(UniqFold)) + 1
@@ -660,11 +660,11 @@ class frmFEEZCrossValidation(Ui_frmFEEZCrossValidation):
         print("DONE.")
         print("Cross validation is done.")
         msgBox.setText("Cross validation is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmFEEZCrossValidation.show(frmFEEZCrossValidation)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

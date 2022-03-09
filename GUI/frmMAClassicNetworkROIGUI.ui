@@ -506,11 +506,31 @@
     <attribute name="title">
      <string>Integration</string>
     </attribute>
+    <widget class="QWidget" name="Code" native="true">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>711</width>
+       <height>351</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_5">
     <attribute name="title">
      <string>Metric</string>
     </attribute>
+    <widget class="QWidget" name="Code2" native="true">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>711</width>
+       <height>351</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QLabel" name="label_35">

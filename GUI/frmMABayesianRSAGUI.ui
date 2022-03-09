@@ -1396,6 +1396,16 @@
     <attribute name="title">
      <string>Optimizer</string>
     </attribute>
+    <widget class="QWidget" name="Code" native="true">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>711</width>
+       <height>581</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_8">
     <attribute name="title">

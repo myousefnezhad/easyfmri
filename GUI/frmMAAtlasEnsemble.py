@@ -25,7 +25,7 @@ import sys
 import numpy as np
 import nibabel as nb
 import scipy.io as io
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.svm import LinearSVC
 from GUI.frmMAAtlasEnsembleGUI import *
@@ -35,15 +35,7 @@ from IO.mainIO import mainIO_load, mainIO_save
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
 
-
-import logging
-logging.basicConfig(level=logging.DEBUG)
-from pyqode.core import api
-from pyqode.core import modes
-from pyqode.core import panels
-from pyqode.qt import QtWidgets as pyWidgets
-
-
+from Base.codeEditor import codeEditor
 
 def EventCode():
     return\
@@ -52,8 +44,6 @@ def EventCode():
 #from sklearn.svm import LinearSVC as CLS
 model = CLS()
 """
-
-
 
 def EventCode2():
     return\
@@ -80,34 +70,20 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
         ui.tabWidget.setCurrentIndex(0)
 
         # Base
-        ui.txtEvents = api.CodeEdit(ui.tab_2)
-        ui.txtEvents.setGeometry(QtCore.QRect(10, 10, 790, 420))
-        ui.txtEvents.setObjectName("txtEvents")
-        ui.txtEvents.backend.start('backend/server.py')
-        ui.txtEvents.modes.append(modes.CodeCompletionMode())
-        ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())
-        ui.txtEvents.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
-        ui.txtEvents.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        ui.txtEvents.setFont(font)
-        ui.txtEvents.setPlainText(EventCode(),"","")
+        cEditor = codeEditor(ui)
+        ui.txtEvents = cEditor.Obj
+        cEditor.setObjectName("txtEvents")
+        cEditor.setText(EventCode())
+        layout = QHBoxLayout(ui.Code)
+        layout.addWidget(cEditor.Obj)
 
         # Ensemble
-        ui.txtEvents2 = api.CodeEdit(ui.tab_7)
-        ui.txtEvents2.setGeometry(QtCore.QRect(10, 10, 790, 420))
-        ui.txtEvents2.setObjectName("txtEvents")
-        ui.txtEvents2.backend.start('backend/server.py')
-        ui.txtEvents2.modes.append(modes.CodeCompletionMode())
-        ui.txtEvents2.modes.append(modes.CaretLineHighlighterMode())
-        ui.txtEvents2.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
-        ui.txtEvents2.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-        font2 = QtGui.QFont()
-        font2.setBold(True)
-        font2.setWeight(75)
-        ui.txtEvents2.setFont(font2)
-        ui.txtEvents2.setPlainText(EventCode2(),"","")
+        cEditor2 = codeEditor(ui)
+        ui.txtEvents2 = cEditor2.Obj
+        cEditor2.setObjectName("txtEvents2")
+        cEditor2.setText(EventCode2())
+        layout2 = QHBoxLayout(ui.Code2)
+        layout2.addWidget(cEditor2.Obj)
 
         # Precision Avg
         ui.cbPrecisionAvg.addItem("weighted","weighted")
@@ -141,8 +117,8 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
         ui.cbF1Avg.addItem("None", None)
 
         dialog.setWindowTitle("easy fMRI Atlas-based ensemble analysis: Atlas - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -169,9 +145,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                             # Check Filter ID for training
                             if not len(ui.txtFilterTrID.currentText()):
                                 msgBox.setText("Please enter variable name for training filter!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return False
                             TrF = InData[ui.txtFilterTrID.currentText()][0]
                             fstr = ""
@@ -184,9 +160,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                         except:
                             print("Reference filter for training is wrong!")
                             msgBox.setText("Reference filter for training is wrong!")
-                            msgBox.setIcon(QMessageBox.Critical)
-                            msgBox.setStandardButtons(QMessageBox.Ok)
-                            msgBox.exec_()
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
                             return
 
                     # Ref Filter Test
@@ -195,9 +171,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                             # Check Filter ID for testing
                             if not len(ui.txtFilterTeID.currentText()):
                                 msgBox.setText("Please enter variable name for testing filter!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return False
                             TeF = InData[ui.txtFilterTeID.currentText()][0]
                             fstr = ""
@@ -210,9 +186,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                         except:
                             print("Reference filter for testing is wrong!")
                             msgBox.setText("Reference filter for testing is wrong!")
-                            msgBox.setIcon(QMessageBox.Critical)
-                            msgBox.setStandardButtons(QMessageBox.Ok)
-                            msgBox.exec_()
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
                             return
                 except Exception as e:
                     print(e)
@@ -383,23 +359,23 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         # Atlas
         InAtlas = ui.txtAtlas.text()
         if not len(InAtlas):
             msgBox.setText("Please enter atlas file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InAtlas):
             msgBox.setText("Atlas file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -408,15 +384,15 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
             AtlasShape = np.shape(AtlasImg)
             if np.shape(AtlasShape)[0] != 3:
                 msgBox.setText("Atlas must be 3D image")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         except:
             msgBox.setText("Cannot load atlas file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -431,9 +407,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
         except:
             print("Class Filter is wrong!")
             msgBox.setText("Class filter is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
 
@@ -467,17 +443,17 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
             InFile = ui.txtInFile.text()
             if not len(InFile):
                 msgBox.setText(f"FOLD {fold}: Please enter input file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             InFile = InFile.replace("$FOLD$", str(fold))
             InFileList.append(InFile)
             if not os.path.isfile(InFile):
                 msgBox.setText(f"FOLD {fold}: Input file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             # Load InData
             try:
@@ -489,29 +465,29 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
             # Data
             if not len(ui.txtITrData.currentText()):
                 msgBox.setText("Please enter Input Train Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtITeData.currentText()):
                 msgBox.setText("Please enter Input Test Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             # Label
             if not len(ui.txtITrLabel.currentText()):
                     msgBox.setText("Please enter Train Input Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             if not len(ui.txtITeLabel.currentText()):
                     msgBox.setText("Please enter Test Input Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
             try:
@@ -519,9 +495,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
             except:
                 print(f"FOLD {fold}: Cannot load train data")
                 msgBox.setText(f"FOLD {fold}: Cannot load train data!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             try:
@@ -529,9 +505,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
             except:
                 print(f"FOLD {fold}: Cannot load test data")
                 msgBox.setText(f"FOLD {fold}: Cannot load train data!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
 
@@ -559,9 +535,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                     if not len(TrFilterContent):
                         print("Reference filter for training is wrong!")
                         msgBox.setText("Reference filter for training is wrong!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
                     else:
                         TrFilterContent = TrFilterContent.replace("\'", " ").replace(",", " ").replace("[", "").replace(
@@ -570,26 +546,26 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                     # Check Filter ID for training
                     if not len(ui.txtFilterTrID.currentText()):
                         msgBox.setText("Please enter variable name for training filter!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return False
                     TrF = InData[ui.txtFilterTrID.currentText()][0]
 
                     if np.shape(TrX)[0] != np.shape(TrF)[0] or np.shape(TrL)[0] != np.shape(TrF)[0]:
                         print("Shape of reference for training must be the same as data and label")
                         msgBox.setText("Shape of reference for training must be the same as data and label")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
 
                 except:
                     print("Reference filter for training is wrong!")
                     msgBox.setText("Reference filter for training is wrong!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
                 # Remove training set
                 try:
@@ -604,9 +580,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                     print("Cannot filter the training set based on Reference")
                     print(str(e))
                     msgBox.setText("Cannot filter the training set based on Reference")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
             # Ref Filter Test
@@ -618,9 +594,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                     if not len(TeFilterContent):
                         print("Reference filter for testing is wrong!")
                         msgBox.setText("Reference filter for testing is wrong!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
                     else:
                         TeFilterContent = TeFilterContent.replace("\'", " ").replace(",", " ").replace("[", "").replace("]", "").split()
@@ -628,26 +604,26 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                     # Check Filter ID for testing
                     if not len(ui.txtFilterTeID.currentText()):
                         msgBox.setText("Please enter variable name for testing filter!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return False
                     TeF = InData[ui.txtFilterTeID.currentText()][0]
 
                     if np.shape(TeX)[0] != np.shape(TeF)[0] or np.shape(TeL)[0] != np.shape(TeF)[0]:
                         print("Shape of reference for testing must be the same as data and label")
                         msgBox.setText("Shape of reference for testing must be the same as data and label")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
 
                 except:
                     print("Reference filter for testing is wrong!")
                     msgBox.setText("Reference filter for testing is wrong!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
                 # Remove testing set
                 try:
@@ -662,9 +638,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                     print("Cannot filter the testing set based on Reference")
                     print(str(e))
                     msgBox.setText("Cannot filter the testing set based on Reference")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
 
@@ -693,9 +669,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
             # FoldID
             if not len(ui.txtFoldID.currentText()):
                 msgBox.setText("Please enter FoldID variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 currFID = InData[ui.txtFoldID.currentText()][0][0]
@@ -710,9 +686,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                 # Coordinate
                 if not len(ui.txtCol.currentText()):
                     msgBox.setText("Please enter Condition variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     Coord = np.transpose(InData[ui.txtCol.currentText()])
@@ -722,9 +698,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                 # imgShape
                 if not len(ui.txtImg.currentText()):
                     msgBox.setText("Please enter Image Shape variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     DataShape = tuple(InData[ui.txtImg.currentText()][0])
@@ -736,9 +712,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                 if AtlasShape[0] != DataShape[0] or AtlasShape[1] != DataShape[1] or AtlasShape[2] != DataShape[2]:
                     print(f'Atlas and data must have the same shape.\nAtlas: {AtlasShape} vs. Data: {DataShape}')
                     msgBox.setText(f'Atlas and data must have the same shape.\nAtlas: {AtlasShape} vs. Data: {DataShape}')
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
                 print("Mapping 2D vector space to 3D region area...")
@@ -777,9 +753,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
                 except Exception as e:
                     print(f'Cannot generate model\n{e}')
                     msgBox.setText(f'Cannot generate model\n{e}')
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 print(f"FOLD {fold}: Linear accuracy for {reg} is {bacc}")
 
@@ -798,9 +774,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
             except Exception as e:
                 print(f"Cannot generate the final model\n{e}")
                 msgBox.setText(f"Cannot generate the final model\n{e}")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
 
@@ -914,9 +890,9 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
         mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("Atlas-based ensemble analysis is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 
@@ -924,4 +900,4 @@ class frmMAAtlasEnsemble(Ui_frmMAAtlasEnsemble):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmMAAtlasEnsemble.show(frmMAAtlasEnsemble)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

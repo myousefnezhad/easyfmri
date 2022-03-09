@@ -20,8 +20,8 @@
 #
 #
 
-from PyQt5.QtWidgets import *
-import PyQt5.QtCore as QtCore
+from PyQt6.QtWidgets import *
+import PyQt6.QtCore as QtCore
 
 class frmEventViewer(QDialog):
     def __init__(self, Events=None, StartRow=None, SubID=None, RowID=None, Task=None):
@@ -51,7 +51,7 @@ class frmEventViewer(QDialog):
             for i in range(0, ESize):
                 for j in range(0, 3):
                     item = QTableWidgetItem(str(Events[i][j]))
-                    item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+                    item.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable | QtCore.Qt.ItemFlag.ItemIsEnabled)
                     self.tableWidget.setItem(i, j, item)
             self.tableWidget.move(0, 0)
 
@@ -61,7 +61,7 @@ class frmEventViewer(QDialog):
         self.layout.addWidget(self.tableWidget)
         self.layout.addWidget(self.btnExit)
         self.setLayout(self.layout)
-        self.exec_()
+        self.exec()
         pass
 
     def btnExit_onclick(self):

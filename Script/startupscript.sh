@@ -63,6 +63,8 @@ export EN_LONGADDRESS="1"
 # Further you can change the Anaconda environment via aenv/denv commands for switching between different versions of Python
 export EN_AENV="1"
 export RUN_AENV="0"
+# Max Threads
+export NUMEXPR_MAX_THREADS=128
 ######################################
 # Proxy for terminal                 #
 ######################################

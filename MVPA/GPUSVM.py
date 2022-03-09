@@ -25,7 +25,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 import torch.optim as optim
-from scipy.sparse.linalg.eigen.arpack import eigsh
+# from scipy.sparse.linalg.eigen.arpack import eigsh
 import scipy.io as io
 from sklearn.preprocessing import label_binarize
 from sklearn.metrics import accuracy_score
@@ -122,7 +122,7 @@ class GPUSVM:
 
         # Convert data to Tensor
         X = torch.Tensor(X)
-        Y = torch.Tensor(label_binarize(Y, np.unique(Y)))
+        Y = torch.Tensor(label_binarize(Y, classes=np.unique(Y)))
 
         if torch.cuda.is_available():
             X = X.cuda()
@@ -220,7 +220,7 @@ class GPUSVM:
         # Convert data to Tensor
         self.TestDataShape = np.shape(X)
         X = torch.Tensor(X)
-        Y = torch.Tensor(label_binarize(Y, np.unique(Y)))
+        Y = torch.Tensor(label_binarize(Y, classes=np.unique(Y)))
 
         # Send data to GPU
         if torch.cuda.is_available():
@@ -265,58 +265,3 @@ class GPUSVM:
             return None
         return {"W": self.W, "b": self.b}
 
-
-if __name__ == "__main__":
-    i = 1 # 0: create, 1: stability, Other: load
-    model = GPUSVM(kernel='linear')
-    if i == 0:
-        from sklearn.datasets.samples_generator import make_blobs
-        X, y = make_blobs(n_samples=10000, centers=2, random_state=0, cluster_std=1)
-        y = y + 1
-        Xtr = X[:8000,:]
-        ytr = y[:8000]
-        Xte = X[8001:, :]
-        yte = y[8001:]
-        io.savemat("/home/tony/data.mat", {"test_data": Xte, "test_label": yte, "train_data": Xtr, "train_label": ytr, "FoldID": 1})
-        model.train(Xtr, ytr, verbose=True, enable_norm1=False, enable_norm2=False)
-        #print(model.parameters())
-        model.test(Xte, yte, verbose=True)
-        print("GSVM, train: {:6f}, runtime: {}".format(model.TrainError, model.TrainRuntime))
-        print("GSVM,  test: {:6f}, runtime: {}".format(model.TestError, model.TestRuntime))
-        model.save("/home/tony/mod.model")
-        from sklearn import svm
-        clf = svm.SVC(decision_function_shape='ova',kernel='linear')
-        tme = time.time()
-        clf.fit(Xtr, ytr)
-        error = 1 - accuracy_score(ytr, clf.predict(Xtr))
-        print("Normal SVM, train: {:6f}, runtime: {}".format(error, time.time() - tme))
-        tme = time.time()
-        p = clf.predict(Xte)
-        error = 1 - accuracy_score(yte, p)
-        print("Normal SVM,  test: {:6f}, runtime: {}".format(error, time.time() - tme))
-
-    elif i == 1:
-        from sklearn.datasets.samples_generator import make_blobs
-        X, y = make_blobs(n_samples=10000, centers=4, random_state=0, cluster_std=1)
-        y = y + 1
-        Xtr = X[:8000,:]
-        ytr = y[:8000]
-        Xte = X[8001:, :]
-        yte = y[8001:]
-        model.train(Xtr, ytr, verbose=True, enable_norm1=False)
-        W1 = model.parameters()["W"]
-        model.train(Xtr, ytr, verbose=True, enable_norm1=False)
-        W2 = model.parameters()["W"]
-        model.train(Xtr, ytr, verbose=True, enable_norm1=False)
-        W3 = model.parameters()["W"]
-        print("W1\n", W1 @ W1.T)
-        print("W2\n", W2 @ W2.T)
-        print("W3\n", W3 @ W3.T)
-
-    else:
-        data = io.loadmat("/home/tony/data.mat")
-        Xte = data["test_data"]
-        yte = data["test_label"][0]
-        model.load("/home/tony/mod.model")
-        model.test(Xte, yte)
-        print(model.TestError, model.TestPredict)

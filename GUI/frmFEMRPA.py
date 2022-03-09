@@ -23,7 +23,7 @@
 import os
 import sys
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmFEMRPAGUI import *
 from scipy.signal import argrelextrema
 from Base.dialogs import LoadFile, SaveFile
@@ -49,8 +49,8 @@ class frmFEMRPA(Ui_frmFEMRPA):
 
 
         dialog.setWindowTitle("easy fMRI Multi Region Pattern Analysis (Snapshots) - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -207,50 +207,50 @@ class frmFEMRPA(Ui_frmFEMRPA):
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Sigma = np.int32(ui.txtSigma.text())
         except:
             msgBox.setText("Sigma is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if Sigma < 1:
             msgBox.setText("Sigma must be greater than zero!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         # Design
         if not len(ui.txtDM.currentText()):
             msgBox.setText("Please enter Design Matrix variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         InData = mainIO_load(InFile)
         OutData = dict()
@@ -299,9 +299,9 @@ class frmFEMRPA(Ui_frmFEMRPA):
         if ui.cbSubject.isChecked():
             if not len(ui.txtSubject.currentText()):
                 msgBox.setText("Please enter Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         try:
             OutData[ui.txtOSubject.text()] = reshape_1Dvector(InData[ui.txtSubject.currentText()][0][AllIndex])
@@ -312,63 +312,63 @@ class frmFEMRPA(Ui_frmFEMRPA):
         if ui.cbTask.isChecked():
             if not len(ui.txtTask.currentText()):
                 msgBox.setText("Please enter Task variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtOTask.text()] = reshape_1Dvector(InData[ui.txtTask.currentText()][0][AllIndex])
         # Run
         if ui.cbRun.isChecked():
             if not len(ui.txtRun.currentText()):
                 msgBox.setText("Please enter Run variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtORun.text()] = reshape_1Dvector(InData[ui.txtRun.currentText()][0][AllIndex])
         # Counter
         if ui.cbCounter.isChecked():
             if not len(ui.txtCounter.currentText()):
                 msgBox.setText("Please enter Counter variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtOCounter.text()] = reshape_1Dvector(InData[ui.txtCounter.currentText()][0][AllIndex])
         # Matrix Label
         if ui.cbmLabel.isChecked():
             if not len(ui.txtmLabel.currentText()):
                 msgBox.setText("Please enter Matrix Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
-            OutData[ui.txtOmLabel.text()] = label_binarize(AllLabels,np.unique(AllLabels))
+            OutData[ui.txtOmLabel.text()] = label_binarize(AllLabels, classes=np.unique(AllLabels))
         # Coordinate
         if ui.cbCol.isChecked():
             if not len(ui.txtCol.currentText()):
                 msgBox.setText("Please enter Coordinator variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtOCol.text()] = InData[ui.txtCol.currentText()]
         # Condition
         if ui.cbCond.isChecked():
             if not len(ui.txtCond.currentText()):
                 msgBox.setText("Please enter Condition variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtOCond.text()] = InData[ui.txtCond.currentText()]
         # Number of Scan
         if ui.cbNScan.isChecked():
             if not len(ui.txtScan.currentText()):
                 msgBox.setText("Please enter Number of Scan variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutData[ui.txtOScan.text()] = reshape_1Dvector(InData[ui.txtScan.currentText()][0][AllIndex])
         Models = dict()
@@ -381,12 +381,12 @@ class frmFEMRPA(Ui_frmFEMRPA):
         print("Number of all instances :", np.shape(X)[0])
         print("Number of selected instances: ", len(AllLabels))
         msgBox.setText("MRPA is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmFEMRPA.show(frmFEMRPA)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

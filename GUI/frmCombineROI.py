@@ -25,7 +25,7 @@ import sys
 
 import nibabel as nb
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 
 from Base.utility import getDirFSLAtlas, getVersion, getBuild
 from Base.dialogs import LoadFile, SaveFile, LoadMultiFile
@@ -56,8 +56,8 @@ class frmCombineROI(Ui_frmCombineROI):
         ui.cbMetric.addItem("Union","uni")
 
         dialog.setWindowTitle("easy fMRI combine ROI - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -95,9 +95,9 @@ class frmCombineROI(Ui_frmCombineROI):
         if not len(ui.tvArea.selectedItems()):
             msgBox = QMessageBox()
             msgBox.setText("Please select a item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         ui.tvArea.takeTopLevelItem(ui.tvArea.indexOfTopLevelItem(ui.tvArea.selectedItems()[0]))
 
@@ -105,9 +105,9 @@ class frmCombineROI(Ui_frmCombineROI):
         if not len(ui.tvArea.selectedItems()):
             msgBox = QMessageBox()
             msgBox.setText("Please select a item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         aindx = ui.tvArea.indexOfTopLevelItem(ui.tvArea.selectedItems()[0])
         for index in range(ui.tvArea.topLevelItemCount()):
@@ -119,18 +119,18 @@ class frmCombineROI(Ui_frmCombineROI):
 
         if ui.tvArea.topLevelItemCount() < 1:
             msgBox.setText("There is no input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         ofile = ui.txtOFile.text()
         if not len(ofile):
             print("Please enter Output File!")
             msgBox.setText("Please enter Output File!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         aindx = -1
@@ -141,9 +141,9 @@ class frmCombineROI(Ui_frmCombineROI):
         if aindx < 0:
             print("Please select affine file")
             msgBox.setText("Please select affine file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         print("Combining ROI ...")
@@ -157,9 +157,9 @@ class frmCombineROI(Ui_frmCombineROI):
             if not os.path.isfile(filename):
                 print("Cannot find input file: " + filename)
                 msgBox.setText("Cannot find input file: " + filename)
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             # Load Data
             try:
@@ -168,9 +168,9 @@ class frmCombineROI(Ui_frmCombineROI):
             except:
                 print("Cannot load input file: " + filename)
                 msgBox.setText("Cannot load input file: " + filename)
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             # Check Size
             if OutSize is None:
@@ -179,9 +179,9 @@ class frmCombineROI(Ui_frmCombineROI):
             elif OutSize != np.shape(fileIMG):
                 print("Size of file: " + filename + " is not matched!")
                 msgBox.setText("Size of file: " + filename + " is not matched!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
             # Get Affine
             if len(ui.tvArea.topLevelItem(index).text(1)):
@@ -196,9 +196,9 @@ class frmCombineROI(Ui_frmCombineROI):
         if affine is None:
             print("Cannot find affine!")
             msgBox.setText("Cannot find affine!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if ui.cbMetric.currentData() == "int":
@@ -220,12 +220,12 @@ class frmCombineROI(Ui_frmCombineROI):
 
         msgBox.setText("ROI is generated!\nNumber of all voxels: " + str(NumVoxels) + \
                        "\nNumber of selected voxles in ROI: " + str(NumROIVoxel))
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmCombineROI.show(frmCombineROI)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

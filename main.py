@@ -27,4 +27,4 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     frmMainMenuGUI.show(frmMainMenuGUI)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

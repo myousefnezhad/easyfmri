@@ -25,7 +25,7 @@ import sys
 
 import nibabel as nb
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.dialogs import SaveFile, LoadFile
 
 from GUI.frmfMRIConcatenatorGUI import *
@@ -45,8 +45,8 @@ class frmfMRIConcatenator(Ui_frmfMRIConcatenator):
         dialog = QtWidgets.QMainWindow()
         ui.setupUi(dialog)
         self.set_events(self)
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -79,9 +79,9 @@ class frmfMRIConcatenator(Ui_frmfMRIConcatenator):
         if not len(ui.lwFiles.selectedItems()):
             msgBox = QMessageBox()
             msgBox.setText("Please select a item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         ui.lwFiles.takeItem(ui.lwFiles.currentRow())
 
@@ -101,17 +101,17 @@ class frmfMRIConcatenator(Ui_frmfMRIConcatenator):
         if ui.lwFiles.count() < 1:
             msgBox = QMessageBox()
             msgBox.setText("There is no input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if ui.lwFiles.count() < 2:
             msgBox = QMessageBox()
             msgBox.setText("You must select at least two files!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         files = []
@@ -127,9 +127,9 @@ class frmfMRIConcatenator(Ui_frmfMRIConcatenator):
             print("Please enter Output File!")
             msgBox = QMessageBox()
             msgBox.setText("Please enter Output File!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         try:
             dim = np.int32(ui.txtDim.value()) - 1
@@ -156,13 +156,13 @@ class frmfMRIConcatenator(Ui_frmfMRIConcatenator):
         print("Output is generated!")
         msgBox = QMessageBox()
         msgBox.setText("Output is generated!")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
         return
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmfMRIConcatenator.show(frmfMRIConcatenator)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

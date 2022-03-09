@@ -26,7 +26,7 @@ import sys
 import time
 import numpy as np
 from sklearn.svm import NuSVC
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmMANuSVMGUI import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
@@ -97,8 +97,8 @@ class frmMANuSVM(Ui_frmMANuSVM):
         ui.cbF1Avg.addItem("None", None)
 
         dialog.setWindowTitle("easy fMRI Nu Support Vector Classification - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -125,9 +125,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
                             # Check Filter ID for training
                             if not len(ui.txtFilterTrID.currentText()):
                                 msgBox.setText("Please enter variable name for training filter!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return False
                             TrF = InData[ui.txtFilterTrID.currentText()][0]
                             fstr = ""
@@ -140,9 +140,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
                         except:
                             print("Reference filter for training is wrong!")
                             msgBox.setText("Reference filter for training is wrong!")
-                            msgBox.setIcon(QMessageBox.Critical)
-                            msgBox.setStandardButtons(QMessageBox.Ok)
-                            msgBox.exec_()
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
                             return
 
                     # Ref Filter Test
@@ -151,9 +151,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
                             # Check Filter ID for testing
                             if not len(ui.txtFilterTeID.currentText()):
                                 msgBox.setText("Please enter variable name for testing filter!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return False
                             TeF = InData[ui.txtFilterTeID.currentText()][0]
                             fstr = ""
@@ -166,9 +166,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
                         except:
                             print("Reference filter for testing is wrong!")
                             msgBox.setText("Reference filter for testing is wrong!")
-                            msgBox.setIcon(QMessageBox.Critical)
-                            msgBox.setStandardButtons(QMessageBox.Ok)
-                            msgBox.exec_()
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
                             return
                 except Exception as e:
                     print(e)
@@ -306,9 +306,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
             Nu = np.float(ui.txtNu.text())
         except:
             msgBox.setText("Nu is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Gamma
@@ -318,9 +318,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
                 Gamma = "auto"
         except:
             msgBox.setText("Gamma is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Degree
@@ -328,9 +328,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
             Degree = np.int32(ui.txtDegree.text())
         except:
             msgBox.setText("Degree is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Coef0
@@ -338,9 +338,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
             Coef0 = np.float(ui.txtCoef0.text())
         except:
             msgBox.setText("Coef0 is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Tol
@@ -348,9 +348,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
             Tol = np.float(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # MaxIte
@@ -358,9 +358,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
             MaxIter = np.int32(ui.txtMaxIter.text())
         except:
             msgBox.setText("Maximum number of iterations is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if MaxIter <= 0:
@@ -377,18 +377,18 @@ class frmMANuSVM(Ui_frmMANuSVM):
         except:
             print("Class filter is wrong!")
             msgBox.setText("Class filter is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         Fold  = list()
@@ -424,44 +424,44 @@ class frmMANuSVM(Ui_frmMANuSVM):
             InFileList.append(InFile)
             if not len(InFile):
                 msgBox.setText("Please enter input file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not os.path.isfile(InFile):
                 msgBox.setText("Input file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             InData = mainIO_load(InFile)
             # Data
             if not len(ui.txtITrData.currentText()):
                 msgBox.setText("Please enter Input Train Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtITeData.currentText()):
                 msgBox.setText("Please enter Input Test Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             # Label
             if not len(ui.txtITrLabel.currentText()):
                     msgBox.setText("Please enter Train Input Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             if not len(ui.txtITeLabel.currentText()):
                     msgBox.setText("Please enter Test Input Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
             TrX = InData[ui.txtITrData.currentText()]
@@ -478,9 +478,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
                     if not len(TrFilterContent):
                         print("Reference filter for training is wrong!")
                         msgBox.setText("Reference filter for training is wrong!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
                     else:
                         TrFilterContent = TrFilterContent.replace("\'", " ").replace(",", " ").replace("[", "").replace(
@@ -489,26 +489,26 @@ class frmMANuSVM(Ui_frmMANuSVM):
                     # Check Filter ID for training
                     if not len(ui.txtFilterTrID.currentText()):
                         msgBox.setText("Please enter variable name for training filter!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return False
                     TrF = InData[ui.txtFilterTrID.currentText()][0]
 
                     if np.shape(TrX)[0] != np.shape(TrF)[0] or np.shape(TrL)[0] != np.shape(TrF)[0]:
                         print("Shape of reference for training must be the same as data and label")
                         msgBox.setText("Shape of reference for training must be the same as data and label")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
 
                 except:
                     print("Reference filter for training is wrong!")
                     msgBox.setText("Reference filter for training is wrong!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
                 # Remove training set
                 try:
@@ -523,9 +523,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
                     print("Cannot filter the training set based on Reference")
                     print(str(e))
                     msgBox.setText("Cannot filter the training set based on Reference")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
             # Ref Filter Test
@@ -537,9 +537,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
                     if not len(TeFilterContent):
                         print("Reference filter for testing is wrong!")
                         msgBox.setText("Reference filter for testing is wrong!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
                     else:
                         TeFilterContent = TeFilterContent.replace("\'", " ").replace(",", " ").replace("[", "").replace("]", "").split()
@@ -547,26 +547,26 @@ class frmMANuSVM(Ui_frmMANuSVM):
                     # Check Filter ID for testing
                     if not len(ui.txtFilterTeID.currentText()):
                         msgBox.setText("Please enter variable name for testing filter!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return False
                     TeF = InData[ui.txtFilterTeID.currentText()][0]
 
                     if np.shape(TeX)[0] != np.shape(TeF)[0] or np.shape(TeL)[0] != np.shape(TeF)[0]:
                         print("Shape of reference for testing must be the same as data and label")
                         msgBox.setText("Shape of reference for testing must be the same as data and label")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
 
                 except:
                     print("Reference filter for testing is wrong!")
                     msgBox.setText("Reference filter for testing is wrong!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
                 # Remove testing set
                 try:
@@ -581,9 +581,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
                     print("Cannot filter the testing set based on Reference")
                     print(str(e))
                     msgBox.setText("Cannot filter the testing set based on Reference")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
             try:
@@ -610,9 +610,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
             # FoldID
             if not len(ui.txtFoldID.currentText()):
                 msgBox.setText("Please enter FoldID variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 currFID = InData[ui.txtFoldID.currentText()][0][0]
@@ -634,7 +634,7 @@ class frmMANuSVM(Ui_frmMANuSVM):
                 PeL = clf.predict(TeX)
                 PrL = clf.predict(TrX)
 
-                OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, np.unique(TeL))
+                OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, labels=np.unique(TeL))
                 OutData["fold" + str(currFID) + "_classification_report"] = classification_report(TeL, PeL)
                 print(OutData["fold" + str(currFID) + "_classification_report"])
 
@@ -643,9 +643,9 @@ class frmMANuSVM(Ui_frmMANuSVM):
                 print(e)
                 msgBox = QMessageBox()
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             if ui.cbAverage.isChecked():
@@ -758,12 +758,12 @@ class frmMANuSVM(Ui_frmMANuSVM):
         mainIO_save(OutData, OutFile)
         print("DONE.")
         msgBox.setText("Nu Support Vector Classification is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmMANuSVM.show(frmMANuSVM)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

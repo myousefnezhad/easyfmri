@@ -25,7 +25,7 @@ import sys
 
 import nibabel as nb
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 
 from Base.utility import getDirFSLAtlas
 from Base.dialogs import LoadFile, SaveFile
@@ -59,8 +59,8 @@ class frmAtlasROI(Ui_frmAtlasROI):
         currentFile = None
         currentSize = None
 
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -109,9 +109,9 @@ class frmAtlasROI(Ui_frmAtlasROI):
                     print("All input files must be in the same size!")
                     msgBox = QMessageBox()
                     msgBox.setText("All input files must be in the same size!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
                 minReg = np.min(fileIMG)
@@ -138,9 +138,9 @@ class frmAtlasROI(Ui_frmAtlasROI):
                 print("Cannot load file!")
                 msgBox = QMessageBox()
                 msgBox.setText("Cannot load file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
 
     def btnAdd_click(self):
         global currentFile, currentSize, OutSize
@@ -151,18 +151,18 @@ class frmAtlasROI(Ui_frmAtlasROI):
             print("Region To is smaller than Region From!")
             msgBox = QMessageBox()
             msgBox.setText("Region To is smaller than Region From!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if currentFile is None:
             print("File not found!")
             msgBox = QMessageBox()
             msgBox.setText("Please select an Atlas!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         item = QtWidgets.QTreeWidgetItem()
@@ -179,9 +179,9 @@ class frmAtlasROI(Ui_frmAtlasROI):
         if not len(ui.tvArea.selectedItems()):
             msgBox = QMessageBox()
             msgBox.setText("Please select a item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         ui.tvArea.takeTopLevelItem(ui.tvArea.indexOfTopLevelItem(ui.tvArea.selectedItems()[0]))
 
@@ -190,9 +190,9 @@ class frmAtlasROI(Ui_frmAtlasROI):
         if not len(ui.tvArea.selectedItems()):
             msgBox = QMessageBox()
             msgBox.setText("Please select a item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         aindx = ui.tvArea.indexOfTopLevelItem(ui.tvArea.selectedItems()[0])
         for index in range(ui.tvArea.topLevelItemCount()):
@@ -205,18 +205,18 @@ class frmAtlasROI(Ui_frmAtlasROI):
 
         if ui.tvArea.topLevelItemCount() < 1:
             msgBox.setText("There is no input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         ofile = ui.txtOFile.text()
         if not len(ofile):
             print("Please enter Output File!")
             msgBox.setText("Please enter Output File!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
 
@@ -228,9 +228,9 @@ class frmAtlasROI(Ui_frmAtlasROI):
         if aindx < 0:
             print("Please select affine file")
             msgBox.setText("Please select affine file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         print("Generating ROI ...")
@@ -270,12 +270,12 @@ class frmAtlasROI(Ui_frmAtlasROI):
 
         msgBox.setText("ROI is generated!\nNumber of all voxels: " + str(NumVoxels) + \
                        "\nNumber of selected voxles in ROI: " + str(NumROIVoxel))
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmAtlasROI.show(frmAtlasROI)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

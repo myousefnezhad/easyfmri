@@ -24,7 +24,7 @@ import os
 import sys
 
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 
 from sklearn import preprocessing
 from sklearn.metrics import accuracy_score
@@ -64,8 +64,8 @@ class frmSKCModelEditor(Ui_frmSKCModelEditor):
         ui.lwData.setColumnWidth(0,200)
 
         dialog.setWindowTitle("easy fMRI SK Clustering Model Viewer - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -173,9 +173,9 @@ class frmSKCModelEditor(Ui_frmSKCModelEditor):
         msgBox = QMessageBox()
         if not len(ui.lwData.selectedItems()):
             msgBox.setText("Please select an item first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         Index = ui.lwData.indexOfTopLevelItem(ui.lwData.selectedItems()[0])
         varName = ui.lwData.topLevelItem(Index).text(0)
@@ -247,55 +247,55 @@ class frmSKCModelEditor(Ui_frmSKCModelEditor):
         InModelFile = ui.txtInFile.text()
         if not len(InModelFile):
             msgBox.setText("Please enter model file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InModelFile):
             msgBox.setText("Model file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # InData
         InDataFile = ui.txtInData.text()
         if not len(InDataFile):
             msgBox.setText("Please enter data file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InDataFile):
             msgBox.setText("data file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Data
         if not len(ui.txtITeData.currentText()):
             msgBox.setText("Please enter Input Test Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Label
         if not len(ui.txtITeLabel.currentText()):
                 msgBox.setText("Please enter Test Input Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         try:
             cls = joblib.load(InModelFile)
         except:
             msgBox.setText("Cannot load classification model!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -303,9 +303,9 @@ class frmSKCModelEditor(Ui_frmSKCModelEditor):
         except:
             print("cannot load data file!")
             msgBox.setText("cannot load data file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         TeX = InData[ui.txtITeData.currentText()]
@@ -344,13 +344,13 @@ class frmSKCModelEditor(Ui_frmSKCModelEditor):
 
         print("Data is analyzed!")
         msgBox.setText("Data is analyzed!")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
         pass
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmSKCModelEditor.show(frmSKCModelEditor)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

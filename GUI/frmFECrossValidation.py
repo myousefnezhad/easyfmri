@@ -25,7 +25,7 @@ import sys
 
 import numpy as np
 #import scipy.io as io
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmFECrossValidationGUI import *
 from Base.dialogs import LoadFile, SelectDir
 from Base.utility import getVersion, getBuild
@@ -50,8 +50,8 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
         ui.tabWidget.setCurrentIndex(0)
 
         dialog.setWindowTitle("easy fMRI Cross Validation - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -220,79 +220,79 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
             if not ui.cbFTask.isChecked():
                 if not ui.cbFCounter.isChecked():
                     msgBox.setText("You must at least select one Fold Level!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
         # Label
         if not len(ui.txtLabel.currentText()):
             msgBox.setText("Please enter Label variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Matrix Label
         if ui.cbmLabel.isChecked():
             if not len(ui.txtmLabel.currentText()):
                 msgBox.setText("Please enter Matrix Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Design
         if ui.cbDM.isChecked():
             if not len(ui.txtDM.currentText()):
                 msgBox.setText("Please enter Design Matrix variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Coordinate
         if ui.cbCol.isChecked():
             if not len(ui.txtCol.currentText()):
                 msgBox.setText("Please enter Coordinator variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Condition
         if ui.cbCond.isChecked():
             if not len(ui.txtCond.currentText()):
                 msgBox.setText("Please enter Condition variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Number of Scan
         if ui.cbNScan.isChecked():
             if not len(ui.txtScan.currentText()):
                 msgBox.setText("Please enter Number of Scan variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Subject Condition
         if ui.cbFSubject.isChecked():
             if not ui.cbSubject.isChecked():
                 msgBox.setText("For using task as a fold level, you have to enable task filed in input file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             # Run Condition
             if ui.rbFRun.isChecked():
                 if not ui.cbRun.isChecked():
                     msgBox.setText("For using run as a fold level, you have to enable run filed in input file!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
 
@@ -300,34 +300,34 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
         if not ui.cbTask.isChecked():
             if ui.cbFTask.isChecked():
                 msgBox.setText("For using task as a fold level, you have to enable task filed in input file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Counter
         if not ui.cbCounter.isChecked():
             if ui.cbFCounter.isChecked():
                 msgBox.setText("For using counter as a fold level, you have to enable counter filed in input file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # OutDIR
         OutDIR = ui.txtOutDIR.text()
         if not len(OutDIR):
             msgBox.setText("Please enter out directory!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if not os.path.isdir(OutDIR):
             msgBox.setText("Output directory not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -335,25 +335,25 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -365,9 +365,9 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
 
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -380,9 +380,9 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
         if ui.cbSubject.isChecked():
             if not len(ui.txtSubject.currentText()):
                 msgBox.setText("Please enter Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         try:
@@ -395,9 +395,9 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
         if ui.cbTask.isChecked():
             if not len(ui.txtTask.currentText()):
                 msgBox.setText("Please enter Task variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         try:
@@ -413,9 +413,9 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
         if ui.cbRun.isChecked():
             if not len(ui.txtRun.currentText()):
                 msgBox.setText("Please enter Run variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         try:
@@ -428,9 +428,9 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
         if ui.cbCounter.isChecked():
             if not len(ui.txtCounter.currentText()):
                 msgBox.setText("Please enter Counter variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         try:
@@ -444,16 +444,16 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
             Unit = np.int32(ui.txtUnit.text())
         except:
             msgBox.setText("Unit for the test set must be a number!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if Unit < 1:
             msgBox.setText("Unit for the test set must be greater than zero!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         print("Calculating Folds ...")
@@ -483,16 +483,16 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
 
         if len(UniqFold) <= Unit:
             msgBox.setText("Unit for the test set must be smaller than all possible folds! Number of all folds is: " + str(len(UniqFold)))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if np.mod(len(UniqFold),Unit):
             msgBox.setText("Unit for the test set must be divorceable to all possible folds! Number of all folds is: " + str(len(UniqFold)))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         ListFold = list()
         for gfold in GroupFold:
@@ -564,8 +564,8 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
 
             # m Label
             if ui.cbmLabel.isChecked():
-                OutData[ui.txtTrain.text() + ui.txtOmLabel.text()] = label_binarize(TrainLabel[0], np.unique(TrainLabel))
-                OutData[ui.txtTest.text()  + ui.txtOmLabel.text()] = label_binarize(TestLabel[0], np.unique(TestLabel))
+                OutData[ui.txtTrain.text() + ui.txtOmLabel.text()] = label_binarize(TrainLabel[0], classes=np.unique(TrainLabel))
+                OutData[ui.txtTest.text()  + ui.txtOmLabel.text()] = label_binarize(TestLabel[0], classes=np.unique(TestLabel))
 
             # DM
             if ui.cbDM.isChecked():
@@ -595,12 +595,12 @@ class frmFECrossValidation(Ui_frmFECrossValidation):
 
         print("Cross validation is done.")
         msgBox.setText("Cross validation is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmFECrossValidation.show(frmFECrossValidation)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -25,7 +25,7 @@ import sys
 
 import numpy as np
 from Base.Conditions import Conditions
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn.preprocessing import label_binarize
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
@@ -50,8 +50,8 @@ class frmCombineData(Ui_frmCombineData):
 
 
         dialog.setWindowTitle("easy fMRI combine data - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -325,45 +325,45 @@ class frmCombineData(Ui_frmCombineData):
         InFFile = ui.txtInFFile.text()
         if not len(InFFile):
             msgBox.setText("Please select the first input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         elif not os.path.isfile(InFFile):
             msgBox.setText("The first input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         InSFile = ui.txtInSFile.text()
         if not len(InSFile):
             msgBox.setText("Please select the second input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         elif not os.path.isfile(InSFile):
             msgBox.setText("The second input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please select the output file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if not ui.cbCondUnion.isChecked():
             if not len(ui.txtFCondPre.text()):
                 msgBox.setText("Please enter the condition prefix!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         InFData = mainIO_load(InFFile)
@@ -374,21 +374,21 @@ class frmCombineData(Ui_frmCombineData):
         # Data
         if not len(ui.txtFData.currentText()):
             msgBox.setText("Please enter First Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.txtSData.currentText()):
             msgBox.setText("Please enter Second Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not len(ui.txtOData.text()):
             msgBox.setText("Please enter Out Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             InFX = InFData[ui.txtFData.currentText()]
@@ -418,21 +418,21 @@ class frmCombineData(Ui_frmCombineData):
         if ui.cbCol.isChecked():
             if not len(ui.txtFCol.currentText()):
                 msgBox.setText("Please enter First Coordinator variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtSCol.currentText()):
                 msgBox.setText("Please enter Second Coordinator variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtOCoI.text()):
                 msgBox.setText("Please enter Out Coordinator variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 InFCol = np.array(InFData[ui.txtFCol.currentText()])
@@ -448,9 +448,9 @@ class frmCombineData(Ui_frmCombineData):
             SubCol = InFCol - InSCol
             if (np.max(SubCol) != 0) or (np.min(SubCol) != 0):
                 msgBox.setText("Coordinates are not matched!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             OutData[ui.txtOCoI.text()] = InFData[ui.txtFCol.currentText()]
@@ -461,21 +461,21 @@ class frmCombineData(Ui_frmCombineData):
         # Label
         if not len(ui.txtFLabel.currentText()):
                 msgBox.setText("Please enter First Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         if not len(ui.txtSLabel.currentText()):
                 msgBox.setText("Please enter Second Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         if not len(ui.txtOLabel.text()):
                 msgBox.setText("Please enter Out Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         try:
             InFL = InFData[ui.txtFLabel.currentText()]
@@ -504,11 +504,11 @@ class frmCombineData(Ui_frmCombineData):
         if ui.cbmLabel.isChecked():
             if not len(ui.txtOmLabel.text()):
                 msgBox.setText("Please enter Out Matrix Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
-            OutData[ui.txtOmLabel.text()] = label_binarize(OutData[ui.txtOLabel.text()],np.unique(OutData[ui.txtOLabel.text()]))
+            OutData[ui.txtOmLabel.text()] = label_binarize(OutData[ui.txtOLabel.text()], classes=np.unique(OutData[ui.txtOLabel.text()]))
 
 
 
@@ -516,21 +516,21 @@ class frmCombineData(Ui_frmCombineData):
         if ui.cbCond.isChecked():
             if not len(ui.txtFCond.currentText()):
                 msgBox.setText("Please enter First Condition variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtSCond.currentText()):
                 msgBox.setText("Please enter Second Condition variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtOCond.text()):
                 msgBox.setText("Please enter Out Condition variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             if ui.cbCondUnion.isChecked():
@@ -555,21 +555,21 @@ class frmCombineData(Ui_frmCombineData):
         if ui.cbSubject.isChecked():
             if not len(ui.txtFSubject.currentText()):
                 msgBox.setText("Please enter First Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtSSubject.currentText()):
                 msgBox.setText("Please enter Second Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtOSubject.text()):
                 msgBox.setText("Please enter Out Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtOSubject.text()] = reshape_1Dvector(np.concatenate((InFData[ui.txtFSubject.currentText()],InSData[ui.txtSSubject.currentText()]),1)[0])
@@ -581,21 +581,21 @@ class frmCombineData(Ui_frmCombineData):
         if ui.cbTask.isChecked():
             if not len(ui.txtFTask.currentText()):
                 msgBox.setText("Please enter First Task variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtSTask.currentText()):
                 msgBox.setText("Please enter Second Task variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtOTask.text()):
                 msgBox.setText("Please enter Out Task variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtOTask.text()] = reshape_1Dvector(np.concatenate((InFData[ui.txtFTask.currentText()],InSData[ui.txtSTask.currentText()]),1)[0])
@@ -607,21 +607,21 @@ class frmCombineData(Ui_frmCombineData):
         if ui.cbRun.isChecked():
             if not len(ui.txtFRun.currentText()):
                 msgBox.setText("Please enter First Run variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtSRun.currentText()):
                 msgBox.setText("Please enter Second Run variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtORun.text()):
                 msgBox.setText("Please enter Out Run variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtORun.text()] = reshape_1Dvector(np.concatenate((InFData[ui.txtFRun.currentText()],InSData[ui.txtSRun.currentText()]),1)[0])
@@ -633,21 +633,21 @@ class frmCombineData(Ui_frmCombineData):
         if ui.cbCounter.isChecked():
             if not len(ui.txtFCounter.currentText()):
                 msgBox.setText("Please enter First Counter variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtSCounter.currentText()):
                 msgBox.setText("Please enter Second Counter variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtOCounter.text()):
                 msgBox.setText("Please enter Out Counter variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtOCounter.text()] = reshape_1Dvector(np.concatenate((InFData[ui.txtFCounter.currentText()],InSData[ui.txtSCounter.currentText()]),1)[0])
@@ -659,23 +659,23 @@ class frmCombineData(Ui_frmCombineData):
         if ui.cbNScan.isChecked():
             if not len(ui.txtFScan.currentText()):
                 msgBox.setText("Please enter First NScan variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         if ui.cbNScan.isChecked():
             if not len(ui.txtSScan.currentText()):
                 msgBox.setText("Please enter Second NScan variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         if ui.cbNScan.isChecked():
             if not len(ui.txtOScan.text()):
                 msgBox.setText("Please enter Out NScan variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         try:
             OutData[ui.txtOScan.text()] = reshape_1Dvector(np.concatenate((InFData[ui.txtFScan.currentText()], InSData[ui.txtSScan.currentText()]), 1)[0])
@@ -687,21 +687,21 @@ class frmCombineData(Ui_frmCombineData):
         if ui.cbDM.isChecked():
             if not len(ui.txtFDM.currentText()):
                 msgBox.setText("Please enter First Design Matrix variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtSDM.currentText()):
                 msgBox.setText("Please enter Second Design Matrix variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtODM.text()):
                 msgBox.setText("Please enter Out Design Matrix variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 OutData[ui.txtODM.text()] = np.concatenate((InFData[ui.txtFDM.currentText()],InSData[ui.txtSDM.currentText()]))
@@ -713,12 +713,12 @@ class frmCombineData(Ui_frmCombineData):
         mainIO_save(OutData, ui.txtOutFile.text())
         print("DONE.")
         msgBox.setText("Datasets are combined.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmCombineData.show(frmCombineData)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -25,7 +25,7 @@ import sys
 
 import numpy as np
 import nibabel as nb
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn import preprocessing
 from sklearn.svm import LinearSVC
 from sklearn.metrics import accuracy_score
@@ -37,16 +37,7 @@ from GUI.frmAAVoxelSelection import *
 from MVPA.MultiThreadingVectorClassification import MultiThreadingVectorClassification
 from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 
-import logging
-
-
-logging.basicConfig(level=logging.DEBUG)
-from pyqode.core import api
-from pyqode.core import modes
-from pyqode.core import panels
-from pyqode.qt import QtWidgets as pyWidgets
-
-
+from Base.codeEditor import codeEditor
 
 def EventCode():
     return\
@@ -73,29 +64,17 @@ class frmAAVoxel(Ui_frmAAVoxel):
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
 
-
-        ui.txtEvents = api.CodeEdit(ui.tab_2)
-        ui.txtEvents.setGeometry(QtCore.QRect(10, 10, 641, 200))
-        ui.txtEvents.setObjectName("txtEvents")
-
-        ui.txtEvents.backend.start('backend/server.py')
-
-        ui.txtEvents.modes.append(modes.CodeCompletionMode())
-        ui.txtEvents.modes.append(modes.CaretLineHighlighterMode())
-        ui.txtEvents.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtEvents.document()))
-        ui.txtEvents.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        ui.txtEvents.setFont(font)
-        ui.txtEvents.setPlainText(EventCode(),"","")
-
-
+        # New Code Editor Library
+        cEditor = codeEditor(ui)
+        ui.txtEvents = cEditor.Obj
+        cEditor.setObjectName("txtEvents")
+        cEditor.setText(EventCode())
+        layout = QHBoxLayout(ui.Code)
+        layout.addWidget(cEditor.Obj)
 
         dialog.setWindowTitle("easy fMRI Voxel based analysis - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -232,9 +211,9 @@ class frmAAVoxel(Ui_frmAAVoxel):
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         ResData = dict()
         Coord   = None
@@ -245,16 +224,16 @@ class frmAAVoxel(Ui_frmAAVoxel):
             InFile = ui.txtInFile.text()
             if not len(InFile):
                 msgBox.setText(f"FOLD {fold}: Please enter input file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             InFile = InFile.replace("$FOLD$", str(fold))
             if not os.path.isfile(InFile):
                 msgBox.setText(f"FOLD {fold}: Input file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             # Load InData
             InData = None
@@ -265,9 +244,9 @@ class frmAAVoxel(Ui_frmAAVoxel):
             # Train data
             if not len(ui.txtData.currentText()):
                 msgBox.setText(f"FOLD {fold}: Please enter train data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 Xtr = InData[ui.txtData.currentText()]
@@ -277,16 +256,16 @@ class frmAAVoxel(Ui_frmAAVoxel):
             except:
                 print(f"FOLD {fold}: Cannot load train data")
                 msgBox.setText(f"FOLD {fold}: Cannot load train data!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             # Test data
             if not len(ui.txtTeData.currentText()):
                 msgBox.setText(f"FOLD {fold}: Please enter test data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 Xte = InData[ui.txtTeData.currentText()]
@@ -296,16 +275,16 @@ class frmAAVoxel(Ui_frmAAVoxel):
             except:
                 print(f"FOLD {fold}: Cannot load test data")
                 msgBox.setText(f"FOLD {fold}: Cannot load train data!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             # Train Label
             if not len(ui.txtLabel.currentText()):
                     msgBox.setText(f"FOLD {fold}: Please enter Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             try:
                 Ytr = InData[ui.txtLabel.currentText()][0]
@@ -315,9 +294,9 @@ class frmAAVoxel(Ui_frmAAVoxel):
             # Test Label
             if not len(ui.txtTeLabel.currentText()):
                     msgBox.setText(f"FOLD {fold}: Please enter test Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             try:
                 Yte = InData[ui.txtTeLabel.currentText()][0]
@@ -328,9 +307,9 @@ class frmAAVoxel(Ui_frmAAVoxel):
             if Coord is None:
                 if not len(ui.txtCol.currentText()):
                     msgBox.setText("Please enter Condition variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 try:
                     Coord = np.transpose(InData[ui.txtCol.currentText()])
@@ -351,9 +330,9 @@ class frmAAVoxel(Ui_frmAAVoxel):
                 except Exception as e:
                     print(f'Cannot generate model\n{e}')
                     msgBox.setText(f'Cannot generate model\n{e}')
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
                 if startIndex + stepIndex < CoordSize:
                     endIndex = startIndex + stepIndex
@@ -409,9 +388,9 @@ class frmAAVoxel(Ui_frmAAVoxel):
         #                                         ui.txtCol.currentText():Coord})
         print("DONE.")
         msgBox.setText("Wised voxel analysis is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 
@@ -419,4 +398,4 @@ class frmAAVoxel(Ui_frmAAVoxel):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmAAVoxel.show(frmAAVoxel)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -25,7 +25,7 @@ import sys
 from IO.easyX import easyX
 import numpy as np
 import scipy.io as io
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.utility import getVersion, getBuild
 from IO.EasyData import LoadEzData
 from Base.dialogs import LoadFile, SaveFile
@@ -49,8 +49,8 @@ class frmEzEzX(Ui_frmEzEzx):
         self.set_events(self)
 
         dialog.setWindowTitle("easy fMRI Convert Easy Data to easyX - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -87,22 +87,22 @@ class frmEzEzX(Ui_frmEzEzx):
         InFile = ui.txtInFile.text()
         if not len(InFile):
             msgBox.setText("Please enter easy data header file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         if not os.path.isfile(InFile):
             msgBox.setText("Easy data header file is not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter MatLab file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         print("Converting ...")
@@ -116,16 +116,16 @@ class frmEzEzX(Ui_frmEzEzx):
         except Exception as e:
             print(str(e))
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Information)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Information)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         print("DONE!")
         msgBox.setText("Data is converted")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 
@@ -133,4 +133,4 @@ class frmEzEzX(Ui_frmEzEzx):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmEzEzX.show(frmEzEzX)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

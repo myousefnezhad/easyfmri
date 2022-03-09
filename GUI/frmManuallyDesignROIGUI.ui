@@ -71,11 +71,7 @@
       </item>
       <item>
        <widget class="QWidget" name="Code" native="true">
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <widget class="QTextEdit" name="txtCode"/>
-         </item>
-        </layout>
+        <layout class="QGridLayout" name="gridLayout"/>
        </widget>
       </item>
      </layout>

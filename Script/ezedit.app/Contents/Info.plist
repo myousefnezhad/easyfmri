@@ -2,16 +2,39 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AMIsApplet</key>
+	<true/>
+	<key>AMStayOpen</key>
+	<false/>
+	<key>BuildMachineOSBuild</key>
+	<string>20A241128</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>*</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Automator workflow file</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>****</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
-	<string>applet</string>
+	<string>Automator Application Stub</string>
 	<key>CFBundleIconFile</key>
-	<string>applet</string>
+	<string>ApplicationStub</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.apple.ScriptEditor.id.ezedit</string>
+	<string>com.apple.automator.ezedit</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -19,56 +42,68 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.3</string>
 	<key>CFBundleSignature</key>
-	<string>aplt</string>
-	<key>LSMinimumSystemVersionByArchitecture</key>
-	<dict>
-		<key>x86_64</key>
-		<string>10.6</string>
-	</dict>
-	<key>LSRequiresCarbon</key>
+	<string>????</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>MacOSX</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array/>
+	<key>CFBundleVersion</key>
+	<string>512</string>
+	<key>DTCompiler</key>
+	<string>com.apple.compilers.llvm.clang.1_0</string>
+	<key>DTPlatformBuild</key>
+	<string>13A191</string>
+	<key>DTPlatformName</key>
+	<string>macosx</string>
+	<key>DTPlatformVersion</key>
+	<string>12.2</string>
+	<key>DTSDKBuild</key>
+	<string>21D34</string>
+	<key>DTSDKName</key>
+	<string>macosx12.2.internal</string>
+	<key>DTXcode</key>
+	<string>1300</string>
+	<key>DTXcodeBuild</key>
+	<string>13A191</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.9</string>
+	<key>LSUIElement</key>
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>This script needs to control other applications to run.</string>
+	<string>This workflow needs to control other applications to run.</string>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>This script needs access to your music to run.</string>
+	<string>This workflow needs access to your music to run.</string>
+	<key>NSAppleScriptEnabled</key>
+	<string>YES</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>This script needs access to your calendars to run.</string>
+	<string>This workflow needs access to your calendars to run.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>This script needs access to your camera to run.</string>
+	<string>This workflow needs access to your camera to run.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>This script needs access to your contacts to run.</string>
+	<string>This workflow needs access to your contacts to run.</string>
 	<key>NSHomeKitUsageDescription</key>
-	<string>This script needs access to your HomeKit Home to run.</string>
+	<string>This workflow needs access to your HomeKit Home to run.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>This script needs access to your microphone to run.</string>
+	<string>This workflow needs access to your microphone to run.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This script needs access to your photos to run.</string>
+	<string>This workflow needs access to your photos to run.</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
 	<key>NSRemindersUsageDescription</key>
-	<string>This script needs access to your reminders to run.</string>
+	<string>This workflow needs access to your reminders to run.</string>
+	<key>NSServices</key>
+	<array/>
 	<key>NSSiriUsageDescription</key>
-	<string>This script needs access to Siri to run.</string>
+	<string>This workflow needs access to Siri to run.</string>
 	<key>NSSystemAdministrationUsageDescription</key>
-	<string>This script needs access to administer this system to run.</string>
-	<key>WindowState</key>
-	<dict>
-		<key>bundleDividerCollapsed</key>
-		<false/>
-		<key>bundlePositionOfDivider</key>
-		<real>401</real>
-		<key>dividerCollapsed</key>
-		<false/>
-		<key>eventLogLevel</key>
-		<integer>2</integer>
-		<key>name</key>
-		<string>ScriptWindowState</string>
-		<key>positionOfDivider</key>
-		<real>388</real>
-		<key>savedFrame</key>
-		<string>146 306 700 672 0 0 1920 1057 </string>
-		<key>selectedTab</key>
-		<string>description</string>
-	</dict>
+	<string>This workflow needs access to administer this system in order to run.</string>
+	<key>UTExportedTypeDeclarations</key>
+	<array/>
+	<key>UTImportedTypeDeclarations</key>
+	<array/>
 </dict>
 </plist>

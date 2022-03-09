@@ -29,7 +29,7 @@ import matplotlib
 import numpy as np
 import nibabel as nb
 from nilearn import plotting
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn import preprocessing
 from GUI.frmMAClassicNetworkGUI import *
 from Base.dialogs import LoadFile, SaveFile
@@ -43,12 +43,7 @@ from Network.DistanceNetwork import ClassicNetworkAnalysis
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 
-# Code
-logging.basicConfig(level=logging.DEBUG)
-from pyqode.core import api
-from pyqode.core import modes
-from pyqode.core import panels
-from pyqode.qt import QtWidgets as pyWidgets
+from Base.codeEditor import codeEditor
 
 
 def MetricCode():
@@ -92,40 +87,25 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
 
-
         # Metric
-        ui.txtMetric = api.CodeEdit(ui.tab_5)
-        ui.txtMetric.setGeometry(QtCore.QRect(10, 10, 700, 350))
-        ui.txtMetric.setObjectName("txtMetric")
-        ui.txtMetric.backend.start('backend/server.py')
-        ui.txtMetric.modes.append(modes.CodeCompletionMode())
-        ui.txtMetric.modes.append(modes.CaretLineHighlighterMode())
-        ui.txtMetric.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtMetric.document()))
-        ui.txtMetric.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        ui.txtMetric.setFont(font)
-        ui.txtMetric.setPlainText(MetricCode(),"","")
+        cEditor2 = codeEditor(ui)
+        ui.txtMetric = cEditor2.Obj
+        cEditor2.setObjectName("txtMetric")
+        cEditor2.setText(MetricCode())
+        layout2 = QHBoxLayout(ui.Code2)
+        layout2.addWidget(cEditor2.Obj)
 
         # Integration
-        ui.txtIntegration = api.CodeEdit(ui.tab_3)
-        ui.txtIntegration.setGeometry(QtCore.QRect(10, 10, 700, 350))
-        ui.txtIntegration.setObjectName("txtIntegration")
-        ui.txtIntegration.backend.start('backend/server.py')
-        ui.txtIntegration.modes.append(modes.CodeCompletionMode())
-        ui.txtIntegration.modes.append(modes.CaretLineHighlighterMode())
-        ui.txtIntegration.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtIntegration.document()))
-        ui.txtIntegration.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        ui.txtIntegration.setFont(font)
-        ui.txtIntegration.setPlainText(IntegrationCode(),"","")
+        cEditor = codeEditor(ui)
+        ui.txtIntegration = cEditor.Obj
+        cEditor.setObjectName("txtIntegration")
+        cEditor.setText(IntegrationCode())
+        layout = QHBoxLayout(ui.Code)
+        layout.addWidget(cEditor.Obj)
 
         dialog.setWindowTitle("easy fMRI Classic Network Analysis - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -261,9 +241,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             assert Threshold >= 0
         except:
             msgBox.setText("Threshold is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             EdgeThreshold = np.float(ui.txtEdgeThre.text())
@@ -271,9 +251,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             assert EdgeThreshold >= 0
         except:
             msgBox.setText("Edge threshold is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -283,9 +263,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             Metric = allvars['metric']
         except Exception as e:
             msgBox.setText("Metric is wrong!\n" + str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             IntegrationCode  = ui.txtIntegration.toPlainText()
@@ -294,9 +274,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             Integration = allvars['integration']
         except Exception as e:
             msgBox.setText("Integration is wrong!\n" + str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         AtlasPath = ui.txtAtlasPath.text()
@@ -329,9 +309,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         OutData = dict()
@@ -340,15 +320,15 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
         AtlasFile = ui.txtAtlasFile.text()
         if not len(AtlasFile):
             msgBox.setText("Please enter atlas file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(AtlasFile):
             msgBox.setText("Atlas file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -362,24 +342,24 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             AtlasShape = np.shape(AtlasImg)
         except:
             msgBox.setText("Cannot load atlas file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # InFile
         InFile = ui.txtInFile.text()
         if not len(InFile):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -396,25 +376,25 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             assert imgShape[2] == AtlasShape[2]
         except:
             msgBox.setText("Input file (" + str(imgShape).replace("]", "").replace("[", "") + ") and Atlas file " + str(AtlasShape).replace(",", "") + " must have the same shape!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Input Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Label
         if not len(ui.txtLabel.currentText()):
                 msgBox.setText("Please enter Train Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Condition
@@ -430,9 +410,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
                 labels = np.array(labels)
         except:
             msgBox.setText("Condition value is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -452,9 +432,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
                 Coord = None
         except:
             msgBox.setText("Coordinate variable is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -501,9 +481,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             plt.show()
         print("DONE.")
         msgBox.setText("Network analysis is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 
@@ -517,9 +497,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             assert EdgeThreshold >= 0
         except:
             msgBox.setText("Edge threshold is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         ofile = LoadFile("Load result file ...", ['Result files (*.ezx *.mat)'], 'ezx',\
                          os.path.dirname(ui.txtOutFile.text()))
@@ -530,9 +510,9 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             except:
                 print("Cannot load result file!")
                 msgBox.setText("Cannot load result file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             Net = Out["Networks"]
             ThrNet = Out["ThresholdNetworks"]
@@ -553,4 +533,4 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmMAClassicNetwork.show(frmMAClassicNetwork)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

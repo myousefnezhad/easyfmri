@@ -109,9 +109,13 @@ class easyX:
             if is_load:
                 if verbose:
                     print('\x1b[0m' + f"LOAD::BINARY::{bk}", end='')
-                out[bk] = self._binary_to_obj(np.asarray(binaryData[bk]))
-                if verbose:
-                    print('\x1b[32m' + " ✓" + '\x1b[0m')
+                try:
+                    out[bk] = self._binary_to_obj(np.asarray(binaryData[bk]))
+                    if verbose:
+                        print('\x1b[32m' + " ✓" + '\x1b[0m')
+                except:
+                    if verbose:
+                        print('\x1b[31m' + " x" + '\x1b[0m')
         return out
 
     def load_keys(self, fname):

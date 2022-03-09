@@ -48,6 +48,8 @@ export EN_SCALE_WISH="1" # Run FSL with Scale Factor
 export EN_CLEAN_SCREEN="0"
 # Latex (set LaTex Path as well)
 export EN_LATEX="1"
+# Max Threads
+export NUMEXPR_MAX_THREADS=128
 ######################################
 # Proxy for terminal                 #
 ######################################

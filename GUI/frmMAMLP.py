@@ -23,7 +23,7 @@
 import os
 import sys
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmMAMLPGUI import *
 from sklearn import preprocessing
 from Base.dialogs import LoadFile, SaveFile
@@ -102,8 +102,8 @@ class frmMAMLP(Ui_frmMAMLP):
         ui.cbF1Avg.addItem("None", None)
 
         dialog.setWindowTitle("easy fMRI Multi-layer Perceptron Classifier - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -130,9 +130,9 @@ class frmMAMLP(Ui_frmMAMLP):
                             # Check Filter ID for training
                             if not len(ui.txtFilterTrID.currentText()):
                                 msgBox.setText("Please enter variable name for training filter!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return False
                             TrF = InData[ui.txtFilterTrID.currentText()][0]
                             fstr = ""
@@ -145,9 +145,9 @@ class frmMAMLP(Ui_frmMAMLP):
                         except:
                             print("Reference filter for training is wrong!")
                             msgBox.setText("Reference filter for training is wrong!")
-                            msgBox.setIcon(QMessageBox.Critical)
-                            msgBox.setStandardButtons(QMessageBox.Ok)
-                            msgBox.exec_()
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
                             return
 
                     # Ref Filter Test
@@ -156,9 +156,9 @@ class frmMAMLP(Ui_frmMAMLP):
                             # Check Filter ID for testing
                             if not len(ui.txtFilterTeID.currentText()):
                                 msgBox.setText("Please enter variable name for testing filter!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return False
                             TeF = InData[ui.txtFilterTeID.currentText()][0]
                             fstr = ""
@@ -171,9 +171,9 @@ class frmMAMLP(Ui_frmMAMLP):
                         except:
                             print("Reference filter for testing is wrong!")
                             msgBox.setText("Reference filter for testing is wrong!")
-                            msgBox.setIcon(QMessageBox.Critical)
-                            msgBox.setStandardButtons(QMessageBox.Ok)
-                            msgBox.exec_()
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
                             return
                 except Exception as e:
                     print(e)
@@ -325,32 +325,32 @@ class frmMAMLP(Ui_frmMAMLP):
             LearningRateInit = np.double(ui.txtLearningRate.text())
         except:
             msgBox.setText("Learning Rate (init) is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
             HiddenLayer = ui.txtHiddenLayers.text()
             if not len(HiddenLayer):
                 msgBox.setText("Hidden Layer is wrong!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             HiddenLayer = tuple(np.int32(HiddenLayer.replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()))
             if not len(HiddenLayer):
                 msgBox.setText("Hidden Layer is wrong!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
         except:
             msgBox.setText("Hidden Layer is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Powert
@@ -358,9 +358,9 @@ class frmMAMLP(Ui_frmMAMLP):
             Powert = np.double(ui.txtPowert.text())
         except:
             msgBox.setText("Power_t is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Batch Size
@@ -370,9 +370,9 @@ class frmMAMLP(Ui_frmMAMLP):
                 BatchSize = "auto"
         except:
             msgBox.setText("Batch Size is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Alpha
@@ -380,9 +380,9 @@ class frmMAMLP(Ui_frmMAMLP):
             Alpha = np.float(ui.txtAlpha.text())
         except:
             msgBox.setText("Alpha is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Tol
@@ -390,9 +390,9 @@ class frmMAMLP(Ui_frmMAMLP):
             Tol = np.float(ui.txtTol.text())
         except:
             msgBox.setText("Tolerance is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # MaxIte
@@ -400,16 +400,16 @@ class frmMAMLP(Ui_frmMAMLP):
             MaxIter = np.int32(ui.txtMaxIter.text())
         except:
             msgBox.setText("Maximum number of iterations is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if MaxIter <= 0:
             msgBox.setText("Maximum number of iterations is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Momentum
@@ -417,9 +417,9 @@ class frmMAMLP(Ui_frmMAMLP):
             Momentum = np.float(ui.txtMomentum.text())
         except:
             msgBox.setText("Momentum is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # ValidationFraction
@@ -427,9 +427,9 @@ class frmMAMLP(Ui_frmMAMLP):
             ValidationFraction = np.float(ui.txtValidationFraction.text())
         except:
             msgBox.setText("Validation Fraction is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Beta1
@@ -437,9 +437,9 @@ class frmMAMLP(Ui_frmMAMLP):
             Beta1 = np.float(ui.txtBeta1.text())
         except:
             msgBox.setText("Beta 1 is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Beta2
@@ -447,9 +447,9 @@ class frmMAMLP(Ui_frmMAMLP):
             Beta2 = np.float(ui.txtBeta2.text())
         except:
             msgBox.setText("Beta 2 is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Epsilon
@@ -457,9 +457,9 @@ class frmMAMLP(Ui_frmMAMLP):
             Epsilon = np.float(ui.txtEpsilon.text())
         except:
             msgBox.setText("Epsilon is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Filter
@@ -473,18 +473,18 @@ class frmMAMLP(Ui_frmMAMLP):
         except:
             print("Class filter is wrong!")
             msgBox.setText("Class filter is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         Fold  = list()
@@ -519,44 +519,44 @@ class frmMAMLP(Ui_frmMAMLP):
             InFileList.append(InFile)
             if not len(InFile):
                 msgBox.setText("Please enter input file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not os.path.isfile(InFile):
                 msgBox.setText("Input file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             InData = mainIO_load(InFile)
             # Data
             if not len(ui.txtITrData.currentText()):
                 msgBox.setText("Please enter Input Train Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtITeData.currentText()):
                 msgBox.setText("Please enter Input Test Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             # Label
             if not len(ui.txtITrLabel.currentText()):
                     msgBox.setText("Please enter Train Input Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             if not len(ui.txtITeLabel.currentText()):
                     msgBox.setText("Please enter Test Input Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
             TrX = InData[ui.txtITrData.currentText()]
@@ -573,9 +573,9 @@ class frmMAMLP(Ui_frmMAMLP):
                     if not len(TrFilterContent):
                         print("Reference filter for training is wrong!")
                         msgBox.setText("Reference filter for training is wrong!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
                     else:
                         TrFilterContent = TrFilterContent.replace("\'", " ").replace(",", " ").replace("[", "").replace(
@@ -584,26 +584,26 @@ class frmMAMLP(Ui_frmMAMLP):
                     # Check Filter ID for training
                     if not len(ui.txtFilterTrID.currentText()):
                         msgBox.setText("Please enter variable name for training filter!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return False
                     TrF = InData[ui.txtFilterTrID.currentText()][0]
 
                     if np.shape(TrX)[0] != np.shape(TrF)[0] or np.shape(TrL)[0] != np.shape(TrF)[0]:
                         print("Shape of reference for training must be the same as data and label")
                         msgBox.setText("Shape of reference for training must be the same as data and label")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
 
                 except:
                     print("Reference filter for training is wrong!")
                     msgBox.setText("Reference filter for training is wrong!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
                 # Remove training set
                 try:
@@ -618,9 +618,9 @@ class frmMAMLP(Ui_frmMAMLP):
                     print("Cannot filter the training set based on Reference")
                     print(str(e))
                     msgBox.setText("Cannot filter the training set based on Reference")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
             # Ref Filter Test
@@ -632,9 +632,9 @@ class frmMAMLP(Ui_frmMAMLP):
                     if not len(TeFilterContent):
                         print("Reference filter for testing is wrong!")
                         msgBox.setText("Reference filter for testing is wrong!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
                     else:
                         TeFilterContent = TeFilterContent.replace("\'", " ").replace(",", " ").replace("[", "").replace("]", "").split()
@@ -642,26 +642,26 @@ class frmMAMLP(Ui_frmMAMLP):
                     # Check Filter ID for testing
                     if not len(ui.txtFilterTeID.currentText()):
                         msgBox.setText("Please enter variable name for testing filter!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return False
                     TeF = InData[ui.txtFilterTeID.currentText()][0]
 
                     if np.shape(TeX)[0] != np.shape(TeF)[0] or np.shape(TeL)[0] != np.shape(TeF)[0]:
                         print("Shape of reference for testing must be the same as data and label")
                         msgBox.setText("Shape of reference for testing must be the same as data and label")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
 
                 except:
                     print("Reference filter for testing is wrong!")
                     msgBox.setText("Reference filter for testing is wrong!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
                 # Remove testing set
                 try:
@@ -676,9 +676,9 @@ class frmMAMLP(Ui_frmMAMLP):
                     print("Cannot filter the testing set based on Reference")
                     print(str(e))
                     msgBox.setText("Cannot filter the testing set based on Reference")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
             try:
@@ -705,9 +705,9 @@ class frmMAMLP(Ui_frmMAMLP):
             # FoldID
             if not len(ui.txtFoldID.currentText()):
                 msgBox.setText("Please enter FoldID variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 currFID = InData[ui.txtFoldID.currentText()][0][0]
@@ -733,16 +733,16 @@ class frmMAMLP(Ui_frmMAMLP):
                 print("FoldID = " + str(currFID) + " is testing ...")
                 PeL = clf.predict(TeX)
                 PrL = clf.predict(TrX)
-                OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, np.unique(TeL))
+                OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, labels=np.unique(TeL))
                 OutData["fold" + str(currFID) + "_classification_report"] = classification_report(TeL, PeL)
                 print(OutData["fold" + str(currFID) + "_classification_report"])
 
             except Exception as e:
                 print(str(e))
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             if ui.cbAverage.isChecked():
@@ -853,12 +853,12 @@ class frmMAMLP(Ui_frmMAMLP):
         mainIO_save(OutData, OutFile)
         print("DONE.")
         msgBox.setText("Multi-layer Perceptron Classifier is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmMAMLP.show(frmMAMLP)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

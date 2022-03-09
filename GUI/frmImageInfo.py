@@ -24,7 +24,7 @@ import os
 import sys
 import nibabel as nb
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from Base.utility import getVersion, getBuild
 from Base.dialogs import LoadFile
 from GUI.frmImageInfoGUI import *
@@ -46,8 +46,8 @@ class frmImageInfo(Ui_frmImageInfo):
 
 
         dialog.setWindowTitle("easy fMRI Image Information - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -93,4 +93,4 @@ class frmImageInfo(Ui_frmImageInfo):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmImageInfo.show(frmImageInfo)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

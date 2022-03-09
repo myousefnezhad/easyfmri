@@ -189,12 +189,12 @@
        <rect>
         <x>11</x>
         <y>69</y>
-        <width>81</width>
+        <width>101</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>Task Name:</string>
+       <string>Task Name(s):</string>
       </property>
      </widget>
      <widget class="QPushButton" name="btnDIR">
@@ -270,11 +270,14 @@
      <widget class="QComboBox" name="txtTask">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>120</x>
         <y>67</y>
-        <width>421</width>
+        <width>401</width>
         <height>26</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;Task Names: a unique array of integers, i.e., [task1, task2, ...]&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;, is the separator&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="editable">
        <bool>true</bool>
@@ -380,10 +383,10 @@
        </rect>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunRange: sequence of ranges, i.e. If all 12 subjects have runs from 2 to 5 then Range=[12*2-5]; If 3 subjects have runs from 1 to 4 and 2 subjects have runs from 5 to 7 then Range=[3*1-4, 2*5-7]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;RunRange is a 3D tensor --- defining as {ax[b*c-d];...}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;a is the number of subjects that [b*c-d] will be applied to them&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;b denotes the number of counters in &amp;quot;a&amp;quot; subjects with c-d runs&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;c-d is an interval of runs for the corresponding counters and subjects&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;; is the separator for subjects&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;, is the separator for counters&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;A single 1 coefficient can be interpreted as all subjects/counters as well&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;Example 1: If we have 12 subjects with 3 counters, each has runs from 5 to 10: {12x[3*5-10]}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;Example 2: If we have 6 subjects with 3 counters + 5 subjects with 2 counters, each has runs from 1 to 6: {6x[3*1-6];5x[2*1-6]}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; color:#0000ff;&quot;&gt;Example 3: If we have 2 subjects with 6 counters, where the first 3 counters have 1-8 runs and the second 2 counters have 4-9 runs, and the last counter only has run 7: {2x[3*1-8, 2*4-9, 7]}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="text">
-       <string>[1*1-1]</string>
+       <string>{1x[1*1-1]}</string>
       </property>
      </widget>
     </widget>
@@ -471,9 +474,7 @@
        </property>
        <property name="font">
         <font>
-         <family>Arial</family>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -553,9 +554,7 @@ It's case sensitive.</string>
        </property>
        <property name="font">
         <font>
-         <family>Arial</family>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -664,9 +663,7 @@ It's case sensitive.</string>
        </property>
        <property name="font">
         <font>
-         <family>Arial</family>
          <pointsize>11</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -835,9 +832,7 @@ It's case sensitive.</string>
      </property>
      <property name="font">
       <font>
-       <family>Arial</family>
        <pointsize>11</pointsize>
-       <weight>50</weight>
        <bold>false</bold>
       </font>
      </property>
@@ -1232,14 +1227,20 @@ the preprocessing parameters. It's case sensitive.</string>
       <string>Extract Events</string>
      </property>
     </widget>
-    <widget class="QTextEdit" name="txtEvents">
+    <widget class="QWidget" name="Code" native="true">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>641</width>
+       <width>651</width>
        <height>451</height>
       </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
     </widget>
    </widget>
@@ -1506,11 +1507,11 @@ the preprocessing parameters. It's case sensitive.</string>
       </property>
       <property name="html">
        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:13pt;&quot;&gt;filtered_func_data.nii.gz&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:13pt;&quot;&gt;mask.nii.gz&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text';&quot;&gt;filtered_func_data.nii.gz&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text';&quot;&gt;mask.nii.gz&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_17">
@@ -1518,12 +1519,33 @@ p, li { white-space: pre-wrap; }
        <rect>
         <x>20</x>
         <y>116</y>
-        <width>591</width>
+        <width>391</width>
         <height>20</height>
        </rect>
       </property>
       <property name="text">
        <string>Verify following files in output folders (each file per line)</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="cbDelSmoke">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>60</y>
+        <width>181</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Delete Smoke Test</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -1772,6 +1794,102 @@ p, li { white-space: pre-wrap; }
       </rect>
      </property>
     </widget>
+    <widget class="QLineEdit" name="txtfslcmd">
+     <property name="geometry">
+      <rect>
+       <x>139</x>
+       <y>280</y>
+       <width>510</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string>/bin/fsl</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_45">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>280</y>
+       <width>121</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>fsl cmd:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnfsleyescmd">
+     <property name="geometry">
+      <rect>
+       <x>337</x>
+       <y>460</y>
+       <width>311</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>FSL Eyes</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txtfsleyescmd">
+     <property name="geometry">
+      <rect>
+       <x>139</x>
+       <y>330</y>
+       <width>510</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="toolTipDuration">
+      <number>-1</number>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string>/bin/fsleyes</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_46">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>330</y>
+       <width>121</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>fsleyes cmd:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnfslcmd">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>460</y>
+       <width>311</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>FSL</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_7">
     <attribute name="title">
@@ -2000,7 +2118,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>btnTest</tabstop>
   <tabstop>btnClose</tabstop>
   <tabstop>txtSetting</tabstop>
-  <tabstop>txtEvents</tabstop>
   <tabstop>txtAnalysis</tabstop>
   <tabstop>txtScript</tabstop>
   <tabstop>txtConPer</tabstop>

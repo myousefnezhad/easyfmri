@@ -23,7 +23,7 @@
 import os
 import sys
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn import preprocessing
 from GUI.frmMASpectralGUI import *
 from sklearn.metrics import accuracy_score
@@ -71,8 +71,8 @@ class frmMASpectral(Ui_frmMASpectral):
 
 
         dialog.setWindowTitle("easy fMRI Spectral Clustering - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -162,9 +162,9 @@ class frmMASpectral(Ui_frmMASpectral):
             NCluster = np.int32(ui.txtNCluster.text())
         except:
             msgBox.setText("Number of Cluster is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # NInit
@@ -172,9 +172,9 @@ class frmMASpectral(Ui_frmMASpectral):
             NInit = np.int32(ui.txtNInit.text())
         except:
             msgBox.setText("Number of init is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # NJobs
@@ -182,9 +182,9 @@ class frmMASpectral(Ui_frmMASpectral):
             NJobs = np.int(ui.txtNJobs.text())
         except:
             msgBox.setText("Number of Jobs is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Degree
@@ -192,9 +192,9 @@ class frmMASpectral(Ui_frmMASpectral):
             Degree = np.float(ui.txtDegree.text())
         except:
             msgBox.setText("Degree is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Tol
@@ -202,9 +202,9 @@ class frmMASpectral(Ui_frmMASpectral):
             Tol = np.float(ui.txtTole.text())
         except:
             msgBox.setText("Eigen Tolerance is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # NNeighbors
@@ -212,9 +212,9 @@ class frmMASpectral(Ui_frmMASpectral):
             NNeighbors = np.int32(ui.txtNNeighbors.text())
         except:
             msgBox.setText("Number of Neighbors is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Gamma
@@ -222,9 +222,9 @@ class frmMASpectral(Ui_frmMASpectral):
             Gamma = np.float(ui.txtGamma.text())
         except:
             msgBox.setText("Gamma is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Coef0
@@ -232,9 +232,9 @@ class frmMASpectral(Ui_frmMASpectral):
             Coef0 = np.float(ui.txtCoef0.text())
         except:
             msgBox.setText("Coef0 is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Filter
@@ -253,9 +253,9 @@ class frmMASpectral(Ui_frmMASpectral):
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -271,32 +271,32 @@ class frmMASpectral(Ui_frmMASpectral):
         InFile = ui.txtInFile.text()
         if not len(InFile):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         InData = mainIO_load(InFile)
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Input Train Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Label
         if not len(ui.txtLabel.currentText()):
                 msgBox.setText("Please enter Train Input Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         X = InData[ui.txtData.currentText()]
@@ -326,9 +326,9 @@ class frmMASpectral(Ui_frmMASpectral):
             PeL = cls.fit_predict(X)
         except Exception as e:
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         OutData["predict"] = PeL
@@ -362,12 +362,12 @@ class frmMASpectral(Ui_frmMASpectral):
         mainIO_save(OutData, OutFile)
         print("DONE.")
         msgBox.setText("Spectral Clustering is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmMASpectral.show(frmMASpectral)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

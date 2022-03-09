@@ -23,7 +23,7 @@
 import os
 import sys
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn import preprocessing
 from GUI.frmMAGaussianGUI import *
 from sklearn.metrics import accuracy_score
@@ -65,16 +65,16 @@ class frmMAGaussian(Ui_frmMAGaussian):
         ui.cbIParams.addItem("KMeans", "kmeans")
         ui.cbIParams.addItem("Random","random")
 
-        # Precisions
-        ui.cbPrecisions.addItem("spherical")
-        ui.cbPrecisions.addItem("tied")
-        ui.cbPrecisions.addItem("diag")
-        ui.cbPrecisions.addItem("full")
+        # # Precisions
+        # ui.cbPrecisions.addItem("spherical")
+        # ui.cbPrecisions.addItem("tied")
+        # ui.cbPrecisions.addItem("diag")
+        # ui.cbPrecisions.addItem("full")
 
 
         dialog.setWindowTitle("easy fMRI Gaussian Mixture Clustering - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -164,9 +164,9 @@ class frmMAGaussian(Ui_frmMAGaussian):
             NComponent = np.int32(ui.txtNComponent.text())
         except:
             msgBox.setText("Number of Component is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # NInit
@@ -174,9 +174,9 @@ class frmMAGaussian(Ui_frmMAGaussian):
             NInit = np.int32(ui.txtNInit.text())
         except:
             msgBox.setText("Number of init is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Tol
@@ -184,9 +184,9 @@ class frmMAGaussian(Ui_frmMAGaussian):
             Tol = np.float(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -195,9 +195,9 @@ class frmMAGaussian(Ui_frmMAGaussian):
             MaxIter = np.int32(ui.txtMaxIter.text())
         except:
             msgBox.setText("Max Iteration is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Regularization
@@ -205,9 +205,9 @@ class frmMAGaussian(Ui_frmMAGaussian):
             Regularization = np.float(ui.txtRegularization.text())
         except:
             msgBox.setText("Regularization is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Verbose
@@ -215,9 +215,9 @@ class frmMAGaussian(Ui_frmMAGaussian):
             Verbose = np.int(ui.txtVerbose.text())
         except:
             msgBox.setText("Verbose is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # IVerbose
@@ -225,9 +225,9 @@ class frmMAGaussian(Ui_frmMAGaussian):
             IVerbose = np.int(ui.txtIVerbose.text())
         except:
             msgBox.setText("Verbose Interval is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -247,9 +247,9 @@ class frmMAGaussian(Ui_frmMAGaussian):
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -265,32 +265,32 @@ class frmMAGaussian(Ui_frmMAGaussian):
         InFile = ui.txtInFile.text()
         if not len(InFile):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isfile(InFile):
             msgBox.setText("Input file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         InData = mainIO_load(InFile)
         # Data
         if not len(ui.txtData.currentText()):
             msgBox.setText("Please enter Input Train Data variable name!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # Label
         if not len(ui.txtLabel.currentText()):
                 msgBox.setText("Please enter Train Input Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         X = InData[ui.txtData.currentText()]
@@ -323,9 +323,9 @@ class frmMAGaussian(Ui_frmMAGaussian):
             print(e)
             msgBox = QMessageBox()
             msgBox.setText(str(e))
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
 
@@ -360,12 +360,12 @@ class frmMAGaussian(Ui_frmMAGaussian):
         mainIO_save(OutData, OutFile)
         print("DONE.")
         msgBox.setText("Gaussian Mixture Clustering is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmMAGaussian.show(frmMAGaussian)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

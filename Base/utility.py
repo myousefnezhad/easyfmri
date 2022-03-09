@@ -19,14 +19,12 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 #
-
-from PyQt5.QtWidgets import QMessageBox, QSizePolicy, QTextEdit
-
-import numpy as np
 import os
-from dir import getDIR
-
+import platform
 import threading
+import numpy as np
+from dir import getDIR
+from PyQt6.QtWidgets import QMessageBox, QSizePolicy, QTextEdit
 
 def About():
     return """
@@ -63,7 +61,7 @@ class MyMessageBox(QMessageBox):
         self.setMaximumHeight(16777215)
         self.setMinimumWidth(550)
         self.setMaximumWidth(16777215)
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         textEdit = self.findChild(QTextEdit)
         if textEdit != None :
@@ -110,9 +108,17 @@ def OpenReport(addr):
 def getVersion():
     return "1.8"
 
+def getHostname():
+    try:
+        return os.uname()[1]
+    except:
+        return "localhost"
 
-def getBuild():
-    return "8888"
+def getBuild(hostname=True):
+    built = "9000"
+    if hostname:
+        return f"{built} on {getHostname()}::{platform.machine()}"
+    return built
 
 def getSettingVersion():
     return "2.0"
@@ -232,14 +238,20 @@ def fitLine(interval):
         errors.append(err)
     return coeffs[np.argmin(errors)]
 
-def strRange(data,Unique=False):
+
+# New version of this fuction is moved to Preprocess.BIDS
+# Please use the new one
+def strRange(data, Unique=False):
     if not len(data):
         return None
     result = list()
     try:
         strData = data.replace("\'", " ").replace(",", " ").replace("[", "").replace("]","").split()
         for D in strData:
-            reformD = D.replace("-"," ").split()
+            if CheckDash:
+                reformD = D.replace("-"," ").split()
+            else:
+                reformD = D.split()
             if len(reformD) == 1:
                 result.append(np.int(reformD[0]))
             elif len(reformD) == 2:
@@ -268,7 +280,8 @@ def strRange(data,Unique=False):
             return None
     return result
 
-
+# New version of this fuction is moved to Preprocess.BIDS
+# Please use the new one
 def strMultiRange(data,Len=None):
     if not len(data):
         return None
@@ -324,6 +337,8 @@ def strMultiRange(data,Len=None):
             print("Size of Range is wrong!")
             return None
     return result
+
+
 
 def encoding(Codes):
     Encode = None

@@ -24,14 +24,14 @@ import os
 import platform
 import sys
 
-import PyQt5.QtWidgets as QtWidgets
+import PyQt6.QtWidgets as QtWidgets
 import matplotlib
 import nibabel as nb
 import numpy as np
 from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
 import scipy.io as io
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QMessageBox
 from sklearn.preprocessing import label_binarize
 import threading
 
@@ -53,8 +53,8 @@ from GUI.frmFELabelAlign import frmFELabelAlign
 from GUI.frmTAIntersec import frmTAIntersec
 from GUI.frmFASHA import frmFASHA
 
-from Base.utility import fixstr, getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
-from Base.utility import strRange, strMultiRange, getSettingVersion
+from Base.utility import getDirSpaceINI, getDirSpace, setParameters3, convertDesignMatrix, fitLine
+from Base.utility import getSettingVersion
 from Base.Setting import Setting
 from Base.SettingHistory import History
 from Base.Conditions import Conditions
@@ -62,6 +62,7 @@ from Base.dialogs import LoadFile, SaveFile, SelectDir
 from Base.fsl import FSL
 from Base.tools import Tools
 
+from Preprocess.BIDS import BIDS, strTaskList
 
 class RegistrationThread(threading.Thread):
     def __init__(self, flirt=None, arg=None, InTitle=None, files=list()):
@@ -199,9 +200,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         except:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find MNI files!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
 
 
         fsl = FSL()
@@ -209,9 +210,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         if not fsl.Validate:
             msgBox = QMessageBox()
             msgBox.setText("Cannot find FSL setting!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
         else:
             ui.txtFSLDIR.setText(fsl.FSLDIR)
             ui.txtFlirt.setText(fsl.flirt)
@@ -242,9 +243,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         # Temporal Alignment
+        ui.cbTA.addItem("Temporal Alignment with intersection strategy", 20001)
         ui.cbTA.addItem("Shape Alignment (Report)", 10001)
         ui.cbTA.addItem("Label Alignment (Report)", 10002)
-        ui.cbTA.addItem("Temporal Alignment with intersection strategy", 20001)
 
         # Functional Alignment
         ui.cbFA.addItem("GPU Hyperalignment (GPUHA)", 10008)
@@ -266,8 +267,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         dialog.setWindowTitle("easy fMRI feature analysis - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -373,9 +374,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             if not os.path.isfile(filename):
                 msgBox = QMessageBox()
                 msgBox.setText("Setting file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             setting = Setting()
@@ -385,9 +386,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 print("WARNING: You are using different version of Easy fMRI!!!")
                 msgBox = QMessageBox()
                 msgBox.setText("This version of setting is not supported!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             if not setting.empty:
@@ -420,9 +421,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             if not os.path.isfile(filename):
                 msgBox = QMessageBox()
                 msgBox.setText("Setting file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             setting = Setting()
@@ -432,9 +433,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 print("WARNING: You are using different version of Easy fMRI!!!")
                 msgBox = QMessageBox()
                 msgBox.setText("This version of setting is not supported!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             if not setting.empty:
@@ -467,9 +468,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     print("WARNING: You are using different version of Easy fMRI!!!")
                     msgBox = QMessageBox()
                     msgBox.setText("This version of setting is not supported!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
                 if not setting.empty:
@@ -505,9 +506,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     print("WARNING: You are using different version of Easy fMRI!!!")
                     msgBox = QMessageBox()
                     msgBox.setText("This version of setting is not supported!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
                 if not setting.empty:
@@ -527,7 +528,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                     ui.txtDIEventDIR.setText(setting.EventFolder)
                     ui.txtDIInFile.setCurrentText(setting.Analysis + ".feat/filtered_func_data.nii.gz")
                     ui.txtDIDM.setCurrentText(setting.Analysis + ".feat/design.mat")
-
+                    ui.txtDITR.setText(str(setting.TR))
+                    ui.txtDIOnset.setText(setting.Onset)
 
 
         else:
@@ -561,222 +563,112 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         if (os.path.isfile(FSLDIR + ui.txtFlirt.text()) == False):
             msgBox.setText("Cannot find feat cmd!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         mainDIR = ui.txtSSDIR.text()
-        Task = ui.txtSSTask.text()
-        # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isdir(mainDIR):
             msgBox.setText("Main directory doesn't exist")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Main directory is okay.")
-        if not len(Task):
-            msgBox.setText("There is no task title")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-
-        try:
-            SubRange = strRange(ui.txtSSSubRange.text(),Unique=True)
-            if SubRange is None:
-                raise Exception
-            SubSize = len(SubRange)
-        except:
-            msgBox.setText("Subject Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Range of subjects is okay!")
-        try:
-            SubLen = np.int32(ui.txtSSSubLen.text())
-            1 / SubLen
-        except:
-            msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of subjects is okay!")
-
-
-        try:
-            ConRange = strMultiRange(ui.txtSSConRange.text(),SubSize)
-            if ConRange is None:
-                raise Exception
-            if not (len(ConRange) == SubSize):
-                msgBox.setText("Counter Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Counter Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter Range is okay!")
-        try:
-            ConLen = np.int32(ui.txtSSConLen.text())
-            1 / ConLen
-        except:
-            msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of Counter is okay!")
-
-
-        try:
-            RunRange = strMultiRange(ui.txtSSRunRange.text(),SubSize)
-            if RunRange is None:
-                raise Exception
-            if not (len(RunRange) == SubSize):
-                msgBox.setText("Run Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Run Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Run Range is okay!")
-        try:
-            RunLen = np.int32(ui.txtSSRunLen.value())
-            1 / RunLen
-        except:
-            msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of runs is valid")
-
 
         Mat = ui.txtSSMatFile.text()
         if not len(Mat):
             msgBox.setText("Please enter transformation matrix!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         Space = ui.txtSSSpace.currentText()
         if not len(Space):
             msgBox.setText("Please enter standard space!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         In = ui.txtSSInFile.currentText()
         if not len(In):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         Out = ui.txtSSOutFile.currentText()
         if not len(Out):
             msgBox.setText("Please enter output file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         Flirt = ui.txtFSLDIR.text() + ui.txtFlirt.text()
         if not os.path.isfile(Flirt):
             msgBox = QMessageBox()
             msgBox.setText("Cannot find flirt cmd!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
+        bids = BIDS(ui.txtSSTask.text(), ui.txtSSSubRange.text(), ui.txtSSSubLen.text(), ui.txtSSSubPer.text(),
+                                        ui.txtSSConRange.text(), ui.txtSSConLen.text(), ui.txtSSConPer.text(),
+                                        ui.txtSSRunRange.text(), ui.txtSSRunLen.text(), ui.txtSSRunPer.text())
+
         print("Checking files ...")
-        for si, s in enumerate(SubRange):
-            for cnt in ConRange[si]:
-                print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                for r in RunRange[si]:
-                    MatFile = setParameters3(Mat, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                             fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                             fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-                    if os.path.isfile(MatFile):
-                        print(MatFile + " - is OKAY.")
-                    else:
-                        print(MatFile + " - not found!")
-                        return
+        for (_, t, _, s, _, c, runs) in bids:
+            print(f"Analyzing Subject {s}, Counter {c} ...")
+            for r in runs:
+                MatFile = setParameters3(Mat, mainDIR, s, r, t, c)
+                if os.path.isfile(MatFile):
+                    print(MatFile + " - is OKAY.")
+                else:
+                    print(MatFile + " - not found!")
+                    return
 
-                    SpaceFile = setParameters3(Space, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                               fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                               fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-                    if os.path.isfile(SpaceFile):
-                        print(SpaceFile + " - is OKAY.")
-                    else:
-                        print(SpaceFile + " - not found!")
-                        return
+                SpaceFile = setParameters3(Space, mainDIR, s, r, t, c)
+                if os.path.isfile(SpaceFile):
+                    print(SpaceFile + " - is OKAY.")
+                else:
+                    print(SpaceFile + " - not found!")
+                    return
 
-                    InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-                    if os.path.isfile(InFile):
-                        print(InFile + " - is OKAY.")
-                    else:
-                        print(InFile + " - not found!")
-                        return
+                InFile = setParameters3(In, mainDIR, s, r, t, c)
+                if os.path.isfile(InFile):
+                    print(InFile + " - is OKAY.")
+                else:
+                    print(InFile + " - not found!")
+                    return
 
         Jobs = list()
         print("Registration ...")
-        for si, s in enumerate(SubRange):
-            for cnt in ConRange[si]:
-                print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                for r in RunRange[si]:
-                    MatFile = setParameters3(Mat, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                             fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                             fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-
-                    SpaceFile = setParameters3(Space, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                               fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                               fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-
-                    InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-                    InTitle = setParameters3(In, "", fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-
-                    OutFile = setParameters3(Out, mainDIR, fixstr(s, SubLen, ui.txtSSSubPer.text()), \
-                                             fixstr(r, RunLen, ui.txtSSRunPer.text()), ui.txtSSTask.text(), \
-                                             fixstr(cnt, ConLen, ui.txtSSConPer.text()))
-
-
+        for (_, t, _, s, _, c, runs) in bids:
+                print(f"Analyzing Subject {s}, Counter {c} ...")
+                for r in runs:
+                    MatFile = setParameters3(Mat, mainDIR, s, r, t, c)
+                    SpaceFile = setParameters3(Space, mainDIR, s, r, t, c)
+                    InFile = setParameters3(In, mainDIR, s, r, t, c)
+                    InTitle = setParameters3(In, "", s, r, t, c)
+                    OutFile = setParameters3(Out, mainDIR, s, r, t, c)
                     files  = [OutFile]
                     arg    = " -in " + InFile + " -applyxfm -init " + MatFile + " -out " + OutFile + \
                                 " -paddingsize 0.0 -interp " + ui.cbSSInter.currentData() + " -ref " + SpaceFile
                     thread = RegistrationThread(flirt=Flirt, arg=arg, files=files, InTitle=InTitle)
                     Jobs.append(["Registration", InTitle, thread])
                     print("Job: Registration for " + InTitle + " - is created.")
-
         if not len(Jobs):
             print("TASK FAILED!")
         else:
@@ -808,7 +700,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
     def btnDIOutFile_click(self):
         msgBox = QMessageBox()
         ofile = SaveFile("Save data file ...", ['easyX files (*.ezx)', 'MatLab files (*.mat)'],'ezx',\
-                             os.path.dirname(ui.txtDIOutFile.text()))
+                            os.path.dirname(ui.txtDIOutFile.text()))
         if len(ofile):
             if ui.rbDImatType.isChecked():
                 if ofile[-3:] != "mat":
@@ -846,7 +738,6 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         global ui
         msgBox = QMessageBox()
         mainDIR = ui.txtDIDIR.text()
-        Task = ui.txtDITask.text()
 
         outType = 3
         if ui.rbDIezxType.isChecked():
@@ -856,21 +747,21 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
         do_compress = False
         if outType > 1:
-            reply = QMessageBox.question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.Yes, QMessageBox.No)
-            do_compress = True if reply == QMessageBox.Yes else False
+            reply = QMessageBox.Icon.Question(None, 'Data Compress', "Do you like to compress data?", QMessageBox.StandardButton.Yes, QMessageBox.StandardButton.No)
+            do_compress = True if reply == QMessageBox.StandardButton.Yes else False
 
         if not(ui.txtDISetting.currentText()):
             msgBox.setText("In order to save setting, you must load setting file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if not os.path.isfile(ui.txtDISetting.currentText()):
             msgBox.setText("Setting file not found!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         setting = Setting()
@@ -878,116 +769,33 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             setting.Load(ui.txtDISetting.currentText())
             if setting.empty:
                 msgBox.setText("Cannot load setting file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isdir(mainDIR):
             msgBox.setText("Main directory doesn't exist")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Main directory is okay.")
-        if not len(Task):
-            msgBox.setText("There is no task title")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        try:
-            SubRange = strRange(ui.txtDISubRange.text(),Unique=True)
-            if SubRange is None:
-                raise Exception
-            SubSize = len(SubRange)
-        except:
-            msgBox.setText("Subject Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Range of subjects is okay!")
-        try:
-            SubLen = np.int32(ui.txtDISubLen.text())
-            1 / SubLen
-        except:
-            msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of subjects is okay!")
-        try:
-            ConRange = strMultiRange(ui.txtDIConRange.text(),SubSize)
-            if ConRange is None:
-                raise Exception
-            if not (len(ConRange) == SubSize):
-                msgBox.setText("Counter Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Counter Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter Range is okay!")
-        try:
-            ConLen = np.int32(ui.txtDIConLen.text())
-            1 / ConLen
-        except:
-            msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of Counter is okay!")
-        try:
-            RunRange = strMultiRange(ui.txtDIRunRange.text(),SubSize)
-            if RunRange is None:
-                raise Exception
-            if not (len(RunRange) == SubSize):
-                msgBox.setText("Run Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Run Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Run Range is okay!")
-        try:
-            RunLen = np.int32(ui.txtDIRunLen.value())
-            1 / RunLen
-        except:
-            msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of runs is valid")
-
 
         if outType < 3:
             OutFileName = ui.txtDIOutFile.text()
             if not len(OutFileName):
                 msgBox.setText("Please enter output file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutFileName = OutFileName.replace("$MAINDIR$", mainDIR)
             if ui.rbDIezxType.isChecked():
@@ -997,49 +805,46 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 if str(OutFileName[-3:]).lower() != "mat":
                     OutFileName += "mat"
 
-
-
-
         else:
             OutDIR = ui.txtDIOutDIR.text()
             if not len(OutDIR):
                 msgBox.setText("Please enter output file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             OutDIR = OutDIR.replace("$MAINDIR$", mainDIR)
 
             OutHDR = ui.txtDIOutHDR.text()
-            OutHDR = OutHDR.replace("$TASK$", Task)
+            OutHDR = OutHDR.replace("$TASK$", ui.txtDITask.text())
             if not len(OutHDR):
                 msgBox.setText("Please enter output header file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             OutDAT = ui.txtDIOutDAT.text()
             if not len(OutDAT):
                 msgBox.setText("Please enter output data file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         ROIFile = ui.txtDIROIFile.text()
         if not len(ROIFile):
             msgBox.setText("Please enter ROI file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if not os.path.isfile(ROIFile):
             msgBox.setText("Cannot find ROI File!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         try:
@@ -1052,9 +857,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 vroiIND  = (roiIND[0] - np.min(roiIND,axis=1)[0], roiIND[1] - np.min(roiIND,axis=1)[1], roiIND[2] - np.min(roiIND,axis=1)[2])
         except:
             msgBox.setText("Cannot load ROI File!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         print("Number of feature: ", np.shape(roiIND)[1])
@@ -1062,9 +867,9 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         In = ui.txtDIInFile.currentText()
         if not len(In):
             msgBox.setText("Please enter input file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -1072,25 +877,25 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             DM = ui.txtDIDM.currentText()
             if not len(DM):
                 msgBox.setText("Please enter desgin matrix!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             try:
                 Threshold = np.float(ui.txtDIThreshold.text())
             except:
                 msgBox.setText("Threshold must be a number")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             if (Threshold < 0) or (Threshold > 1):
                 msgBox.setText("Threshold must be between 0 to 1")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             print("Threshold is valid")
@@ -1099,155 +904,253 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             LB = ui.txtDILabels.text()
             if not len(LB):
                 msgBox.setText("Please enter label files!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Subject
         if ui.cbDISubjectID.isChecked():
             if not len(ui.txtDISubjectID.text()):
                 msgBox.setText("Please enter Subject variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Task
         if ui.cbDITaskID.isChecked():
             if not len(ui.txtDITaskID.text()):
                 msgBox.setText("Please enter Task variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Run
         if ui.cbDIRunID.isChecked():
             if not len(ui.txtDIRunID.text()):
                 msgBox.setText("Please enter Run variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Counter
         if ui.cbDICounterID.isChecked():
             if not len(ui.txtDICounterID.text()):
                 msgBox.setText("Please enter Counter variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Label
         if ui.cbDILabelID.isChecked():
             if not len(ui.txtDILabelID.text()):
                 msgBox.setText("Please enter Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Matrix Label
         if ui.cbDImLabelID.isChecked():
             if not len(ui.txtDImLabelID.text()):
                 msgBox.setText("Please enter Matrix Label variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Data
         if ui.cbDIDataID.isChecked():
             if not len(ui.txtDIDataID.text()):
                 msgBox.setText("Please enter Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Design
         if ui.cbDIDM.isChecked():
             if not len(ui.txtDIDMID.text()):
                 msgBox.setText("Please enter Design Matrix variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Coordinate
         if ui.cbDICoID.isChecked():
             if not len(ui.txtDICoID.text()):
                 msgBox.setText("Please enter Coordinator variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Condition
         if ui.cbDICondID.isChecked():
             if not len(ui.txtDICoundID.text()):
                 msgBox.setText("Please enter Condition variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
         # Number of Scan
         if ui.cbDINScanID.isChecked():
             if not len(ui.txtDINScanID.text()):
                 msgBox.setText("Please enter Number of Scan variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
 
+
+
+        # Extract Design Matrix Meta Information
+        if ui.cbDIDesignMatrixMeta.isChecked():
+            DMMDeaultValue = None
+
+            DMMDIOnset = ui.txtDIOnset.text()
+            if not len(DMMDIOnset):
+                msgBox.setText("You must enter Event Files section to import Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
+                return False
+
+            try:
+                DMMHeaderOffset = np.int32(ui.txtDIHeaderOffset.text())
+                if DMMHeaderOffset < 0:
+                    raise Exception
+            except:
+                msgBox.setText("Header offset is wrong for Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
+                return False
+
+            try:
+                DMMOnsetID = np.int32(ui.txtDIOnsetID.text())
+                if DMMOnsetID < 0:
+                    raise Exception
+            except:
+                msgBox.setText("Onset Column ID is wrong for Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
+                return False
+
+            try:
+                DMMDurationID = np.int32(ui.txtDIDurID.text())
+                if DMMDurationID < 0:
+                    raise Exception
+            except:
+                msgBox.setText("Duration Column ID is wrong for Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
+                return False
+
+            try:
+                DMMTR = np.float32(ui.txtDITR.text())
+                if DMMTR <= 0:
+                    raise Exception
+            except:
+                msgBox.setText("TR is wrong for Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
+                return False
+
+            ColStrs = strTaskList(ui.txtDIColumnIDs.text())
+            if ColStrs is None:
+                msgBox.setText("Wrong format for Column IDs in Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
+                return False
+
+            DMMColumns = list()
+            for strCol in ColStrs:
+                try:
+                    DMMColumns.append(np.int32(strCol))
+                except:
+                    msgBox.setText(f"Wrong format for value '{strCol}' at Column IDs in Design Matrix Meta Information!")
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
+                    return False
+
+            DMMVars = strTaskList(ui.txtDIVariableNames.text())
+            if DMMVars is None:
+                msgBox.setText("Wrong format for Variable Names in Design Matrix Meta Information!")
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
+                return False
+            
+            if len(DMMColumns) != len(DMMVars):
+                msgBox.setText("Number of Column IDs and Variable Names in Design Matrix Meta Information are not matched!")
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
+                return False
+
+
+
+        bids = BIDS(ui.txtDITask.text(), ui.txtDISubRange.text(), ui.txtDISubLen.text(), ui.txtDISubPer.text(),
+                                        ui.txtDIConRange.text(), ui.txtDIConLen.text(), ui.txtDIConPer.text(),
+                                        ui.txtDIRunRange.text(), ui.txtDIRunLen.text(), ui.txtDIRunPer.text())
+
         print("Checking files ...")
-        for si, s in enumerate(SubRange):
-            for cnt in ConRange[si]:
-                print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                for r in RunRange[si]:
-                    InFile = setParameters3(In, mainDIR, fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                    if os.path.isfile(InFile):
-                        print(InFile + " - is OKAY.")
+        for (_, t, _, s, _, c, runs) in bids:
+            print(f"Analyzing Subject {s}, Counter {c} ...")
+            for r in runs:
+                InFile = setParameters3(In, mainDIR, s, r, t, c)
+                if os.path.isfile(InFile):
+                    print(InFile + " - is OKAY.")
+                else:
+                    print(InFile + " - not found!")
+                    return
+
+                EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR, s, r, t, c)
+                CondFile = EventFolder + ui.txtDICondPre.text() + ".mat"
+                if os.path.isfile(CondFile):
+                    print(CondFile + " - is OKAY.")
+                else:
+                    print(CondFile + " - not found!")
+                    return
+
+                # Extract Design Matrix Meta Information
+                if ui.cbDIDesignMatrixMeta.isChecked():
+                    EventOnsetFile  = setParameters3(DMMDIOnset, mainDIR, s, r, t, c)
+                    if os.path.isfile(EventOnsetFile):
+                        print(EventOnsetFile + " - is OKAY.")
                     else:
-                        print(InFile + " - not found!")
+                        print(EventOnsetFile + " - not found!")
                         return
 
-                    EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR,
-                                                 fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                                 fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                                 fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                    CondFile = EventFolder + ui.txtDICondPre.text() + ".mat"
-                    if os.path.isfile(CondFile):
-                        print(CondFile + " - is OKAY.")
+
+                if ui.rbDIDynamic.isChecked() or ui.cbDIDM.isChecked():
+
+                    DMFile = setParameters3(DM, mainDIR, s, r, t, c)
+                    if os.path.isfile(DMFile):
+                        print(DMFile + " - is OKAY.")
                     else:
-                        print(CondFile + " - not found!")
+                        print(DMFile + " - not found!")
                         return
-
-                    if ui.rbDIDynamic.isChecked() or ui.cbDIDM.isChecked():
-
-                        DMFile = setParameters3(DM, mainDIR, fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                        if os.path.isfile(DMFile):
-                            print(DMFile + " - is OKAY.")
-                        else:
-                            print(DMFile + " - not found!")
-                            return
+                else:
+                    LBFile = setParameters3(LB, mainDIR, s, r, t, c)
+                    if os.path.isfile(LBFile):
+                        print(LBFile + " - is OKAY.")
                     else:
-                        LBFile = setParameters3(LB, mainDIR, fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                        if os.path.isfile(LBFile):
-                            print(LBFile + " - is OKAY.")
-                        else:
-                            print(LBFile + " - not found!")
-                            return
+                        print(LBFile + " - not found!")
+                        return
 
         fMRISize    = None
 
@@ -1265,6 +1168,11 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         NumberOFALL = 0
         BatchFiles = list()
 
+        if ui.cbDIDesignMatrixMeta.isChecked():
+            DMMContent = dict()
+            for var in DMMVars:
+                DMMContent[var] = list()
+
         # RUNNING ...
         if outType > 2:
             try:
@@ -1274,187 +1182,262 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         print("Extraction ...")
-        for si, s in enumerate(SubRange):
-            for cnt in ConRange[si]:
-                print("Analyzing Subject %d, Counter %d ..." % (s, cnt))
-                for r in RunRange[si]:
-                    try:
-                        InFile = setParameters3(In, mainDIR,
-                                    fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                    fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                    fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                        InHDR = None # Free Mem
-                        InHDR = nb.load(InFile)
-                        InIMG = np.asanyarray(InHDR.dataobj)
-                        #InIMG = InHDR.get_data()
-                        if fMRISize is None:
-                            fMRISize = np.shape(InIMG)[0:3]
-                            if roiSize != fMRISize:
-                                print("ROI and fMRI images must be in the same size!")
-                                msgBox.setText("ROI and fMRI images must be in the same size!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
-                                return
+        for (_, t, _, s, _, c, runs) in bids:
+            print(f"Analyzing Subject {s}, Counter {c} ...")
+            for r in runs:
+                try:
+                    InFile = setParameters3(In, mainDIR, s, r, t, c)
+                    InHDR = None # Free Mem
+                    InHDR = nb.load(InFile)
+                    InIMG = np.asanyarray(InHDR.dataobj)
+                    if fMRISize is None:
+                        fMRISize = np.shape(InIMG)[0:3]
+                        if roiSize != fMRISize:
+                            print("ROI and fMRI images must be in the same size!")
+                            msgBox.setText("ROI and fMRI images must be in the same size!")
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
+                            return
+                    else:
+                        if fMRISize != np.shape(InIMG)[0:3]:
+                            print("Image size is not matched!")
+                            msgBox.setText("Image size is not matched!")
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
+                            return
+                    NScan = np.shape(InIMG)[3]
+                except:
+                    print(InFile + " - cannot load image file!")
+                    return
+                print(InFile + " - is loaded.")
+                print("Number of scans: ", NScan)
+                try:
+                    EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR, s, r, t, c)
+                    CondFile = EventFolder + ui.txtDICondPre.text() + ".mat"
+                    CondTitle = io.loadmat(CondFile)["Cond"]
+                    CondSize = len(CondTitle)
+                    for condindx in range(0, CondSize):
+                        CondID.add_cond(CondTitle[condindx][0][0],CondTitle[condindx][1][0])
+                except:
+                    print(CondFile + " - cannot load file!")
+                    return
 
+                print("Number of conditions: ", CondSize)
+                if ui.rbDIDynamic.isChecked() or ui.cbDIDM.isChecked():
+                    try:
+                        DMFile = setParameters3(DM, mainDIR, s, r, t, c)
+                        DesginValues = convertDesignMatrix(DMFile, CondSize)
+                        DMval = np.transpose(DesginValues)
+                        print("Desing Matrix is recovered.")
+                    except:
+                        print(DMFile + " - cannot load file!")
+                        return
+
+
+                # Session Class Labels
+                Y_Sess = list()
+
+                if ui.rbDIDynamic.isChecked():
+                    print("Estimating class labels ...")
+                    DMNew = list()
+                    DMCoeff     = list()
+                    for valinx in range(0, len(DMval)):
+                        val = DMval[valinx]
+                        val = val - np.min(val)
+                        val = val / np.max(val)
+                        coeff = fitLine(val)
+                        val = val - coeff
+                        DMCoeff.append(coeff)
+                        DMNew.append(val)
+                    DMNew = np.transpose(DMNew)
+
+                    for DMLineIndx, DMLine in enumerate(DMNew):
+                        MaxValIndx = np.argmax(DMLine)
+                        if DMLine[MaxValIndx] < Threshold:
+                            Y_Sess.append(0)
                         else:
-                            if fMRISize != np.shape(InIMG)[0:3]:
-                                print("Image size is not matched!")
-                                msgBox.setText("Image size is not matched!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
-                                return
-                        NScan = np.shape(InIMG)[3]
-                    except:
-                        print(InFile + " - cannot load image file!")
-                        return
-
-                    print(InFile + " - is loaded.")
-                    print("Number of scans: ", NScan)
-
+                            Y_Sess.append(MaxValIndx + 1)
+                    Y_Sess = np.int32(Y_Sess)
+                else:
+                    print("Loading class labels ...")
                     try:
-                        EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR,
-                                                     fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                                     fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                                     fixstr(cnt, ConLen, ui.txtDIConPer.text()))
-                        CondFile = EventFolder + ui.txtDICondPre.text() + ".mat"
-                        CondTitle = io.loadmat(CondFile)["Cond"]
-                        CondSize = len(CondTitle)
-                        for condindx in range(0, CondSize):
-                            CondID.add_cond(CondTitle[condindx][0][0],CondTitle[condindx][1][0])
-
+                        LBFile = setParameters3(LB, mainDIR, s, r, t, c)
+                        Y_Sess = np.int32(open(LBFile).read().rsplit())
                     except:
-                        print(CondFile + " - cannot load file!")
+                        print("Cannot read label file!")
                         return
 
-                    print("Number of conditions: ", CondSize)
+                if len(Y_Sess) == NScan:
+                    print("Number of class labels is okay. Class labels: ", len(Y_Sess))
+                else:
+                    print("Number of class labels must be equal to number of scans! Class labels: ", len(Y_Sess))
+                    return
 
-                    if ui.rbDIDynamic.isChecked() or ui.cbDIDM.isChecked():
-                        try:
-                            DMFile = setParameters3(DM, mainDIR, fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                                fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                                fixstr(cnt, ConLen, ui.txtDIConPer.text()))
+                if np.max(Y_Sess) >= CondSize:
+                    print("Number of conditions is okay. Conditions: ", np.max(Y_Sess))
+                else:
+                    print("WARNING: some class labels are not found!", np.max(Y_Sess))
+                
 
-                            DesginValues = convertDesignMatrix(DMFile, CondSize)
-                            DMval = np.transpose(DesginValues)
-                            print("Desing Matrix is recovered.")
-                        except:
-                            print(DMFile + " - cannot load file!")
-                            return
+                # Import Session Design Matrix
+                if ui.cbDIDesignMatrixMeta.isChecked():
+                    try:
+                        EventOnsetFileName  = setParameters3(DMMDIOnset, mainDIR, s, r, t, c)
+                        EventOnsetLines = open(EventOnsetFileName, "r").readlines()
+                    except:
+                        print(f"Cannot read onset file: {EventOnsetFileName}")
+                        msgBox.setText(f"Cannot read onset file: {EventOnsetFileName}")
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
+                        return False
+                    EventOnsetList = list()
+                    EventOnsetTimeList = list()
+                    EventOnsetDurationList = list()
+                    try:
+                        for eventLinesIndex, eventLines in enumerate(EventOnsetLines):
+                            if eventLinesIndex >= DMMHeaderOffset:
+                                eventLineArray = str(eventLines).rsplit()
+                                EventOnsetList.append([eventLineArray[k] for k in DMMColumns])
+                                EventOnsetTimeList.append(np.float32(eventLineArray[DMMOnsetID]))
+                                EventOnsetDurationList.append(np.float32(eventLineArray[DMMDurationID]))
+                        EventOnsetTimeList = np.array(EventOnsetTimeList)
+                        EventOnsetDurationList = np.array(EventOnsetDurationList)
+                    except:
+                        print(f"Cannot read columns in onset file: {EventOnsetFileName}")
+                        msgBox.setText(f"Cannot read columns in onset file: {EventOnsetFileName}")
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
+                        return False
 
+                currentTR = 0
+                for instID, yID in enumerate(Y_Sess):
+                    NumberOFALL = NumberOFALL + 1
 
-                    # Session Class Labels
-                    Y_Sess = list()
-
-                    if ui.rbDIDynamic.isChecked():
-                        print("Estimating class labels ...")
-                        DMNew = list()
-                        DMCoeff     = list()
-                        for valinx in range(0, len(DMval)):
-                            val = DMval[valinx]
-                            val = val - np.min(val)
-                            val = val / np.max(val)
-                            coeff = fitLine(val)
-                            val = val - coeff
-                            DMCoeff.append(coeff)
-                            DMNew.append(val)
-                        DMNew = np.transpose(DMNew)
-
-                        for DMLineIndx, DMLine in enumerate(DMNew):
-                            MaxValIndx = np.argmax(DMLine)
-                            if DMLine[MaxValIndx] < Threshold:
-                                Y_Sess.append(0)
+                    if not ui.cbDIRemoveRest.isChecked() or yID != 0:
+                        NumberOFExtract = NumberOFExtract + 1                        
+                        # DM Meta Information
+                        if ui.cbDIDesignMatrixMeta.isChecked():
+                            if yID == 0:
+                                for varname in DMMVars:
+                                    DMMContent[varname].append(DMMDeaultValue)
                             else:
-                                Y_Sess.append(MaxValIndx + 1)
-                        Y_Sess = np.int32(Y_Sess)
-                    else:
-                        print("Loading class labels ...")
-                        try:
-                            LBFile = setParameters3(LB, mainDIR, fixstr(s, SubLen, ui.txtDISubPer.text()), \
-                                            fixstr(r, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                            fixstr(cnt, ConLen, ui.txtDIConPer.text()))
+                                selectedOnsetIndex = np.where(np.logical_and(np.greater_equal(EventOnsetTimeList, currentTR), np.less(EventOnsetTimeList, currentTR + DMMTR)))[0]
+                                
+                                if not len(selectedOnsetIndex):
+                                    currentEventOnset = None                                
+                                else:
+                                    champainedOnsetIndex = None
+                                    for selIndex in selectedOnsetIndex:
+                                        if EventOnsetTimeList[selIndex] <= currentTR + EventOnsetDurationList[selIndex]:
+                                            champainedOnsetIndex = selIndex
+                                            break
+                                    if champainedOnsetIndex is None:
+                                        champainedOnsetIndex = selectedOnsetIndex[-1]
+                                    
+                                    try:
+                                        currentEventOnset = EventOnsetList[champainedOnsetIndex]
+                                    except:
+                                        currentEventOnset = None
+                                        print(f"WARNING: Task {t}, Subject {s}, Counter {c}, Run {r}, Label index {instID}, DesignMatrix Meta Information cannot found in index {currentEvenOnsetIndex}.\n\tIt is replaced by {str(DMMDeaultValue)}")
 
-                            Y_Sess = np.int32(open(LBFile).read().rsplit())
-                        except:
-                            print("Cannot read label file!")
-                            return
+                                try:
+                                    for varindex, varname in enumerate(DMMVars):
+                                        if currentEventOnset is None:
+                                            DMMContent[varname].append(DMMDeaultValue)
+                                        else:
+                                            DMMContent[varname].append(currentEventOnset[varindex])
+                                except:
+                                    print(f"Error in importing Design Matrix Meta Information.\nTask {t}\nSubject {s}\nCounter {c}\nRun {r}\nLabel index {instID}")
+                                    msgBox.setText(f"Error in importing Design Matrix Meta Information.\nTask {t}\nSubject {s}\nCounter {c}\nRun {r}\nLabel index {instID}")
+                                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                    msgBox.exec()
+                                    return False
 
-                    if len(Y_Sess) == NScan:
-                        print("Number of class labels is okay. Class labels: ", len(Y_Sess))
-                    else:
-                        print("Number of class labels must be equal to number of scans! Class labels: ", len(Y_Sess))
-                        return
+                        # NScan
+                        if ui.cbDINScanID.isChecked():
+                            NScanID.append(instID)
 
-                    if np.max(Y_Sess) >= CondSize:
-                        print("Number of conditions is okay. Conditions: ", np.max(Y_Sess))
-                    else:
-                        print("WARNING: some class labels are not found!", np.max(Y_Sess))
-
-                    for instID, yID in enumerate(Y_Sess):
-                        NumberOFALL = NumberOFALL + 1
-                        if not ui.cbDIRemoveRest.isChecked() or yID != 0:
-                            NumberOFExtract = NumberOFExtract + 1
-                            # NScan
-                            if ui.cbDINScanID.isChecked():
-                                NScanID.append(instID)
-
-                            # Subject
-                            if ui.cbDISubjectID.isChecked():
+                        # Subject
+                        if ui.cbDISubjectID.isChecked():
+                            try:
+                                if not ui.cbDIConvertSN.isChecked():
+                                    SubjectID.append(s)
+                                else:
+                                    SubjectID.append(np.int32(s))
+                            except:
                                 SubjectID.append(s)
 
-                            # Task
-                            if ui.cbDITaskID.isChecked():
-                                TaskID.append(ui.txtDITask.text())
+                        # Task
+                        if ui.cbDITaskID.isChecked():
+                            TaskID.append(t)
 
-                            # Run
-                            if ui.cbDIRunID.isChecked():
+                        # Run
+                        if ui.cbDIRunID.isChecked():
+                            try:
+                                if not ui.cbDIConvertSN.isChecked():
+                                    RunID.append(r)
+                                else:
+                                    RunID.append(np.int32(r))
+                            except:
                                 RunID.append(r)
 
-                            # Counter
-                            if ui.cbDICounterID.isChecked():
-                                CounterID.append(cnt)
+                        # Counter
+                        if ui.cbDICounterID.isChecked():
+                            try:
+                                if not ui.cbDIConvertSN.isChecked():
+                                    CounterID.append(c)
+                                else:
+                                    CounterID.append(np.int32(c))
+                            except:
+                                CounterID.append(c)
 
-                            # Label
-                            if ui.cbDILabelID.isChecked():
-                                Y.append(yID)
+                        # Label
+                        if ui.cbDILabelID.isChecked():
+                            Y.append(yID)
 
-                            # Data
-                            if ui.cbDIDataID.isChecked():
-                                Snapshot = InIMG[:, :, :, instID]
-                                if ui.rb2DShape.isChecked():
-                                    X.append(Snapshot[roiIND])
-                                elif ui.rb4DShape.isChecked():
-                                    x3d = np.zeros(roiSize)
-                                    x3d[roiIND] = Snapshot[roiIND]
-                                    X.append(x3d)
-                                elif ui.rb4DShape2.isChecked():
-                                    x3d = np.zeros(vroiSize)
-                                    x3d[vroiIND] = Snapshot[roiIND]
-                                    X.append(x3d)
+                        # Data
+                        if ui.cbDIDataID.isChecked():
+                            Snapshot = InIMG[:, :, :, instID]
+                            if ui.rb2DShape.isChecked():
+                                X.append(Snapshot[roiIND])
+                            elif ui.rb4DShape.isChecked():
+                                x3d = np.zeros(roiSize)
+                                x3d[roiIND] = Snapshot[roiIND]
+                                X.append(x3d)
+                            elif ui.rb4DShape2.isChecked():
+                                x3d = np.zeros(vroiSize)
+                                x3d[vroiIND] = Snapshot[roiIND]
+                                X.append(x3d)
 
-                            if ui.cbDIDM.isChecked():
-                                DesignID.append(DesginValues[instID])
+                        if ui.cbDIDM.isChecked():
+                            DesignID.append(DesginValues[instID])
 
-                    # Data Files
-                    if ui.cbDIDataID.isChecked():
-                        if outType > 2:
-                            if ui.rbMatFile.isChecked():
-                                OutDataFile = setParameters3(OutDAT, "", str(s), str(r), ui.txtDITask.text(), str(cnt)) + ".ezmat"
-                            else:
-                                OutDataFile = setParameters3(OutDAT, "", str(s), str(r), ui.txtDITask.text(), str(cnt)) + ".nii.gz"
+                    if ui.cbDIDesignMatrixMeta.isChecked():
+                        currentTR += DMMTR
+                # Data Files
+                if ui.cbDIDataID.isChecked():
+                    if outType > 2:
+                        if ui.rbMatFile.isChecked():
+                            OutDataFile = setParameters3(OutDAT, "", s, r, t, c) + ".ezmat"
+                        else:
+                            OutDataFile = setParameters3(OutDAT, "", s, r, t, c) + ".nii.gz"
 
-                            BatchFiles.append([s, r, cnt, ui.txtDITask.text(), OutDataFile])
-                            print("Saving data " + OutDataFile + "... ")
-                            DataFiles.append(OutDataFile)
+                        BatchFiles.append([s, r, c, t, OutDataFile])
+                        print("Saving data " + OutDataFile + "... ")
+                        DataFiles.append(OutDataFile)
 
-                            if ui.rbMatFile.isChecked():
-                                io.savemat(OutDIR + '/' + OutDataFile, mdict={ui.txtDIDataID.text(): X},appendmat=False, do_compression=do_compress)
-                            else:
-                                convertedXtoIMG = nb.Nifti1Image(np.asarray(X).T, np.eye(4))
-                                nb.save(convertedXtoIMG, OutDIR + '/' + OutDataFile)
-                            print("Data " + OutDataFile + " is saved!")
-                            X = list()
+                        if ui.rbMatFile.isChecked():
+                            io.savemat(OutDIR + '/' + OutDataFile, mdict={ui.txtDIDataID.text(): X},appendmat=False, do_compression=do_compress)
+                        else:
+                            convertedXtoIMG = nb.Nifti1Image(np.asarray(X).T, np.eye(4))
+                            nb.save(convertedXtoIMG, OutDIR + '/' + OutDataFile)
+                        print("Data " + OutDataFile + " is saved!")
+                        X = list()
 
         if outType < 3:
             print(f"Saving data: {OutFileName} ...")
@@ -1471,11 +1454,11 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 
 
         Integration = dict()
-        Integration["SubLen"]    = SubLen
+        Integration["SubLen"]    = ui.txtDISubLen.text()
         Integration["SubPer"]    = ui.txtDISubPer.text()
-        Integration["RunLen"]    = RunLen
+        Integration["RunLen"]    = ui.txtDIRunLen.text()
         Integration["RunPer"]    = ui.txtDIRunPer.text()
-        Integration["ConLen"]    = ConLen
+        Integration["ConLen"]    = ui.txtDIConLen.text()
         Integration["ConPer"]    = ui.txtDIConPer.text()
         if ui.cbDISetting.isChecked():
             # Save Preprocessing Setting
@@ -1518,8 +1501,8 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             Preprocess["CTPT"]          = setting.CTPT
             Preprocess["TimeSlice"]     = setting.TimeSlice
             Preprocess["EventCodes"]    = setting.EventCodes
-            OutData["setting_" + Task]  = Preprocess
-            Integration["Preprocess"].append("Setting_" + Task)
+            OutData["setting_" + ui.txtDITask.text()]  = Preprocess
+            Integration["Preprocess"].append("Setting_" + ui.txtDITask.text())
         if outType > 2:
             OutData["BatchFiles"]    = BatchFiles
             Integration["OutHeader"] = ui.txtDIOutHDR.text()
@@ -1535,6 +1518,11 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         else:
             Integration["OutFile"] = ui.txtDIOutFile.text()
         OutData["Integration"]   = Integration
+
+        # Desgin Matrix Meta Information
+        if ui.cbDIDesignMatrixMeta.isChecked():
+            for varname in DMMContent:
+                OutData[varname] = DMMContent[varname]
 
         # NScan
         if ui.cbDINScanID.isChecked():
@@ -1558,7 +1546,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             del CounterID
         # Matrix Label
         if ui.cbDImLabelID.isChecked():
-            OutData[ui.txtDImLabelID.text()] = label_binarize(Y,np.unique(Y))
+            OutData[ui.txtDImLabelID.text()] = label_binarize(Y, classes=np.unique(Y))
         # Label
         if ui.cbDILabelID.isChecked():
             OutData[ui.txtDILabelID.text()] = reshape_1Dvector(Y)
@@ -1594,133 +1582,49 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         print("Number of features: ", ShapeROIind)
         print("DONE.")
         msgBox.setText("Data Integration is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
     def btnDIDraw_click(self):
         global ui
         msgBox = QMessageBox()
         mainDIR = ui.txtDIDIR.text()
-        Task = ui.txtDITask.text()
         # Check Directory
         if not len(mainDIR):
             msgBox.setText("There is no main directory")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         if not os.path.isdir(mainDIR):
             msgBox.setText("Main directory doesn't exist")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         print("Main directory is okay.")
-        if not len(Task):
-            msgBox.setText("There is no task title")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        try:
-            SubRange = strRange(ui.txtDISubRange.text(),Unique=True)
-            if SubRange is None:
-                raise Exception
-            SubSize = len(SubRange)
-        except:
-            msgBox.setText("Subject Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Range of subjects is okay!")
-        try:
-            SubLen = np.int32(ui.txtDISubLen.text())
-            1 / SubLen
-        except:
-            msgBox.setText("Length of subjects must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of subjects is okay!")
-        try:
-            ConRange = strMultiRange(ui.txtDIConRange.text(),SubSize)
-            if ConRange is None:
-                raise Exception
-            if not (len(ConRange) == SubSize):
-                msgBox.setText("Counter Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Counter Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Counter Range is okay!")
-        try:
-            ConLen = np.int32(ui.txtDIConLen.text())
-            1 / ConLen
-        except:
-            msgBox.setText("Length of counter must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of Counter is okay!")
-        try:
-            RunRange = strMultiRange(ui.txtDIRunRange.text(),SubSize)
-            if RunRange is None:
-                raise Exception
-            if not (len(RunRange) == SubSize):
-                msgBox.setText("Run Size must be equal to Subject Size!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
-                return False
-        except:
-            msgBox.setText("Run Range is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Run Range is okay!")
-        try:
-            RunLen = np.int32(ui.txtDIRunLen.value())
-            1 / RunLen
-        except:
-            msgBox.setText("Length of runs must be an integer number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
-            return False
-        print("Length of runs is valid")
-
 
         if not ui.rbDIDynamic.isChecked():
             msgBox.setText("Please select dynamic method first")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
         try:
             Threshold = np.float(ui.txtDIThreshold.text())
         except:
             msgBox.setText("Threshold must be a number")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         if (Threshold < 0) or (Threshold > 1):
             msgBox.setText("Threshold must be between 0 to 1")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         print("Threshold is valid")
@@ -1728,33 +1632,26 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
         DM = ui.txtDIDM.currentText()
         if not len(DM):
             msgBox.setText("Please enter desgin matrix!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         setting = Setting()
-        setting.Task = Task
-
+        setting.Task        = ui.txtDITask.text()
         setting.SubRange    = ui.txtDISubRange.text()
-        setting.SubLen      = SubLen
+        setting.SubLen      = ui.txtDISubLen.text()
         setting.SubPer      = ui.txtDISubPer.text()
-
         setting.RunRange    = ui.txtDIRunRange.text()
-        setting.RunLen      = RunLen
+        setting.RunLen      = ui.txtDIRunLen.text()
         setting.RunPer      = ui.txtDIRunPer.text()
-
-
-        setting.ConRange     = ui.txtDIConRange.text()
-        setting.ConLen      = ConLen
+        setting.ConRange    = ui.txtDIConRange.text()
+        setting.ConLen      = ui.txtDIConLen.text()
         setting.ConPer      = ui.txtDIConPer.text()
         sSess = frmSelectSession(None, setting=setting)
 
         try:
-            EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR,
-                                         fixstr(sSess.SubID, SubLen, ui.txtDISubPer.text()), \
-                                         fixstr(sSess.RunID, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                         fixstr(sSess.ConID, ConLen, ui.txtDIConPer.text()))
+            EventFolder = setParameters3(ui.txtDIEventDIR.text(), mainDIR, sSess.SubID, sSess.RunID, sSess.TaskID, sSess.ConID)
             CondFile = EventFolder + ui.txtDICondPre.text() + ".mat"
             CondTitle = io.loadmat(CondFile)["Cond"]
             CondSize = len(CondTitle)
@@ -1763,10 +1660,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             return
 
         try:
-            DMFile = setParameters3(DM, mainDIR, fixstr(sSess.SubID, SubLen, ui.txtDISubPer.text()), \
-                                    fixstr(sSess.RunID, RunLen, ui.txtDIRunPer.text()), ui.txtDITask.text(), \
-                                    fixstr(sSess.ConID, ConLen, ui.txtDIConPer.text()))
-
+            DMFile = setParameters3(DM, mainDIR, sSess.SubID, sSess.RunID, sSess.TaskID, sSess.ConID)
             DesginValues = convertDesignMatrix(DMFile, CondSize)
             DMval = np.transpose(DesginValues)
             print("Desing Matrix is recovered.")
@@ -2003,4 +1897,4 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     frmFeatureAnalysis.show(frmFeatureAnalysis)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

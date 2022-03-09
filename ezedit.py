@@ -21,7 +21,7 @@
 #
 
 import sys
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from GUI.frmDataEditor import frmDataEditor
 
 if __name__ == '__main__':
@@ -32,4 +32,4 @@ if __name__ == '__main__':
         frmDataEditor.show(frmDataEditor, sys.argv[1])
     else:
         frmDataEditor.show(frmDataEditor)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

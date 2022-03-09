@@ -22,9 +22,9 @@
 
 
 import os
-import icon_rc
+import platform
 import subprocess
-import PyQt5.QtWidgets as QtWidgets
+import PyQt6.QtWidgets as QtWidgets
 from GUI.frmMainMenuGUI import *
 from GUI.frmFeatureAnalysis import *
 from GUI.frmModelAnalysis import *
@@ -32,7 +32,7 @@ from GUI.frmPreprocess import *
 from GUI.frmVisualization import *
 from GUI.Login import Login
 from Base.tools import Tools
-from Base.utility import About
+from Base.utility import About, getHostname
 from Base.git import clone_git, has_git_branch, getGitBranch
 from Base.utility import MyMessageBox
 
@@ -55,6 +55,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         tools.combo(ui.cbTools)
         print()
         print(20*"#" + " Platform Information " + 20*"#")
+        # Hostname
+        print("Hostname:", getHostname())
         # Base Info
         print("Base:", os.name)
         # OS Info
@@ -69,6 +71,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             pythonInfo = str(sys.version).split("\n")
             print("Python:", pythonInfo[0])
             print("C Compiler:", pythonInfo[1])
+            print("Python Architecture:", platform.machine())
+            print("PyQt: 6.x")
 
         except:
             pass
@@ -84,16 +88,16 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
                 print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript or ~/.zstartupscript")
                 msgBox = QMessageBox()
                 msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript or ~/.zstartupscript")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
         except:
                 print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript or ~/.zstartupscript")
                 msgBox = QMessageBox()
                 msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript or ~/.zstartupscript")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
         if has_git_branch():
             ui.cbSource.addItem("Fast via pull request", ["", "", False, True ])
         ui.cbSource.addItem("GitLab (Clone/Full)", ["gitlab.com/easyfmri/easyfmri.git", "https", False, False])
@@ -102,8 +106,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
 
         dialog.setWindowTitle(f"easy fMRI - V{getVersion()}B{getBuild()} ({getGitBranch()})")
 
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -132,17 +136,17 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         if not len(ezdir):
             print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript or ~/.zstartupscript")
             msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript or ~/.zstartupscript")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         cmd = "cd " + ezdir + "; git checkout master"
         os.popen(cmd)
         msgBox.setText("You have to reopen easy fMRI in order to apply the new mode!")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
     def btnDev_click(self):
@@ -151,17 +155,17 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         if not len(ezdir):
             print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript or ~/.zstartupscript")
             msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript or ~/.zstartupscript")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         cmd = "cd " + ezdir + "; git checkout developing"
         os.popen(cmd)
         msgBox.setText("You have to reopen easy fMRI in order to apply the new mode!")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
     def btnUpdate_click(self):
@@ -170,9 +174,9 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         if not len(ezdir):
             print("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript or ~/.zstartupscript")
             msgBox.setText("WARNING: cannot find $EASYFMRI! Please setup ~/.startupscript or ~/.zstartupscript")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         ezcmd = os.popen('which ezfmri').read().replace('\n', '')
@@ -191,16 +195,16 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
                 process2.wait()
                 print(f"Checkout to {branch}")
             msgBox.setText("Update is done!")
-            msgBox.setIcon(QMessageBox.Information)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Information)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             sys.exit()
         else:
             user   = None
             passwd = None
             if item[2]:
                 login = Login()
-                if not login.exec_() == QtWidgets.QDialog.Accepted:
+                if not login.exec() == QtWidgets.QDialog.Accepted:
                     return
                 passwd  = login.passwd
                 user    = login.user
@@ -217,22 +221,22 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             if not os.path.isdir(update_dir):
                 print("Cannot find " + update_dir + "! Update is canceled.")
                 msgBox.setText("Cannot find " + update_dir + "! Update is canceled.")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 sys.exit()
             if not has_git_branch(ezdir):
                 print("Cannot find " + update_dir + "! Update is canceled.")
                 msgBox.setText("Cannot find " + update_dir + "! Update is canceled.")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 sys.exit()
             os.popen("rm -rf " + ezdir + "; mv " + update_dir + " " + ezdir + "; " + ezcmd)
             msgBox.setText("Update is done!")
-            msgBox.setIcon(QMessageBox.Information)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Information)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             sys.exit()
 
 
@@ -241,9 +245,9 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
         msgBox.setMinimumWidth(800)
         msgBox.setText(About())
         msgBox.setWindowTitle("easy fMRI project")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
         pass
 
     def btnPreprocess_click(self):
@@ -271,4 +275,4 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     frmMainMenuGUI.show(frmMainMenuGUI)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

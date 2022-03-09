@@ -24,8 +24,8 @@ import os
 import sys
 import time
 import numpy as np
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QThread
+from PyQt6.QtWidgets import *
+from PyQt6.QtCore import QThread
 from Base.utility import getVersion, getBuild, OpenReport
 from Base.dialogs import SaveFile
 from GUI.frmJobsGUI import *
@@ -235,7 +235,7 @@ class frmJobs(Ui_frmJobs):
                 item.setText(2, job[2].status)
                 item.setText(3, job[1])
                 ui.lvJobs.addTopLevelItem(item)
-        ui.lvJobs.sortByColumn(3, QtCore.Qt.AscendingOrder)
+        ui.lvJobs.sortByColumn(3, QtCore.Qt.SortOrder.AscendingOrder)
         ui.stb.showMessage("Number of jobs: %d " % (ui.lvJobs.topLevelItemCount()))
 
 
@@ -243,9 +243,9 @@ class frmJobs(Ui_frmJobs):
         if ui.btnRun.text() == "Stop":
             msgBox = QMessageBox()
             msgBox.setText("Please stop jobs first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         item = ui.lvJobs.currentItem()
@@ -260,9 +260,9 @@ class frmJobs(Ui_frmJobs):
         if ui.btnRun.text() == "Stop":
             msgBox = QMessageBox()
             msgBox.setText("Please stop jobs first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         item = ui.lvJobs.currentItem()
@@ -278,9 +278,9 @@ class frmJobs(Ui_frmJobs):
         if ui.btnRun.text() == "Stop":
             msgBox = QMessageBox()
             msgBox.setText("Please stop jobs first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         root = ui.lvJobs.invisibleRootItem()
@@ -293,9 +293,9 @@ class frmJobs(Ui_frmJobs):
         if ui.lvJobs.topLevelItemCount() < 1:
             msgBox = QMessageBox()
             msgBox.setText("There is no job!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         if ui.btnRun.text() == "Run":
@@ -319,18 +319,18 @@ class frmJobs(Ui_frmJobs):
         if ui.btnRun.text() == "Stop":
             msgBox = QMessageBox()
             msgBox.setText("Please stop jobs first!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         TotalRow = ui.lvJobs.topLevelItemCount()
         if TotalRow < 1:
             msgBox = QMessageBox()
             msgBox.setText("There is no job!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
         ofile = SaveFile("Saving Report ...",['Text files (*.txt)'],'txt')
         if len(ofile):
@@ -346,4 +346,4 @@ class frmJobs(Ui_frmJobs):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmJobs.show(frmJobs)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

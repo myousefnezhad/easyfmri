@@ -23,9 +23,8 @@
 
 import os
 import sys
-import logging
 import numpy as np
-from PyQt5.QtWidgets import *
+from PyQt6.QtWidgets import *
 from sklearn import preprocessing
 from GUI.frmMAAdaBoostGUI import *
 from Base.dialogs import LoadFile, SaveFile
@@ -33,10 +32,7 @@ from Base.utility import getVersion, getBuild
 from sklearn.ensemble import AdaBoostClassifier
 from IO.mainIO import mainIO_load, mainIO_save
 from sklearn.metrics import accuracy_score, precision_score, average_precision_score, f1_score, recall_score, confusion_matrix, classification_report
-logging.basicConfig(level=logging.DEBUG)
-from pyqode.core import api
-from pyqode.core import modes
-from pyqode.core import panels
+from Base.codeEditor import codeEditor
 
 # Python 3.8: Support both old and new joblib
 try:
@@ -50,9 +46,16 @@ def BaseAlgorithms():
 # Output name must be \'base\'
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC, LinearSVC, NuSVC
-        
+from sklearn.linear_model import LogisticRegression, RidgeClassifier
+
+# LogisticRegression
+base = LogisticRegression()
+
+# RidgeClassifier
+# base = RidgeClassifier()
+
 # Decision Tree
-base = DecisionTreeClassifier(criterion='gini', splitter='best', max_depth=None, min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features=None, random_state=None, max_leaf_nodes=None, min_impurity_decrease=0.0, min_impurity_split=None, class_weight=None, presort=False)
+#base = DecisionTreeClassifier(criterion='gini', splitter='best', max_depth=None, min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features=None, random_state=None, max_leaf_nodes=None, min_impurity_decrease=0.0, min_impurity_split=None, class_weight=None, presort=False)
     
 # SVC
 #base = SVC(C=1.0, kernel='rbf', degree=3, gamma='auto', coef0=0.0, shrinking=True, probability=False, tol=0.001, cache_size=200, class_weight=None, verbose=False, max_iter=-1, decision_function_shape='ovr', random_state=None)
@@ -79,29 +82,17 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
         self.set_events(self)
         ui.tabWidget.setCurrentIndex(0)
 
-        ui.txtBase = api.CodeEdit(ui.tab_6)
-        ui.txtBase.setGeometry(QtCore.QRect(10, 10, 700, 500))
-        ui.txtBase.setObjectName("txtBase")
-
-        #ui.txtBase.backend.start('backend/server.py')
-
-        ui.txtBase.modes.append(modes.CodeCompletionMode())
-        ui.txtBase.modes.append(modes.CaretLineHighlighterMode())
-        ui.txtBase.modes.append(modes.PygmentsSyntaxHighlighter(ui.txtBase.document()))
-        #ui.txtBase.panels.append(panels.SearchAndReplacePanel(), api.Panel.Position.TOP)
-        ui.txtBase.panels.append(panels.LineNumberPanel(),api.Panel.Position.LEFT)
-
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        ui.txtBase.setFont(font)
-        ui.txtBase.setPlainText(BaseAlgorithms(), "", "")
-
+        # New Code Editor Library
+        cEditor = codeEditor(ui)
+        ui.txtCode = cEditor.Obj
+        cEditor.setObjectName("txtBase")
+        cEditor.setText(BaseAlgorithms())
+        layout = QHBoxLayout(ui.Code)
+        layout.addWidget(cEditor.Obj)
 
         # Kernels
-        ui.cbAlgorithm.addItem("SAMME.R")
         ui.cbAlgorithm.addItem("SAMME")
-
+        ui.cbAlgorithm.addItem("SAMME.R")
 
         # Precision Avg
         ui.cbPrecisionAvg.addItem("weighted","weighted")
@@ -135,8 +126,8 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
         ui.cbF1Avg.addItem("None", None)
 
         dialog.setWindowTitle("easy fMRI AdaBoost Classification - V" + getVersion() + "B" + getBuild())
-        dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
+        # dialog.setWindowFlags(dialog.windowFlags() | QtCore.Qt.CustomizeWindowHint)
+        # dialog.setWindowFlags(dialog.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
         dialog.setFixedSize(dialog.size())
         dialog.show()
 
@@ -163,9 +154,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                             # Check Filter ID for training
                             if not len(ui.txtFilterTrID.currentText()):
                                 msgBox.setText("Please enter variable name for training filter!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return False
                             TrF = InData[ui.txtFilterTrID.currentText()][0]
                             fstr = ""
@@ -178,9 +169,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                         except:
                             print("Reference filter for training is wrong!")
                             msgBox.setText("Reference filter for training is wrong!")
-                            msgBox.setIcon(QMessageBox.Critical)
-                            msgBox.setStandardButtons(QMessageBox.Ok)
-                            msgBox.exec_()
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
                             return
 
                     # Ref Filter Test
@@ -189,9 +180,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                             # Check Filter ID for testing
                             if not len(ui.txtFilterTeID.currentText()):
                                 msgBox.setText("Please enter variable name for testing filter!")
-                                msgBox.setIcon(QMessageBox.Critical)
-                                msgBox.setStandardButtons(QMessageBox.Ok)
-                                msgBox.exec_()
+                                msgBox.setIcon(QMessageBox.Icon.Critical)
+                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                                msgBox.exec()
                                 return False
                             TeF = InData[ui.txtFilterTeID.currentText()][0]
                             fstr = ""
@@ -204,9 +195,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                         except:
                             print("Reference filter for testing is wrong!")
                             msgBox.setText("Reference filter for testing is wrong!")
-                            msgBox.setIcon(QMessageBox.Critical)
-                            msgBox.setStandardButtons(QMessageBox.Ok)
-                            msgBox.exec_()
+                            msgBox.setIcon(QMessageBox.Icon.Critical)
+                            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                            msgBox.exec()
                             return
                 except Exception as e:
                     print(e)
@@ -344,9 +335,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
             NEstimators = np.int(ui.txtNEstimators.text())
         except:
             msgBox.setText("Number of Estimators is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         # LearningRate
@@ -354,9 +345,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
             LearningRate = np.float(ui.txtLearningRate.text())
         except:
             msgBox.setText("Learning Rate is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
 
@@ -371,18 +362,18 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
         except:
             print("Class Filter is wrong!")
             msgBox.setText("Class filter is wrong!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return
 
         # OutFile
         OutFile = ui.txtOutFile.text()
         if not len(OutFile):
             msgBox.setText("Please enter out file!")
-            msgBox.setIcon(QMessageBox.Critical)
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec_()
+            msgBox.setIcon(QMessageBox.Icon.Critical)
+            msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+            msgBox.exec()
             return False
 
         Fold  = list()
@@ -417,44 +408,44 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
             InFileList.append(InFile)
             if not len(InFile):
                 msgBox.setText("Please enter input file!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not os.path.isfile(InFile):
                 msgBox.setText("Input file not found!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             InData = mainIO_load(InFile)
             # Data
             if not len(ui.txtITrData.currentText()):
                 msgBox.setText("Please enter Input Train Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             if not len(ui.txtITeData.currentText()):
                 msgBox.setText("Please enter Input Test Data variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
 
             # Label
             if not len(ui.txtITrLabel.currentText()):
                     msgBox.setText("Please enter Train Input Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
             if not len(ui.txtITeLabel.currentText()):
                     msgBox.setText("Please enter Test Input Label variable name!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return False
 
             TrX = InData[ui.txtITrData.currentText()]
@@ -471,9 +462,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                     if not len(TrFilterContent):
                         print("Reference filter for training is wrong!")
                         msgBox.setText("Reference filter for training is wrong!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
                     else:
                         TrFilterContent = TrFilterContent.replace("\'", " ").replace(",", " ").replace("[", "").replace(
@@ -482,26 +473,26 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                     # Check Filter ID for training
                     if not len(ui.txtFilterTrID.currentText()):
                         msgBox.setText("Please enter variable name for training filter!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return False
                     TrF = InData[ui.txtFilterTrID.currentText()][0]
 
                     if np.shape(TrX)[0] != np.shape(TrF)[0] or np.shape(TrL)[0] != np.shape(TrF)[0]:
                         print("Shape of reference for training must be the same as data and label")
                         msgBox.setText("Shape of reference for training must be the same as data and label")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
 
                 except:
                     print("Reference filter for training is wrong!")
                     msgBox.setText("Reference filter for training is wrong!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
                 # Remove training set
                 try:
@@ -516,9 +507,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                     print("Cannot filter the training set based on Reference")
                     print(str(e))
                     msgBox.setText("Cannot filter the training set based on Reference")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
             # Ref Filter Test
@@ -530,9 +521,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                     if not len(TeFilterContent):
                         print("Reference filter for testing is wrong!")
                         msgBox.setText("Reference filter for testing is wrong!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
                     else:
                         TeFilterContent = TeFilterContent.replace("\'", " ").replace(",", " ").replace("[", "").replace("]", "").split()
@@ -540,26 +531,26 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                     # Check Filter ID for testing
                     if not len(ui.txtFilterTeID.currentText()):
                         msgBox.setText("Please enter variable name for testing filter!")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return False
                     TeF = InData[ui.txtFilterTeID.currentText()][0]
 
                     if np.shape(TeX)[0] != np.shape(TeF)[0] or np.shape(TeL)[0] != np.shape(TeF)[0]:
                         print("Shape of reference for testing must be the same as data and label")
                         msgBox.setText("Shape of reference for testing must be the same as data and label")
-                        msgBox.setIcon(QMessageBox.Critical)
-                        msgBox.setStandardButtons(QMessageBox.Ok)
-                        msgBox.exec_()
+                        msgBox.setIcon(QMessageBox.Icon.Critical)
+                        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                        msgBox.exec()
                         return
 
                 except:
                     print("Reference filter for testing is wrong!")
                     msgBox.setText("Reference filter for testing is wrong!")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
                 # Remove testing set
                 try:
@@ -574,9 +565,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                     print("Cannot filter the testing set based on Reference")
                     print(str(e))
                     msgBox.setText("Cannot filter the testing set based on Reference")
-                    msgBox.setIcon(QMessageBox.Critical)
-                    msgBox.setStandardButtons(QMessageBox.Ok)
-                    msgBox.exec_()
+                    msgBox.setIcon(QMessageBox.Icon.Critical)
+                    msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                    msgBox.exec()
                     return
 
 
@@ -605,9 +596,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
             # FoldID
             if not len(ui.txtFoldID.currentText()):
                 msgBox.setText("Please enter FoldID variable name!")
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return False
             try:
                 currFID = InData[ui.txtFoldID.currentText()][0][0]
@@ -625,9 +616,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                 print(e)
                 msgBox = QMessageBox()
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
             try:
@@ -643,7 +634,8 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                 print("FoldID = " + str(currFID) + " is testing ...")
                 PeL = clf.predict(TeX)
                 PrL = clf.predict(TrX)
-
+                
+                OutData["fold" + str(currFID) + "_testing_labels_vs_predictions"] = np.concatenate(([TeL], [PeL]), axis=0)
                 OutData["fold" + str(currFID) + "_confusion_matrix"]      = confusion_matrix(TeL, PeL, np.unique(TeL))
                 OutData["fold" + str(currFID) + "_classification_report"] = classification_report(TeL, PeL)
                 print(OutData["fold" + str(currFID) + "_classification_report"])
@@ -653,9 +645,9 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
                 print(e)
                 msgBox = QMessageBox()
                 msgBox.setText(str(e))
-                msgBox.setIcon(QMessageBox.Critical)
-                msgBox.setStandardButtons(QMessageBox.Ok)
-                msgBox.exec_()
+                msgBox.setIcon(QMessageBox.Icon.Critical)
+                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msgBox.exec()
                 return
 
 
@@ -767,12 +759,12 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
         mainIO_save(OutData, OutFile)
         print("DONE.")
         msgBox.setText("AdaBoost Classification is done.")
-        msgBox.setIcon(QMessageBox.Information)
-        msgBox.setStandardButtons(QMessageBox.Ok)
-        msgBox.exec_()
+        msgBox.setIcon(QMessageBox.Icon.Information)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     frmMAAdaBoost.show(frmMAAdaBoost)
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

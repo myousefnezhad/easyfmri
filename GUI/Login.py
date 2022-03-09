@@ -20,8 +20,8 @@
 #
 #
 
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import *
+from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import *
 
 class Login(QtWidgets.QDialog):
     def __init__(self, parent=None):
@@ -84,10 +84,10 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     login = Login()
 
-    if login.exec_() == QtWidgets.QDialog.Accepted:
+    if login.exec() == QtWidgets.QDialog.Accepted:
         print(login.user, login.passwd)
 
     login.close()
 
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
