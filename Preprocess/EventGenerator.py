@@ -20,6 +20,8 @@
 #
 #
 
+import re, os, sys, json, scipy, sklearn
+import numpy as np
 class EventGenerator:
 
     def __init__(self):
