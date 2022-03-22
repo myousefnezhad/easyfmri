@@ -94,59 +94,15 @@ class EventGenerator:
                         print(EventAddr, " - file not find!")
                         return False
                     else:
-                        file = open(EventAddr, "r")
-                        lines = file.readlines()
-                        file.close()
                         dir = {}
-                        dir.clear()
-
-                        for k in range(0, len(lines)):
-                            Event = lines[k].rsplit()
-                            try:
-                                allvars = dict(locals(), **globals())
-                                exec(setting.EventCodes,allvars,allvars)
-
-                            except Exception as e:
-                                print("Event codes generated following error:\n")
-                                print(e)
-                                return False
-
-                            try:
-                                RowStartID = allvars['RowStartID']
-                            except:
-                                print("Cannot find RowStartID variable in event code")
-                                return False
-                            try:
-                                Condition = allvars['Condition']
-                            except:
-                                print("Cannot find Condition variable in event code")
-                                return False
-                            try:
-                                Onset = allvars['Onset']
-                            except:
-                                print("Cannot find Onset variable in event code")
-                                return False
-                            try:
-                                Duration = allvars['Duration']
-                            except:
-                                print("Cannot find Duration variable in event code")
-                                return False
-
-                            try:
-                                Skip = int(allvars["Skip"])
-                            except:
-                                print("Cannot find Skip variable in event code")
-                                return False
-                            if RowStartID <= k and Skip == 0:
-                                # Create Condition Directory
-                                try:
-                                    value = dir[Condition]
-                                    value.append([float(Onset), float(Duration)])
-                                    dir[Condition] = value
-                                except KeyError:
-                                    value = list()
-                                    value.append([float(Onset), float(Duration)])
-                                    dir[Condition] = value
+                        try:
+                            allvars = dict(locals(), **globals())
+                            exec(setting.EventCodes, allvars, allvars)
+                            dir, _ = allvars['parseEvents'](EventAddr)
+                        except Exception as e:
+                            print("Event parser function issue:\n")
+                            print(e)
+                            return False
 
                         for condinx, cond in enumerate(dir):
                             self.add_condTitle(title=cond,ConditionTitles=self.ConditionTitles)

@@ -20,17 +20,18 @@
 #
 #
 
-import configparser as cp
-from glob import glob
+
 import os
+import json
+import logging
 import platform
 import subprocess
-import sys, shutil
-import logging
-import nibabel as nb
 import numpy as np
+import sys, shutil
+import nibabel as nb
 import scipy.io as io
-
+from glob import glob
+import configparser as cp
 from PyQt6.QtWidgets import QMessageBox, QHBoxLayout
 
 from Base.Setting import Setting
@@ -51,18 +52,16 @@ from GUI.frmfMRIConcatenator import frmfMRIConcatenator
 from GUI.frmSelectSession import frmSelectSession
 from GUI.frmImageInfo import frmImageInfo
 
-
 from Preprocess.BrainExtractor import BrainExtractor
 from Preprocess.EventGenerator import EventGenerator
 from Preprocess.RunPreprocess import RunPreprocess
 from Preprocess.ScriptGenerator import ScriptGenerator
 
-
 from Base.codeEditor import codeEditor
 
 
 def EventCode():
-    return\
+    return \
 """# This procedure extracts information from the event files.
 # Note 1: You can write any Python 3 style codes in order to extract the information.
 # Note 2: Numpy can be called by using np, e.g. np.int32()
@@ -79,31 +78,72 @@ def EventCode():
 # \t3. Duration:  the echo time (TE). Its type is float.
 # \t4. Condition: the condition title (category of stimuli). Its type is str.
 
-# Handling headers ->
-RowStartID = 1
+def parseEvents(EventFileAddress):
+    # Handling headers ->
+    RowStartID=1
 
-# Skip is not zero for any row that you don't want to use it!
-Skip = 0
+    # Output in the form of dictionary
+    # keys are the condition/label title
+    # values are a list of [onset, duration]
+    dir = {}
 
-# Extracting onset ->
-# In order to handle the headers, you must use this style:
-try:
-    Onset = float(Event[0])
-except:
-    Onset = None
-    Skip = 1
+    # Output in the form of list
+    # Each line has [onset, duration, condition]
+    lst = list()
 
-# Extracting echo time ->
-# In order to handle the headers, you must use this style:
-try:
-    Duration = float(Event[1])
-except:
-    Duration = None
-    Skip = 1
+    # Reading All Lines of Event File
+    fileHandle = open(EventFileAddress, "r")
+    lines = fileHandle.readlines()
+    fileHandle.close()
+    
+    # Evaluate Each Line
+    for k in range(0, len(lines)):
+        # Convert each line to column
+        # If the separator is not specified, any whitespace (space, newline etc.) 
+        Event = lines[k].rsplit()
+        
+        # Skip is not zero for any row that you don't want to use it!
+        Skip = 0
 
-Condition = Event[2]
-# This is an example of labeling based on line number for complex stimuli
-#Condition = str(k%5 + 1)"""
+        # Extracting onset ->
+        # In order to handle the headers, you must use this style:
+        try:
+            Onset = float(Event[0])
+        except:
+            Onset = None
+            Skip = 1
+
+        # Extracting echo time ->
+        # In order to handle the headers, you must use this style:
+        try:
+            Duration = float(Event[1])
+        except:
+            Duration = None
+            Skip = 1
+
+        # Extracting Condition/Label Name 
+        Condition = Event[2]
+        # This is an example of labeling based on line number for complex stimuli
+        #Condition = str(k%5 + 1)
+        
+        if RowStartID <= k and Skip == 0:
+            # Create Condition Directory
+            try:
+                value = dir[Condition]
+                value.append([float(Onset), float(Duration)])
+                dir[Condition] = value
+
+            except KeyError:
+                value = list()
+                value.append([float(Onset), float(Duration)])
+                dir[Condition] = value
+            # Create Condition List
+            try:
+                lst.append([float(Onset), float(Duration), Condition])
+            except Exception as e:
+                print(str(e))
+    return dir, lst
+"""
 
 class MainWindow(QtWidgets.QMainWindow):
     parent = None
@@ -893,82 +933,17 @@ class frmPreprocess(Ui_frmPreprocess):
                         print(EventAddr, " - file not find!")
                         return
                     else:
-                        file = open(EventAddr, "r")
-                        lines = file.readlines()
-                        file.close()
-                        GenEvents = list()
+                        lst = list()
+                        try:
+                            allvars = dict(locals(), **globals())
+                            exec(setting.EventCodes, allvars, allvars)
+                            _, lst = allvars['parseEvents'](EventAddr)
+                        except Exception as e:
+                            print("Event parser function issue:\n")
+                            print(e)
+                            return False
 
-                        for k in range(0, len(lines)):
-                            Event = lines[k].rsplit()
-                            try:
-                                allvars = dict(locals(), **globals())
-                                exec(setting.EventCodes, allvars, allvars)
-
-                            except Exception as e:
-                                print("Event codes generated following error:")
-                                print(e)
-                                msgBox = QMessageBox()
-                                msgBox.setText(str(e))
-                                msgBox.setIcon(QMessageBox.Icon.Critical)
-                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
-                                msgBox.exec()
-                                return
-                            try:
-                                RowStartID = allvars['RowStartID']
-                            except:
-                                print("Cannot find RowStartID variable in event code")
-                                msgBox = QMessageBox()
-                                msgBox.setText("Cannot find RowStartID variable in event code")
-                                msgBox.setIcon(QMessageBox.Icon.Critical)
-                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
-                                msgBox.exec()
-                                return
-                            try:
-                                Condition = allvars['Condition']
-                            except:
-                                print("Cannot find Condition variable in event code")
-                                msgBox = QMessageBox()
-                                msgBox.setText("Cannot find Condition variable in event code")
-                                msgBox.setIcon(QMessageBox.Icon.Critical)
-                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
-                                msgBox.exec()
-                                return
-                            try:
-                                Onset = allvars['Onset']
-                            except:
-                                print("Cannot find Onset variable in event code")
-                                msgBox = QMessageBox()
-                                msgBox.setText("Cannot find Onset variable in event code")
-                                msgBox.setIcon(QMessageBox.Icon.Critical)
-                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
-                                msgBox.exec()
-                                return
-                            try:
-                                Duration = allvars['Duration']
-                            except:
-                                print("Cannot find Duration variable in event code")
-                                msgBox = QMessageBox()
-                                msgBox.setText("Cannot find Duration variable in event code")
-                                msgBox.setIcon(QMessageBox.Icon.Critical)
-                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
-                                msgBox.exec()
-                                return
-
-                            try:
-                                Skip = int(allvars["Skip"])
-                            except:
-                                print("Cannot find Skip variable in event code")
-                                msgBox = QMessageBox()
-                                msgBox.setText("Cannot find Skip variable in event code")
-                                msgBox.setIcon(QMessageBox.Icon.Critical)
-                                msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
-                                msgBox.exec()
-                                return
-
-                            if RowStartID <= k and Skip == 0:
-                                GenEvents.append([Onset,Duration,Condition])
-
-                    EventViewer = frmEventViewer(Events=GenEvents,StartRow=RowStartID,SubID=sSess.SubID,\
+                    EventViewer = frmEventViewer(Events=lst,StartRow=0,SubID=sSess.SubID,\
                                                 RowID=sSess.RunID, Task=sSess.TaskID)
         pass
 
