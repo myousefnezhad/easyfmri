@@ -22,7 +22,10 @@
 
 
 import os
+import re
 import json
+import scipy
+import sklearn
 import logging
 import platform
 import subprocess
@@ -64,7 +67,8 @@ def EventCode():
     return \
 """# This procedure extracts information from the event files.
 # Note 1: You can write any Python 3 style codes in order to extract the information.
-# Note 2: Numpy can be called by using np, e.g. np.int32()
+# Note 2: Numpy can be called by using np, e.g., np.int32()
+# Note 3: Other imported libraries are os, re, sys, json, scipy, sklearn
 #
 # Input:
 # \tEvent[] includes each line of the event files in each iteration.
