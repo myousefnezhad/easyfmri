@@ -20,12 +20,6 @@
 #
 #
 
-<<<<<<< HEAD
-import configparser as cp
-from glob import glob
-=======
-
->>>>>>> developing
 import os
 import re
 import json
@@ -38,12 +32,8 @@ import numpy as np
 import sys, shutil
 import nibabel as nb
 import scipy.io as io
-<<<<<<< HEAD
-
-=======
 from glob import glob
 import configparser as cp
->>>>>>> developing
 from PyQt6.QtWidgets import QMessageBox, QHBoxLayout
 
 from Base.Setting import Setting
@@ -1213,7 +1203,6 @@ class frmPreprocess(Ui_frmPreprocess):
                             if os.path.isfile(file):
                                 try:
                                     if not ui.cbDelSmoke.isChecked():
-<<<<<<< HEAD
                                         os.remove(file)
                                     print(strDel + "DELETE: BET FILE,\t" + file)
                                 except:
@@ -1225,19 +1214,6 @@ class frmPreprocess(Ui_frmPreprocess):
                                 try:
                                     if not ui.cbDelSmoke.isChecked():
                                         os.remove(file)
-=======
-                                        os.remove(file)
-                                    print(strDel + "DELETE: BET FILE,\t" + file)
-                                except:
-                                    print("CANNOT DELETE: BET FILE,\t" + file)
-                            else:
-                                print("NOT FOUND: BET FILE,\t" + file)
-                            file = setParameters3(setting.BETPDF, setting.mainDIR, s, "", t, c)
-                            if os.path.isfile(file):
-                                try:
-                                    if not ui.cbDelSmoke.isChecked():
-                                        os.remove(file)
->>>>>>> developing
                                     print(strDel + "DELETE: PDF FILE,\t" + file)
                                 except:
                                     print("NOT DELETE: PDF FILE,\t" + file)
