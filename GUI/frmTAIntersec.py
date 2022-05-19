@@ -27,7 +27,7 @@ from PyQt6.QtWidgets import *
 from GUI.frmTAIntersecGUI import *
 from Base.dialogs import LoadFile, SaveFile
 from Base.utility import getVersion, getBuild
-from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector
+from IO.mainIO import mainIO_load, mainIO_save, reshape_1Dvector, get_file_type
 
 
 
@@ -71,7 +71,12 @@ class frmTAIntersec(Ui_frmTAInterSec):
             if os.path.isfile(filename):
                 try:
                     print("Loading ...")
-                    data = mainIO_load(filename)
+                    data  = mainIO_load(filename, only_keys=True)
+                    if get_file_type(filename)[0] == "ezx":
+                        data2 = mainIO_load(filename, partial=["label", "subject"])
+                    else:
+                        data2 = data
+
                     Keys = data.keys()
 
                     ui.txtClassList.clear()
@@ -85,7 +90,7 @@ class frmTAIntersec(Ui_frmTAInterSec):
                             HasDefualt = True
                     if HasDefualt:
                         ui.txtData.setCurrentText("data")
-                        print("Data Shape: ", np.shape(data["data"]))
+                        # print("Data Shape: ", np.shape(data["data"]))
 
 
                     # Label
@@ -97,7 +102,7 @@ class frmTAIntersec(Ui_frmTAInterSec):
                             HasDefualt = True
                     if HasDefualt:
                         ui.txtLabel.setCurrentText("label")
-                        Labels = data[ui.txtLabel.currentText()]
+                        Labels = data2[ui.txtLabel.currentText()]
                         Labels = np.unique(Labels)
                         print("Number of labels: ", np.shape(Labels)[0])
                         print("Labels: ", Labels)
@@ -115,7 +120,7 @@ class frmTAIntersec(Ui_frmTAInterSec):
                             HasDefualt = True
                     if HasDefualt:
                         ui.txtSubject.setCurrentText("subject")
-                        print("Number of subjects: ", np.shape(np.unique(data["subject"]))[0])
+                        print("Number of subjects: ", np.shape(np.unique(data2["subject"]))[0])
 
 
                     # Task
