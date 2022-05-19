@@ -24,6 +24,7 @@
 import os
 import platform
 import subprocess
+import PyQt6
 import PyQt6.QtWidgets as QtWidgets
 from GUI.frmMainMenuGUI import *
 from GUI.frmFeatureAnalysis import *
@@ -72,7 +73,7 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
             print("Python:", pythonInfo[0])
             print("C Compiler:", pythonInfo[1])
             print("Python Architecture:", platform.machine())
-            print("PyQt: 6.x")
+            print("GUI:", PyQt6.__name__)
 
         except:
             pass
@@ -126,8 +127,8 @@ class frmMainMenuGUI(QtWidgets.QMainWindow):
 
 
     def btnExit_click(self):
-         import sys
-         sys.exit()
+        import sys
+        sys.exit()
 
     def btnStable_click(self):
         ezdir = ui.txtEZDIR.text()

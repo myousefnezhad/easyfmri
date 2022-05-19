@@ -44,8 +44,8 @@ def About():
 
 <h4>Created by:</h4>
 <center>
-<h4><a href=\"https://learningbymachine.com/\">Tony Muhammad Yousefnezhad</a>,</h4>
-<h4><a href=\"https://www.ualberta.ca/\">University of Alberta</a>, Canada.<h4>
+<h4><a href=\"https://www.yousefnezhad.com/\">Tony Muhammad Yousefnezhad</a>,</h4>
+<h4><a href=\"https://www.learningbymachine.com/\">Learning By Machine</a>.<h4>
 </center>
 """
 
@@ -115,7 +115,7 @@ def getHostname():
         return "localhost"
 
 def getBuild(hostname=True):
-    built = "9000"
+    built = "9100"
     if hostname:
         return f"{built} on {getHostname()}::{platform.machine()}"
     return built

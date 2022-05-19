@@ -1,10 +1,10 @@
-easy fMRI project (V1.8B9000 beta)
+easy fMRI project (V1.8B9100 beta)
 ==================================
 
 # Introduction
 
 Easy fMRI is an open source toolbox for the Human Brain Mapping and Decoding — _i.e._, we analyze task-based and rest-mode fMRI datasets by using advanced machine learning approaches.
-This project is developing by [Tony Yousefnezhad](https://myousefnezhad.gitlab.io/), [University of Albera](https://www.ualberta.ca), Canada.
+This project is developing by [Tony Yousefnezhad](https://www.yousefnezhad.com), [University of Albera](https://www.ualberta.ca), Canada.
 
 
 * The project website: 
@@ -17,9 +17,9 @@ This project is developing by [Tony Yousefnezhad](https://myousefnezhad.gitlab.i
 
 * Codebase repositories:
 
-    * [https://gitlab.com/easyfmri/easyfmri](https://gitlab.com/easyfmri/easyfmri) [preferred]
+    * [https://github.com/myousefnezhad/easyfmri](https://github.com/myousefnezhad/easyfmri) [preferred]
 
-    * [https://github.com/easyfmri/easyfmri](https://github.com/easyfmri/easyfmri)
+    * [https://gitlab.com/myousefnezhad/easyfmri](https://gitlab.com/myousefnezhad/easyfmri)
 
 # Dependencies
 
@@ -66,14 +66,16 @@ Easy fMRI needs following software:
 ## STEP A: Copy Files
 
 * Download easy fMRI files:
-    * Option 1: From [GitLab](https://gitlab.com/easyfmri/easyfmri):
+    * Option 1: From [GitHub](https://github.com/myousefnezhad/easyfmri):
         ```
-        git clone https://gitlab.com/easyfmri/easyfmri.git  ~/easyfmri
+        git clone https://github.com/myousefnezhad/easyfmri.git ~/easyfmri
         ```
-    * Option 2: From [GitHub](https://github.com/easyfmri/easyfmri):
+
+    * Option 2: From [GitLab](https://gitlab.com/myousefnezhad/easyfmri):
         ```
-        git clone https://github.com/easyfmri/easyfmri.git ~/easyfmri
+        git clone https://gitlab.com/myousefnezhad/easyfmri.git  ~/easyfmri
         ```
+
 
 * Copy executable files (ezfmri, ezedit, etc.) to `/usr/local/bin`:
     * For Linux:
@@ -483,20 +485,20 @@ git pull
 git checkout master # If you want to swithch back to stable version
 ```
 
-## Option 2: A fresh copy from `gitlab` repository:
+## Option 2: A fresh copy from `github` repository:
 
 ```
 rm -rf $EASYFMRI 
-git clone https://gitlab.com/easyfmri/easyfmri.git $EASYFMRI
+git clone https://github.com/myousefnezhad/easyfmri.git $EASYFMRI
 ```
 
-## Option 3: A fresh copy from `github` repository:
+
+## Option 3: A fresh copy from `gitlab` repository:
 
 ```
 rm -rf $EASYFMRI 
-git clone https://github.com/easyfmri/easyfmri.git $EASYFMRI
+git clone https://gitlab.com/myousefnezhad/easyfmri.git $EASYFMRI
 ```
-
 
 # How to uninstall easy fMRI
 
