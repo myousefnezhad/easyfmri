@@ -345,7 +345,7 @@ In `Get NeuroDebian` section, you must select Linux version and the closest reso
 *  The last version of **Miniforge** for Mac (Apple Silicon) can be download from [https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh)
 
 
-### Install Python 3.9
+### Install Python 3.10
 After you have downloaded the related Miniconda or Miniforge on your computer, you must open a terminal and use `cd` commends to go to the directory that your file is there. As an example, you may download the file in the Downloads folder, so you need to run: 
 ```
 cd ~/Downloads
@@ -395,14 +395,14 @@ Then, you can use `sh <FILE NAME>` to run the setup, where `<FILE NAME>` is the 
 
 * Creating the easy fMRI environment:
     ```
-    conda create --name easyfmri python=3.9
+    conda create --name easyfmri python=3.10
     ```
 
 * Update Conda components and install easy fMRI required python packages by using: 
     ```
     conda activate easyfmri
     conda update --all
-    conda install numpy scipy ipython matplotlib pandas seaborn psutil statsmodels h5py
+    conda install numpy scipy ipython matplotlib seaborn psutil statsmodels h5py
     conda install -c conda-forge mpi4py scikit-learn
     pip install -U future nibabel nitime nilearn pydicom matplotlib
     pip install PyQt6 PyQt6-QScintilla
@@ -424,7 +424,7 @@ Then, you can use `sh <FILE NAME>` to run the setup, where `<FILE NAME>` is the 
 
     * In Mac (Apple Silicon):
         ```
-        conda install pytorch torchvision -c pytorch
+        conda install pytorch torchvision torchaudio -c pytorch
         ```
 ### Change main repository of `pip` [recommended for China]
 
