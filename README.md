@@ -406,6 +406,7 @@ Then, you can use `sh <FILE NAME>` to run the setup, where `<FILE NAME>` is the 
     conda install -c conda-forge mpi4py scikit-learn
     pip install -U future nibabel nitime nilearn pydicom matplotlib
     pip install PyQt6 PyQt6-QScintilla
+    pip uninstall pandas
     ```
 
 * Install [PyTorch](https://pytorch.org/) package:
