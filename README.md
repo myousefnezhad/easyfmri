@@ -402,7 +402,7 @@ Then, you can use `sh <FILE NAME>` to run the setup, where `<FILE NAME>` is the 
     ```
     conda activate easyfmri
     conda update --all
-    conda install numpy scipy ipython matplotlib seaborn psutil statsmodels h5py
+    conda install numpy scipy ipython seaborn psutil statsmodels h5py
     conda install -c conda-forge mpi4py scikit-learn
     pip install -U future nibabel nitime nilearn pydicom matplotlib
     pip install PyQt6 PyQt6-QScintilla
