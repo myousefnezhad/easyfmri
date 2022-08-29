@@ -13,6 +13,11 @@ sudo cp ezfmri_scaled /usr/local/bin/.
 sudo chmod -c 7777 /usr/local/bin/ezfmri_scaled
 sudo cp ezfmri_scaled2 /usr/local/bin/.
 sudo chmod -c 7777 /usr/local/bin/ezfmri_scaled2
+# WSL 2
+sudo cp wezfmri /usr/local/bin/.
+sudo chmod -c 7777 /usr/local/bin/wezfmri
+sudo cp wezedit /usr/local/bin/.
+sudo chmod -c 7777 /usr/local/bin/wezedit
 
 # Local Desktop Icons for Linux
 sudo mkdir -p /usr/share/icons
