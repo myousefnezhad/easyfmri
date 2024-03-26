@@ -179,7 +179,7 @@ class frmMASpectral(Ui_frmMASpectral):
 
         # NJobs
         try:
-            NJobs = np.int(ui.txtNJobs.text())
+            NJobs = np.int32(ui.txtNJobs.text())
         except:
             msgBox.setText("Number of Jobs is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -189,7 +189,7 @@ class frmMASpectral(Ui_frmMASpectral):
 
         # Degree
         try:
-            Degree = np.float(ui.txtDegree.text())
+            Degree = np.float32(ui.txtDegree.text())
         except:
             msgBox.setText("Degree is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -199,7 +199,7 @@ class frmMASpectral(Ui_frmMASpectral):
 
         # Tol
         try:
-            Tol = np.float(ui.txtTole.text())
+            Tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Eigen Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -219,7 +219,7 @@ class frmMASpectral(Ui_frmMASpectral):
 
         # Gamma
         try:
-            Gamma = np.float(ui.txtGamma.text())
+            Gamma = np.float32(ui.txtGamma.text())
         except:
             msgBox.setText("Gamma is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -229,7 +229,7 @@ class frmMASpectral(Ui_frmMASpectral):
 
         # Coef0
         try:
-            Coef0 = np.float(ui.txtCoef0.text())
+            Coef0 = np.float32(ui.txtCoef0.text())
         except:
             msgBox.setText("Coef0 is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

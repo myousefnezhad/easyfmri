@@ -332,7 +332,7 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
 
         # NEstimators
         try:
-            NEstimators = np.int(ui.txtNEstimators.text())
+            NEstimators = np.int32(ui.txtNEstimators.text())
         except:
             msgBox.setText("Number of Estimators is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -342,7 +342,7 @@ class frmMAAdaBoost(Ui_frmMAAdaBoost):
 
         # LearningRate
         try:
-            LearningRate = np.float(ui.txtLearningRate.text())
+            LearningRate = np.float32(ui.txtLearningRate.text())
         except:
             msgBox.setText("Learning Rate is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

@@ -322,7 +322,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
 
 
         try:
-            miter = np.int(ui.txtMaxIter.text())
+            miter = np.int32(ui.txtMaxIter.text())
             assert miter >= 1, None
         except:
             msgBox.setText("Max Iteration is wrong!")
@@ -332,7 +332,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             return False
 
         try:
-            iiter = np.int(ui.txtInitIter.text())
+            iiter = np.int32(ui.txtInitIter.text())
             assert iiter >= 1, None
         except:
             msgBox.setText("Init Iteration is wrong!")
@@ -341,7 +341,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             msgBox.exec()
             return False
         try:
-            Speed = np.int(ui.txtAnnealSpeed.text())
+            Speed = np.int32(ui.txtAnnealSpeed.text())
             assert Speed >= 1, None
         except:
             msgBox.setText("Anneal speed is wrong!")
@@ -350,7 +350,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             msgBox.exec()
             return False
         try:
-            rank = np.int(ui.txtRank.text())
+            rank = np.int32(ui.txtRank.text())
             assert rank >= 0, None
             if rank == 0:
                 rank = None
@@ -361,7 +361,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             msgBox.exec()
             return False
         try:
-            NumReg = np.int(ui.txtNumReg.text())
+            NumReg = np.int32(ui.txtNumReg.text())
             assert NumReg >= 0, None
             if NumReg == 0:
                 NumReg = None
@@ -372,7 +372,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             msgBox.exec()
             return False
         try:
-            SNRBin = np.int(ui.txtSNRBins.text())
+            SNRBin = np.int32(ui.txtSNRBins.text())
             assert SNRBin > 0, None
         except:
             msgBox.setText("SNR bin is wrong!")
@@ -381,7 +381,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             msgBox.exec()
             return False
         try:
-            rhoBin = np.int(ui.txtRhoBins.text())
+            rhoBin = np.int32(ui.txtRhoBins.text())
             assert rhoBin > 0, None
         except:
             msgBox.setText("Rho bin is wrong!")
@@ -390,7 +390,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             msgBox.exec()
             return False
         try:
-            tol = np.float(ui.txtTole.text())
+            tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -398,7 +398,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             msgBox.exec()
             return False
         try:
-            eta = np.float(ui.txtEta.text())
+            eta = np.float32(ui.txtEta.text())
         except:
             msgBox.setText("Eta is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -406,7 +406,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             msgBox.exec()
             return False
         try:
-            LogSRange = np.float(ui.txtLogSRange.text())
+            LogSRange = np.float32(ui.txtLogSRange.text())
         except:
             msgBox.setText("LogS range is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -414,7 +414,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             msgBox.exec()
             return False
         try:
-            SpaceSmoothRange = np.float(ui.txtSpaceSmoothRange.text())
+            SpaceSmoothRange = np.float32(ui.txtSpaceSmoothRange.text())
             if SpaceSmoothRange == 0:
                 SpaceSmoothRange = None
         except:
@@ -424,7 +424,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             msgBox.exec()
             return False
         try:
-            IntenSmoothRange = np.float(ui.txtIntenSmoothRange.text())
+            IntenSmoothRange = np.float32(ui.txtIntenSmoothRange.text())
             if IntenSmoothRange == 0:
                 IntenSmoothRange = None
         except:
@@ -434,7 +434,7 @@ class frmMABayesianRSA(Ui_frmMABayesianRSA):
             msgBox.exec()
             return False
         try:
-            Tau = np.float(ui.txtTauRange.text())
+            Tau = np.float32(ui.txtTauRange.text())
         except:
             msgBox.setText("Eta is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

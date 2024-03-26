@@ -304,7 +304,7 @@ class frmMASVM(Ui_frmMASVM):
 
         # C
         try:
-            C = np.float(ui.txtC.text())
+            C = np.float32(ui.txtC.text())
         except:
             msgBox.setText("C is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -314,7 +314,7 @@ class frmMASVM(Ui_frmMASVM):
 
         # Gamma
         try:
-            Gamma = np.float(ui.txtGamma.text())
+            Gamma = np.float32(ui.txtGamma.text())
             if Gamma == 0:
                 Gamma = "auto"
         except:
@@ -336,7 +336,7 @@ class frmMASVM(Ui_frmMASVM):
 
         # Coef0
         try:
-            Coef0 = np.float(ui.txtCoef0.text())
+            Coef0 = np.float32(ui.txtCoef0.text())
         except:
             msgBox.setText("Coef0 is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -346,7 +346,7 @@ class frmMASVM(Ui_frmMASVM):
 
         # Tol
         try:
-            Tol = np.float(ui.txtTole.text())
+            Tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

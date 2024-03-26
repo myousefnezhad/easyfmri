@@ -233,7 +233,7 @@ class frmFEDictionaryLearning(Ui_frmFEDictionaryLearning):
         Transform = ui.cbTransform.currentText()
         # Tol
         try:
-            Tol = np.float(ui.txtTole.text())
+            Tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -257,7 +257,7 @@ class frmFEDictionaryLearning(Ui_frmFEDictionaryLearning):
             return False
         # Alpha
         try:
-            Alpha = np.float(ui.txtAlpha.text())
+            Alpha = np.float32(ui.txtAlpha.text())
         except:
             msgBox.setText("Alpha is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

@@ -181,7 +181,7 @@ class frmMAGaussian(Ui_frmMAGaussian):
 
         # Tol
         try:
-            Tol = np.float(ui.txtTole.text())
+            Tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -202,7 +202,7 @@ class frmMAGaussian(Ui_frmMAGaussian):
 
         # Regularization
         try:
-            Regularization = np.float(ui.txtRegularization.text())
+            Regularization = np.float32(ui.txtRegularization.text())
         except:
             msgBox.setText("Regularization is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -212,7 +212,7 @@ class frmMAGaussian(Ui_frmMAGaussian):
 
         # Verbose
         try:
-            Verbose = np.int(ui.txtVerbose.text())
+            Verbose = np.int32(ui.txtVerbose.text())
         except:
             msgBox.setText("Verbose is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -222,7 +222,7 @@ class frmMAGaussian(Ui_frmMAGaussian):
 
         # IVerbose
         try:
-            IVerbose = np.int(ui.txtIVerbose.text())
+            IVerbose = np.int32(ui.txtIVerbose.text())
         except:
             msgBox.setText("Verbose Interval is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

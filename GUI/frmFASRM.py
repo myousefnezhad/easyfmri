@@ -419,7 +419,8 @@ class frmFASRM(Ui_frmFASRM):
                 return False
 
             try:
-                Gamma = np.float(ui.txtGamma.text())
+                print(ui.txtGamma.text())
+                Gamma = np.float32(ui.txtGamma.text())
             except:
                 msgBox.setText("Gamma is wrong!")
                 msgBox.setIcon(QMessageBox.Icon.Critical)

@@ -220,7 +220,7 @@ class frmFESPCA(Ui_frmFESPCA):
         msgBox = QMessageBox()
         # Alpha
         try:
-            Alpha = np.float(ui.txtAlpha.text())
+            Alpha = np.float32(ui.txtAlpha.text())
         except:
             msgBox.setText("Alpha is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -229,7 +229,7 @@ class frmFESPCA(Ui_frmFESPCA):
             return False
         # Ridge
         try:
-            Ridge = np.float(ui.txtRidge.text())
+            Ridge = np.float32(ui.txtRidge.text())
         except:
             msgBox.setText("Ridge Alpha is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -247,7 +247,7 @@ class frmFESPCA(Ui_frmFESPCA):
             return False
         # Tolerance
         try:
-            Tol = np.float(ui.txtTole.text())
+            Tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

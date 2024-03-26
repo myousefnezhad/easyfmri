@@ -233,7 +233,7 @@ class frmFEKPCA(Ui_frmFEKPCA):
         Kernel = ui.cbKernel.currentText()
         # Gamma
         try:
-            Gamma = np.float(ui.txtGamma.text())
+            Gamma = np.float32(ui.txtGamma.text())
         except:
             msgBox.setText("Gamma is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -251,7 +251,7 @@ class frmFEKPCA(Ui_frmFEKPCA):
             return False
         # Coef0
         try:
-            Coef0 = np.float(ui.txtCoef0.text())
+            Coef0 = np.float32(ui.txtCoef0.text())
         except:
             msgBox.setText("Coef0 is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -269,7 +269,7 @@ class frmFEKPCA(Ui_frmFEKPCA):
             return False
         # Tol
         try:
-            Tol = np.float(ui.txtTole.text())
+            Tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

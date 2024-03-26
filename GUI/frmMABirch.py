@@ -154,7 +154,7 @@ class frmMABirch(Ui_frmMABirch):
 
         # Threshold
         try:
-            Threshold = np.float(ui.txtThreshold.text())
+            Threshold = np.float32(ui.txtThreshold.text())
         except:
             msgBox.setText("Threshold is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -164,7 +164,7 @@ class frmMABirch(Ui_frmMABirch):
 
         # BranchingFactor
         try:
-            BranchingFactor = np.int(ui.txtBranchingFactor.text())
+            BranchingFactor = np.int32(ui.txtBranchingFactor.text())
         except:
             msgBox.setText("Branching Factor is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

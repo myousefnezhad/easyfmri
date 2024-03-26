@@ -383,7 +383,7 @@ class frmFAARSRM(Ui_frmFAARSRM):
                 return False
 
             try:
-                Gamma = np.float(ui.txtGamma.text())
+                Gamma = np.float32(ui.txtGamma.text())
             except:
                 msgBox.setText("Gamma is wrong!")
                 msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -403,7 +403,7 @@ class frmFAARSRM(Ui_frmFAARSRM):
 
             # AR Rank
             try:
-                Rho = np.float(ui.txtRho.text())
+                Rho = np.float32(ui.txtRho.text())
             except:
                 msgBox.setText("Rho value is wrong!")
                 msgBox.setIcon(QMessageBox.Icon.Critical)

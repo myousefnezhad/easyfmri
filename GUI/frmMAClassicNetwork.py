@@ -236,7 +236,7 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
         msgBox = QMessageBox()
         tStart = time.time()
         try:
-            Threshold = np.float(ui.txtThre.text())
+            Threshold = np.float32(ui.txtThre.text())
             assert Threshold <= 1
             assert Threshold >= 0
         except:
@@ -246,7 +246,7 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
             msgBox.exec()
             return False
         try:
-            EdgeThreshold = np.float(ui.txtEdgeThre.text())
+            EdgeThreshold = np.float32(ui.txtEdgeThre.text())
             assert EdgeThreshold <= 1
             assert EdgeThreshold >= 0
         except:
@@ -492,7 +492,7 @@ class frmMAClassicNetwork(Ui_frmMAClassicNetwork):
     def btnRedraw_click(self):
         msgBox = QMessageBox()
         try:
-            EdgeThreshold = np.float(ui.txtEdgeThre.text())
+            EdgeThreshold = np.float32(ui.txtEdgeThre.text())
             assert EdgeThreshold <= 1
             assert EdgeThreshold >= 0
         except:

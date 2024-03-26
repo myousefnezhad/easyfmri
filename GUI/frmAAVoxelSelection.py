@@ -801,7 +801,7 @@ class frmAAVoxelSelection(Ui_frmAAVoxelSelection):
             msgBox.exec()
             return
         try:
-            T = np.float(ui.txtAcc.text())
+            T = np.float32(ui.txtAcc.text())
         except:
             print("Accuracy rate must be a number")
             msgBox.setText("Accuracy rate must be a number")

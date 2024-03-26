@@ -244,7 +244,7 @@ class frmMARSA(Ui_frmMARSA):
         normalize   = ui.cbNormalize.isChecked()
 
         try:
-            alpha = np.float(ui.txtAlpha.text())
+            alpha = np.float32(ui.txtAlpha.text())
         except:
             msgBox.setText("Alpha is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -254,7 +254,7 @@ class frmMARSA(Ui_frmMARSA):
 
 
         try:
-            iter = np.int(ui.txtMaxIter.text())
+            iter = np.int32(ui.txtMaxIter.text())
         except:
             msgBox.setText("Max Iteration is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -264,7 +264,7 @@ class frmMARSA(Ui_frmMARSA):
 
 
         try:
-            tol = np.float(ui.txtTole.text())
+            tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -273,7 +273,7 @@ class frmMARSA(Ui_frmMARSA):
             return False
 
         try:
-            l1 = np.float(ui.txtL1.text())
+            l1 = np.float32(ui.txtL1.text())
         except:
             msgBox.setText("L1 is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -282,7 +282,7 @@ class frmMARSA(Ui_frmMARSA):
             return False
 
         try:
-            njob = np.float(ui.txtJobs.text())
+            njob = np.float32(ui.txtJobs.text())
         except:
             msgBox.setText("Number of jobs is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

@@ -365,7 +365,7 @@ class frmFAARHA(Ui_frmFAARHA):
             tic = time.time()
             # Regularization
             try:
-                Regularization = np.float(ui.txtRegularization.text())
+                Regularization = np.float32(ui.txtRegularization.text())
             except:
                 msgBox.setText("Regularization value is wrong!")
                 msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -385,7 +385,7 @@ class frmFAARHA(Ui_frmFAARHA):
 
             # AR Rank
             try:
-                Rho = np.float(ui.txtRho.text())
+                Rho = np.float32(ui.txtRho.text())
             except:
                 msgBox.setText("Rho value is wrong!")
                 msgBox.setIcon(QMessageBox.Icon.Critical)

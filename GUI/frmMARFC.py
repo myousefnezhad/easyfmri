@@ -306,7 +306,7 @@ class frmMARFC(Ui_frmMARFC):
 
         # NEstimators
         try:
-            NEstimators = np.int(ui.txtNEstimators.text())
+            NEstimators = np.int32(ui.txtNEstimators.text())
         except:
             msgBox.setText("Number of Estimators is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -319,7 +319,7 @@ class frmMARFC(Ui_frmMARFC):
         if MaxFeatures is not None:
             if MaxFeatures == "value":
                 try:
-                    MaxFeatures = np.float(ui.txtMaxFeatures.text())
+                    MaxFeatures = np.float32(ui.txtMaxFeatures.text())
                 except:
                     msgBox.setText("Value of Max Features is wrong!")
                     msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -340,7 +340,7 @@ class frmMARFC(Ui_frmMARFC):
 
         # MinSamplesSplit
         try:
-            MinSamplesSplit = np.float(ui.txtMinSamplesSplit.text())
+            MinSamplesSplit = np.float32(ui.txtMinSamplesSplit.text())
         except:
             msgBox.setText("Min Samples Split is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -350,7 +350,7 @@ class frmMARFC(Ui_frmMARFC):
 
         # MinSamplesLeaf
         try:
-            MinSamplesLeaf = np.float(ui.txtMinSamplesLeaf.text())
+            MinSamplesLeaf = np.float32(ui.txtMinSamplesLeaf.text())
         except:
             msgBox.setText("Min Samples Leaf is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -360,7 +360,7 @@ class frmMARFC(Ui_frmMARFC):
 
         # MinWeightFractionLeaf
         try:
-            MinWeightFractionLeaf = np.float(ui.txtMinWeightFractionLeaf.text())
+            MinWeightFractionLeaf = np.float32(ui.txtMinWeightFractionLeaf.text())
         except:
             msgBox.setText("Min Weight Fraction Leaf is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -382,7 +382,7 @@ class frmMARFC(Ui_frmMARFC):
 
         # MinImpurityDecrease
         try:
-            MinImpurityDecrease = np.float(ui.txtMinImpurityDecrease.text())
+            MinImpurityDecrease = np.float32(ui.txtMinImpurityDecrease.text())
         except:
             msgBox.setText("Min Impurity Decrease is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -392,7 +392,7 @@ class frmMARFC(Ui_frmMARFC):
 
         # MinImpuritySplit
         try:
-            MinImpuritySplit = np.float(ui.txtMinImpuritySplit.text())
+            MinImpuritySplit = np.float32(ui.txtMinImpuritySplit.text())
             if MinImpuritySplit == 0:
                 MinImpuritySplit = None
         except:

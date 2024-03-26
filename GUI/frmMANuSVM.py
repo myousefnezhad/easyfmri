@@ -303,7 +303,7 @@ class frmMANuSVM(Ui_frmMANuSVM):
 
         # Nu
         try:
-            Nu = np.float(ui.txtNu.text())
+            Nu = np.float32(ui.txtNu.text())
         except:
             msgBox.setText("Nu is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -313,7 +313,7 @@ class frmMANuSVM(Ui_frmMANuSVM):
 
         # Gamma
         try:
-            Gamma = np.float(ui.txtGamma.text())
+            Gamma = np.float32(ui.txtGamma.text())
             if Gamma == 0:
                 Gamma = "auto"
         except:
@@ -335,7 +335,7 @@ class frmMANuSVM(Ui_frmMANuSVM):
 
         # Coef0
         try:
-            Coef0 = np.float(ui.txtCoef0.text())
+            Coef0 = np.float32(ui.txtCoef0.text())
         except:
             msgBox.setText("Coef0 is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -345,7 +345,7 @@ class frmMANuSVM(Ui_frmMANuSVM):
 
         # Tol
         try:
-            Tol = np.float(ui.txtTole.text())
+            Tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

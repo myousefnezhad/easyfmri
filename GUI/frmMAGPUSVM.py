@@ -357,7 +357,7 @@ class frmMASVM(Ui_frmMAGPUSVM):
 
         # C
         try:
-            C = np.float(ui.txtC.text())
+            C = np.float32(ui.txtC.text())
         except:
             msgBox.setText("C is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -387,7 +387,7 @@ class frmMASVM(Ui_frmMAGPUSVM):
 
         # lr
         try:
-            lr = np.float(ui.txtRate.text())
+            lr = np.float32(ui.txtRate.text())
         except:
             msgBox.setText("Learning Rate is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -397,7 +397,7 @@ class frmMASVM(Ui_frmMAGPUSVM):
 
         # Percentage Rate
         try:
-            perrate = np.float(ui.txtPer.text())
+            perrate = np.float32(ui.txtPer.text())
         except:
             msgBox.setText("C is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

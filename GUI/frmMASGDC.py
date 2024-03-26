@@ -331,7 +331,7 @@ class frmMASGDC(Ui_frmMASGDC):
 
         # Alpha
         try:
-            Alpha = np.float(ui.txtAlpha.text())
+            Alpha = np.float32(ui.txtAlpha.text())
         except:
             msgBox.setText("Alpha is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -341,7 +341,7 @@ class frmMASGDC(Ui_frmMASGDC):
 
         # L1Rate
         try:
-            L1Rate = np.float(ui.txtL1Rate.text())
+            L1Rate = np.float32(ui.txtL1Rate.text())
         except:
             msgBox.setText("L1 Rate is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -371,7 +371,7 @@ class frmMASGDC(Ui_frmMASGDC):
 
         # Tol
         try:
-            Tol = np.float(ui.txtTol.text())
+            Tol = np.float32(ui.txtTol.text())
             if Tol == 0:
                 Tol = None
         except:
@@ -401,7 +401,7 @@ class frmMASGDC(Ui_frmMASGDC):
 
         # Epsilon
         try:
-            Epsilon = np.float(ui.txtEpsilon.text())
+            Epsilon = np.float32(ui.txtEpsilon.text())
         except:
             msgBox.setText("Epsilon is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

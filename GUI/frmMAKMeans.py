@@ -183,7 +183,7 @@ class frmMAKMeans(Ui_frmMAKMeans):
 
         # NJobs
         try:
-            NJobs = np.int(ui.txtNJobs.text())
+            NJobs = np.int32(ui.txtNJobs.text())
         except:
             msgBox.setText("Number of Jobs is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -203,7 +203,7 @@ class frmMAKMeans(Ui_frmMAKMeans):
 
         # Tol
         try:
-            Tol = np.float(ui.txtTole.text())
+            Tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

@@ -304,7 +304,7 @@ class frmMALSVM(Ui_frmMALSVM):
 
         # C
         try:
-            C = np.float(ui.txtC.text())
+            C = np.float32(ui.txtC.text())
         except:
             msgBox.setText("C is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -315,7 +315,7 @@ class frmMALSVM(Ui_frmMALSVM):
 
         # Tol
         try:
-            Tol = np.float(ui.txtTole.text())
+            Tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

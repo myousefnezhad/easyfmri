@@ -227,7 +227,7 @@ class frmFEFastICA(Ui_frmFEFastICA):
         Alg = ui.cbAlg.currentText()
         # Tol
         try:
-            Tol = np.float(ui.txtTole.text())
+            Tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

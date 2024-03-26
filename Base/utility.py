@@ -253,12 +253,12 @@ def strRange(data, Unique=False):
             else:
                 reformD = D.split()
             if len(reformD) == 1:
-                result.append(np.int(reformD[0]))
+                result.append(np.int32(reformD[0]))
             elif len(reformD) == 2:
-                LoBand = np.int(reformD[0])
-                HiBand = np.int(reformD[1])
+                LoBand = np.int32(reformD[0])
+                HiBand = np.int32(reformD[1])
                 if LoBand == HiBand:
-                    result.append(np.int(reformD[0]))
+                    result.append(np.int32(reformD[0]))
                 elif LoBand < HiBand:
                     ren = np.arange(LoBand, HiBand + 1, 1)
                     for x in ren:
@@ -304,12 +304,12 @@ def strMultiRange(data,Len=None):
             res = list()
             reformD = Str.replace("-"," ").split()
             if len(reformD) == 1:
-                res.append(np.int(reformD[0]))
+                res.append(np.int32(reformD[0]))
             elif len(reformD) == 2:
-                LoBand = np.int(reformD[0])
-                HiBand = np.int(reformD[1])
+                LoBand = np.int32(reformD[0])
+                HiBand = np.int32(reformD[1])
                 if LoBand == HiBand:
-                    res.append(np.int(reformD[0]))
+                    res.append(np.int32(reformD[0]))
                 elif LoBand < HiBand:
                     ren = np.arange(LoBand, HiBand + 1, 1)
                     for x in ren:

@@ -377,7 +377,7 @@ class frmMAMLP(Ui_frmMAMLP):
 
         # Alpha
         try:
-            Alpha = np.float(ui.txtAlpha.text())
+            Alpha = np.float32(ui.txtAlpha.text())
         except:
             msgBox.setText("Alpha is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -387,7 +387,7 @@ class frmMAMLP(Ui_frmMAMLP):
 
         # Tol
         try:
-            Tol = np.float(ui.txtTol.text())
+            Tol = np.float32(ui.txtTol.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -414,7 +414,7 @@ class frmMAMLP(Ui_frmMAMLP):
 
         # Momentum
         try:
-            Momentum = np.float(ui.txtMomentum.text())
+            Momentum = np.float32(ui.txtMomentum.text())
         except:
             msgBox.setText("Momentum is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -424,7 +424,7 @@ class frmMAMLP(Ui_frmMAMLP):
 
         # ValidationFraction
         try:
-            ValidationFraction = np.float(ui.txtValidationFraction.text())
+            ValidationFraction = np.float32(ui.txtValidationFraction.text())
         except:
             msgBox.setText("Validation Fraction is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -434,7 +434,7 @@ class frmMAMLP(Ui_frmMAMLP):
 
         # Beta1
         try:
-            Beta1 = np.float(ui.txtBeta1.text())
+            Beta1 = np.float32(ui.txtBeta1.text())
         except:
             msgBox.setText("Beta 1 is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -444,7 +444,7 @@ class frmMAMLP(Ui_frmMAMLP):
 
         # Beta2
         try:
-            Beta2 = np.float(ui.txtBeta2.text())
+            Beta2 = np.float32(ui.txtBeta2.text())
         except:
             msgBox.setText("Beta 2 is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -454,7 +454,7 @@ class frmMAMLP(Ui_frmMAMLP):
 
         # Epsilon
         try:
-            Epsilon = np.float(ui.txtEpsilon.text())
+            Epsilon = np.float32(ui.txtEpsilon.text())
         except:
             msgBox.setText("Epsilon is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

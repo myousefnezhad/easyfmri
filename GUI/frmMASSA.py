@@ -238,7 +238,7 @@ class frmMASSA(Ui_frmMASSA):
         Verbose  = ui.cbVerbose.isChecked()
 
         try:
-            gamma = np.float(ui.txtGamma.text())
+            gamma = np.float32(ui.txtGamma.text())
         except:
             msgBox.setText("Gamma is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -247,7 +247,7 @@ class frmMASSA(Ui_frmMASSA):
             return False
 
         try:
-            Iter = np.int(ui.txtIter.text())
+            Iter = np.int32(ui.txtIter.text())
         except:
             msgBox.setText("Max Iteration is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

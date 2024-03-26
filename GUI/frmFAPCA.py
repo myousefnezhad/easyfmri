@@ -378,7 +378,7 @@ class frmFAPCA(Ui_frmFAPCA):
 
         # Gamma
         try:
-            Gamma = np.float(ui.txtGamma.text())
+            Gamma = np.float32(ui.txtGamma.text())
         except:
             msgBox.setText("Gamma is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -398,7 +398,7 @@ class frmFAPCA(Ui_frmFAPCA):
 
         # Coef0
         try:
-            Coef0 = np.float(ui.txtCoef0.text())
+            Coef0 = np.float32(ui.txtCoef0.text())
         except:
             msgBox.setText("Coef0 is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -418,7 +418,7 @@ class frmFAPCA(Ui_frmFAPCA):
 
         # Tol
         try:
-            Tol = np.float(ui.txtTole.text())
+            Tol = np.float32(ui.txtTole.text())
         except:
             msgBox.setText("Tolerance is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)

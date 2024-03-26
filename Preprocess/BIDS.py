@@ -21,12 +21,12 @@ def strRange(data, Unique=False):
         for D in strData:
             reformD = D.replace("-"," ").split()
             if len(reformD) == 1:
-                result.append(np.int(reformD[0]))
+                result.append(np.int32(reformD[0]))
             elif len(reformD) == 2:
-                LoBand = np.int(reformD[0])
-                HiBand = np.int(reformD[1])
+                LoBand = np.int32(reformD[0])
+                HiBand = np.int32(reformD[1])
                 if LoBand == HiBand:
-                    result.append(np.int(reformD[0]))
+                    result.append(np.int32(reformD[0]))
                 elif LoBand < HiBand:
                     ren = np.arange(LoBand, HiBand + 1, 1)
                     for x in ren:

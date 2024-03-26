@@ -370,7 +370,7 @@ class frmFELDA(Ui_frmFELDA):
         for fold in range(FoldFrom, FoldTo+1):
             # Tol
             try:
-                Tol = np.float(ui.txtTole.text())
+                Tol = np.float32(ui.txtTole.text())
             except:
                 msgBox.setText("Tolerance is wrong!")
                 msgBox.setIcon(QMessageBox.Icon.Critical)

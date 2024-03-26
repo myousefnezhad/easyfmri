@@ -365,7 +365,7 @@ class frmFASHA(Ui_frmFASHA):
             tic = time.time()
             # Regularization
             try:
-                Regularization = np.float(ui.txtRegularization.text())
+                Regularization = np.float32(ui.txtRegularization.text())
             except:
                 msgBox.setText("Regularization value is wrong!")
                 msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -376,7 +376,7 @@ class frmFASHA(Ui_frmFASHA):
 
             # Lambda
             try:
-                Lamd = np.float(ui.txtLambda.text())
+                Lamd = np.float32(ui.txtLambda.text())
             except:
                 msgBox.setText("Lambda value is wrong!")
                 msgBox.setIcon(QMessageBox.Icon.Critical)

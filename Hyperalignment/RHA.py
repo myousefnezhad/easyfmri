@@ -69,7 +69,7 @@ class RHA:
             self.eps = [np.float32(self.regularization) for i in range(self.V)]  # Assume eps is same for each view
 
 
-        self.F = [np.int(np.shape(views)[2]) for i in range(self.V)]  # Assume eps is same for each view
+        self.F = [np.int32(np.shape(views)[2]) for i in range(self.V)]  # Assume eps is same for each view
 
         if self.Dim is None:
             self.k = np.min((np.shape(views)[2],np.shape(views)[1]))  # Dimensionality of embedding we want to learn
@@ -132,7 +132,7 @@ class RHA:
 
         self.eps_tilde = [np.float32(self.regularization) for i in range(self.V_tilde)]  # Assume eps is same for each view
 
-        self.F_tilde = [np.int(np.shape(views_tilde)[2]) for i in range(self.V_tilde)]  # Assume eps is same for each view
+        self.F_tilde = [np.int32(np.shape(views_tilde)[2]) for i in range(self.V_tilde)]  # Assume eps is same for each view
         if G is not None:
             self.G = G
         else:

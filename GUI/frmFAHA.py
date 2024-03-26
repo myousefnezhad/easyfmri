@@ -364,7 +364,7 @@ class frmFAHA(Ui_frmFAHA):
             tic = time.time()
             # Regularization
             try:
-                Regularization = np.float(ui.txtRegularization.text())
+                Regularization = np.float32(ui.txtRegularization.text())
             except:
                 msgBox.setText("Regularization value is wrong!")
                 msgBox.setIcon(QMessageBox.Icon.Critical)

@@ -883,7 +883,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
                 return False
 
             try:
-                Threshold = np.float(ui.txtDIThreshold.text())
+                Threshold = np.float32(ui.txtDIThreshold.text())
             except:
                 msgBox.setText("Threshold must be a number")
                 msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -1612,7 +1612,7 @@ class frmFeatureAnalysis(Ui_frmFeatureAnalysis):
             msgBox.exec()
             return False
         try:
-            Threshold = np.float(ui.txtDIThreshold.text())
+            Threshold = np.float32(ui.txtDIThreshold.text())
         except:
             msgBox.setText("Threshold must be a number")
             msgBox.setIcon(QMessageBox.Icon.Critical)

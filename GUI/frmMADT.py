@@ -311,7 +311,7 @@ class frmMADT(Ui_frmMADT):
         if MaxFeatures is not None:
             if MaxFeatures == "value":
                 try:
-                    MaxFeatures = np.float(ui.txtMaxFeatures.text())
+                    MaxFeatures = np.float32(ui.txtMaxFeatures.text())
                 except:
                     msgBox.setText("Value of Max Features is wrong!")
                     msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -333,7 +333,7 @@ class frmMADT(Ui_frmMADT):
 
         # MinSamplesSplit
         try:
-            MinSamplesSplit = np.float(ui.txtMinSamplesSplit.text())
+            MinSamplesSplit = np.float32(ui.txtMinSamplesSplit.text())
         except:
             msgBox.setText("Min Samples Split is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -343,7 +343,7 @@ class frmMADT(Ui_frmMADT):
 
         # MinSamplesLeaf
         try:
-            MinSamplesLeaf = np.float(ui.txtMinSamplesLeaf.text())
+            MinSamplesLeaf = np.float32(ui.txtMinSamplesLeaf.text())
         except:
             msgBox.setText("Min Samples Leaf is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -353,7 +353,7 @@ class frmMADT(Ui_frmMADT):
 
         # MinWeightFractionLeaf
         try:
-            MinWeightFractionLeaf = np.float(ui.txtMinWeightFractionLeaf.text())
+            MinWeightFractionLeaf = np.float32(ui.txtMinWeightFractionLeaf.text())
         except:
             msgBox.setText("Min Weight Fraction Leaf is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -375,7 +375,7 @@ class frmMADT(Ui_frmMADT):
 
         # MinImpurityDecrease
         try:
-            MinImpurityDecrease = np.float(ui.txtMinImpurityDecrease.text())
+            MinImpurityDecrease = np.float32(ui.txtMinImpurityDecrease.text())
         except:
             msgBox.setText("Min Impurity Decrease is wrong!")
             msgBox.setIcon(QMessageBox.Icon.Critical)
@@ -385,7 +385,7 @@ class frmMADT(Ui_frmMADT):
 
         # MinImpuritySplit
         try:
-            MinImpuritySplit = np.float(ui.txtMinImpuritySplit.text())
+            MinImpuritySplit = np.float32(ui.txtMinImpuritySplit.text())
             if MinImpuritySplit == 0:
                 MinImpuritySplit = None
         except:
